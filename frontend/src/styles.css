@@ -939,6 +939,71 @@ h1 {
   color: var(--muted);
 }
 
+.warehouse-grid-react {
+  align-items: start;
+}
+
+.warehouse-overview-panel,
+.warehouse-actions-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.warehouse-summary-grid {
+  margin-bottom: 4px;
+}
+
+.warehouse-zone-list,
+.warehouse-receipts-list {
+  display: grid;
+  gap: 14px;
+}
+
+.warehouse-zone-card,
+.warehouse-receipt-card,
+.warehouse-form-card,
+.warehouse-receipts-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel-soft);
+  padding: 18px;
+}
+
+.warehouse-zone-head,
+.warehouse-receipt-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.warehouse-zone-head p,
+.warehouse-receipt-head p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.warehouse-zone-meta,
+.warehouse-receipt-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
+.warehouse-form-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.warehouse-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
 .groups-grid-react {
   align-items: start;
 }

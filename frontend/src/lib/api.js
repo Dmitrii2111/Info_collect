@@ -86,6 +86,29 @@ export async function loadExportRows() {
   return payload.items || [];
 }
 
+export async function loadWarehouseData() {
+  const [overview, zones, receipts, rooms] = await Promise.all([
+    apiGet("/api/stock/overview"),
+    apiGet("/api/stock/zones"),
+    apiGet("/api/stock/receipts"),
+    apiGet("/api/rooms/"),
+  ]);
+
+  return {
+    overview,
+    zones,
+    receipts,
+    rooms: rooms || [],
+  };
+}
+
+export async function createWarehouseZone(payload) {
+  return apiSend("/api/stock/zones", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function previewAssignmentOverlaps(userId, payload) {
   return apiSend(`/api/users/field-workers/${userId}/assignment-overlaps`, {
     method: "POST",

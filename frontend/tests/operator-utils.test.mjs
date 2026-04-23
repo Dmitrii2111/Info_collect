@@ -30,11 +30,11 @@ test("getVisibleTabsForRole respects role access", () => {
   );
   assert.deepEqual(
     getVisibleTabsForRole("operator").map((item) => item.id),
-    ["control", "assignments", "groups", "export"],
+    ["control", "warehouse", "assignments", "groups", "export"],
   );
   assert.deepEqual(
     getVisibleTabsForRole("admin").map((item) => item.id),
-    ["control", "assignments", "users", "groups", "export"],
+    ["control", "warehouse", "assignments", "users", "groups", "export"],
   );
 });
 

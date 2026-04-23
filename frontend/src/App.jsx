@@ -30,12 +30,14 @@ import {
   MenuUnfoldOutlined,
   ReloadOutlined,
   SettingOutlined,
+  ShopOutlined,
   TeamOutlined,
   UserOutlined,
   UsergroupAddOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import {
+  createWarehouseZone,
   createGroup,
   createFieldUser,
   createGroupMerge,
@@ -46,6 +48,7 @@ import {
   loadGroups,
   loadOperatorBootstrap,
   loadRoomDetail,
+  loadWarehouseData,
   loginOperator,
   previewAssignmentOverlaps,
   restoreFieldUser,
@@ -93,6 +96,7 @@ import {
   validateUserForm,
 } from "./operator/utils.js";
 const ControlTab = lazy(() => import("./operator/tabs/ControlTab.jsx").then((module) => ({ default: module.ControlTab })));
+const WarehouseTab = lazy(() => import("./operator/tabs/WarehouseTab.jsx").then((module) => ({ default: module.WarehouseTab })));
 const AssignmentsTab = lazy(() => import("./operator/tabs/AssignmentsTab.jsx").then((module) => ({ default: module.AssignmentsTab })));
 const UsersTab = lazy(() => import("./operator/tabs/UsersTab.jsx").then((module) => ({ default: module.UsersTab })));
 const GroupsTab = lazy(() => import("./operator/tabs/GroupsTab.jsx").then((module) => ({ default: module.GroupsTab })));
@@ -120,6 +124,7 @@ export default function App() {
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(true);
   const [controlLoading, setControlLoading] = useState(false);
+  const [warehouseLoading, setWarehouseLoading] = useState(false);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [savingAssignments, setSavingAssignments] = useState(false);
   const [groupsLoading, setGroupsLoading] = useState(false);
@@ -192,6 +197,19 @@ export default function App() {
     team_name: "",
     member_user_ids: [],
   });
+  const [warehouseStatus, setWarehouseStatus] = useState("");
+  const [warehouseActionLoading, setWarehouseActionLoading] = useState(false);
+  const [warehouseData, setWarehouseData] = useState({
+    overview: null,
+    zones: [],
+    receipts: [],
+    rooms: [],
+  });
+  const [warehouseForm, setWarehouseForm] = useState({
+    code: "",
+    name: "",
+    room_id: "",
+  });
 
   const [exportRows, setExportRows] = useState([]);
   const [exportFilters, setExportFilters] = useState({
@@ -206,6 +224,7 @@ export default function App() {
   const controlCacheRef = useRef(new Map());
   const assignmentCacheRef = useRef(new Map());
   const roomDetailCacheRef = useRef(new Map());
+  const warehouseLoadedRef = useRef(false);
   const groupsLoadedRef = useRef(false);
   const exportLoadedRef = useRef(false);
   const screens = Grid.useBreakpoint();
@@ -221,6 +240,7 @@ export default function App() {
         label: tab.label,
         icon:
           tab.id === "control" ? <AuditOutlined /> :
+          tab.id === "warehouse" ? <ShopOutlined /> :
           tab.id === "assignments" ? <ApartmentOutlined /> :
           tab.id === "users" ? <TeamOutlined /> :
           tab.id === "groups" ? <UsergroupAddOutlined /> :
@@ -465,6 +485,30 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
     async function run() {
+      if (!auth || activeTab !== "warehouse") return;
+      if (warehouseLoadedRef.current && warehouseData.zones.length) return;
+      setWarehouseLoading(true);
+      try {
+        const payload = await loadWarehouseData();
+        if (!cancelled) {
+          warehouseLoadedRef.current = true;
+          setWarehouseData(payload);
+        }
+      } catch (error) {
+        if (!cancelled) setWarehouseStatus(error.message || "Не удалось загрузить складские данные.");
+      } finally {
+        if (!cancelled) setWarehouseLoading(false);
+      }
+    }
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [auth, activeTab, warehouseData.zones.length]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
       if (!auth || activeTab !== "export") return;
       if (exportLoadedRef.current && exportRows.length) return;
       setExportLoading(true);
@@ -617,6 +661,12 @@ export default function App() {
     setSelectedGroupId((current) => current || payload[0]?.team_id || null);
   }
 
+  async function reloadWarehouseData() {
+    const payload = await loadWarehouseData();
+    warehouseLoadedRef.current = true;
+    setWarehouseData(payload);
+  }
+
   function updateGroupForm(key, value) {
     setGroupForm((current) => ({ ...current, [key]: value }));
   }
@@ -644,6 +694,37 @@ export default function App() {
       setGroupsStatus(error.message || "Не удалось создать группу.");
     } finally {
       setGroupsActionLoading(false);
+    }
+  }
+
+  function updateWarehouseForm(key, value) {
+    setWarehouseForm((current) => ({ ...current, [key]: value }));
+  }
+
+  async function handleCreateWarehouseZone() {
+    if (!warehouseForm.code.trim() || !warehouseForm.name.trim()) {
+      setWarehouseStatus("Для зоны нужны код и название.");
+      return;
+    }
+    setWarehouseActionLoading(true);
+    setWarehouseStatus("");
+    try {
+      await createWarehouseZone({
+        code: warehouseForm.code.trim(),
+        name: warehouseForm.name.trim(),
+        room_id: warehouseForm.room_id || null,
+      });
+      await reloadWarehouseData();
+      setWarehouseForm({
+        code: "",
+        name: "",
+        room_id: "",
+      });
+      setWarehouseStatus("Складская зона создана.");
+    } catch (error) {
+      setWarehouseStatus(error.message || "Не удалось создать складскую зону.");
+    } finally {
+      setWarehouseActionLoading(false);
     }
   }
 
@@ -1085,6 +1166,21 @@ export default function App() {
             onToggleDepartment={toggleDepartment}
             onToggleFloor={toggleFloor}
             onSelectRoom={selectAssignmentRoom}
+          />
+        </Suspense>
+      );
+    }
+    if (activeTab === "warehouse") {
+      return (
+        <Suspense fallback={<TabFallback />}>
+          <WarehouseTab
+            warehouseLoading={warehouseLoading}
+            warehouseActionLoading={warehouseActionLoading}
+            warehouseStatus={warehouseStatus}
+            warehouseData={warehouseData}
+            warehouseForm={warehouseForm}
+            onUpdateWarehouseForm={updateWarehouseForm}
+            onCreateZone={handleCreateWarehouseZone}
           />
         </Suspense>
       );
