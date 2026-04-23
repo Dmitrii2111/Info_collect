@@ -36,6 +36,7 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import {
+  createGroup,
   createFieldUser,
   createGroupMerge,
   deactivateFieldUser,
@@ -186,6 +187,11 @@ export default function App() {
   const [groupsData, setGroupsData] = useState([]);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [groupsStatus, setGroupsStatus] = useState("");
+  const [groupsActionLoading, setGroupsActionLoading] = useState(false);
+  const [groupForm, setGroupForm] = useState({
+    team_name: "",
+    member_user_ids: [],
+  });
 
   const [exportRows, setExportRows] = useState([]);
   const [exportFilters, setExportFilters] = useState({
@@ -499,6 +505,7 @@ export default function App() {
   const directorySummary = getDirectorySummary(data.users);
   const selectedGroup = groupsData.find((group) => group.team_id === selectedGroupId) || null;
   const groupSummary = getGroupSummary(selectedGroup);
+  const groupCandidates = data.users.filter((user) => user.is_active && user.role === "field_worker");
   const currentUser = data.users.find((user) => user.user_id === auth?.user_id) || null;
   const configTheme = useMemo(
     () => ({
@@ -608,6 +615,36 @@ export default function App() {
     groupsLoadedRef.current = true;
     setGroupsData(payload);
     setSelectedGroupId((current) => current || payload[0]?.team_id || null);
+  }
+
+  function updateGroupForm(key, value) {
+    setGroupForm((current) => ({ ...current, [key]: value }));
+  }
+
+  async function handleCreateGroup() {
+    if (!groupForm.team_name.trim() || groupForm.member_user_ids.length < 2) {
+      setGroupsStatus("Для группы нужны название и минимум два участника.");
+      return;
+    }
+    setGroupsActionLoading(true);
+    setGroupsStatus("");
+    try {
+      const payload = await createGroup({
+        team_name: groupForm.team_name.trim(),
+        member_user_ids: groupForm.member_user_ids,
+      });
+      await reloadGroupsData();
+      setSelectedGroupId(payload.team_id);
+      setGroupForm({
+        team_name: "",
+        member_user_ids: [],
+      });
+      setGroupsStatus(`Группа «${payload.team_name}» создана.`);
+    } catch (error) {
+      setGroupsStatus(error.message || "Не удалось создать группу.");
+    } finally {
+      setGroupsActionLoading(false);
+    }
   }
 
   async function handleLogin() {
@@ -1083,11 +1120,16 @@ export default function App() {
         <Suspense fallback={<TabFallback />}>
           <GroupsTab
             groupsLoading={groupsLoading}
+            groupsActionLoading={groupsActionLoading}
             groupsData={groupsData}
             groupsStatus={groupsStatus}
             selectedGroupId={selectedGroupId}
             selectedGroup={selectedGroup}
             groupSummary={groupSummary}
+            groupCandidates={groupCandidates}
+            groupForm={groupForm}
+            onUpdateGroupForm={updateGroupForm}
+            onCreateGroup={handleCreateGroup}
             onSelectGroup={setSelectedGroupId}
           />
         </Suspense>

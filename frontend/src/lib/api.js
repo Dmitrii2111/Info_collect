@@ -107,6 +107,13 @@ export async function createGroupMerge(payload) {
   });
 }
 
+export async function createGroup(payload) {
+  return apiSend("/api/users/groups", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function createFieldUser(payload) {
   return apiSend("/api/users/field-workers", {
     method: "POST",

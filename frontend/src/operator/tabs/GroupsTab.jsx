@@ -1,34 +1,84 @@
-import { SummaryBadge, SummaryCard } from "../components.jsx";
+import { Button, Input, Select } from "antd";
+import { SummaryBadge, SummaryCard, UserAvatar } from "../components.jsx";
 
 export function GroupsTab({
   groupsLoading,
+  groupsActionLoading,
   groupsData,
   groupsStatus,
   selectedGroupId,
   selectedGroup,
   groupSummary,
+  groupCandidates,
+  groupForm,
+  onUpdateGroupForm,
+  onCreateGroup,
   onSelectGroup,
 }) {
   return (
-    <section className="react-grid">
-      <article className={`react-panel ${groupsLoading && groupsData.length ? "panel-busy" : ""}`}>
+    <section className="react-grid groups-grid-react">
+      <article className="react-panel groups-create-panel">
         <div className="panel-title-row">
-          <h2>Группы сотрудников</h2>
+          <div>
+            <h2>Группы сотрудников</h2>
+            <p className="panel-subtitle">
+              Объединяйте операторов, которые работают по общим помещениям. Общие помещения считаются по пересечению назначений всех участников группы.
+            </p>
+          </div>
         </div>
-        <p className="assignment-helper-text">Общие помещения считаются только по пересечению назначений всех участников группы.</p>
+
+        <div className="groups-create-card">
+          <div className="groups-create-head">
+            <h3>Новая группа</h3>
+            <SummaryBadge>{groupCandidates.length} кандидатов</SummaryBadge>
+          </div>
+          <div className="groups-form-grid">
+            <Input
+              placeholder="Например: Бригада этаж 3"
+              value={groupForm.team_name}
+              onChange={(event) => onUpdateGroupForm("team_name", event.target.value)}
+            />
+            <Select
+              mode="multiple"
+              placeholder="Выберите участников"
+              value={groupForm.member_user_ids}
+              onChange={(value) => onUpdateGroupForm("member_user_ids", value)}
+              options={groupCandidates.map((user) => ({
+                value: user.user_id,
+                label: `${user.full_name} — ${user.phone || "без телефона"}`,
+              }))}
+            />
+          </div>
+          <div className="groups-create-actions">
+            <Button type="primary" onClick={onCreateGroup} loading={groupsActionLoading} disabled={!groupForm.team_name.trim() || groupForm.member_user_ids.length < 2}>
+              Создать группу
+            </Button>
+          </div>
+        </div>
+
         {groupsStatus ? <p className="assignment-status-note">{groupsStatus}</p> : null}
         {groupsLoading && !groupsData.length ? <div className="empty-box">Загрузка групп...</div> : null}
         {!groupsLoading && !groupsData.length ? <div className="empty-box">Группы пока не созданы.</div> : null}
         {groupsData.length ? (
-          <div className="assignment-users-list">
+          <div className="groups-list">
             {groupsData.map((group) => (
-              <button key={group.team_id} type="button" className={`assignment-user-card ${group.team_id === selectedGroupId ? "selected" : ""}`} onClick={() => onSelectGroup(group.team_id)}>
-                <div className="assignment-user-header">
+              <button
+                key={group.team_id}
+                type="button"
+                className={`group-directory-card ${group.team_id === selectedGroupId ? "selected" : ""}`}
+                onClick={() => onSelectGroup(group.team_id)}
+              >
+                <div className="group-directory-head">
                   <div>
                     <strong>{group.team_name}</strong>
                     <p>{group.members_count} участников</p>
                   </div>
                   <SummaryBadge>{group.assigned_rooms_count || 0}</SummaryBadge>
+                </div>
+                <div className="group-directory-meta">
+                  <span>Завершено: {group.completed_rooms_count || 0}</span>
+                  <span>В работе: {group.in_progress_rooms_count || 0}</span>
+                  <span>Не начато: {group.not_started_rooms_count || 0}</span>
                 </div>
                 <div className="control-badges">
                   {group.members.map((member) => (
@@ -41,28 +91,48 @@ export function GroupsTab({
         ) : null}
       </article>
 
-      <article className="react-panel">
+      <article className="react-panel groups-detail-panel">
         <div className="panel-title-row">
-          <h2>Сводка группы</h2>
+          <div>
+            <h2>Карточка группы</h2>
+            <p className="panel-subtitle">Краткая сводка по общей зоне работы участников группы.</p>
+          </div>
         </div>
         {!selectedGroup ? (
           <div className="empty-box">Выберите группу слева.</div>
         ) : (
-          <>
+          <div className="groups-detail-layout">
             <div className="react-summary-grid assignment-summary-grid">
               <SummaryCard label="Общие помещения" value={groupSummary.assigned} />
               <SummaryCard label="Завершено" value={groupSummary.completed} tone="success" />
               <SummaryCard label="В работе" value={groupSummary.inProgress} tone="warning" />
               <SummaryCard label="Не начато" value={groupSummary.notStarted} tone="danger" />
             </div>
-            <div className="control-badges">
-              {selectedGroup.members.map((member) => (
-                <SummaryBadge key={member.user_id}>{member.full_name}</SummaryBadge>
-              ))}
-            </div>
-          </>
+
+            <section className="group-members-section">
+              <div className="group-members-head">
+                <h3>Участники группы</h3>
+                <SummaryBadge>{selectedGroup.members.length}</SummaryBadge>
+              </div>
+              <div className="group-members-grid">
+                {selectedGroup.members.map((member) => (
+                  <article key={member.user_id} className="group-member-card">
+                    <div className="group-member-main">
+                      <UserAvatar user={member} />
+                      <div>
+                        <strong>{member.full_name}</strong>
+                        <p>{member.login}</p>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
         )}
       </article>
     </section>
   );
 }
+
+export default GroupsTab;
