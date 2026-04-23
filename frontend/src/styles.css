@@ -871,6 +871,74 @@ h1 {
   padding: 14px;
 }
 
+.export-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.export-title-row {
+  align-items: flex-start;
+}
+
+.panel-subtitle {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.summary-strip {
+  display: grid;
+  gap: 12px;
+}
+
+.export-summary-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.summary-chip {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel-soft);
+  padding: 14px 16px;
+}
+
+.summary-chip span {
+  color: var(--muted);
+  display: block;
+}
+
+.summary-chip strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.45rem;
+}
+
+.summary-chip.success {
+  background: rgba(47, 123, 87, 0.12);
+}
+
+.summary-chip.danger {
+  background: rgba(181, 64, 64, 0.1);
+}
+
+.summary-chip.soft {
+  background: color-mix(in srgb, var(--panel-soft) 80%, var(--soft));
+}
+
+.export-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+}
+
 .users-grid-react {
   align-items: start;
 }
@@ -1390,6 +1458,10 @@ h1 {
   .assignment-workspace {
     grid-template-columns: 1fr;
   }
+
+  .export-summary-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
@@ -1400,6 +1472,10 @@ h1 {
   .panel-title-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .panel-actions {
+    justify-content: stretch;
   }
 
   .react-summary-grid,
@@ -1440,6 +1516,10 @@ h1 {
   .directory-progress-meta {
     min-width: 0;
     width: 100%;
+  }
+
+  .export-summary-strip {
+    grid-template-columns: 1fr;
   }
 }
 .operator-ant-header {

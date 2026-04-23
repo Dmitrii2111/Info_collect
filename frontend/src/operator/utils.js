@@ -308,3 +308,60 @@ export function getGroupSummary(group) {
     notStarted: group?.not_started_rooms_count || 0,
   };
 }
+
+export function getExportSummary(rows) {
+  const total = rows.length;
+  const checked = rows.filter((row) => row.current_presence_status && row.current_presence_status !== "not_checked").length;
+  const problem = rows.filter((row) => row.current_presence_status === "missing" || row.current_presence_status === "conflict").length;
+  const withSerial = rows.filter((row) => row.serial_state === "serial_entered" && row.serial_number).length;
+  return {
+    total,
+    checked,
+    problem,
+    withSerial,
+  };
+}
+
+function escapeCsv(value) {
+  const text = String(value ?? "");
+  if (!text.includes(";") && !text.includes('"') && !text.includes("\n")) {
+    return text;
+  }
+  return `"${text.replaceAll('"', '""')}"`;
+}
+
+export function buildExportCsv(rows) {
+  const headers = [
+    "Этаж",
+    "Отделение",
+    "Помещение",
+    "Позиция",
+    "Оборудование",
+    "Экземпляр",
+    "Наличие",
+    "Серийный номер",
+    "ПНР",
+    "Коммуникации",
+    "Дата проверки",
+    "Сотрудник",
+  ];
+
+  const lines = rows.map((item) => [
+    item.floor_code || "—",
+    item.department_name || "—",
+    `${item.room_code || "—"} — ${item.room_name || "—"}`,
+    item.position_code || "—",
+    item.equipment_name || "—",
+    item.display_label || "—",
+    getPresenceLabel(item.current_presence_status),
+    getSerialLabel(item.serial_number, item.serial_state),
+    getPnrLabel(item.pnr_status),
+    getCommunicationsLabel(item.communications_status),
+    formatDate(item.last_check_at),
+    item.last_checked_by_name || "—",
+  ]);
+
+  return [headers, ...lines]
+    .map((row) => row.map(escapeCsv).join(";"))
+    .join("\n");
+}

@@ -2,11 +2,13 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import {
+  buildExportCsv,
   buildAuthFromUser,
   formatRuPhone,
   getAssignmentUserSummary,
   getAssignmentStatusLabel,
   getDirectorySummary,
+  getExportSummary,
   getGroupSummary,
   getVisibleTabsForRole,
   normalizePhone,
@@ -154,4 +156,46 @@ test("getGroupSummary returns normalized counts for empty and filled groups", ()
       notStarted: 2,
     },
   );
+});
+
+test("getExportSummary aggregates visible export rows", () => {
+  const summary = getExportSummary([
+    { current_presence_status: "not_checked", serial_state: "unknown", serial_number: null },
+    { current_presence_status: "found", serial_state: "serial_entered", serial_number: "SN-1" },
+    { current_presence_status: "missing", serial_state: "serial_entered", serial_number: "SN-2" },
+    { current_presence_status: "conflict", serial_state: "not_provided", serial_number: null },
+  ]);
+
+  assert.deepEqual(summary, {
+    total: 4,
+    checked: 3,
+    problem: 2,
+    withSerial: 2,
+  });
+});
+
+test("buildExportCsv returns semicolon-separated csv with escaped values", () => {
+  const csv = buildExportCsv([
+    {
+      floor_code: "3",
+      department_name: "Реанимация",
+      room_code: "3.01",
+      room_name: "Палата; интенсивной терапии",
+      position_code: "К-1",
+      equipment_name: "Монитор",
+      display_label: "Экземпляр 1",
+      current_presence_status: "found",
+      serial_number: "SN-77",
+      serial_state: "serial_entered",
+      pnr_status: "done",
+      communications_status: "done",
+      last_check_at: "2026-04-23T10:00:00.000Z",
+      last_checked_by_name: "Иванов И.И.",
+    },
+  ]);
+
+  assert.match(csv, /^Этаж;Отделение;Помещение;/);
+  assert.match(csv, /Монитор/);
+  assert.match(csv, /"3\.01 — Палата; интенсивной терапии"/);
+  assert.match(csv, /Иванов И\.И\./);
 });

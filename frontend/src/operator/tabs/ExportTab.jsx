@@ -1,8 +1,10 @@
 import { Button, Input, Select } from "antd";
 import { PRESENCE_FILTER_OPTIONS } from "../constants.js";
 import {
+  buildExportCsv,
   formatDate,
   getCommunicationsLabel,
+  getExportSummary,
   getPnrLabel,
   getPresenceLabel,
   getPresenceTone,
@@ -18,24 +20,85 @@ export function ExportTab({
   exportRoomOptions,
   filteredExportRows,
   onUpdateExportFilter,
+  onResetFilters,
+  onExportCsv,
   onRefresh,
 }) {
+  const summary = getExportSummary(filteredExportRows);
+
   return (
-    <section className="react-panel">
-      <div className="panel-title-row">
-        <h2>Экспортная таблица</h2>
-        <Button type="primary" onClick={onRefresh}>
-          Обновить таблицу
-        </Button>
+    <section className="react-panel export-panel">
+      <div className="panel-title-row export-title-row">
+        <div>
+          <h2>Экспортная таблица</h2>
+          <p className="panel-subtitle">
+            Итоговая выборка по экземплярам оборудования с фильтрацией и выгрузкой в CSV.
+          </p>
+        </div>
+        <div className="panel-actions">
+          <Button onClick={onResetFilters}>Сбросить фильтры</Button>
+          <Button onClick={onRefresh}>Обновить таблицу</Button>
+          <Button type="primary" onClick={() => onExportCsv(buildExportCsv(filteredExportRows))} disabled={!filteredExportRows.length}>
+            Выгрузить CSV
+          </Button>
+        </div>
+      </div>
+
+      <div className="summary-strip export-summary-strip">
+        <article className="summary-chip">
+          <span>Строк в выборке</span>
+          <strong>{summary.total}</strong>
+        </article>
+        <article className="summary-chip success">
+          <span>С отметками</span>
+          <strong>{summary.checked}</strong>
+        </article>
+        <article className="summary-chip danger">
+          <span>Проблемные</span>
+          <strong>{summary.problem}</strong>
+        </article>
+        <article className="summary-chip soft">
+          <span>С серийным номером</span>
+          <strong>{summary.withSerial}</strong>
+        </article>
       </div>
 
       <div className="filter-grid export-filter-grid antd-filter-grid">
-        <Select value={exportFilters.floorCode} onChange={(value) => onUpdateExportFilter("floorCode", value)} options={[{ value: "", label: "Все этажи" }, ...exportFloors.map((floorCode) => ({ value: floorCode, label: floorCode }))]} />
-        <Select value={exportFilters.departmentName} onChange={(value) => onUpdateExportFilter("departmentName", value)} options={[{ value: "", label: "Все отделения" }, ...exportDepartments.map((departmentName) => ({ value: departmentName, label: departmentName }))]} />
-        <Select value={exportFilters.roomId} onChange={(value) => onUpdateExportFilter("roomId", value)} options={[{ value: "", label: "Все помещения" }, ...exportRoomOptions]} />
-        <Input placeholder="Оборудование" value={exportFilters.equipmentQuery} onChange={(event) => onUpdateExportFilter("equipmentQuery", event.target.value)} />
-        <Input placeholder="Серийный номер" value={exportFilters.serialQuery} onChange={(event) => onUpdateExportFilter("serialQuery", event.target.value)} />
-        <Select value={exportFilters.presenceStatus} onChange={(value) => onUpdateExportFilter("presenceStatus", value)} options={PRESENCE_FILTER_OPTIONS} />
+        <Select
+          value={exportFilters.floorCode}
+          onChange={(value) => onUpdateExportFilter("floorCode", value)}
+          options={[{ value: "", label: "Все этажи" }, ...exportFloors.map((floorCode) => ({ value: floorCode, label: floorCode }))]}
+        />
+        <Select
+          value={exportFilters.departmentName}
+          onChange={(value) => onUpdateExportFilter("departmentName", value)}
+          options={[{ value: "", label: "Все отделения" }, ...exportDepartments.map((departmentName) => ({ value: departmentName, label: departmentName }))]}
+        />
+        <Select
+          value={exportFilters.roomId}
+          onChange={(value) => onUpdateExportFilter("roomId", value)}
+          options={[{ value: "", label: "Все помещения" }, ...exportRoomOptions]}
+        />
+        <Input
+          placeholder="Оборудование, позиция, экземпляр"
+          value={exportFilters.equipmentQuery}
+          onChange={(event) => onUpdateExportFilter("equipmentQuery", event.target.value)}
+        />
+        <Input
+          placeholder="Серийный номер"
+          value={exportFilters.serialQuery}
+          onChange={(event) => onUpdateExportFilter("serialQuery", event.target.value)}
+        />
+        <Select
+          value={exportFilters.presenceStatus}
+          onChange={(value) => onUpdateExportFilter("presenceStatus", value)}
+          options={PRESENCE_FILTER_OPTIONS}
+        />
+      </div>
+
+      <div className="export-meta-row">
+        <span>Всего строк в плане: {exportRows.length}</span>
+        <span>В текущей выборке: {filteredExportRows.length}</span>
       </div>
 
       {exportLoading && !exportRows.length ? <div className="empty-box">Загрузка строк экспорта...</div> : null}
@@ -83,3 +146,5 @@ export function ExportTab({
     </section>
   );
 }
+
+export default ExportTab;

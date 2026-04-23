@@ -976,6 +976,29 @@ export default function App() {
     });
   }
 
+  function resetExportFilters() {
+    setExportFilters({
+      floorCode: "",
+      departmentName: "",
+      roomId: "",
+      equipmentQuery: "",
+      serialQuery: "",
+      presenceStatus: "",
+    });
+  }
+
+  function exportCsv(csvText) {
+    const blob = new Blob([`\uFEFF${csvText}`], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const timestamp = new Date().toISOString().slice(0, 19).replaceAll(":", "-");
+    link.href = URL.createObjectURL(blob);
+    link.download = `infocollect-export-${timestamp}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  }
+
   function renderTab() {
     if (activeTab === "control") {
       return (
@@ -1081,6 +1104,8 @@ export default function App() {
           exportRoomOptions={exportRoomOptions}
           filteredExportRows={filteredExportRows}
           onUpdateExportFilter={updateExportFilter}
+          onResetFilters={resetExportFilters}
+          onExportCsv={exportCsv}
           onRefresh={async () => {
             setExportLoading(true);
             const rows = await loadExportRows();
