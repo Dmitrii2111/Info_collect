@@ -1,31 +1,22 @@
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   Alert,
-  Avatar,
-  Badge,
   Button,
+  Badge,
   Card,
   Col,
   ConfigProvider,
   Drawer,
   Dropdown,
-  Form,
   Grid,
-  Input,
   Layout,
-  List,
   Menu,
-  Modal as AntModal,
   Progress,
   Row,
-  Select,
   Space,
   Spin,
   Statistic,
-  Table,
-  Tag,
   Typography,
-  Upload,
   theme as antdTheme,
 } from "antd";
 import {
@@ -61,884 +52,59 @@ import {
   updateFieldUser,
   uploadFieldUserAvatar,
 } from "./lib/api";
+import {
+  EMPTY_LOGIN_FORM,
+  EMPTY_USER_FORM,
+  ROLE_OPTIONS,
+  THEME_ACCENT_OPTIONS,
+  THEME_MODE_OPTIONS,
+} from "./operator/constants.js";
+import {
+  AvatarDropzone,
+  LoginScreen,
+  Modal,
+  PasswordField,
+  SelectField,
+  TextField,
+  UserAvatar,
+} from "./operator/components.jsx";
+import {
+  buildAuthFromUser,
+  buildEditForm,
+  buildSelectionMap,
+  formatDate,
+  getAssignmentUserSummary,
+  getControlRoomOptions,
+  getDirectorySummary,
+  getFirstActiveUserId,
+  getGroupSummary,
+  getRoleLabel,
+  getUniqueValues,
+  getVisibleTabsForRole,
+  normalizePhone,
+  clearStoredAuth,
+  readStoredAuth,
+  readStoredThemeAccent,
+  readStoredThemeMode,
+  storeAuth,
+  storeThemeAccent,
+  storeThemeMode,
+  validateUserForm,
+} from "./operator/utils.js";
+const ControlTab = lazy(() => import("./operator/tabs/ControlTab.jsx").then((module) => ({ default: module.ControlTab })));
+const AssignmentsTab = lazy(() => import("./operator/tabs/AssignmentsTab.jsx").then((module) => ({ default: module.AssignmentsTab })));
+const UsersTab = lazy(() => import("./operator/tabs/UsersTab.jsx").then((module) => ({ default: module.UsersTab })));
+const GroupsTab = lazy(() => import("./operator/tabs/GroupsTab.jsx").then((module) => ({ default: module.GroupsTab })));
+const ExportTab = lazy(() => import("./operator/tabs/ExportTab.jsx").then((module) => ({ default: module.ExportTab })));
 
 const { Header, Sider, Content } = Layout;
-const { Title, Text, Paragraph } = Typography;
-const { Dragger } = Upload;
+const { Title, Text } = Typography;
 
-const TABS = [
-  { id: "control", label: "Контроль" },
-  { id: "assignments", label: "Назначения" },
-  { id: "users", label: "Сотрудники" },
-  { id: "groups", label: "Группы" },
-  { id: "export", label: "Экспорт" },
-];
-
-const ROOM_WORKLIST_OPTIONS = [
-  { value: "", label: "Все статусы" },
-  { value: "unchecked", label: "Не проверенные" },
-  { value: "missing", label: "С отсутствием" },
-  { value: "conflict", label: "С конфликтами" },
-  { value: "no_serial", label: "Без серийных номеров" },
-  { value: "pnr_attention", label: "ПНР требует внимания" },
-];
-
-const ITEM_WORKLIST_OPTIONS = [
-  { value: "", label: "Все" },
-  { value: "unchecked", label: "Не проверенные" },
-  { value: "missing", label: "Отсутствующие" },
-  { value: "conflict", label: "Конфликтные" },
-  { value: "no_serial", label: "Без серийного номера" },
-  { value: "pnr_attention", label: "ПНР требует внимания" },
-];
-
-const PRESENCE_FILTER_OPTIONS = [
-  { value: "", label: "Все статусы" },
-  { value: "not_checked", label: "Не проверено" },
-  { value: "found", label: "Найдено" },
-  { value: "missing", label: "Отсутствует" },
-  { value: "conflict", label: "Конфликт" },
-];
-
-const ROLE_OPTIONS = [
-  { value: "field_worker", label: "Оператор" },
-  { value: "operator", label: "Диспетчер" },
-  { value: "admin", label: "Супервайзер" },
-];
-
-const ROLE_LABELS = {
-  field_worker: "Оператор",
-  operator: "Диспетчер",
-  admin: "Супервайзер",
-};
-
-const EMPTY_USER_FORM = {
-  login: "",
-  password: "",
-  last_name: "",
-  first_name: "",
-  middle_name: "",
-  phone: "",
-  email: "",
-  role: "field_worker",
-};
-
-const EMPTY_LOGIN_FORM = {
-  login: "",
-  password: "",
-};
-
-const THEME_MODE_OPTIONS = [
-  { value: "light", label: "Светлая" },
-  { value: "dark", label: "Темная" },
-];
-
-const THEME_ACCENT_OPTIONS = [
-  { value: "forest", label: "Лес" },
-  { value: "ocean", label: "Океан" },
-  { value: "copper", label: "Медь" },
-];
-
-const PRESENCE_LABELS = {
-  not_checked: "Не проверено",
-  found: "Найдено",
-  missing: "Отсутствует",
-  conflict: "Конфликт",
-};
-
-const SERIAL_LABELS = {
-  unknown: "Не указан",
-  not_provided: "Не предусмотрен",
-};
-
-const PNR_LABELS = {
-  unknown: "Неизвестно",
-  not_required: "Не требуется",
-  not_done: "Не проведено",
-  done: "Проведено",
-  installation: "Монтаж",
-};
-
-const COMMUNICATIONS_LABELS = {
-  unknown: "Неизвестно",
-  missing: "Отсутствуют",
-  done: "Выполнены",
-  error: "Выполнены с ошибками",
-  not_provided: "Не предусмотрены",
-};
-
-const LOGIN_RE = /^[A-Za-z0-9]+$/;
-const CYRILLIC_NAME_RE = /^[А-ЯЁа-яё]+(?:-[А-ЯЁа-яё]+)?$/;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_RE = /^(?:\+7|7|8)\d{10}$/;
-const PASSWORD_RE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-
-function readStoredAuth() {
-  try {
-    const raw = sessionStorage.getItem("operator-auth");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function storeAuth(auth) {
-  sessionStorage.setItem("operator-auth", JSON.stringify(auth));
-}
-
-function clearStoredAuth() {
-  sessionStorage.removeItem("operator-auth");
-}
-
-function readStoredThemeMode() {
-  try {
-    return localStorage.getItem("operator-theme-mode") || "light";
-  } catch {
-    return "light";
-  }
-}
-
-function storeThemeMode(mode) {
-  localStorage.setItem("operator-theme-mode", mode);
-}
-
-function readStoredThemeAccent() {
-  try {
-    return localStorage.getItem("operator-theme-accent") || "forest";
-  } catch {
-    return "forest";
-  }
-}
-
-function storeThemeAccent(accent) {
-  localStorage.setItem("operator-theme-accent", accent);
-}
-
-function normalizePhone(value) {
-  return String(value || "").replace(/[^\d+]/g, "");
-}
-
-function formatRuPhone(value) {
-  const normalized = normalizePhone(value);
-  if (!normalized) return "";
-  let digits = normalized.replace(/\D/g, "");
-  if (digits.length === 11 && digits.startsWith("8")) digits = `7${digits.slice(1)}`;
-  if (digits.length !== 11) return value;
-  return `+7 (${digits.slice(1, 4)}) ${digits.slice(4, 7)}-${digits.slice(7, 9)}-${digits.slice(9, 11)}`;
-}
-
-function validateUserForm(form, { requirePassword = true } = {}) {
-  const errors = {};
-  const login = String(form.login || "").trim();
-  const password = String(form.password || "");
-  const lastName = String(form.last_name || "").trim();
-  const firstName = String(form.first_name || "").trim();
-  const middleName = String(form.middle_name || "").trim();
-  const phone = normalizePhone(form.phone);
-  const email = String(form.email || "").trim();
-
-  if (!login) errors.login = "Укажите логин.";
-  else if (!LOGIN_RE.test(login)) errors.login = "Только латиница и цифры.";
-
-  if (requirePassword || password) {
-    if (!password) errors.password = "Укажите пароль.";
-    else if (!PASSWORD_RE.test(password)) errors.password = "Минимум 8 символов, верхний/нижний регистр, цифра и спецсимвол.";
-  }
-
-  if (!lastName) errors.last_name = "Укажите фамилию.";
-  else if (lastName.length < 2 || !CYRILLIC_NAME_RE.test(lastName)) errors.last_name = "Только кириллица, минимум 2 буквы.";
-
-  if (!firstName) errors.first_name = "Укажите имя.";
-  else if (firstName.length < 2 || !CYRILLIC_NAME_RE.test(firstName)) errors.first_name = "Только кириллица, минимум 2 буквы.";
-
-  if (!middleName) errors.middle_name = "Укажите отчество.";
-  else if (middleName.length < 2 || !CYRILLIC_NAME_RE.test(middleName)) errors.middle_name = "Только кириллица, минимум 2 буквы.";
-
-  if (!phone) errors.phone = "Укажите телефон.";
-  else if (!PHONE_RE.test(phone)) errors.phone = "Телефон РФ: +7XXXXXXXXXX.";
-
-  if (!email) errors.email = "Укажите email.";
-  else if (!EMAIL_RE.test(email)) errors.email = "Некорректный email.";
-
-  if (!form.role) errors.role = "Выберите роль.";
-  return errors;
-}
-
-function getVisibleTabsForRole(role) {
-  if (role === "admin") return TABS;
-  if (role === "operator") return TABS.filter((tab) => tab.id !== "users");
-  return TABS.filter((tab) => tab.id === "assignments");
-}
-
-function formatDate(value) {
-  if (!value) return "—";
-  try {
-    return new Date(value).toLocaleString("ru-RU");
-  } catch {
-    return String(value);
-  }
-}
-
-function getUniqueValues(items, accessor) {
-  return [...new Set(items.map(accessor).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), "ru"));
-}
-
-function getInitials(fullName) {
-  const parts = String(fullName || "").trim().split(/\s+/).filter(Boolean);
-  return parts.slice(0, 2).map((part) => part[0]?.toUpperCase() || "").join("") || "—";
-}
-
-function getProgressPercent(completedCount, assignedCount) {
-  if (!assignedCount) return 0;
-  return Math.max(0, Math.min(100, Math.round((completedCount / assignedCount) * 100)));
-}
-
-function getFirstActiveUserId(users) {
-  return users.find((user) => user.is_active)?.user_id || null;
-}
-
-function getRoleLabel(role) {
-  return ROLE_LABELS[role] || role || "—";
-}
-
-function getPresenceLabel(value) {
-  return PRESENCE_LABELS[value] || value || "—";
-}
-
-function getSerialLabel(serialNumber, serialState) {
-  if (serialNumber) return serialNumber;
-  return SERIAL_LABELS[serialState] || serialState || "—";
-}
-
-function getPnrLabel(value) {
-  return PNR_LABELS[value] || value || "—";
-}
-
-function getCommunicationsLabel(value) {
-  return COMMUNICATIONS_LABELS[value] || value || "—";
-}
-
-function getPresenceTone(status) {
-  if (status === "found" || status === "moved_to_room") return "success";
-  if (status === "missing" || status === "conflict") return "danger";
-  if (status === "not_checked") return "warning";
-  return "soft";
-}
-
-function getUserStatusLabel(status) {
-  if (status === "in_progress") return "В работе";
-  if (status === "idle") return "Простаивает";
-  return "Свободен";
-}
-
-function getUserStatusTone(status) {
-  if (status === "in_progress") return "success";
-  if (status === "idle") return "danger";
-  return "warning";
-}
-
-function getAssignmentStatusLabel(status) {
-  if (status === "completed") return "Завершено";
-  if (status === "in_progress") return "В работе";
-  if (status === "not_started") return "Не начато";
-  return "Не назначено";
-}
-
-function getAssignmentStatusTone(status) {
-  if (status === "completed") return "success";
-  if (status === "in_progress") return "warning";
-  if (status === "not_started") return "danger";
-  return "soft";
-}
-
-function getRoomProgressClass(room) {
-  if (room.status_flags?.has_missing_items || room.status_flags?.has_conflict_items) return "problem";
-  if (room.completed_at) return "done";
-  if (room.status_flags?.has_unchecked_items || room.status_flags?.has_no_serial_items || room.status_flags?.has_pnr_attention_items) return "attention";
-  return "neutral";
-}
-
-function getControlRoomOptions(rooms, floorCode, departmentName) {
-  return rooms
-    .filter((room) => {
-      if (floorCode && room.floor_code !== floorCode) return false;
-      if (departmentName && room.department_name !== departmentName) return false;
-      return true;
-    })
-    .map((room) => ({
-      value: room.room_id,
-      label: `${room.room_code} — ${room.room_name}`,
-    }));
-}
-
-function collectFloorRoomIds(floor) {
-  return floor.departments.flatMap((department) => department.rooms.map((room) => room.room_id));
-}
-
-function collectDepartmentRoomIds(department) {
-  return department.rooms.map((room) => room.room_id);
-}
-
-function buildSelectionMap(options) {
-  return new Set(options?.selected_room_ids || []);
-}
-
-function countSelection(roomIds, selectionSet) {
-  return roomIds.reduce((acc, roomId) => acc + (selectionSet.has(roomId) ? 1 : 0), 0);
-}
-
-function buildEditForm(user) {
-  if (!user) return EMPTY_USER_FORM;
-  return {
-    login: user.login || "",
-    password: "",
-    last_name: user.last_name || "",
-    first_name: user.first_name || "",
-    middle_name: user.middle_name || "",
-    phone: user.phone || "",
-    email: user.email || "",
-    role: user.role || "field_worker",
-  };
-}
-
-function buildAuthFromUser(user, fallbackAuth = null) {
-  if (!user) return fallbackAuth;
-  return {
-    ...(fallbackAuth || {}),
-    user_id: user.user_id,
-    login: user.login,
-    full_name: user.full_name,
-    last_name: user.last_name || "",
-    first_name: user.first_name || "",
-    middle_name: user.middle_name || "",
-    role: user.role,
-    phone: user.phone || "",
-    email: user.email || "",
-    avatar_url: user.avatar_url || null,
-  };
-}
-
-function getRoomActivitySummary(roomDetail) {
-  if (!roomDetail?.positions?.length) {
-    return "По помещению пока нет отметок.";
-  }
-  const checkedItems = roomDetail.positions.flatMap((position) => position.items).filter((item) => item.last_check_at);
-  if (!checkedItems.length) {
-    return "По помещению пока нет отметок.";
-  }
-  checkedItems.sort((left, right) => new Date(right.last_check_at) - new Date(left.last_check_at));
-  const lastItem = checkedItems[0];
-  return `Последняя отметка: ${lastItem.last_checked_by_name || "Неизвестно"} / ${formatDate(lastItem.last_check_at)}`;
-}
-
-function getAssignmentUserSummary(users) {
-  const activeUsers = users.filter((user) => user.is_active);
-  const inactiveUsers = users.filter((user) => !user.is_active);
-  const inProgress = activeUsers.filter(
-    (user) => (user.assigned_rooms_count || 0) > 0 && (user.completed_rooms_count || 0) < (user.assigned_rooms_count || 0),
-  ).length;
-  const available = activeUsers.filter(
-    (user) => (user.assigned_rooms_count || 0) === 0 || (user.completed_rooms_count || 0) >= (user.assigned_rooms_count || 0),
-  ).length;
-  return {
-    activeCount: activeUsers.length,
-    inactiveCount: inactiveUsers.length,
-    inProgress,
-    available,
-  };
-}
-
-function getDirectorySummary(users) {
-  const activeUsers = users.filter((user) => user.is_active);
-  const inactiveUsers = users.filter((user) => !user.is_active);
-  const inProgress = activeUsers.filter((user) => user.work_status === "in_progress").length;
-  const available = activeUsers.filter((user) => user.work_status !== "in_progress").length;
-  return {
-    total: activeUsers.length,
-    inProgress,
-    available,
-    inactive: inactiveUsers.length,
-  };
-}
-
-function getGroupSummary(group) {
-  return {
-    assigned: group?.assigned_rooms_count || 0,
-    completed: group?.completed_rooms_count || 0,
-    inProgress: group?.in_progress_rooms_count || 0,
-    notStarted: group?.not_started_rooms_count || 0,
-  };
-}
-
-function SummaryCard({ label, value, tone = "default" }) {
-  const statusMap = {
-    default: "#1677ff",
-    success: "#52c41a",
-    warning: "#faad14",
-    danger: "#ff4d4f",
-  };
-  return <Card size="small" className={`summary-card-react tone-${tone}`} bordered><Statistic title={label} value={value} valueStyle={{ color: statusMap[tone] || statusMap.default, fontSize: 34 }} /></Card>;
-}
-
-function SummaryBadge({ children, tone = "soft" }) {
-  const colorMap = { soft: "default", success: "success", warning: "warning", danger: "error" };
-  return <Tag color={colorMap[tone] || "default"}>{children}</Tag>;
-}
-
-function Modal({ open, title, subtitle, children, actions }) {
+function TabFallback() {
   return (
-    <AntModal
-      open={open}
-      width={720}
-      title={
-        <Space direction="vertical" size={0}>
-          <Text type="secondary">{subtitle}</Text>
-          <Title level={4} style={{ margin: 0 }}>
-            {title}
-          </Title>
-        </Space>
-      }
-      footer={actions}
-      closable={false}
-      onCancel={() => {}}
-      styles={{ body: { maxHeight: "70vh", overflow: "auto" } }}
-    >
-      <div className="modal-body">{children}</div>
-    </AntModal>
-  );
-}
-
-function UserAvatar({ user, previewUrl = "", size = "default" }) {
-  const src = previewUrl || user?.avatar_url || "";
-  const avatarSize = size === "large" ? 88 : 42;
-  if (src) return <Avatar src={src} size={avatarSize} shape="circle" />;
-  return <Avatar size={avatarSize} icon={<UserOutlined />}>{getInitials(user?.full_name)}</Avatar>;
-}
-
-function AvatarDropzone({ label, previewUrl, onFileSelected, helperText = "" }) {
-  return (
-    <div className="avatar-dropzone-wrap">
-      <Text strong>{label}</Text>
-      <Dragger
-        multiple={false}
-        maxCount={1}
-        accept=".jpg,.jpeg,.png,.webp"
-        showUploadList={false}
-        beforeUpload={(file) => {
-          onFileSelected(file);
-          return false;
-        }}
-        className="avatar-dropzone"
-      >
-        {previewUrl ? <img className="avatar-dropzone-preview" src={previewUrl} alt="Предпросмотр фото" /> : <Paragraph style={{ marginBottom: 0 }}>Перетащите фото или нажмите для выбора</Paragraph>}
-      </Dragger>
-      {helperText ? <Text type="secondary">{helperText}</Text> : null}
+    <div className="ant-loading-wrap">
+      <Spin indicator={<ReloadOutlined spin />} size="large" />
     </div>
-  );
-}
-
-function TextField({ label, value, onChange, error, type = "text", placeholder = "", className = "" }) {
-  return (
-    <Form.Item className={className} label={label} validateStatus={error ? "error" : ""} help={error || ""}>
-      <Input type={type} value={value} onChange={onChange} placeholder={placeholder} status={error ? "error" : ""} />
-    </Form.Item>
-  );
-}
-
-function PasswordField({ label, value, onChange, error, visible, onToggleVisibility, placeholder = "" }) {
-  return (
-    <Form.Item label={label} validateStatus={error ? "error" : ""} help={error || ""}>
-      <Input.Password
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        status={error ? "error" : ""}
-        visibilityToggle={{ visible, onVisibleChange: onToggleVisibility }}
-      />
-    </Form.Item>
-  );
-}
-
-function SelectField({ label, value, onChange, error, options, className = "" }) {
-  return (
-    <Form.Item className={className} label={label} validateStatus={error ? "error" : ""} help={error || ""}>
-      <Select value={value} onChange={(nextValue) => onChange({ target: { value: nextValue } })} status={error ? "error" : ""} options={options} />
-    </Form.Item>
-  );
-}
-
-function LoginScreen({ form, setForm, onSubmit, loading, error, passwordVisible, onTogglePassword }) {
-  return (
-    <main className="login-screen">
-      <Card className="login-card" bordered={false}>
-        <Space direction="vertical" size={8} style={{ width: "100%" }}>
-          <Text type="secondary">InfoCollect</Text>
-          <Title level={2} style={{ marginBottom: 0 }}>
-            Вход в систему
-          </Title>
-          <Paragraph type="secondary">Введите логин и пароль. После авторизации откроется интерфейс в соответствии с ролью пользователя.</Paragraph>
-        </Space>
-        <Form layout="vertical" className="login-form">
-          <div className="login-form-row">
-            <Form.Item label="Логин" className="login-form-item">
-              <Input
-                size="large"
-                value={form.login}
-                onChange={(event) => setForm((current) => ({ ...current, login: event.target.value }))}
-              />
-            </Form.Item>
-            <Form.Item label="Пароль" className="login-form-item">
-              <Input.Password
-                size="large"
-                value={form.password}
-                onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
-                visibilityToggle={{ visible: passwordVisible, onVisibleChange: onTogglePassword }}
-              />
-            </Form.Item>
-          </div>
-        </Form>
-        {error ? <Alert type="error" showIcon message={error} style={{ marginBottom: 16 }} /> : null}
-        <Button type="primary" size="large" block onClick={onSubmit} loading={loading} disabled={!form.login || !form.password}>
-          Войти
-        </Button>
-      </Card>
-    </main>
-  );
-}
-
-function RoomCard({ room }) {
-  return (
-    <Card className={`control-card room-card-react tone-${getRoomProgressClass(room)}`}>
-      <Space direction="vertical" size={10} style={{ width: "100%" }}>
-        <div className="control-card-header">
-          <div>
-            <strong>{room.room_code}</strong>
-            <div>{room.room_name}</div>
-          </div>
-          <SummaryBadge>{room.planned_items_count}</SummaryBadge>
-        </div>
-        <Text type="secondary">{room.floor_code || "Без этажа"} / {room.department_name || "Без отделения"}</Text>
-        <div className="control-badges">
-          {room.status_flags?.has_unchecked_items ? <SummaryBadge tone="warning">Не проверено</SummaryBadge> : null}
-          {room.status_flags?.has_missing_items ? <SummaryBadge tone="danger">Отсутствует</SummaryBadge> : null}
-          {room.status_flags?.has_conflict_items ? <SummaryBadge tone="danger">Конфликт</SummaryBadge> : null}
-          {room.status_flags?.has_no_serial_items ? <SummaryBadge>Без серийника</SummaryBadge> : null}
-          {room.status_flags?.has_pnr_attention_items ? <SummaryBadge tone="warning">ПНР</SummaryBadge> : null}
-        </div>
-      </Space>
-    </Card>
-  );
-}
-
-function ItemCard({ item }) {
-  return (
-    <Card className="control-card item-card-react">
-      <Space direction="vertical" size={10} style={{ width: "100%" }}>
-        <div className="control-card-header">
-          <div>
-            <strong>{item.position_code} / {item.display_label}</strong>
-            <div>{item.equipment_name}</div>
-          </div>
-          <SummaryBadge tone={getPresenceTone(item.current_presence_status)}>{getPresenceLabel(item.current_presence_status)}</SummaryBadge>
-        </div>
-        <Text type="secondary">{item.room_code || "Без кода"} / {item.room_name || "Без названия"}</Text>
-        <div className="control-badges">
-          <SummaryBadge>{getSerialLabel(item.serial_number, item.serial_state)}</SummaryBadge>
-          <SummaryBadge>{getPnrLabel(item.pnr_status)}</SummaryBadge>
-          <SummaryBadge>{getCommunicationsLabel(item.communications_status)}</SummaryBadge>
-        </div>
-        {item.last_checked_by_name ? <Text type="secondary">Последняя проверка: {item.last_checked_by_name} / {formatDate(item.last_check_at)}</Text> : null}
-      </Space>
-    </Card>
-  );
-}
-
-function AssignmentUserCard({ user, selected, onClick }) {
-  const showWorkStatus = user.role === "field_worker";
-  return (
-    <Card hoverable className={`assignment-user-card ${selected ? "selected" : ""}`} onClick={onClick} bordered={selected}>
-      <Space direction="vertical" size={8} style={{ width: "100%" }}>
-        <div className="assignment-user-header">
-          <div className="assignment-user-main">
-            <UserAvatar user={user} />
-            <div>
-              <strong>{user.full_name}</strong>
-                <div>{user.phone || user.email || "Без контактов"}</div>
-              </div>
-            </div>
-          <SummaryBadge tone={showWorkStatus ? getUserStatusTone(user.work_status) : "soft"}>
-            {showWorkStatus ? getUserStatusLabel(user.work_status) : getRoleLabel(user.role)}
-          </SummaryBadge>
-        </div>
-        {showWorkStatus ? (
-          <div className="assignment-user-meta">
-            <span>Назначено: {user.assigned_rooms_count || 0}</span>
-            <span>Завершено: {user.completed_rooms_count || 0}</span>
-          </div>
-        ) : null}
-      </Space>
-    </Card>
-  );
-}
-
-function RoomCompletionHistogram({ activity }) {
-  const days = activity?.days || [];
-  if (!days.length) {
-    return <div className="empty-box">Закрытых помещений пока нет.</div>;
-  }
-
-  const maxValue = Math.max(...days.map((day) => day.total_completed_rooms), 1);
-  return (
-    <div className="completion-chart-list">
-      {days.map((day) => (
-        <div key={day.date} className="completion-chart-row">
-          <div className="completion-chart-head">
-            <strong>{formatDate(`${day.date}T00:00:00`)}</strong>
-            <span>{day.total_completed_rooms} помещений</span>
-          </div>
-          <div className="completion-chart-bar">
-            {day.employees.map((employee) => (
-              <div
-                key={`${day.date}-${employee.user_id || employee.full_name}`}
-                className="completion-chart-segment"
-                style={{ width: `${(employee.completed_rooms_count / maxValue) * 100}%` }}
-                title={`${employee.full_name}: ${employee.completed_rooms_count}`}
-              >
-                <span>{employee.completed_rooms_count}</span>
-              </div>
-            ))}
-          </div>
-          <div className="completion-chart-legend">
-            {day.employees.map((employee) => (
-              <SummaryBadge key={`${day.date}-legend-${employee.user_id || employee.full_name}`}>
-                {employee.full_name}: {employee.completed_rooms_count}
-              </SummaryBadge>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function UserDirectoryCard({ user, onEdit, onDeactivate, onRestore }) {
-  return (
-    <Card className={`directory-card ${!user.is_active ? "inactive" : ""}`}>
-      <Space direction="vertical" size={16} style={{ width: "100%" }}>
-        <div className="directory-card-body">
-          <UserAvatar user={user} size="large" />
-          <div className="directory-card-text">
-            <strong>{user.full_name}</strong>
-            <div>{getRoleLabel(user.role)}</div>
-            <div>{user.phone ? formatRuPhone(user.phone) : "Телефон не указан"}</div>
-            <div>{user.email || "Почта не указана"}</div>
-          </div>
-        </div>
-        <div className="directory-actions">
-          <Button onClick={() => onEdit(user)}>Редактировать</Button>
-          {user.is_active ? (
-            <Button danger type="primary" className="danger-action-button" onClick={() => onDeactivate(user)}>
-              Отключить
-            </Button>
-          ) : (
-            <Button type="primary" onClick={() => onRestore(user)}>
-              Восстановить
-            </Button>
-          )}
-        </div>
-      </Space>
-    </Card>
-  );
-}
-
-function AssignmentTree({
-  options,
-  selection,
-  expansion,
-  onToggleExpand,
-  onToggleRoom,
-  onToggleDepartment,
-  onToggleFloor,
-  onSelectRoom,
-  selectedRoomId,
-  readOnly = false,
-}) {
-  if (!options) return <div className="empty-box">Выберите сотрудника слева.</div>;
-  if (!options.floors.length) return <div className="empty-box">Для активной версии плана помещений не найдено.</div>;
-
-  return (
-    <div className="assignment-tree-react">
-      {options.floors.map((floor) => {
-        const floorRoomIds = collectFloorRoomIds(floor);
-        const floorSelectedCount = countSelection(floorRoomIds, selection);
-        const floorAssignedCount = floor.assigned_rooms_count || 0;
-        const floorChecked = floorRoomIds.length > 0 && floorSelectedCount === floorRoomIds.length;
-        const floorPartial = floorSelectedCount > 0 && floorSelectedCount < floorRoomIds.length;
-        const floorKey = `floor:${floor.floor_id || floor.floor_code}`;
-        const floorExpanded = expansion[floorKey] ?? false;
-
-        return (
-          <article key={floorKey} className="assignment-level-card">
-            <div className="assignment-level-header">
-              <div className="assignment-checkbox-wrap">
-                <input
-                  type="checkbox"
-                  checked={floorChecked}
-                  disabled={readOnly}
-                  ref={(node) => {
-                    if (node) node.indeterminate = floorPartial;
-                  }}
-                  onChange={() => onToggleFloor(floor)}
-                />
-                <button type="button" className="assignment-expand-button" onClick={() => onToggleExpand(floorKey)}>
-                  {floorExpanded ? "▾" : "▸"}
-                </button>
-                <div>
-                  <strong>{floor.floor_code || "Без этажа"}</strong>
-                  <p>{getAssignmentStatusLabel(floor.progress_status)}</p>
-                </div>
-              </div>
-              <div className="assignment-level-side">
-                <SummaryBadge tone={getAssignmentStatusTone(floor.progress_status)}>{getAssignmentStatusLabel(floor.progress_status)}</SummaryBadge>
-                <strong>
-                  {floor.completed_rooms_count || 0} / {floorAssignedCount}
-                </strong>
-              </div>
-            </div>
-            <div className="assignment-progress-bar">
-              <span style={{ width: `${getProgressPercent(floor.completed_rooms_count || 0, floorAssignedCount)}%` }} />
-            </div>
-            {floorExpanded ? (
-              <div className="assignment-children">
-                {floor.departments.map((department) => {
-                  const departmentKey = `department:${department.department_id || `${floorKey}:${department.department_name}`}`;
-                  const departmentRoomIds = collectDepartmentRoomIds(department);
-                  const departmentSelectedCount = countSelection(departmentRoomIds, selection);
-                  const departmentChecked = departmentRoomIds.length > 0 && departmentSelectedCount === departmentRoomIds.length;
-                  const departmentPartial = departmentSelectedCount > 0 && departmentSelectedCount < departmentRoomIds.length;
-                  const departmentExpanded = expansion[departmentKey] ?? false;
-                  const departmentAssignedCount = department.assigned_rooms_count || 0;
-
-                  return (
-                    <article key={departmentKey} className="assignment-level-card nested">
-                      <div className="assignment-level-header">
-                        <div className="assignment-checkbox-wrap">
-                          <input
-                            type="checkbox"
-                            checked={departmentChecked}
-                            disabled={readOnly}
-                            ref={(node) => {
-                              if (node) node.indeterminate = departmentPartial;
-                            }}
-                            onChange={() => onToggleDepartment(department)}
-                          />
-                          <button type="button" className="assignment-expand-button" onClick={() => onToggleExpand(departmentKey)}>
-                            {departmentExpanded ? "▾" : "▸"}
-                          </button>
-                          <div>
-                            <strong>{department.department_name || "Без отделения"}</strong>
-                            <p>{getAssignmentStatusLabel(department.progress_status)}</p>
-                          </div>
-                        </div>
-                        <div className="assignment-level-side">
-                          <SummaryBadge tone={getAssignmentStatusTone(department.progress_status)}>{getAssignmentStatusLabel(department.progress_status)}</SummaryBadge>
-                          <strong>
-                            {department.completed_rooms_count || 0} / {departmentAssignedCount}
-                          </strong>
-                        </div>
-                      </div>
-                      <div className="assignment-progress-bar">
-                        <span style={{ width: `${getProgressPercent(department.completed_rooms_count || 0, departmentAssignedCount)}%` }} />
-                      </div>
-                      {departmentExpanded ? (
-                        <div className="assignment-children rooms">
-                          {department.rooms.map((room) => (
-                            <label
-                              key={room.room_id}
-                              className={`assignment-room-row ${selectedRoomId === room.room_id ? "selected" : ""}`}
-                              onClick={() => onSelectRoom?.(room.room_id)}
-                            >
-                              <span className="assignment-room-main">
-                                <input type="checkbox" checked={selection.has(room.room_id)} disabled={readOnly} onChange={() => onToggleRoom(room.room_id)} />
-                                <span>
-                                  <strong>
-                                    {room.room_code} — {room.room_name}
-                                  </strong>
-                                  <small>
-                                    {room.checked_items_count} / {room.total_items_count}
-                                  </small>
-                                </span>
-                              </span>
-                              <span className="assignment-room-side">
-                                {room.repeat_check_required ? <SummaryBadge tone="warning">Повторная проверка</SummaryBadge> : null}
-                                <SummaryBadge tone={getAssignmentStatusTone(room.progress_status)}>{getAssignmentStatusLabel(room.progress_status)}</SummaryBadge>
-                              </span>
-                            </label>
-                          ))}
-                        </div>
-                      ) : null}
-                    </article>
-                  );
-                })}
-              </div>
-            ) : null}
-          </article>
-        );
-      })}
-    </div>
-  );
-}
-
-function AssignmentRoomContext({ roomDetail, loading }) {
-  if (loading) {
-    return <div className="empty-box">Загрузка деталей помещения...</div>;
-  }
-  if (!roomDetail) {
-    return <div className="empty-box">Выберите помещение, чтобы увидеть состав и последние отметки.</div>;
-  }
-
-  return (
-    <article className="react-panel room-context-panel">
-      <div className="panel-title-row">
-        <div>
-          <h2>{roomDetail.room_code} — {roomDetail.room_name}</h2>
-          <p className="assignment-helper-text">{roomDetail.floor_code || "Без этажа"} / {roomDetail.department_name || "Без отделения"}</p>
-        </div>
-        <SummaryBadge>{roomDetail.positions.length}</SummaryBadge>
-      </div>
-      <p className="assignment-status-note">{getRoomActivitySummary(roomDetail)}</p>
-      <div className="room-context-list">
-        {roomDetail.positions.map((position) => (
-          <section key={position.planned_position_id} className="room-context-position">
-            <div className="room-context-position-header">
-              <div>
-                <strong>{position.position_code} / {position.equipment_name}</strong>
-                {position.model_mark ? <p>{position.model_mark}</p> : null}
-              </div>
-              <SummaryBadge>{position.items.length}</SummaryBadge>
-            </div>
-            <div className="room-context-items">
-              {position.items.map((item) => (
-                <article key={item.planned_item_id} className="room-context-item">
-                  <div className="room-context-item-header">
-                    <strong>{item.display_label}</strong>
-                    <SummaryBadge tone={getPresenceTone(item.current_presence_status)}>{getPresenceLabel(item.current_presence_status)}</SummaryBadge>
-                  </div>
-                  <div className="control-badges">
-                    <SummaryBadge>{getSerialLabel(item.serial_number, item.serial_state)}</SummaryBadge>
-                    <SummaryBadge>{getPnrLabel(item.pnr_status)}</SummaryBadge>
-                    <SummaryBadge>{getCommunicationsLabel(item.communications_status)}</SummaryBadge>
-                  </div>
-                  <p className="room-context-meta">
-                    {item.last_checked_by_name ? `${item.last_checked_by_name} / ${formatDate(item.last_check_at)}` : "Отметок пока нет"}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </section>
-        ))}
-      </div>
-    </article>
   );
 }
 
@@ -1470,7 +636,7 @@ export default function App() {
 
   function openProfile() {
     const sourceUser = currentUser || auth;
-    setProfileForm(buildEditForm(sourceUser));
+    setProfileForm(buildEditForm(sourceUser, EMPTY_USER_FORM));
     setProfileErrors({});
     setProfileAvatarFile(null);
     setProfileAvatarPreview("");
@@ -1550,7 +716,7 @@ export default function App() {
 
   function openEditUser(user) {
     setEditUser(user);
-    setEditForm(buildEditForm(user));
+    setEditForm(buildEditForm(user, EMPTY_USER_FORM));
     setEditErrors({});
     setEditAvatarFile(null);
     setEditAvatarPreview("");
@@ -1810,411 +976,120 @@ export default function App() {
     });
   }
 
-  function renderControlTab() {
-    const roomSummary = controlData.roomSummary || {};
-    const itemSummary = controlData.itemSummary || {};
-    const roomTotal = Number(roomSummary.total || 0);
-    const roomCompleted = Math.max(roomTotal - Number(roomSummary.worklist?.unchecked || 0), 0);
-    const roomAttention = Number(roomSummary.worklist?.missing || 0) + Number(roomSummary.worklist?.conflict || 0);
-    const itemTotal = Number(itemSummary.total || 0);
-    const itemCompleted = Math.max(itemTotal - Number(itemSummary.worklist?.unchecked || 0), 0);
-    const itemAttention = Number(itemSummary.worklist?.no_serial || 0) + Number(itemSummary.worklist?.pnr_attention || 0);
-    const roomFilters = [
-      { value: "", label: "Все статусы" },
-      ...ROOM_WORKLIST_OPTIONS.filter((option) => option.value),
-    ];
-
-    return (
-      <>
-        <section className="react-grid control-summary-grid">
-          <article className="react-panel control-summary-panel">
-            <div className="panel-title-row">
-              <h2>Сводка по помещениям</h2>
-            </div>
-            <div className="react-summary-grid">
-              <SummaryCard label="Всего" value={roomSummary.total ?? "—"} />
-              <SummaryCard label="Не проверено" value={roomSummary.worklist?.unchecked ?? "—"} tone="warning" />
-              <SummaryCard label="Отсутствует" value={roomSummary.worklist?.missing ?? "—"} tone="danger" />
-              <SummaryCard label="Конфликт" value={roomSummary.worklist?.conflict ?? "—"} tone="danger" />
-            </div>
-            <div className="control-chart-grid">
-              <Card size="small" bordered={false}>
-                <Text type="secondary">Прогресс по помещениям</Text>
-                <Progress type="dashboard" percent={roomTotal ? Math.round((roomCompleted / roomTotal) * 100) : 0} />
-              </Card>
-              <Card size="small" bordered={false}>
-                <Text type="secondary">Проблемные помещения</Text>
-                <Progress percent={roomTotal ? Math.round((roomAttention / roomTotal) * 100) : 0} status="exception" />
-                <Text type="secondary">{roomAttention} из {roomTotal || 0}</Text>
-              </Card>
-            </div>
-          </article>
-
-          <article className="react-panel control-summary-panel">
-            <div className="panel-title-row">
-              <h2>Сводка по экземплярам</h2>
-            </div>
-            <div className="react-summary-grid">
-              <SummaryCard label="Всего" value={itemSummary.total ?? "—"} />
-              <SummaryCard label="Не проверено" value={itemSummary.worklist?.unchecked ?? "—"} tone="warning" />
-              <SummaryCard label="Без серийника" value={itemSummary.worklist?.no_serial ?? "—"} tone="warning" />
-              <SummaryCard label="ПНР требует внимания" value={itemSummary.worklist?.pnr_attention ?? "—"} tone="warning" />
-            </div>
-            <div className="control-chart-grid">
-              <Card size="small" bordered={false}>
-                <Text type="secondary">Прогресс по экземплярам</Text>
-                <Progress type="dashboard" percent={itemTotal ? Math.round((itemCompleted / itemTotal) * 100) : 0} />
-              </Card>
-              <Card size="small" bordered={false}>
-                <Text type="secondary">Экземпляры с проблемами</Text>
-                <Progress percent={itemTotal ? Math.round((itemAttention / itemTotal) * 100) : 0} status="active" />
-                <Text type="secondary">{itemAttention} из {itemTotal || 0}</Text>
-              </Card>
-            </div>
-          </article>
-        </section>
-
-        <section className="react-grid">
-          <article className="react-panel">
-            <div className="panel-title-row">
-              <h2>Закрытие помещений по дням</h2>
-            </div>
-            <p className="assignment-helper-text">Сколько помещений и какими сотрудниками было закрыто по дням.</p>
-            <RoomCompletionHistogram activity={controlData.completionActivity} />
-          </article>
-
-          <article className={`react-panel ${controlLoading && controlData.rooms.length ? "panel-busy" : ""}`}>
-            <div className="panel-title-row">
-              <h2>Рабочие помещения</h2>
-              <Select
-                className="control-filter-select control-filter-select-top"
-                value={controlFilters.roomWorklist}
-                onChange={(value) => updateControlFilter("roomWorklist", value)}
-                options={roomFilters}
-              />
-            </div>
-            <div className="filter-grid antd-filter-grid">
-              <Select value={controlFilters.floorCode} onChange={(value) => updateControlFilter("floorCode", value)} options={[{ value: "", label: "Все этажи" }, ...floors.map((floorCode) => ({ value: floorCode, label: floorCode }))]} />
-              <Select value={controlFilters.departmentName} onChange={(value) => updateControlFilter("departmentName", value)} options={[{ value: "", label: "Все отделения" }, ...departments.map((departmentName) => ({ value: departmentName, label: departmentName }))]} />
-              <Select value={controlFilters.roomId} onChange={(value) => updateControlFilter("roomId", value)} options={[{ value: "", label: "Все помещения" }, ...roomOptions]} />
-            </div>
-            {controlError ? <p className="error-note">{controlError}</p> : null}
-            {controlLoading && !controlData.rooms.length ? <div className="empty-box">Загрузка помещений...</div> : null}
-            {!controlLoading && filteredRooms.length === 0 ? <div className="empty-box">Помещений по выбранному фильтру нет.</div> : null}
-            {(filteredRooms.length > 0 || (controlLoading && controlData.rooms.length > 0)) ? <div className="control-list">{filteredRooms.map((room) => <RoomCard key={room.room_id} room={room} />)}</div> : null}
-          </article>
-
-          <article className={`react-panel ${controlLoading && controlData.items.length ? "panel-busy" : ""}`}>
-            <div className="panel-title-row">
-              <h2>Проблемные экземпляры</h2>
-              <Select
-                className="control-filter-select control-filter-select-top"
-                value={controlFilters.itemWorklist}
-                onChange={(value) => updateControlFilter("itemWorklist", value)}
-                options={ITEM_WORKLIST_OPTIONS}
-              />
-            </div>
-            <div className="filter-grid antd-filter-grid">
-              <Select value={controlFilters.floorCode} onChange={(value) => updateControlFilter("floorCode", value)} options={[{ value: "", label: "Все этажи" }, ...floors.map((floorCode) => ({ value: floorCode, label: floorCode }))]} />
-              <Select value={controlFilters.departmentName} onChange={(value) => updateControlFilter("departmentName", value)} options={[{ value: "", label: "Все отделения" }, ...departments.map((departmentName) => ({ value: departmentName, label: departmentName }))]} />
-              <Select value={controlFilters.roomId} onChange={(value) => updateControlFilter("roomId", value)} options={[{ value: "", label: "Все помещения" }, ...roomOptions]} />
-            </div>
-            {controlLoading && !controlData.items.length ? <div className="empty-box">Загрузка экземпляров...</div> : null}
-            {!controlLoading && filteredItems.length === 0 ? <div className="empty-box">Экземпляров по выбранному фильтру нет.</div> : null}
-            {(filteredItems.length > 0 || (controlLoading && controlData.items.length > 0)) ? <div className="control-list">{filteredItems.map((item) => <ItemCard key={item.planned_item_id} item={item} />)}</div> : null}
-          </article>
-        </section>
-      </>
-    );
-  }
-
-  function renderAssignmentsTab() {
-    const isFieldWorker = auth?.role === "field_worker";
-    return (
-      <section className={`react-grid assignments-grid-react ${isFieldWorker ? "assignments-single-column" : ""}`}>
-        {!isFieldWorker ? (
-          <article className="react-panel">
-            <div className="panel-title-row">
-              <h2>Сотрудники</h2>
-            </div>
-            <p className="assignment-helper-text">Сводка по сотрудникам</p>
-            <div className="react-summary-grid assignment-summary-grid">
-              <SummaryCard label="Всего сотрудников" value={userSummary.activeCount} />
-              <SummaryCard label="В работе" value={userSummary.inProgress} tone="success" />
-              <SummaryCard label="Свободны" value={userSummary.available} tone="warning" />
-              <SummaryCard label="Неактивны" value={userSummary.inactiveCount} tone="danger" />
-            </div>
-            <div className="assignment-users-list">
-              {assignmentUsers.map((user) => (
-                <AssignmentUserCard
-                  key={user.user_id}
-                  user={user}
-                  selected={user.user_id === selectedUserId}
-                  onClick={() => {
-                    setAssignmentStatus("");
-                    setAssignmentError("");
-                    startTransition(() => setSelectedUserId(user.user_id));
-                  }}
-                />
-              ))}
-            </div>
-          </article>
-        ) : null}
-
-        <article className={`react-panel ${assignmentsLoading && assignmentOptions ? "panel-busy" : ""}`}>
-          <div className="panel-title-row">
-            <div>
-              <h2>{isFieldWorker ? "Мои назначения" : "Назначения"}</h2>
-              <p className="assignment-helper-text">
-                {selectedAssignmentUser ? `Назначения сотрудника: ${selectedAssignmentUser.full_name}` : "Выберите сотрудника слева."}
-              </p>
-            </div>
-            {!isFieldWorker ? (
-              <button type="button" onClick={startAssignmentSave} disabled={!selectedUserId || savingAssignments}>
-                {savingAssignments ? "Сохраняю..." : "Сохранить назначения"}
-              </button>
-            ) : null}
-          </div>
-          {assignmentOptions ? (
-            <div className="react-summary-grid assignment-summary-grid">
-              <SummaryCard label="Назначено помещений" value={assignmentOptions.progress_summary?.assigned_rooms_count || 0} />
-              <SummaryCard label="Завершено" value={assignmentOptions.progress_summary?.completed_rooms_count || 0} tone="success" />
-              <SummaryCard label="В работе" value={assignmentOptions.progress_summary?.in_progress_rooms_count || 0} tone="warning" />
-              <SummaryCard label="Не начато" value={assignmentOptions.progress_summary?.not_started_rooms_count || 0} tone="danger" />
-            </div>
-          ) : null}
-          {assignmentError ? <p className="error-note">{assignmentError}</p> : null}
-          {assignmentStatus ? <p className="assignment-status-note">{assignmentStatus}</p> : null}
-          {assignmentsLoading && !assignmentOptions ? (
-            <div className="empty-box">Загрузка назначений...</div>
-          ) : (
-            <AssignmentTree
-              options={assignmentOptions}
-              selection={assignmentSelection}
-              expansion={assignmentExpansion}
-              onToggleExpand={toggleExpand}
-              onToggleRoom={toggleRoom}
-              onToggleDepartment={toggleDepartment}
-              onToggleFloor={toggleFloor}
-              onSelectRoom={selectAssignmentRoom}
-              selectedRoomId={selectedAssignmentRoomId}
-              readOnly={isFieldWorker}
-            />
-          )}
-          <AssignmentRoomContext roomDetail={selectedRoomDetail} loading={assignmentRoomLoading} />
-        </article>
-      </section>
-    );
-  }
-
-  function renderUsersTab() {
-    const createValidationErrors = validateUserForm(createForm, { requirePassword: true });
-    const createDisabled = userActionLoading || Object.keys(createValidationErrors).length > 0;
-    return (
-      <section className="react-grid users-grid-react">
-        <section className="react-panel">
-          <div className="panel-title-row">
-            <h2>Новый сотрудник</h2>
-            <button type="button" onClick={handleCreateUser} disabled={createDisabled}>
-              {userActionLoading ? "Создаю..." : "Создать сотрудника"}
-            </button>
-          </div>
-          <div className="form-grid-react">
-            <TextField label="Логин" value={createForm.login} onChange={(event) => updateCreateForm("login", event.target.value)} error={createErrors.login} />
-            <PasswordField
-              label="Пароль"
-              value={createForm.password}
-              onChange={(event) => updateCreateForm("password", event.target.value)}
-              error={createErrors.password}
-              visible={createPasswordVisible}
-              onToggleVisibility={() => setCreatePasswordVisible((current) => !current)}
-            />
-            <TextField label="Фамилия" value={createForm.last_name} onChange={(event) => updateCreateForm("last_name", event.target.value)} error={createErrors.last_name} />
-            <TextField label="Имя" value={createForm.first_name} onChange={(event) => updateCreateForm("first_name", event.target.value)} error={createErrors.first_name} />
-            <TextField label="Отчество" value={createForm.middle_name} onChange={(event) => updateCreateForm("middle_name", event.target.value)} error={createErrors.middle_name} />
-            <TextField label="Телефон" value={createForm.phone} onChange={(event) => updateCreateForm("phone", event.target.value)} error={createErrors.phone} placeholder="+7XXXXXXXXXX" />
-            <TextField label="Email" value={createForm.email} onChange={(event) => updateCreateForm("email", event.target.value)} error={createErrors.email} className="field-span-2" />
-            <SelectField label="Роль" value={createForm.role} onChange={(event) => updateCreateForm("role", event.target.value)} error={createErrors.role} className="field-span-2" options={ROLE_OPTIONS} />
-          </div>
-          <AvatarDropzone label="Фото сотрудника" previewUrl={createAvatarPreview} onFileSelected={setCreateAvatarFile} helperText="Фото необязательно. Поддерживаются JPG, PNG и WEBP." />
-          {usersStatus ? <p className="assignment-status-note">{usersStatus}</p> : null}
-        </section>
-
-        <section className="react-panel">
-          <div className="panel-title-row">
-            <h2>Список сотрудников</h2>
-            <span className="status-chip subtle">{isPending ? "Обновляю..." : "Актуально"}</span>
-          </div>
-          <div className="react-summary-grid assignment-summary-grid">
-            <SummaryCard label="Всего сотрудников" value={directorySummary.total} />
-            <SummaryCard label="В работе" value={directorySummary.inProgress} tone="success" />
-            <SummaryCard label="Свободны" value={directorySummary.available} tone="warning" />
-            <SummaryCard label="Неактивны" value={directorySummary.inactive} tone="danger" />
-          </div>
-
-          <div className="directory-list">
-            {activeDirectoryUsers.map((user) => (
-              <UserDirectoryCard key={user.user_id} user={user} onEdit={openEditUser} onDeactivate={handleDeactivateUser} onRestore={handleRestoreUser} />
-            ))}
-
-            {inactiveDirectoryUsers.length ? (
-              <section className="inactive-group-wrap">
-                <button type="button" className="inactive-toggle-button" onClick={() => setShowInactiveUsers((current) => !current)}>
-                  {showInactiveUsers ? "▾" : "▸"} Неактивные сотрудники ({inactiveDirectoryUsers.length})
-                </button>
-                {showInactiveUsers
-                  ? inactiveDirectoryUsers.map((user) => (
-                      <UserDirectoryCard key={user.user_id} user={user} onEdit={openEditUser} onDeactivate={handleDeactivateUser} onRestore={handleRestoreUser} />
-                    ))
-                  : null}
-              </section>
-            ) : null}
-          </div>
-        </section>
-      </section>
-    );
-  }
-
-  function renderGroupsTab() {
-    return (
-      <section className="react-grid">
-        <article className={`react-panel ${groupsLoading && groupsData.length ? "panel-busy" : ""}`}>
-          <div className="panel-title-row">
-            <h2>Группы сотрудников</h2>
-          </div>
-          <p className="assignment-helper-text">Общие помещения считаются только по пересечению назначений всех участников группы.</p>
-          {groupsStatus ? <p className="assignment-status-note">{groupsStatus}</p> : null}
-          {groupsLoading && !groupsData.length ? <div className="empty-box">Загрузка групп...</div> : null}
-          {!groupsLoading && !groupsData.length ? <div className="empty-box">Группы пока не созданы.</div> : null}
-          {groupsData.length ? (
-            <div className="assignment-users-list">
-              {groupsData.map((group) => (
-                <button key={group.team_id} type="button" className={`assignment-user-card ${group.team_id === selectedGroupId ? "selected" : ""}`} onClick={() => setSelectedGroupId(group.team_id)}>
-                  <div className="assignment-user-header">
-                    <div>
-                      <strong>{group.team_name}</strong>
-                      <p>{group.members_count} участников</p>
-                    </div>
-                    <SummaryBadge>{group.assigned_rooms_count || 0}</SummaryBadge>
-                  </div>
-                  <div className="control-badges">
-                    {group.members.map((member) => (
-                      <SummaryBadge key={member.user_id}>{member.full_name}</SummaryBadge>
-                    ))}
-                  </div>
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </article>
-
-        <article className="react-panel">
-          <div className="panel-title-row">
-            <h2>Сводка группы</h2>
-          </div>
-          {!selectedGroup ? (
-            <div className="empty-box">Выберите группу слева.</div>
-          ) : (
-            <>
-              <div className="react-summary-grid assignment-summary-grid">
-                <SummaryCard label="Общие помещения" value={groupSummary.assigned} />
-                <SummaryCard label="Завершено" value={groupSummary.completed} tone="success" />
-                <SummaryCard label="В работе" value={groupSummary.inProgress} tone="warning" />
-                <SummaryCard label="Не начато" value={groupSummary.notStarted} tone="danger" />
-              </div>
-              <div className="control-badges">
-                {selectedGroup.members.map((member) => (
-                  <SummaryBadge key={member.user_id}>{member.full_name}</SummaryBadge>
-                ))}
-              </div>
-            </>
-          )}
-        </article>
-      </section>
-    );
-  }
-
-  function renderExportTab() {
-    return (
-        <section className="react-panel">
-          <div className="panel-title-row">
-            <h2>Экспортная таблица</h2>
-            <Button
-              type="primary"
-              onClick={async () => {
-                setExportLoading(true);
-                const rows = await loadExportRows();
-                setExportRows(rows);
-                setExportLoading(false);
-              }}
-            >
-              Обновить таблицу
-            </Button>
-          </div>
-
-          <div className="filter-grid export-filter-grid antd-filter-grid">
-            <Select value={exportFilters.floorCode} onChange={(value) => updateExportFilter("floorCode", value)} options={[{ value: "", label: "Все этажи" }, ...exportFloors.map((floorCode) => ({ value: floorCode, label: floorCode }))]} />
-            <Select value={exportFilters.departmentName} onChange={(value) => updateExportFilter("departmentName", value)} options={[{ value: "", label: "Все отделения" }, ...exportDepartments.map((departmentName) => ({ value: departmentName, label: departmentName }))]} />
-            <Select value={exportFilters.roomId} onChange={(value) => updateExportFilter("roomId", value)} options={[{ value: "", label: "Все помещения" }, ...exportRoomOptions]} />
-            <Input placeholder="Оборудование" value={exportFilters.equipmentQuery} onChange={(event) => updateExportFilter("equipmentQuery", event.target.value)} />
-            <Input placeholder="Серийный номер" value={exportFilters.serialQuery} onChange={(event) => updateExportFilter("serialQuery", event.target.value)} />
-            <Select value={exportFilters.presenceStatus} onChange={(value) => updateExportFilter("presenceStatus", value)} options={PRESENCE_FILTER_OPTIONS} />
-          </div>
-
-        {exportLoading && !exportRows.length ? <div className="empty-box">Загрузка строк экспорта...</div> : null}
-        {!exportLoading && !filteredExportRows.length ? <div className="empty-box">Строк по выбранным фильтрам нет.</div> : null}
-        {filteredExportRows.length ? (
-          <div className={`export-table-wrap ${exportLoading ? "panel-busy" : ""}`}>
-            <table className="export-table-react">
-              <thead>
-                <tr>
-                  <th>Этаж</th>
-                  <th>Отделение</th>
-                  <th>Помещение</th>
-                  <th>Позиция</th>
-                  <th>Оборудование</th>
-                  <th>Экземпляр</th>
-                  <th>Наличие</th>
-                  <th>Серийный номер</th>
-                  <th>ПНР</th>
-                  <th>Коммуникации</th>
-                  <th>Дата проверки</th>
-                  <th>Сотрудник</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredExportRows.map((item) => (
-                  <tr key={item.planned_item_id} className={`export-row-${getPresenceTone(item.current_presence_status)}`}>
-                    <td>{item.floor_code || "—"}</td>
-                    <td>{item.department_name || "—"}</td>
-                    <td>
-                      {item.room_code || "—"} — {item.room_name || "—"}
-                    </td>
-                    <td>{item.position_code}</td>
-                    <td>{item.equipment_name}</td>
-                    <td>{item.display_label}</td>
-                    <td>{getPresenceLabel(item.current_presence_status)}</td>
-                    <td>{getSerialLabel(item.serial_number, item.serial_state)}</td>
-                    <td>{getPnrLabel(item.pnr_status)}</td>
-                    <td>{getCommunicationsLabel(item.communications_status)}</td>
-                    <td>{formatDate(item.last_check_at)}</td>
-                    <td>{item.last_checked_by_name || "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : null}
-      </section>
-    );
-  }
-
   function renderTab() {
-    if (activeTab === "control") return renderControlTab();
-    if (activeTab === "assignments") return renderAssignmentsTab();
-    if (activeTab === "users") return renderUsersTab();
-    if (activeTab === "groups") return renderGroupsTab();
-    return renderExportTab();
+    if (activeTab === "control") {
+      return (
+        <Suspense fallback={<TabFallback />}>
+          <ControlTab
+            controlData={controlData}
+            controlFilters={controlFilters}
+            controlLoading={controlLoading}
+            controlError={controlError}
+            filteredRooms={filteredRooms}
+            filteredItems={filteredItems}
+            floors={floors}
+            departments={departments}
+            roomOptions={roomOptions}
+            onUpdateControlFilter={updateControlFilter}
+          />
+        </Suspense>
+      );
+    }
+    if (activeTab === "assignments") {
+      return (
+        <Suspense fallback={<TabFallback />}>
+          <AssignmentsTab
+            auth={auth}
+            assignmentUsers={assignmentUsers}
+            userSummary={userSummary}
+            selectedUserId={selectedUserId}
+            selectedAssignmentUser={selectedAssignmentUser}
+            assignmentOptions={assignmentOptions}
+            assignmentSelection={assignmentSelection}
+            assignmentExpansion={assignmentExpansion}
+            selectedAssignmentRoomId={selectedAssignmentRoomId}
+            assignmentsLoading={assignmentsLoading}
+            savingAssignments={savingAssignments}
+            assignmentError={assignmentError}
+            assignmentStatus={assignmentStatus}
+            selectedRoomDetail={selectedRoomDetail}
+            assignmentRoomLoading={assignmentRoomLoading}
+            onSelectUser={(userId) => {
+              setAssignmentStatus("");
+              setAssignmentError("");
+              startTransition(() => setSelectedUserId(userId));
+            }}
+            onStartAssignmentSave={startAssignmentSave}
+            onToggleExpand={toggleExpand}
+            onToggleRoom={toggleRoom}
+            onToggleDepartment={toggleDepartment}
+            onToggleFloor={toggleFloor}
+            onSelectRoom={selectAssignmentRoom}
+          />
+        </Suspense>
+      );
+    }
+    if (activeTab === "users") {
+      return (
+        <Suspense fallback={<TabFallback />}>
+          <UsersTab
+            createForm={createForm}
+            createErrors={createErrors}
+            createAvatarPreview={createAvatarPreview}
+            createPasswordVisible={createPasswordVisible}
+            userActionLoading={userActionLoading}
+            usersStatus={usersStatus}
+            directorySummary={directorySummary}
+            activeDirectoryUsers={activeDirectoryUsers}
+            inactiveDirectoryUsers={inactiveDirectoryUsers}
+            showInactiveUsers={showInactiveUsers}
+            onToggleInactiveUsers={() => setShowInactiveUsers((current) => !current)}
+            onUpdateCreateForm={updateCreateForm}
+            onToggleCreatePassword={() => setCreatePasswordVisible((current) => !current)}
+            onSetCreateAvatarFile={setCreateAvatarFile}
+            onCreateUser={handleCreateUser}
+            onEditUser={openEditUser}
+            onDeactivateUser={handleDeactivateUser}
+            onRestoreUser={handleRestoreUser}
+          />
+        </Suspense>
+      );
+    }
+    if (activeTab === "groups") {
+      return (
+        <Suspense fallback={<TabFallback />}>
+          <GroupsTab
+            groupsLoading={groupsLoading}
+            groupsData={groupsData}
+            groupsStatus={groupsStatus}
+            selectedGroupId={selectedGroupId}
+            selectedGroup={selectedGroup}
+            groupSummary={groupSummary}
+            onSelectGroup={setSelectedGroupId}
+          />
+        </Suspense>
+      );
+    }
+    return (
+      <Suspense fallback={<TabFallback />}>
+        <ExportTab
+          exportLoading={exportLoading}
+          exportRows={exportRows}
+          exportFilters={exportFilters}
+          exportFloors={exportFloors}
+          exportDepartments={exportDepartments}
+          exportRoomOptions={exportRoomOptions}
+          filteredExportRows={filteredExportRows}
+          onUpdateExportFilter={updateExportFilter}
+          onRefresh={async () => {
+            setExportLoading(true);
+            const rows = await loadExportRows();
+            setExportRows(rows);
+            setExportLoading(false);
+          }}
+        />
+      </Suspense>
+    );
   }
 
   if (!auth) {
@@ -2351,7 +1226,15 @@ export default function App() {
           </>
         }
       >
-        <div className="modal-profile-header">
+        <div className="user-edit-hero">
+          <div className="user-edit-summary">
+            <UserAvatar user={editUser} previewUrl={editAvatarPreview || editUser?.avatar_url || ""} size="large" />
+            <div>
+              <strong>{editUser?.full_name || "Сотрудник"}</strong>
+              <p>{getRoleLabel(editForm.role || editUser?.role)}</p>
+              <span>{editUser?.is_active ? "Активная учетная запись" : "Неактивная учетная запись"}</span>
+            </div>
+          </div>
           <AvatarDropzone label="Заменить фото" previewUrl={editAvatarPreview || editUser?.avatar_url || ""} onFileSelected={setEditAvatarFile} />
         </div>
         <div className="form-grid-react modal-form-grid">

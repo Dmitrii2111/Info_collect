@@ -360,6 +360,66 @@ label {
   padding: 16px;
 }
 
+.queue-stats-grid,
+.status-legend-grid,
+.room-detail-summary {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.queue-stats-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.status-legend-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.room-detail-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.queue-stat-card,
+.legend-card,
+.compact-card {
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(31, 77, 58, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 14px 16px;
+}
+
+.queue-stat-card span,
+.legend-card p,
+.compact-card span {
+  color: var(--muted);
+}
+
+.queue-stat-card strong,
+.legend-card strong,
+.compact-card strong {
+  display: block;
+  margin-top: 6px;
+}
+
+.legend-card p {
+  margin: 8px 0 0;
+  line-height: 1.4;
+}
+
+.legend-card.success {
+  background: rgba(47, 123, 87, 0.12);
+}
+
+.legend-card.warning,
+.legend-card.repeat {
+  background: rgba(216, 157, 63, 0.12);
+}
+
+.legend-card.danger {
+  background: rgba(181, 64, 64, 0.1);
+}
+
 .queue-list,
 .rooms-list,
 .room-items-list {
@@ -436,6 +496,20 @@ label {
   padding: 16px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.room-progress-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.room-progress-count {
+  color: var(--muted);
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .room-card.active {
@@ -606,6 +680,12 @@ label {
 
 .item-card button {
   margin-top: 12px;
+}
+
+.item-last-check {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .hidden {
@@ -916,12 +996,31 @@ label {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.item-context-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.item-context-grid .compact-card {
+  min-height: 92px;
+}
+
+.field-hint {
+  margin: -2px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .full-width {
   grid-column: 1 / -1;
 }
 
 .dialog-actions {
   margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 @media (max-width: 1120px) {
@@ -936,6 +1035,11 @@ label {
 
   .summary-grid {
     grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+
+  .queue-stats-grid,
+  .room-detail-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -952,7 +1056,10 @@ label {
 
   .summary-grid,
   .dialog-grid,
-  .detail-toolbar {
+  .detail-toolbar,
+  .queue-stats-grid,
+  .status-legend-grid,
+  .room-detail-summary {
     grid-template-columns: 1fr;
   }
 
@@ -961,6 +1068,7 @@ label {
   .queue-title-row,
   .room-title-row,
   .item-title-row,
+  .room-progress-row,
   .dialog-header,
   .button-row {
     align-items: stretch;

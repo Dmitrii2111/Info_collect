@@ -46,7 +46,11 @@ const ui = {
   completedRoomsCountLabel: document.getElementById("completedRoomsCountLabel"),
   queuedActionsCountLabel: document.getElementById("queuedActionsCountLabel"),
   queueMetaLabel: document.getElementById("queueMetaLabel"),
+  queueCheckCountLabel: document.getElementById("queueCheckCountLabel"),
+  queueRoomCountLabel: document.getElementById("queueRoomCountLabel"),
+  queueCommentCountLabel: document.getElementById("queueCommentCountLabel"),
   queueList: document.getElementById("queueList"),
+  roomListMetaLabel: document.getElementById("roomListMetaLabel"),
   floorFilterSelect: document.getElementById("floorFilterSelect"),
   departmentFilterSelect: document.getElementById("departmentFilterSelect"),
   roomFilterSelect: document.getElementById("roomFilterSelect"),
@@ -55,6 +59,9 @@ const ui = {
   roomDetail: document.getElementById("roomDetail"),
   roomDetailMeta: document.getElementById("roomDetailMeta"),
   roomDetailTitle: document.getElementById("roomDetailTitle"),
+  roomDetailItemsCountLabel: document.getElementById("roomDetailItemsCountLabel"),
+  roomDetailCheckedCountLabel: document.getElementById("roomDetailCheckedCountLabel"),
+  roomDetailLastActionLabel: document.getElementById("roomDetailLastActionLabel"),
   roomItemsList: document.getElementById("roomItemsList"),
   itemSearchInput: document.getElementById("itemSearchInput"),
   itemFilterSelect: document.getElementById("itemFilterSelect"),
@@ -63,11 +70,16 @@ const ui = {
   closeDialogButton: document.getElementById("closeDialogButton"),
   itemDialogMeta: document.getElementById("itemDialogMeta"),
   itemDialogTitle: document.getElementById("itemDialogTitle"),
+  itemCurrentPresenceLabel: document.getElementById("itemCurrentPresenceLabel"),
+  itemCurrentSerialLabel: document.getElementById("itemCurrentSerialLabel"),
+  itemCurrentLastCheckLabel: document.getElementById("itemCurrentLastCheckLabel"),
+  itemCurrentRepeatLabel: document.getElementById("itemCurrentRepeatLabel"),
   itemForm: document.getElementById("itemForm"),
   itemFormStatus: document.getElementById("itemFormStatus"),
   presenceStatusInput: document.getElementById("presenceStatusInput"),
   serialStateInput: document.getElementById("serialStateInput"),
   serialNumberInput: document.getElementById("serialNumberInput"),
+  serialNumberHint: document.getElementById("serialNumberHint"),
   pnrStatusInput: document.getElementById("pnrStatusInput"),
   communicationsStatusInput: document.getElementById("communicationsStatusInput"),
   actualConditionInput: document.getElementById("actualConditionInput"),
@@ -102,6 +114,12 @@ function formatDateTime(value) {
 
 function lookupLabel(groupName, code) {
   return state.lookups[groupName]?.find((item) => item.code === code)?.label ?? code ?? "—";
+}
+
+function getQueueActionLabel(actionType) {
+  if (actionType === "item_check") return "Отметка экземпляра";
+  if (actionType === "room_complete") return "Завершение помещения";
+  return actionType || "Событие";
 }
 
 function openDb() {
@@ -332,8 +350,12 @@ function renderSummary() {
   ui.assignmentModeLabel.textContent = state.bootstrap?.assignment_mode === "assigned_rooms" ? "Назначения оператора" : "Назначения не загружены";
   ui.assignedRoomsCountLabel.textContent = String(state.bootstrap?.assigned_rooms_count || 0);
   ui.completedRoomsCountLabel.textContent = String(state.bootstrap?.completed_rooms_count || 0);
+  ui.itemsCountLabel.textContent = String(state.items.length || 0);
   ui.queuedActionsCountLabel.textContent = String(state.queue.length);
   ui.queueMetaLabel.textContent = `${state.queue.length} событий`;
+  ui.queueCheckCountLabel.textContent = String(state.queue.filter((item) => item.action_type === "item_check").length);
+  ui.queueRoomCountLabel.textContent = String(state.queue.filter((item) => item.action_type === "room_complete").length);
+  ui.queueCommentCountLabel.textContent = String(state.queue.filter((item) => item.comment_text).length);
   ui.lastSyncLabel.textContent = state.bootstrap?.synced_at ? `Последняя загрузка: ${formatDateTime(state.bootstrap.synced_at)}` : "Синхронизации еще не было";
 }
 
@@ -350,7 +372,7 @@ function renderQueue() {
     .map((item) => `
       <article class="queue-event">
         <div class="queue-meta">
-          <strong>${escapeHtml(item.action_type)}</strong>
+          <strong>${escapeHtml(getQueueActionLabel(item.action_type))}</strong>
           <span>${formatDateTime(item.created_at_device)}</span>
         </div>
         <p>${escapeHtml(item.comment_text || "Без комментария")}</p>
@@ -359,18 +381,38 @@ function renderQueue() {
     .join("");
 }
 
-function getRoomProgress(roomId) {
+function getRoomProgressMetrics(roomId) {
   const roomItems = state.items.filter((item) => item.room_id === roomId);
-  if (!roomItems.length) return "not-started";
+  const total = roomItems.length;
   const checkedCount = roomItems.filter((item) => item.current_presence_status !== "not_checked").length;
   const hasQueuedCompletion = state.queue.some((item) => item.action_type === "room_complete" && item.room_id === roomId);
-  if (hasQueuedCompletion || (checkedCount && checkedCount === roomItems.length)) return "completed";
-  if (checkedCount > 0) return "partial";
-  return "not-started";
+  const progress = hasQueuedCompletion || (checkedCount && checkedCount === roomItems.length)
+    ? "completed"
+    : checkedCount > 0
+      ? "partial"
+      : "not-started";
+
+  return {
+    total,
+    checkedCount,
+    progress,
+    hasQueuedCompletion,
+  };
+}
+
+function getRoomProgressLabel(progress) {
+  if (progress === "completed") return "Завершено";
+  if (progress === "partial") return "В работе";
+  return "Не начато";
 }
 
 function renderRooms() {
   const rooms = getFilteredRooms();
+  ui.roomListMetaLabel.textContent = rooms.length
+    ? `Показано помещений: ${rooms.length}`
+    : state.rooms.length
+      ? "По выбранным фильтрам помещения не найдены"
+      : "Нет загруженных назначений";
   if (!rooms.length) {
     ui.roomsList.className = "rooms-list empty-state";
     ui.roomsList.textContent = state.rooms.length ? "По выбранным фильтрам помещений нет." : "Назначенные помещения пока не загружены.";
@@ -385,8 +427,10 @@ function renderRooms() {
   ui.roomsList.innerHTML = rooms
     .map((room) => {
       const activeClass = state.selectedRoomId === room.room_id ? "active" : "";
-      const progressClass = getRoomProgress(room.room_id);
+      const metrics = getRoomProgressMetrics(room.room_id);
+      const progressClass = metrics.progress;
       const repeatBadge = room.repeat_check_required ? '<span class="badge repeat">Повторная проверка</span>' : "";
+      const progressBadgeClass = progressClass === "completed" ? "success" : progressClass === "partial" ? "warn" : "danger";
       return `
         <article class="room-card room-progress ${progressClass} ${activeClass}" data-room-id="${escapeHtml(room.room_id)}">
           <div class="room-title-row">
@@ -399,6 +443,10 @@ function renderRooms() {
           <div class="room-meta">
             <span>${escapeHtml(room.floor_code || "—")}</span>
             <span>${escapeHtml(room.department_name || "—")}</span>
+          </div>
+          <div class="room-progress-row">
+            <span class="badge ${progressBadgeClass}">${getRoomProgressLabel(progressClass)}</span>
+            <span class="room-progress-count">${metrics.checkedCount} / ${metrics.total || room.planned_items_count || 0}</span>
           </div>
           <div class="badge-row">${repeatBadge}</div>
         </article>
@@ -440,10 +488,23 @@ function renderRoomDetail() {
   }
 
   const items = getSelectedRoomItems();
+  const allRoomItems = state.items.filter((item) => item.room_id === room.room_id);
+  const checkedItems = allRoomItems.filter((item) => item.current_presence_status !== "not_checked");
+  const latestCheckedItem = checkedItems
+    .slice()
+    .sort((left, right) => new Date(right.last_check_at || 0) - new Date(left.last_check_at || 0))[0];
+  const completionQueued = state.queue.some((entry) => entry.action_type === "room_complete" && entry.room_id === room.room_id);
   ui.roomDetail.classList.remove("hidden");
   ui.roomDetailEmpty.classList.add("hidden");
   ui.roomDetailMeta.textContent = `${room.floor_code || "—"} • ${room.department_name || "—"}`;
   ui.roomDetailTitle.textContent = `${room.room_code} — ${room.room_name}`;
+  ui.roomDetailItemsCountLabel.textContent = String(allRoomItems.length);
+  ui.roomDetailCheckedCountLabel.textContent = String(checkedItems.length);
+  ui.roomDetailLastActionLabel.textContent = latestCheckedItem
+    ? `${latestCheckedItem.last_checked_by_name || "Неизвестно"} • ${formatDateTime(latestCheckedItem.last_check_at)}`
+    : "Отметок пока нет";
+  ui.completeRoomButton.disabled = completionQueued;
+  ui.completeRoomButton.textContent = completionQueued ? "Уже в очереди на завершение" : "Завершить помещение";
   ui.roomItemsList.innerHTML = items.length
     ? items.map((item) => `
       <article class="item-card">
@@ -461,6 +522,7 @@ function renderRoomDetail() {
         <div class="badge-row">
           <span class="badge">${escapeHtml(lookupLabel("communications_statuses", item.communications_status))}</span>
         </div>
+        <p class="item-last-check">${item.last_checked_by_name ? `Последняя отметка: ${escapeHtml(item.last_checked_by_name)} • ${formatDateTime(item.last_check_at)}` : "Отметок пока нет"}</p>
         <button type="button" data-item-id="${escapeHtml(item.planned_item_id)}">Внести данные</button>
       </article>
     `).join("")
@@ -480,15 +542,38 @@ function populateSelect(selectNode, options, selected) {
 function syncSerialFieldState() {
   const disabled = ui.serialStateInput.value !== "serial_entered";
   ui.serialNumberInput.disabled = disabled;
-  if (disabled) ui.serialNumberInput.value = "";
+  if (disabled) {
+    ui.serialNumberInput.value = "";
+    ui.serialNumberHint.textContent = "Поле недоступно, пока не выбран ручной ввод серийного номера.";
+  } else {
+    ui.serialNumberHint.textContent = "Введите серийный номер так, как он указан на экземпляре.";
+  }
+}
+
+function formatItemSerial(item) {
+  if (!item) return "—";
+  if (item.serial_state === "serial_entered" && item.serial_number) {
+    return item.serial_number;
+  }
+  return lookupLabel("serial_states", item.serial_state);
+}
+
+function formatLastCheck(item) {
+  if (!item?.last_check_at) return "Отметок пока нет";
+  return `${item.last_checked_by_name || "Неизвестно"} • ${formatDateTime(item.last_check_at)}`;
 }
 
 function openItemDialog(plannedItemId) {
   const item = state.items.find((entry) => entry.planned_item_id === plannedItemId);
   if (!item) return;
+  const room = state.rooms.find((entry) => entry.room_id === item.room_id);
   state.selectedItemId = plannedItemId;
   ui.itemDialogMeta.textContent = `${item.room_code || "—"} • ${item.position_code}`;
   ui.itemDialogTitle.textContent = `${item.display_label} — ${item.equipment_name}`;
+  ui.itemCurrentPresenceLabel.textContent = lookupLabel("presence_statuses", item.current_presence_status);
+  ui.itemCurrentSerialLabel.textContent = formatItemSerial(item);
+  ui.itemCurrentLastCheckLabel.textContent = formatLastCheck(item);
+  ui.itemCurrentRepeatLabel.textContent = room?.repeat_check_required ? "Повторная проверка" : "Обычная проверка";
   populateSelect(ui.presenceStatusInput, state.lookups.presence_statuses, item.current_presence_status);
   populateSelect(ui.serialStateInput, state.lookups.serial_states, item.serial_state);
   populateSelect(ui.pnrStatusInput, state.lookups.pnr_statuses, item.pnr_status);
@@ -514,6 +599,11 @@ function patchLocalItem(plannedItemId, patch) {
 async function queueItemCheck() {
   if (!state.session || !state.selectedItemId) {
     ui.itemFormStatus.textContent = "Нет активной сессии сотрудника.";
+    return;
+  }
+  if (ui.serialStateInput.value === "serial_entered" && !ui.serialNumberInput.value.trim()) {
+    ui.itemFormStatus.textContent = "Укажите серийный номер или выберите другой режим заполнения.";
+    ui.serialNumberInput.focus();
     return;
   }
   const payload = {
@@ -544,6 +634,7 @@ async function queueItemCheck() {
     actual_condition: payload.actual_condition,
     completeness_status: payload.completeness_status,
     last_check_at: payload.created_at_device,
+    last_checked_by_name: state.session.full_name,
   });
   await replaceStore(STORE_ITEMS, state.items);
   renderAll();
@@ -554,6 +645,10 @@ async function queueItemCheck() {
 async function queueRoomCompletion() {
   if (!state.session || !state.selectedRoomId) {
     ui.setupStatus.textContent = "Нет активного помещения.";
+    return;
+  }
+  if (state.queue.some((item) => item.action_type === "room_complete" && item.room_id === state.selectedRoomId)) {
+    ui.setupStatus.textContent = "Это помещение уже добавлено в очередь на завершение.";
     return;
   }
   const payload = {

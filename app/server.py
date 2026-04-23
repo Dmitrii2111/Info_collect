@@ -55,7 +55,7 @@ def _redirect_html(target_url: str, title: str) -> str:
     )
 
 
-def create_app() -> FastAPI:
+def create_app(*, bootstrap_builtin_users: bool = True) -> FastAPI:
     app = FastAPI(
         title=settings.app_name,
         version=settings.app_version,
@@ -69,15 +69,16 @@ def create_app() -> FastAPI:
 
     app.include_router(api_router, prefix=settings.api_prefix)
 
-    @app.on_event("startup")
-    def ensure_builtin_users() -> None:
-        db: Session = SessionLocal()
-        try:
-            get_or_create_system_user(db)
-            ensure_default_admin_user(db)
-            db.commit()
-        finally:
-            db.close()
+    if bootstrap_builtin_users:
+        @app.on_event("startup")
+        def ensure_builtin_users() -> None:
+            db: Session = SessionLocal()
+            try:
+                get_or_create_system_user(db)
+                ensure_default_admin_user(db)
+                db.commit()
+            finally:
+                db.close()
 
     @app.get("/", response_class=HTMLResponse, tags=["frontend"])
     def root() -> str:

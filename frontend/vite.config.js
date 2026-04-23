@@ -18,5 +18,20 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("antd") || id.includes("@ant-design") || id.includes("rc-")) {
+              return "ui-vendor";
+            }
+            return "vendor";
+          }
+          if (id.includes("/src/operator/tabs/")) {
+            return "operator-tabs";
+          }
+        },
+      },
+    },
   },
 });

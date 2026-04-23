@@ -118,10 +118,42 @@
             <strong id="queuedActionsCountLabel">0</strong>
           </div>
         </div>
+        <div class="status-legend-grid">
+          <article class="legend-card danger">
+            <strong>Не начато</strong>
+            <p>По помещению еще нет отметок.</p>
+          </article>
+          <article class="legend-card warning">
+            <strong>В работе</strong>
+            <p>Часть экземпляров уже отмечена, но помещение не завершено.</p>
+          </article>
+          <article class="legend-card success">
+            <strong>Завершено</strong>
+            <p>Помещение закрыто и добавлено в очередь или уже синхронизировано.</p>
+          </article>
+          <article class="legend-card repeat">
+            <strong>Повторная проверка</strong>
+            <p>Нужно повторно пройти помещение после новой поставки или замечаний.</p>
+          </article>
+        </div>
         <div class="queue-box">
           <div class="queue-title-row">
             <h3>Локальная очередь</h3>
             <span id="queueMetaLabel" class="muted-note">0 событий</span>
+          </div>
+          <div class="queue-stats-grid">
+            <div class="queue-stat-card">
+              <span>Отметки по экземплярам</span>
+              <strong id="queueCheckCountLabel">0</strong>
+            </div>
+            <div class="queue-stat-card">
+              <span>Завершение помещений</span>
+              <strong id="queueRoomCountLabel">0</strong>
+            </div>
+            <div class="queue-stat-card">
+              <span>С комментариями</span>
+              <strong id="queueCommentCountLabel">0</strong>
+            </div>
           </div>
           <div id="queueList" class="queue-list empty-state">Очередь пуста.</div>
         </div>
@@ -131,7 +163,10 @@
     <section class="workspace-grid">
       <article class="panel rooms-panel">
         <div class="panel-header">
-          <h2>Мои помещения</h2>
+          <div>
+            <h2>Мои помещения</h2>
+            <p id="roomListMetaLabel" class="muted-note">Нет загруженных назначений</p>
+          </div>
         </div>
         <div class="detail-toolbar three-columns">
           <select id="floorFilterSelect">
@@ -162,6 +197,21 @@
             <button id="completeRoomButton" type="button">Завершить помещение</button>
           </div>
 
+          <div id="roomDetailSummary" class="room-detail-summary">
+            <div class="summary-card compact-card">
+              <span class="summary-label">Всего экземпляров</span>
+              <strong id="roomDetailItemsCountLabel">0</strong>
+            </div>
+            <div class="summary-card compact-card">
+              <span class="summary-label">Уже отмечено</span>
+              <strong id="roomDetailCheckedCountLabel">0</strong>
+            </div>
+            <div class="summary-card compact-card room-detail-activity-card">
+              <span class="summary-label">Последняя активность</span>
+              <strong id="roomDetailLastActionLabel">Отметок пока нет</strong>
+            </div>
+          </div>
+
           <div class="detail-toolbar">
             <input id="itemSearchInput" type="search" placeholder="Поиск по позиции, наименованию, ярлыку">
             <select id="itemFilterSelect">
@@ -188,6 +238,25 @@
         <button type="button" id="closeDialogButton" class="ghost-button">Закрыть</button>
       </div>
 
+      <div class="item-context-grid">
+        <div class="compact-card">
+          <span class="summary-label">Текущий статус</span>
+          <strong id="itemCurrentPresenceLabel">—</strong>
+        </div>
+        <div class="compact-card">
+          <span class="summary-label">Серийный номер</span>
+          <strong id="itemCurrentSerialLabel">—</strong>
+        </div>
+        <div class="compact-card">
+          <span class="summary-label">Последняя отметка</span>
+          <strong id="itemCurrentLastCheckLabel">Отметок пока нет</strong>
+        </div>
+        <div class="compact-card">
+          <span class="summary-label">Режим проверки</span>
+          <strong id="itemCurrentRepeatLabel">Обычная проверка</strong>
+        </div>
+      </div>
+
       <div class="dialog-grid">
         <label>
           Наличие
@@ -195,7 +264,7 @@
         </label>
 
         <label>
-          Серийный номер
+          Режим серийного номера
           <select id="serialStateInput" name="serial_state"></select>
         </label>
 
@@ -203,6 +272,8 @@
           Значение серийного номера
           <input id="serialNumberInput" name="serial_number" type="text" placeholder="Введите серийный номер">
         </label>
+
+        <p id="serialNumberHint" class="field-hint full-width">Укажите серийный номер только если для экземпляра выбран режим ручного ввода.</p>
 
         <label>
           ПНР

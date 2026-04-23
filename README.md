@@ -1,58 +1,150 @@
 # InfoCollect
 
-InfoCollect is a self-hosted MVP for collecting information from Android and iOS devices through a mobile web app and processing data on a local server.
+Локальная система учета и проверки оборудования в здании с мобильным полевым контуром, операторской панелью, ролевым доступом, офлайн-синхронизацией и экспортом данных.
 
-## Why this architecture
+## Что уже есть в проекте
 
-- No paid mobile backend services are required.
-- Android and iOS access the same interface through a browser or installed PWA.
-- Data is stored locally in SQLite, which is enough for a pilot or small team.
-- The backend can later be extended with authentication, file uploads, analytics, and ERP/CRM integration.
+- backend на `FastAPI`
+- база данных `PostgreSQL`
+- миграции `Alembic`
+- импорт плановой Excel-ведомости
+- версионирование плана и сравнение версий
+- операторская панель на `React + Vite + Ant Design`
+- полевой мобильный PWA-контур
+- роли `field_worker`, `operator`, `admin`
+- управление сотрудниками, назначениями и группами
+- базовый экспорт табличных данных
+- аудит изменений и событийная модель
 
-## Stack
+## Текущий стек
 
-- Backend: FastAPI
-- Storage: SQLite
-- Frontend: HTML, CSS, vanilla JavaScript, PWA manifest
+### Backend
+- `FastAPI`
+- `SQLAlchemy`
+- `PostgreSQL`
+- `Alembic`
+- `openpyxl`
 
-## Quick start
+### Frontend
+- `React`
+- `Vite`
+- `Ant Design`
+- `react-dropzone`
 
-1. Create and activate a virtual environment:
+### Mobile
+- `PWA`
+- `IndexedDB`
 
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   ```
+## Основные маршруты
 
-2. Install dependencies:
+### Пользовательские интерфейсы
+- `/` — стартовая страница, сейчас ведет на новый экран входа
+- `/operator-next` — текущая React-операторка
+- `/operator-template` — оригинальный шаблон без адаптации
+- `/operator` — старая операторская HTML-версия, сохранена как переходный контур
 
-   ```powershell
-   pip install -r requirements.txt
-   ```
+### API
+- `/api/auth/login`
+- `/api/rooms/*`
+- `/api/items/*`
+- `/api/plans/*`
+- `/api/users/*`
+- `/api/field/*`
+- `/api/sync/*`
+- `/api/health`
 
-3. Run the server:
+## Структура проекта
 
-   ```powershell
-   uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-   ```
+- `app/` — backend-код
+- `alembic/` — миграции
+- `frontend/` — новая операторская панель на React
+- `templates/` — серверные HTML-шаблоны
+- `static/` — статика и старый клиентский контур
+- `docs/` — документация по проекту
+- `design/` — все материалы по дизайну и обратной связи
+- `scripts/` — служебные скрипты
+- `tests/` — backend-тесты
 
-4. Open the service:
+Подробная карта структуры лежит здесь:
+- [docs/project_structure.md](/C:/Users/localadmin/Documents/InfoCollect/docs/project_structure.md)
 
-   - On the server: `http://127.0.0.1:8000`
-   - On mobile devices in the same Wi-Fi network: `http://SERVER_IP:8000`
+## Быстрый запуск
 
-## Available endpoints
+### 1. Python-зависимости
 
-- `GET /` - mobile UI
-- `GET /api/health` - healthcheck
-- `POST /api/submissions` - create a submission
-- `GET /api/submissions` - list recent submissions
-- `GET /api/submissions/export` - export all submissions to CSV
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
 
-## Suggested next steps
+### 2. Dev-зависимости для тестов
 
-1. Add authentication for operators and administrators.
-2. Add file and photo uploads from mobile devices.
-3. Add validation rules per form type.
-4. Add background processing for reports and integrations.
-5. Replace SQLite with PostgreSQL if concurrent load grows.
+```powershell
+pip install -r requirements-dev.txt
+```
+
+### 3. Frontend-зависимости
+
+```powershell
+cd frontend
+npm install
+cd ..
+```
+
+### 4. Запуск backend
+
+```powershell
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+### 5. Сборка frontend
+
+```powershell
+cd frontend
+npm run build
+cd ..
+```
+
+## Тесты
+
+### Backend
+
+```powershell
+pytest
+```
+
+### Frontend utility tests
+
+```powershell
+cd frontend
+npm test
+cd ..
+```
+
+Отдельная памятка:
+- [docs/testing.md](/C:/Users/localadmin/Documents/InfoCollect/docs/testing.md)
+
+## Документация
+
+- [docs/project_structure.md](/C:/Users/localadmin/Documents/InfoCollect/docs/project_structure.md)
+- [docs/testing.md](/C:/Users/localadmin/Documents/InfoCollect/docs/testing.md)
+- [docs/frontend_react_vite_migration.md](/C:/Users/localadmin/Documents/InfoCollect/docs/frontend_react_vite_migration.md)
+- [data_model_design.md](/C:/Users/localadmin/Documents/InfoCollect/data_model_design.md)
+- [designer_brief.md](/C:/Users/localadmin/Documents/InfoCollect/designer_brief.md)
+
+## Дизайн
+
+Все материалы по визуалу складываются в папку:
+- [design](/C:/Users/localadmin/Documents/InfoCollect/design)
+
+Там уже лежат:
+- исходный PDF от дизайнера
+- замечания по `V1`
+
+## Что сейчас стоит делать дальше
+
+1. Продолжать дробить крупные модули frontend и backend на более узкие слои.
+2. Расширять тестовое покрытие перед дальнейшей логикой и редизайном.
+3. Довести документацию до состояния “разработчик зашел и сразу понял, как все устроено”.
+4. После согласования дизайна переносить новые экраны в React-панель без накопления технического долга.
