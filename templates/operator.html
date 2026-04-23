@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1f4d3a">
+  <title>InfoCollect Operator</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="app-shell operator-shell">
+    <section class="hero-panel operator-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Operator Desk</p>
+        <h1>Операторская панель контроля и назначения задач</h1>
+        <p class="hero-text">
+          Оператор ведет сотрудников, выдает им помещения, контролирует ход обхода,
+          управляет группами и просматривает таблицу в виде будущего экспорта.
+        </p>
+      </div>
+      <div class="hero-status">
+        <div class="status-card">
+          <span class="status-title">Активная версия плана</span>
+          <strong id="operatorPlanLabel">—</strong>
+        </div>
+        <div class="status-card">
+          <span class="status-title">Последнее обновление</span>
+          <strong id="operatorRefreshLabel">—</strong>
+        </div>
+        <button id="operatorRefreshButton" type="button">Обновить панель</button>
+      </div>
+    </section>
+
+    <nav class="tab-bar">
+      <button class="tab-button active" data-tab-target="controlTab" type="button">Контроль</button>
+      <button class="tab-button" data-tab-target="usersTab" type="button">Сотрудники</button>
+      <button class="tab-button" data-tab-target="assignmentsTab" type="button">Назначения</button>
+      <button class="tab-button" data-tab-target="groupsTab" type="button">Группы</button>
+      <button class="tab-button" data-tab-target="exportTab" type="button">Экспортная таблица</button>
+    </nav>
+
+    <section id="controlTab" class="tab-panel active">
+      <section class="operator-summary-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Сводка по помещениям</h2>
+          </div>
+          <div class="summary-grid compact-grid">
+            <div class="summary-card">
+              <span class="summary-label">Всего</span>
+              <strong id="roomsTotalLabel">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Не проверено</span>
+              <strong id="roomsUncheckedLabel">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Отсутствует</span>
+              <strong id="roomsMissingLabel">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Конфликт</span>
+              <strong id="roomsConflictLabel">0</strong>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Сводка по экземплярам</h2>
+          </div>
+          <div class="summary-grid compact-grid">
+            <div class="summary-card">
+              <span class="summary-label">Всего</span>
+              <strong id="itemsTotalLabel">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Не проверено</span>
+              <strong id="itemsUncheckedLabel">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Без серийного номера</span>
+              <strong id="itemsNoSerialLabel">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">ПНР требует внимания</span>
+              <strong id="itemsPnrLabel">0</strong>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="workspace-grid operator-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Рабочие помещения</h2>
+          </div>
+          <div class="detail-toolbar three-columns">
+            <select id="controlFloorFilter">
+              <option value="">Все этажи</option>
+            </select>
+            <select id="controlDepartmentFilter">
+              <option value="">Все отделения</option>
+            </select>
+            <select id="controlRoomFilter">
+              <option value="">Все помещения</option>
+            </select>
+          </div>
+          <div class="detail-toolbar">
+            <select id="roomWorklistSelect">
+              <option value="">Все статусы</option>
+              <option value="unchecked">Не проверенные</option>
+              <option value="missing">С отсутствием</option>
+              <option value="conflict">С конфликтами</option>
+              <option value="no_serial">Без серийных номеров</option>
+              <option value="pnr_attention">ПНР требует внимания</option>
+            </select>
+          </div>
+          <div id="operatorRoomsList" class="rooms-list empty-state">Загрузка…</div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Проблемные экземпляры</h2>
+            <select id="itemWorklistSelect">
+              <option value="unchecked">Не проверенные</option>
+              <option value="missing">Отсутствующие</option>
+              <option value="conflict">Конфликтные</option>
+              <option value="no_serial">Без серийного номера</option>
+              <option value="pnr_attention">ПНР требует внимания</option>
+            </select>
+          </div>
+          <div id="operatorItemsList" class="room-items-list empty-state">Загрузка…</div>
+        </article>
+      </section>
+    </section>
+
+    <section id="usersTab" class="tab-panel hidden">
+      <section class="workspace-grid operator-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Новый сотрудник</h2>
+            <button id="createUserButton" type="button">Создать</button>
+          </div>
+          <form id="createUserForm" class="stack-form">
+            <label>Логин<input id="newUserLogin" name="login" type="text" required></label>
+            <label>Пароль<input id="newUserPassword" name="password" type="text" required></label>
+            <label>Фамилия<input id="newUserLastName" name="last_name" type="text" required></label>
+            <label>Имя<input id="newUserFirstName" name="first_name" type="text" required></label>
+            <label>Отчество<input id="newUserMiddleName" name="middle_name" type="text"></label>
+            <label>Телефон<input id="newUserPhone" name="phone" type="text"></label>
+            <label>Email<input id="newUserEmail" name="email" type="text"></label>
+            <p id="createUserStatus" class="inline-status" aria-live="polite"></p>
+          </form>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Список сотрудников</h2>
+          </div>
+          <div id="usersList" class="rooms-list empty-state">Загрузка…</div>
+        </article>
+      </section>
+    </section>
+
+    <section id="assignmentsTab" class="tab-panel hidden">
+      <section class="workspace-grid operator-grid assignments-grid">
+        <article class="panel assignments-users-panel">
+          <div class="panel-header">
+            <h2>Сотрудники</h2>
+          </div>
+          <p class="muted-note assignments-panel-note">Сводка по сотрудникам</p>
+          <div id="usersSummary" class="summary-grid compact-grid"></div>
+          <div id="assignmentUsersList" class="rooms-list empty-state">Загрузка…</div>
+        </article>
+
+        <article class="panel assignments-details-panel">
+          <div class="panel-header">
+            <h2>Назначения</h2>
+            <button id="saveAssignmentsButton" type="button">Сохранить назначения</button>
+          </div>
+          <p id="selectedUserLabel" class="muted-note">Выберите сотрудника слева.</p>
+          <div id="assignmentProgressSummary" class="summary-grid compact-grid hidden"></div>
+          <div id="assignmentTree" class="assignment-tree empty-state">Данные назначения не загружены.</div>
+          <p id="assignmentStatus" class="inline-status" aria-live="polite"></p>
+        </article>
+      </section>
+    </section>
+
+    <section id="groupsTab" class="tab-panel hidden">
+      <section class="workspace-grid operator-grid">
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Группы сотрудников</h2>
+            <button id="createGroupButton" type="button" class="secondary-button">Создать группу</button>
+          </div>
+          <p class="muted-note">В сводке группы показываются только помещения, общие для всех участников группы.</p>
+          <div id="groupsList" class="rooms-list empty-state">Группы еще не созданы.</div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-header">
+            <h2>Сводка группы</h2>
+          </div>
+          <div id="groupSummary" class="detail-empty">Выберите группу, чтобы увидеть короткую сводку.</div>
+        </article>
+      </section>
+    </section>
+
+    <section id="exportTab" class="tab-panel hidden">
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Таблица в экспортном виде</h2>
+          <button id="reloadExportButton" type="button">Обновить таблицу</button>
+        </div>
+        <div class="detail-toolbar export-filters">
+          <select id="exportFloorFilter">
+            <option value="">Все этажи</option>
+          </select>
+          <select id="exportDepartmentFilter">
+            <option value="">Все отделения</option>
+          </select>
+          <select id="exportRoomFilter">
+            <option value="">Все помещения</option>
+          </select>
+          <input id="exportFilterEquipment" type="search" placeholder="Оборудование">
+          <input id="exportFilterSerial" type="search" placeholder="Серийный номер">
+          <select id="exportFilterPresence">
+            <option value="">Все статусы</option>
+            <option value="not_checked">Не проверено</option>
+            <option value="found">Найдено</option>
+            <option value="missing">Отсутствует</option>
+            <option value="conflict">Конфликт</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Этаж</th>
+                <th>Отделение</th>
+                <th>Помещение</th>
+                <th>Позиция</th>
+                <th>Оборудование</th>
+                <th>Экземпляр</th>
+                <th>Наличие</th>
+                <th>Серийный номер</th>
+                <th>ПНР</th>
+                <th>Коммуникации</th>
+                <th>Дата проверки</th>
+                <th>Сотрудник</th>
+              </tr>
+            </thead>
+            <tbody id="exportTableBody">
+              <tr><td colspan="12">Загрузка…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="editUserDialog" class="item-dialog">
+    <form id="editUserForm" method="dialog" class="item-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow" id="editUserLabel">Сотрудник</p>
+          <h3 id="editUserTitle">Редактирование сотрудника</h3>
+        </div>
+        <button type="button" id="closeEditUserButton" class="ghost-button">Закрыть</button>
+      </div>
+      <div class="dialog-grid">
+        <label>Логин<input id="editUserLogin" name="login" type="text"></label>
+        <label>Новый пароль<input id="editUserPassword" name="password" type="text" placeholder="Оставьте пустым, если не меняется"></label>
+        <label>Фамилия<input id="editUserLastName" name="last_name" type="text"></label>
+        <label>Имя<input id="editUserFirstName" name="first_name" type="text"></label>
+        <label>Отчество<input id="editUserMiddleName" name="middle_name" type="text"></label>
+        <label>Телефон<input id="editUserPhone" name="phone" type="text"></label>
+        <label class="full-width">Email<input id="editUserEmail" name="email" type="text"></label>
+      </div>
+      <div class="dialog-actions button-row">
+        <button id="saveUserButton" type="button">Сохранить изменения</button>
+        <button id="deleteUserButton" type="button" class="ghost-button">Удалить сотрудника</button>
+      </div>
+      <p id="editUserStatus" class="inline-status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="repeatCheckDialog" class="item-dialog">
+    <form method="dialog" class="item-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Повторная проверка</p>
+          <h3>Помещения уже были завершены</h3>
+        </div>
+      </div>
+      <p class="muted-note">Для этих помещений будет доступна только повторная проверка.</p>
+      <div id="repeatCheckRoomsList" class="dialog-list"></div>
+      <div class="dialog-actions button-row">
+        <button id="repeatCheckContinueButton" type="button">Продолжить</button>
+        <button id="repeatCheckCancelButton" type="button" class="ghost-button">Отмена</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="assignmentOverlapDialog" class="item-dialog">
+    <form method="dialog" class="item-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">Пересечение назначений</p>
+          <h3>Найдены совпадающие помещения</h3>
+        </div>
+      </div>
+      <p class="muted-note">Можно отменить сохранение или объединить сотрудников в группу.</p>
+      <div id="assignmentOverlapList" class="dialog-list"></div>
+      <label class="full-width">Название группы<input id="assignmentOverlapTeamName" type="text" placeholder="Например, Группа этаж 2"></label>
+      <div class="dialog-actions button-row">
+        <button id="assignmentOverlapMergeButton" type="button">Объединить в группу и сохранить</button>
+        <button id="assignmentOverlapCancelButton" type="button" class="ghost-button">Отмена</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="/static/operator.js" defer></script>
+</body>
+</html>

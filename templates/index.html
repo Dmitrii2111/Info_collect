@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#1f4d3a">
+  <title>InfoCollect Field</title>
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero-panel">
+      <div class="hero-copy">
+        <p class="eyebrow">InfoCollect Field PWA</p>
+        <h1>Полевой учет оборудования по назначенным помещениям</h1>
+        <p class="hero-text">
+          Сотрудник входит под своим логином, получает только назначенные помещения и работает даже при нестабильной связи.
+        </p>
+      </div>
+      <div class="hero-status">
+        <div class="status-pill">
+          <span class="status-dot" id="networkDot"></span>
+          <span id="networkLabel">Проверка сети…</span>
+        </div>
+        <div class="status-card">
+          <span class="status-title">Активная версия</span>
+          <strong id="planVersionLabel">—</strong>
+        </div>
+        <div class="status-card">
+          <span class="status-title">Очередь</span>
+          <strong id="queueCountLabel">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="panel setup-panel">
+        <div class="panel-header">
+          <h2>Вход сотрудника</h2>
+          <button id="loginButton" type="button">Войти</button>
+        </div>
+        <form id="loginForm" class="stack-form">
+          <label>
+            Логин
+            <input id="workerLogin" name="login" type="text" autocomplete="username" required>
+          </label>
+
+          <label>
+            Пароль
+            <input id="workerPassword" name="password" type="password" autocomplete="current-password" required>
+          </label>
+
+          <label>
+            Платформа
+            <select id="platformSelect" name="platform">
+              <option value="android">Android</option>
+              <option value="ios">iOS</option>
+            </select>
+          </label>
+
+          <label>
+            Версия приложения
+            <input id="appVersion" name="app_version" type="text" value="0.1.0">
+          </label>
+
+          <label>
+            ID устройства
+            <input id="deviceUid" name="device_uid" type="text" readonly>
+          </label>
+
+          <div class="button-row">
+            <button id="bootstrapButton" type="button" class="secondary-button">Обновить мои данные</button>
+            <button id="syncButton" type="button" class="secondary-button">Отправить очередь</button>
+            <button id="resetButton" type="button" class="ghost-button">Сбросить кэш</button>
+          </div>
+          <p id="setupStatus" class="inline-status" aria-live="polite"></p>
+        </form>
+
+        <div class="profile-box">
+          <div class="queue-title-row">
+            <h3>Профиль сотрудника</h3>
+            <span id="lastSyncLabel" class="muted-note">Синхронизации еще не было</span>
+          </div>
+          <div class="summary-grid compact-grid">
+            <div class="summary-card">
+              <span class="summary-label">ФИО</span>
+              <strong id="profileFullNameLabel">—</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Логин</span>
+              <strong id="profileLoginLabel">—</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel summary-panel">
+        <div class="panel-header">
+          <h2>Мое задание</h2>
+          <span id="assignmentModeLabel" class="muted-note">Назначения не загружены</span>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-card">
+            <span class="summary-label">Назначено помещений</span>
+            <strong id="assignedRoomsCountLabel">0</strong>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Пройдено помещений</span>
+            <strong id="completedRoomsCountLabel">0</strong>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">Экземпляров в работе</span>
+            <strong id="itemsCountLabel">0</strong>
+          </div>
+          <div class="summary-card">
+            <span class="summary-label">В локальной очереди</span>
+            <strong id="queuedActionsCountLabel">0</strong>
+          </div>
+        </div>
+        <div class="queue-box">
+          <div class="queue-title-row">
+            <h3>Локальная очередь</h3>
+            <span id="queueMetaLabel" class="muted-note">0 событий</span>
+          </div>
+          <div id="queueList" class="queue-list empty-state">Очередь пуста.</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="workspace-grid">
+      <article class="panel rooms-panel">
+        <div class="panel-header">
+          <h2>Мои помещения</h2>
+        </div>
+        <div class="detail-toolbar three-columns">
+          <select id="floorFilterSelect">
+            <option value="">Все этажи</option>
+          </select>
+          <select id="departmentFilterSelect">
+            <option value="">Все отделения</option>
+          </select>
+          <select id="roomFilterSelect">
+            <option value="">Все помещения</option>
+          </select>
+        </div>
+        <div id="roomsList" class="rooms-list empty-state">Сначала войдите в систему и загрузите назначения.</div>
+      </article>
+
+      <article class="panel detail-panel">
+        <div id="roomDetailEmpty" class="detail-empty">
+          <h2>Карточка помещения</h2>
+          <p>Выберите назначенное помещение, чтобы увидеть оборудование и внести отметки.</p>
+        </div>
+
+        <div id="roomDetail" class="room-detail hidden">
+          <div class="detail-header">
+            <div>
+              <p class="eyebrow" id="roomDetailMeta">Помещение</p>
+              <h2 id="roomDetailTitle">—</h2>
+            </div>
+            <button id="completeRoomButton" type="button">Завершить помещение</button>
+          </div>
+
+          <div class="detail-toolbar">
+            <input id="itemSearchInput" type="search" placeholder="Поиск по позиции, наименованию, ярлыку">
+            <select id="itemFilterSelect">
+              <option value="all">Все экземпляры</option>
+              <option value="unchecked">Только не проверенные</option>
+              <option value="missing">Только отсутствующие</option>
+              <option value="no_serial">Без серийного номера</option>
+            </select>
+          </div>
+
+          <div id="roomItemsList" class="room-items-list"></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <dialog id="itemDialog" class="item-dialog">
+    <form id="itemForm" method="dialog" class="item-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow" id="itemDialogMeta">Экземпляр</p>
+          <h3 id="itemDialogTitle">—</h3>
+        </div>
+        <button type="button" id="closeDialogButton" class="ghost-button">Закрыть</button>
+      </div>
+
+      <div class="dialog-grid">
+        <label>
+          Наличие
+          <select id="presenceStatusInput" name="presence_status"></select>
+        </label>
+
+        <label>
+          Серийный номер
+          <select id="serialStateInput" name="serial_state"></select>
+        </label>
+
+        <label>
+          Значение серийного номера
+          <input id="serialNumberInput" name="serial_number" type="text" placeholder="Введите серийный номер">
+        </label>
+
+        <label>
+          ПНР
+          <select id="pnrStatusInput" name="pnr_status"></select>
+        </label>
+
+        <label>
+          Коммуникации
+          <select id="communicationsStatusInput" name="communications_status"></select>
+        </label>
+
+        <label>
+          Состояние
+          <input id="actualConditionInput" name="actual_condition" type="text" placeholder="например: good">
+        </label>
+
+        <label>
+          Комплектность
+          <input id="completenessStatusInput" name="completeness_status" type="text" placeholder="например: complete">
+        </label>
+
+        <label class="full-width">
+          Комментарий
+          <textarea id="commentTextInput" name="comment_text" rows="4" placeholder="Замечания по экземпляру"></textarea>
+        </label>
+      </div>
+
+      <div class="dialog-actions">
+        <button id="saveItemButton" type="submit">Сохранить локально</button>
+      </div>
+      <p id="itemFormStatus" class="inline-status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

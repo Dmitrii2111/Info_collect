@@ -1,0 +1,12 @@
+{
+  "name": "InfoCollect Field",
+  "short_name": "IC Field",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eff2e7",
+  "theme_color": "#1f4d3a",
+  "lang": "ru-RU",
+  "description": "Локальное полевое PWA-приложение для проверки оборудования и офлайн-синхронизации.",
+  "icons": []
+}
