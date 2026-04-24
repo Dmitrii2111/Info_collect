@@ -109,6 +109,25 @@ export async function createWarehouseZone(payload) {
   });
 }
 
+export async function loadConflictsData({ statusCode = "", conflictType = "" } = {}) {
+  const params = new URLSearchParams();
+  if (statusCode) params.set("status_code", statusCode);
+  if (conflictType) params.set("conflict_type", conflictType);
+  const query = params.toString();
+  const [summary, items] = await Promise.all([
+    apiGet("/api/conflicts/summary"),
+    apiGet(`/api/conflicts${query ? `?${query}` : ""}`),
+  ]);
+  return { summary, items };
+}
+
+export async function updateConflict(conflictId, payload) {
+  return apiSend(`/api/conflicts/${conflictId}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function previewAssignmentOverlaps(userId, payload) {
   return apiSend(`/api/users/field-workers/${userId}/assignment-overlaps`, {
     method: "POST",

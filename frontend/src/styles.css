@@ -1780,6 +1780,61 @@ h1 {
   border-radius: 14px !important;
 }
 
+.conflicts-list {
+  display: grid;
+  gap: 16px;
+}
+
+.conflict-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel-soft);
+}
+
+.conflict-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.conflict-card-head p,
+.conflict-card-head strong {
+  margin: 0;
+}
+
+.conflict-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.conflict-meta-grid > div {
+  display: grid;
+  gap: 4px;
+}
+
+.conflict-meta-grid span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.conflict-note {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel));
+}
+
+.conflict-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .mobile-sider-drawer .ant-drawer-body {
   padding: 0;
 }
@@ -1858,5 +1913,15 @@ h1 {
 
   .export-table-wrap {
     margin-top: 12px;
+  }
+
+  .conflict-card-head,
+  .conflict-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .conflict-meta-grid {
+    grid-template-columns: 1fr;
   }
 }

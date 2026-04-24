@@ -309,6 +309,28 @@ export function getGroupSummary(group) {
   };
 }
 
+export function getConflictStatusLabel(status) {
+  if (status === "open") return "Открыт";
+  if (status === "resolved") return "Решен";
+  if (status === "dismissed") return "Отклонен";
+  return status || "—";
+}
+
+export function getConflictStatusTone(status) {
+  if (status === "resolved") return "success";
+  if (status === "dismissed") return "soft";
+  return "danger";
+}
+
+export function getConflictTypeLabel(conflictType) {
+  if (conflictType === "presence_mismatch") return "Расхождение по наличию";
+  if (conflictType === "serial_mismatch") return "Расхождение по серийному номеру";
+  if (conflictType === "pnr_mismatch") return "Расхождение по ПНР";
+  if (conflictType === "communications_mismatch") return "Расхождение по коммуникациям";
+  if (conflictType === "parallel_room_activity") return "Параллельная работа по помещению";
+  return conflictType || "—";
+}
+
 export function getExportSummary(rows) {
   const total = rows.length;
   const checked = rows.filter((row) => row.current_presence_status && row.current_presence_status !== "not_checked").length;

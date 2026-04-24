@@ -24,6 +24,7 @@ import {
   AuditOutlined,
   BgColorsOutlined,
   CheckCircleOutlined,
+  ExclamationCircleOutlined,
   ExportOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
@@ -43,6 +44,7 @@ import {
   createGroupMerge,
   deactivateFieldUser,
   loadAssignmentOptions,
+  loadConflictsData,
   loadControlData,
   loadExportRows,
   loadGroups,
@@ -53,6 +55,7 @@ import {
   previewAssignmentOverlaps,
   restoreFieldUser,
   saveUserAssignments,
+  updateConflict,
   updateFieldUser,
   uploadFieldUserAvatar,
 } from "./lib/api";
@@ -97,6 +100,7 @@ import {
 } from "./operator/utils.js";
 const ControlTab = lazy(() => import("./operator/tabs/ControlTab.jsx").then((module) => ({ default: module.ControlTab })));
 const WarehouseTab = lazy(() => import("./operator/tabs/WarehouseTab.jsx").then((module) => ({ default: module.WarehouseTab })));
+const ConflictsTab = lazy(() => import("./operator/tabs/ConflictsTab.jsx").then((module) => ({ default: module.ConflictsTab })));
 const AssignmentsTab = lazy(() => import("./operator/tabs/AssignmentsTab.jsx").then((module) => ({ default: module.AssignmentsTab })));
 const UsersTab = lazy(() => import("./operator/tabs/UsersTab.jsx").then((module) => ({ default: module.UsersTab })));
 const GroupsTab = lazy(() => import("./operator/tabs/GroupsTab.jsx").then((module) => ({ default: module.GroupsTab })));
@@ -125,11 +129,13 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [controlLoading, setControlLoading] = useState(false);
   const [warehouseLoading, setWarehouseLoading] = useState(false);
+  const [conflictsLoading, setConflictsLoading] = useState(false);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
   const [savingAssignments, setSavingAssignments] = useState(false);
   const [groupsLoading, setGroupsLoading] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [userActionLoading, setUserActionLoading] = useState(false);
+  const [conflictsActionLoading, setConflictsActionLoading] = useState(false);
 
   const [data, setData] = useState({
     roomsSummary: null,
@@ -210,6 +216,15 @@ export default function App() {
     name: "",
     room_id: "",
   });
+  const [conflictsStatus, setConflictsStatus] = useState("");
+  const [conflictsData, setConflictsData] = useState({
+    summary: null,
+    items: [],
+  });
+  const [conflictFilters, setConflictFilters] = useState({
+    statusCode: "",
+    conflictType: "",
+  });
 
   const [exportRows, setExportRows] = useState([]);
   const [exportFilters, setExportFilters] = useState({
@@ -225,6 +240,7 @@ export default function App() {
   const assignmentCacheRef = useRef(new Map());
   const roomDetailCacheRef = useRef(new Map());
   const warehouseLoadedRef = useRef(false);
+  const conflictsCacheRef = useRef(new Map());
   const groupsLoadedRef = useRef(false);
   const exportLoadedRef = useRef(false);
   const screens = Grid.useBreakpoint();
@@ -241,6 +257,7 @@ export default function App() {
         icon:
           tab.id === "control" ? <AuditOutlined /> :
           tab.id === "warehouse" ? <ShopOutlined /> :
+          tab.id === "conflicts" ? <ExclamationCircleOutlined /> :
           tab.id === "assignments" ? <ApartmentOutlined /> :
           tab.id === "users" ? <TeamOutlined /> :
           tab.id === "groups" ? <UsergroupAddOutlined /> :
@@ -509,6 +526,35 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
     async function run() {
+      if (!auth || activeTab !== "conflicts") return;
+      const key = JSON.stringify(conflictFilters);
+      const cached = conflictsCacheRef.current.get(key);
+      if (cached) {
+        setConflictsData(cached);
+      }
+      setConflictsLoading(!cached);
+      setConflictsStatus("");
+      try {
+        const payload = await loadConflictsData(conflictFilters);
+        if (!cancelled) {
+          conflictsCacheRef.current.set(key, payload);
+          setConflictsData(payload);
+        }
+      } catch (error) {
+        if (!cancelled) setConflictsStatus(error.message || "Не удалось загрузить конфликты.");
+      } finally {
+        if (!cancelled) setConflictsLoading(false);
+      }
+    }
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [auth, activeTab, conflictFilters]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
       if (!auth || activeTab !== "export") return;
       if (exportLoadedRef.current && exportRows.length) return;
       setExportLoading(true);
@@ -667,6 +713,13 @@ export default function App() {
     setWarehouseData(payload);
   }
 
+  async function reloadConflictsData(nextFilters = conflictFilters) {
+    const key = JSON.stringify(nextFilters);
+    const payload = await loadConflictsData(nextFilters);
+    conflictsCacheRef.current.set(key, payload);
+    setConflictsData(payload);
+  }
+
   function updateGroupForm(key, value) {
     setGroupForm((current) => ({ ...current, [key]: value }));
   }
@@ -701,6 +754,10 @@ export default function App() {
     setWarehouseForm((current) => ({ ...current, [key]: value }));
   }
 
+  function updateConflictFilter(key, value) {
+    setConflictFilters((current) => ({ ...current, [key]: value }));
+  }
+
   async function handleCreateWarehouseZone() {
     if (!warehouseForm.code.trim() || !warehouseForm.name.trim()) {
       setWarehouseStatus("Для зоны нужны код и название.");
@@ -725,6 +782,42 @@ export default function App() {
       setWarehouseStatus(error.message || "Не удалось создать складскую зону.");
     } finally {
       setWarehouseActionLoading(false);
+    }
+  }
+
+  async function handleResolveConflict(conflictId) {
+    setConflictsActionLoading(true);
+    setConflictsStatus("");
+    try {
+      await updateConflict(conflictId, {
+        status_code: "resolved",
+        resolution_note: "Решено оператором.",
+      });
+      conflictsCacheRef.current.clear();
+      await reloadConflictsData();
+      setConflictsStatus("Конфликт отмечен как решенный.");
+    } catch (error) {
+      setConflictsStatus(error.message || "Не удалось обновить конфликт.");
+    } finally {
+      setConflictsActionLoading(false);
+    }
+  }
+
+  async function handleDismissConflict(conflictId) {
+    setConflictsActionLoading(true);
+    setConflictsStatus("");
+    try {
+      await updateConflict(conflictId, {
+        status_code: "dismissed",
+        resolution_note: "Конфликт отклонен оператором.",
+      });
+      conflictsCacheRef.current.clear();
+      await reloadConflictsData();
+      setConflictsStatus("Конфликт отклонен.");
+    } catch (error) {
+      setConflictsStatus(error.message || "Не удалось обновить конфликт.");
+    } finally {
+      setConflictsActionLoading(false);
     }
   }
 
@@ -1181,6 +1274,34 @@ export default function App() {
             warehouseForm={warehouseForm}
             onUpdateWarehouseForm={updateWarehouseForm}
             onCreateZone={handleCreateWarehouseZone}
+          />
+        </Suspense>
+      );
+    }
+    if (activeTab === "conflicts") {
+      return (
+        <Suspense fallback={<TabFallback />}>
+          <ConflictsTab
+            conflictsLoading={conflictsLoading}
+            conflictsActionLoading={conflictsActionLoading}
+            conflictsStatus={conflictsStatus}
+            conflictsData={conflictsData}
+            conflictFilters={conflictFilters}
+            onUpdateConflictFilter={updateConflictFilter}
+            onRefresh={async () => {
+              setConflictsLoading(true);
+              setConflictsStatus("");
+              try {
+                conflictsCacheRef.current.clear();
+                await reloadConflictsData();
+              } catch (error) {
+                setConflictsStatus(error.message || "Не удалось обновить конфликты.");
+              } finally {
+                setConflictsLoading(false);
+              }
+            }}
+            onResolve={handleResolveConflict}
+            onDismiss={handleDismissConflict}
           />
         </Suspense>
       );
