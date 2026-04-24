@@ -102,6 +102,20 @@ export async function loadWarehouseData() {
   };
 }
 
+export async function loadAuditData({ actorScope = "", eventType = "", aggregateType = "", limit = 100 } = {}) {
+  const params = new URLSearchParams();
+  if (actorScope) params.set("actor_scope", actorScope);
+  if (eventType) params.set("event_type", eventType);
+  if (aggregateType) params.set("aggregate_type", aggregateType);
+  if (limit) params.set("limit", String(limit));
+  const query = params.toString();
+  const [summary, items] = await Promise.all([
+    apiGet("/api/audit/summary"),
+    apiGet(`/api/audit/events${query ? `?${query}` : ""}`),
+  ]);
+  return { summary, items };
+}
+
 export async function createWarehouseZone(payload) {
   return apiSend("/api/stock/zones", {
     method: "POST",

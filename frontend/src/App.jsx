@@ -26,6 +26,7 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   ExportOutlined,
+  FileSearchOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -43,6 +44,7 @@ import {
   createFieldUser,
   createGroupMerge,
   deactivateFieldUser,
+  loadAuditData,
   loadAssignmentOptions,
   loadConflictsData,
   loadControlData,
@@ -99,6 +101,7 @@ import {
   validateUserForm,
 } from "./operator/utils.js";
 const ControlTab = lazy(() => import("./operator/tabs/ControlTab.jsx").then((module) => ({ default: module.ControlTab })));
+const AuditTab = lazy(() => import("./operator/tabs/AuditTab.jsx").then((module) => ({ default: module.AuditTab })));
 const WarehouseTab = lazy(() => import("./operator/tabs/WarehouseTab.jsx").then((module) => ({ default: module.WarehouseTab })));
 const ConflictsTab = lazy(() => import("./operator/tabs/ConflictsTab.jsx").then((module) => ({ default: module.ConflictsTab })));
 const AssignmentsTab = lazy(() => import("./operator/tabs/AssignmentsTab.jsx").then((module) => ({ default: module.AssignmentsTab })));
@@ -128,6 +131,7 @@ export default function App() {
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(true);
   const [controlLoading, setControlLoading] = useState(false);
+  const [auditLoading, setAuditLoading] = useState(false);
   const [warehouseLoading, setWarehouseLoading] = useState(false);
   const [conflictsLoading, setConflictsLoading] = useState(false);
   const [assignmentsLoading, setAssignmentsLoading] = useState(false);
@@ -216,6 +220,16 @@ export default function App() {
     name: "",
     room_id: "",
   });
+  const [auditStatus, setAuditStatus] = useState("");
+  const [auditData, setAuditData] = useState({
+    summary: null,
+    items: [],
+  });
+  const [auditFilters, setAuditFilters] = useState({
+    actorScope: "",
+    eventType: "",
+    aggregateType: "",
+  });
   const [conflictsStatus, setConflictsStatus] = useState("");
   const [conflictsData, setConflictsData] = useState({
     summary: null,
@@ -239,6 +253,7 @@ export default function App() {
   const controlCacheRef = useRef(new Map());
   const assignmentCacheRef = useRef(new Map());
   const roomDetailCacheRef = useRef(new Map());
+  const auditCacheRef = useRef(new Map());
   const warehouseLoadedRef = useRef(false);
   const conflictsCacheRef = useRef(new Map());
   const groupsLoadedRef = useRef(false);
@@ -256,6 +271,7 @@ export default function App() {
         label: tab.label,
         icon:
           tab.id === "control" ? <AuditOutlined /> :
+          tab.id === "audit" ? <FileSearchOutlined /> :
           tab.id === "warehouse" ? <ShopOutlined /> :
           tab.id === "conflicts" ? <ExclamationCircleOutlined /> :
           tab.id === "assignments" ? <ApartmentOutlined /> :
@@ -403,6 +419,35 @@ export default function App() {
       cancelled = true;
     };
   }, [auth, activeTab, controlFilters.roomWorklist, controlFilters.itemWorklist]);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function run() {
+      if (!auth || activeTab !== "audit") return;
+      const key = JSON.stringify(auditFilters);
+      const cached = auditCacheRef.current.get(key);
+      if (cached) {
+        setAuditData(cached);
+      }
+      setAuditLoading(!cached);
+      setAuditStatus("");
+      try {
+        const payload = await loadAuditData(auditFilters);
+        if (!cancelled) {
+          auditCacheRef.current.set(key, payload);
+          setAuditData(payload);
+        }
+      } catch (error) {
+        if (!cancelled) setAuditStatus(error.message || "Не удалось загрузить журнал.");
+      } finally {
+        if (!cancelled) setAuditLoading(false);
+      }
+    }
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [auth, activeTab, auditFilters]);
 
   useEffect(() => {
     let cancelled = false;
@@ -700,6 +745,13 @@ export default function App() {
     });
   }
 
+  async function reloadAuditData(nextFilters = auditFilters) {
+    const key = JSON.stringify(nextFilters);
+    const payload = await loadAuditData(nextFilters);
+    auditCacheRef.current.set(key, payload);
+    setAuditData(payload);
+  }
+
   async function reloadGroupsData() {
     const payload = await loadGroups();
     groupsLoadedRef.current = true;
@@ -752,6 +804,10 @@ export default function App() {
 
   function updateWarehouseForm(key, value) {
     setWarehouseForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateAuditFilter(key, value) {
+    setAuditFilters((current) => ({ ...current, [key]: value }));
   }
 
   function updateConflictFilter(key, value) {
@@ -1225,6 +1281,31 @@ export default function App() {
             departments={departments}
             roomOptions={roomOptions}
             onUpdateControlFilter={updateControlFilter}
+          />
+        </Suspense>
+      );
+    }
+    if (activeTab === "audit") {
+      return (
+        <Suspense fallback={<TabFallback />}>
+          <AuditTab
+            auditLoading={auditLoading}
+            auditStatus={auditStatus}
+            auditData={auditData}
+            auditFilters={auditFilters}
+            onUpdateAuditFilter={updateAuditFilter}
+            onRefresh={async () => {
+              setAuditLoading(true);
+              setAuditStatus("");
+              try {
+                auditCacheRef.current.clear();
+                await reloadAuditData();
+              } catch (error) {
+                setAuditStatus(error.message || "Не удалось обновить журнал.");
+              } finally {
+                setAuditLoading(false);
+              }
+            }}
           />
         </Suspense>
       );

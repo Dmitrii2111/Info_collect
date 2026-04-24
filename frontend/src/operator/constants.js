@@ -1,5 +1,6 @@
 export const TABS = [
   { id: "control", label: "Контроль" },
+  { id: "audit", label: "Журнал" },
   { id: "warehouse", label: "Склады" },
   { id: "conflicts", label: "Конфликты" },
   { id: "assignments", label: "Назначения" },

@@ -1780,6 +1780,66 @@ h1 {
   border-radius: 14px !important;
 }
 
+.audit-list {
+  display: grid;
+  gap: 16px;
+}
+
+.audit-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--panel-soft);
+}
+
+.audit-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.audit-card-head p,
+.audit-card-head strong {
+  margin: 0;
+}
+
+.audit-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.audit-meta-grid > div {
+  display: grid;
+  gap: 4px;
+}
+
+.audit-meta-grid span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.audit-payload {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--accent) 7%, var(--panel));
+}
+
+.audit-payload summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.audit-payload pre {
+  margin: 12px 0 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+}
+
 .conflicts-list {
   display: grid;
   gap: 16px;
@@ -1916,12 +1976,14 @@ h1 {
   }
 
   .conflict-card-head,
-  .conflict-actions {
+  .conflict-actions,
+  .audit-card-head {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .conflict-meta-grid {
+  .conflict-meta-grid,
+  .audit-meta-grid {
     grid-template-columns: 1fr;
   }
 }
