@@ -84,6 +84,12 @@ def create_app(*, bootstrap_builtin_users: bool = True) -> FastAPI:
     def root() -> str:
         return _redirect_html("/operator-next", "InfoCollect Login")
 
+    @app.get("/field", response_class=HTMLResponse, tags=["frontend"])
+    def field() -> str:
+        if INDEX_FILE.exists():
+            return INDEX_FILE.read_text(encoding="utf-8")
+        return "<html><body><h1>InfoCollect Field</h1><p>Field frontend is not available.</p></body></html>"
+
     @app.get("/operator", response_class=HTMLResponse, tags=["frontend"])
     def operator() -> str:
         if OPERATOR_FILE.exists():

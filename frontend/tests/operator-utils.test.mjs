@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   buildExportCsv,
   buildAuthFromUser,
+  buildUserUpdatePayload,
   formatRuPhone,
   getAssignmentUserSummary,
   getAssignmentStatusLabel,
@@ -198,4 +199,22 @@ test("buildExportCsv returns semicolon-separated csv with escaped values", () =>
   assert.match(csv, /Монитор/);
   assert.match(csv, /"3\.01 — Палата; интенсивной терапии"/);
   assert.match(csv, /Иванов И\.И\./);
+});
+
+test("buildUserUpdatePayload omits empty password during edit", () => {
+  const payload = buildUserUpdatePayload({
+    login: "worker1",
+    password: "",
+    last_name: "Иванов",
+    first_name: "Иван",
+    middle_name: "Иванович",
+    phone: "+7 (999) 123-45-67",
+    email: "worker@example.local",
+    role: "field_worker",
+  });
+
+  assert.equal(payload.login, "worker1");
+  assert.equal(payload.phone, "+79991234567");
+  assert.equal(payload.email, "worker@example.local");
+  assert.equal("password" in payload, false);
 });

@@ -271,6 +271,25 @@ export function buildEditForm(user, emptyUserForm) {
   };
 }
 
+export function buildUserUpdatePayload(form) {
+  const payload = {
+    login: String(form.login || "").trim(),
+    last_name: String(form.last_name || "").trim(),
+    first_name: String(form.first_name || "").trim(),
+    middle_name: String(form.middle_name || "").trim(),
+    phone: normalizePhone(form.phone),
+    email: String(form.email || "").trim(),
+    role: form.role || "field_worker",
+  };
+
+  const password = String(form.password || "");
+  if (password) {
+    payload.password = password;
+  }
+
+  return payload;
+}
+
 export function buildAuthFromUser(user, fallbackAuth = null) {
   if (!user) return fallbackAuth;
   return {

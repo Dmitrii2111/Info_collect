@@ -169,6 +169,18 @@ class TeamResponse(BaseModel):
     members: list[TeamMemberInfo]
 
 
+class TeamUpdateRequest(BaseModel):
+    team_name: str = Field(min_length=1, max_length=150)
+    member_user_ids: list[str] = []
+
+
+class TeamDeleteResponse(BaseModel):
+    message: str
+    team_id: str
+    conflicts_created: int = 0
+    disbanded_to_user_id: str | None = None
+
+
 class TeamMergeRequest(BaseModel):
     primary_user_id: str
     other_user_ids: list[str]

@@ -157,3 +157,76 @@ def test_get_groups_returns_group_summary(client, monkeypatch):
     payload = response.json()
     assert payload[0]["team_name"] == "Бригада А"
     assert payload[0]["members_count"] == 2
+
+
+
+def test_update_group_returns_updated_payload(client, monkeypatch):
+    monkeypatch.setattr(
+        users_routes,
+        "update_team",
+        lambda _db, **kwargs: (
+            SimpleNamespace(id="team-1", name=kwargs["team_name"]),
+            {"disbanded": False, "disbanded_to_user_id": None, "conflicts_created": 0},
+        ),
+    )
+    monkeypatch.setattr(
+        users_routes,
+        "get_group_detail",
+        lambda _db, team_id: {
+            "team_id": team_id,
+            "team_name": "??????? ?",
+            "members_count": 2,
+            "assigned_rooms_count": 4,
+            "completed_rooms_count": 1,
+            "in_progress_rooms_count": 2,
+            "not_started_rooms_count": 1,
+            "members": [
+                {"user_id": "u-1", "full_name": "?????? ???? ????????", "login": "ivanov"},
+                {"user_id": "u-2", "full_name": "?????? ???? ????????", "login": "petrov"},
+            ],
+        },
+    )
+
+    response = client.put(
+        "/api/users/groups/team-1",
+        json={"team_name": "??????? ?", "member_user_ids": ["u-1", "u-2"]},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["team_name"] == "??????? ?"
+
+
+def test_update_group_returns_disband_payload(client, monkeypatch):
+    monkeypatch.setattr(
+        users_routes,
+        "update_team",
+        lambda _db, **kwargs: (
+            None,
+            {"disbanded": True, "disbanded_to_user_id": "u-1", "conflicts_created": 0},
+        ),
+    )
+
+    response = client.put(
+        "/api/users/groups/team-1",
+        json={"team_name": "??????? ?", "member_user_ids": ["u-1"]},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["message"] == "Group disbanded"
+    assert payload["disbanded_to_user_id"] == "u-1"
+
+
+def test_delete_group_returns_conflicts_created(client, monkeypatch):
+    monkeypatch.setattr(
+        users_routes,
+        "delete_team",
+        lambda _db, **kwargs: {"team_id": kwargs["team_id"], "conflicts_created": 3},
+    )
+
+    response = client.delete("/api/users/groups/team-9")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["team_id"] == "team-9"
+    assert payload["conflicts_created"] == 3

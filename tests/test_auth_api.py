@@ -49,3 +49,11 @@ def test_auth_login_returns_400_on_invalid_credentials(client, monkeypatch):
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Неверный логин или пароль"
+
+
+
+def test_field_frontend_route_available(client):
+    response = client.get("/field")
+
+    assert response.status_code == 200
+    assert "InfoCollect Field" in response.text

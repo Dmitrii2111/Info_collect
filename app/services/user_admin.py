@@ -7,8 +7,8 @@ from uuid import uuid4
 from sqlalchemy import distinct, func, select
 from sqlalchemy.orm import Session
 
-from app.models.inventory import ItemCheck
-from app.models.enums import UserRole
+from app.models.inventory import Conflict, ItemCheck
+from app.models.enums import ConflictStatus, ConflictType, UserRole
 from app.models.org import Department, Floor, Room, Team, User, UserAssignment, UserTeamMembership
 from app.models.sync import DomainEvent
 from app.services.field_actions import get_or_create_device
@@ -130,7 +130,7 @@ def create_team(session: Session, *, team_name: str, member_user_ids: list[str])
     team = Team(name=team_name.strip(), is_active=True)
     session.add(team)
     session.flush()
-    _replace_team_memberships(session, team_id=str(team.id), member_user_ids=normalized_member_ids)
+    _set_team_memberships(session, team_id=str(team.id), member_user_ids=normalized_member_ids)
     session.flush()
     return team
 
@@ -148,16 +148,63 @@ def merge_users_into_team(
 
     existing_team = get_active_team_for_user(session, user_id=primary_user_id)
     if existing_team is not None:
-        _replace_team_memberships(session, team_id=str(existing_team.id), member_user_ids=member_ids)
+        _set_team_memberships(session, team_id=str(existing_team.id), member_user_ids=member_ids)
         session.flush()
         return existing_team
 
     team = Team(name=(team_name or _build_default_team_name(session, member_ids)).strip(), is_active=True)
     session.add(team)
     session.flush()
-    _replace_team_memberships(session, team_id=str(team.id), member_user_ids=member_ids)
+    _set_team_memberships(session, team_id=str(team.id), member_user_ids=member_ids)
     session.flush()
     return team
+
+
+def update_team(
+    session: Session,
+    *,
+    team_id: str,
+    team_name: str,
+    member_user_ids: list[str],
+) -> tuple[Team | None, dict]:
+    team = session.scalar(select(Team).where(Team.id == team_id, Team.is_active.is_(True)))
+    if team is None:
+        raise ValueError("Group not found")
+
+    normalized_member_ids = _normalize_member_ids(session, member_user_ids)
+    if len(normalized_member_ids) < 2:
+        result = delete_team(session, team_id=team_id, create_conflicts=False)
+        if normalized_member_ids:
+            return None, {
+                "disbanded": True,
+                "disbanded_to_user_id": normalized_member_ids[0],
+                "conflicts_created": result["conflicts_created"],
+            }
+        return None, {
+            "disbanded": True,
+            "disbanded_to_user_id": None,
+            "conflicts_created": result["conflicts_created"],
+        }
+
+    team.name = team_name.strip()
+    _set_team_memberships(session, team_id=team_id, member_user_ids=normalized_member_ids)
+    session.flush()
+    return team, {
+        "disbanded": False,
+        "disbanded_to_user_id": None,
+        "conflicts_created": 0,
+    }
+
+
+def delete_team(session: Session, *, team_id: str, create_conflicts: bool = True) -> dict:
+    team = session.scalar(select(Team).where(Team.id == team_id, Team.is_active.is_(True)))
+    if team is None:
+        raise ValueError("Group not found")
+
+    conflicts_created = _create_team_overlap_conflicts(session, team=team) if create_conflicts else 0
+    _disband_team(session, team=team)
+    session.flush()
+    return {"team_id": team_id, "conflicts_created": conflicts_created}
 
 
 def build_assignment_overlap_preview(session: Session, *, user_id: str, room_ids: list[str]) -> dict:
@@ -228,6 +275,10 @@ def create_field_user(
     existing = session.scalar(select(User).where(User.login == login))
     if existing is not None:
         raise ValueError("User with this login already exists")
+    if email:
+        existing_email = session.scalar(select(User).where(func.lower(User.email) == email.lower()))
+        if existing_email is not None:
+            raise ValueError("User with this email already exists")
 
     full_name = " ".join(part for part in [last_name, first_name, middle_name] if part)
     user = User(
@@ -305,6 +356,12 @@ def update_field_user(
         if existing is not None:
             raise ValueError("User with this login already exists")
         user.login = login
+    if email and email.lower() != (user.email or "").lower():
+        existing_email = session.scalar(
+            select(User).where(func.lower(User.email) == email.lower(), User.id != user_id)
+        )
+        if existing_email is not None:
+            raise ValueError("User with this email already exists")
 
     if password:
         user.password_hash = password
@@ -342,8 +399,11 @@ def deactivate_field_user(session: Session, *, user_id: str) -> None:
     active_memberships = session.execute(
         select(UserTeamMembership).where(UserTeamMembership.user_id == user_id, UserTeamMembership.ended_at.is_(None))
     ).scalars().all()
+    affected_team_ids = {str(membership.team_id) for membership in active_memberships}
     for membership in active_memberships:
         membership.ended_at = now
+
+    _cleanup_small_teams(session, team_ids=affected_team_ids, create_conflicts=False)
 
     session.flush()
 
@@ -668,11 +728,26 @@ def _build_default_team_name(session: Session, member_user_ids: list[str]) -> st
     return f"Группа {' / '.join(names)}"
 
 
-def _replace_team_memberships(session: Session, *, team_id: str, member_user_ids: list[str]) -> None:
+def _set_team_memberships(session: Session, *, team_id: str, member_user_ids: list[str]) -> None:
     now = datetime.now(timezone.utc)
-    current_memberships = session.execute(
-        select(UserTeamMembership).where(UserTeamMembership.user_id.in_(member_user_ids), UserTeamMembership.ended_at.is_(None))
+    current_team_memberships = session.execute(
+        select(UserTeamMembership).where(
+            UserTeamMembership.team_id == team_id,
+            UserTeamMembership.ended_at.is_(None),
+        )
     ).scalars().all()
+    for membership in current_team_memberships:
+        membership.ended_at = now
+
+    if member_user_ids:
+        current_memberships = session.execute(
+            select(UserTeamMembership).where(
+                UserTeamMembership.user_id.in_(member_user_ids),
+                UserTeamMembership.ended_at.is_(None),
+            )
+        ).scalars().all()
+    else:
+        current_memberships = []
     for membership in current_memberships:
         membership.ended_at = now
 
@@ -684,6 +759,37 @@ def _replace_team_memberships(session: Session, *, team_id: str, member_user_ids
                 started_at=now,
             )
         )
+
+
+def _disband_team(session: Session, *, team: Team) -> None:
+    now = datetime.now(timezone.utc)
+    team.is_active = False
+    memberships = session.execute(
+        select(UserTeamMembership).where(
+            UserTeamMembership.team_id == team.id,
+            UserTeamMembership.ended_at.is_(None),
+        )
+    ).scalars().all()
+    for membership in memberships:
+        membership.ended_at = now
+
+
+def _cleanup_small_teams(session: Session, *, team_ids: set[str] | None = None, create_conflicts: bool = False) -> None:
+    stmt = select(Team).where(Team.is_active.is_(True))
+    if team_ids:
+        stmt = stmt.where(Team.id.in_(team_ids))
+    teams = session.execute(stmt).scalars().all()
+    for team in teams:
+        active_member_count = session.scalar(
+            select(func.count(UserTeamMembership.id)).where(
+                UserTeamMembership.team_id == team.id,
+                UserTeamMembership.ended_at.is_(None),
+            )
+        ) or 0
+        if active_member_count < 2:
+            if create_conflicts:
+                _create_team_overlap_conflicts(session, team=team)
+            _disband_team(session, team=team)
 
 
 def _build_team_summary(session: Session, *, team: Team) -> dict:
@@ -750,6 +856,78 @@ def _build_team_summary(session: Session, *, team: Team) -> dict:
         "not_started_rooms_count": not_started_count,
         "members": members,
     }
+
+
+def _create_team_overlap_conflicts(session: Session, *, team: Team) -> int:
+    memberships = session.execute(
+        select(UserTeamMembership.user_id).where(
+            UserTeamMembership.team_id == team.id,
+            UserTeamMembership.ended_at.is_(None),
+        )
+    ).scalars().all()
+    member_ids = [str(member_id) for member_id in memberships]
+    if len(member_ids) < 2:
+        return 0
+
+    rows = session.execute(
+        select(UserAssignment.room_id, func.count(distinct(UserAssignment.user_id)))
+        .where(
+            UserAssignment.user_id.in_(member_ids),
+            UserAssignment.ended_at.is_(None),
+            UserAssignment.room_id.is_not(None),
+        )
+        .group_by(UserAssignment.room_id)
+        .having(func.count(distinct(UserAssignment.user_id)) > 1)
+    ).all()
+    overlap_room_ids = [str(room_id) for room_id, _ in rows if room_id]
+    if not overlap_room_ids:
+        return 0
+
+    created_count = 0
+    for room_id in overlap_room_ids:
+        existing = session.scalar(
+            select(Conflict.id).where(
+                Conflict.room_id == room_id,
+                Conflict.conflict_type == ConflictType.PARALLEL_ROOM_ACTIVITY,
+                Conflict.status_code == ConflictStatus.OPEN,
+            )
+        )
+        if existing is not None:
+            continue
+
+        event = DomainEvent(
+            event_uid=f"team-disband-{team.id}-{room_id}-{uuid4().hex}",
+            event_type="team.disbanded",
+            aggregate_type="team",
+            aggregate_id=team.id,
+            user_id=None,
+            device_id=None,
+            sync_batch_id=None,
+            occurred_at_device=None,
+            payload_json={
+                "team_id": str(team.id),
+                "team_name": team.name,
+                "room_id": room_id,
+                "member_user_ids": member_ids,
+            },
+            metadata_json={"source": "group_management"},
+        )
+        session.add(event)
+        session.flush()
+
+        session.add(
+            Conflict(
+                conflict_type=ConflictType.PARALLEL_ROOM_ACTIVITY,
+                room_id=room_id,
+                equipment_instance_id=None,
+                first_event_id=event.id,
+                second_event_id=event.id,
+                status_code=ConflictStatus.OPEN,
+            )
+        )
+        created_count += 1
+
+    return created_count
 
 
 def replace_user_assignments(

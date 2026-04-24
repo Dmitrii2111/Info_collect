@@ -12,9 +12,11 @@ from app.schemas.users import (
     FieldUserResponse,
     FieldUserUpdateRequest,
     TeamCreateRequest,
+    TeamDeleteResponse,
     TeamMergeRequest,
     TeamResponse,
     TeamSummary,
+    TeamUpdateRequest,
     UserAssignmentOptionsResponse,
     UserAssignmentsUpdateRequest,
     UserAssignmentsUpdateResponse,
@@ -34,6 +36,8 @@ from app.services.user_admin import (
     replace_user_assignments,
     save_field_user_avatar,
     update_field_user,
+    update_team,
+    delete_team,
 )
 
 
@@ -238,6 +242,46 @@ def create_group(payload: TeamCreateRequest, db: Session = Depends(get_db)) -> T
         db.rollback()
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return TeamResponse(team_id=str(team.id), team_name=team.name, members=summary["members"])
+
+
+@router.put("/groups/{team_id}", response_model=TeamDeleteResponse | TeamResponse)
+def update_group(team_id: str, payload: TeamUpdateRequest, db: Session = Depends(get_db)) -> TeamDeleteResponse | TeamResponse:
+    try:
+        team, meta = update_team(
+            db,
+            team_id=team_id,
+            team_name=payload.team_name,
+            member_user_ids=payload.member_user_ids,
+        )
+        db.commit()
+        if meta["disbanded"]:
+            return TeamDeleteResponse(
+                message="Group disbanded",
+                team_id=team_id,
+                conflicts_created=meta["conflicts_created"],
+                disbanded_to_user_id=meta["disbanded_to_user_id"],
+            )
+        summary = get_group_detail(db, team_id=team_id)
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return TeamResponse(team_id=str(team.id), team_name=team.name, members=summary["members"])
+
+
+@router.delete("/groups/{team_id}", response_model=TeamDeleteResponse)
+def remove_group(team_id: str, db: Session = Depends(get_db)) -> TeamDeleteResponse:
+    try:
+        result = delete_team(db, team_id=team_id, create_conflicts=True)
+        db.commit()
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return TeamDeleteResponse(
+        message="Group deleted",
+        team_id=team_id,
+        conflicts_created=result["conflicts_created"],
+        disbanded_to_user_id=None,
+    )
 
 
 @router.post("/groups/merge", response_model=TeamResponse)

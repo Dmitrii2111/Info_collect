@@ -44,6 +44,7 @@ import {
   createGroup,
   createFieldUser,
   createGroupMerge,
+  deleteGroup,
   deactivateFieldUser,
   loadAuditData,
   loadAssignmentOptions,
@@ -60,6 +61,7 @@ import {
   saveUserAssignments,
   updateConflict,
   updateFieldUser,
+  updateGroup,
   uploadFieldUserAvatar,
 } from "./lib/api";
 import {
@@ -82,6 +84,7 @@ import {
   buildAuthFromUser,
   bumpAvatarUrl,
   buildEditForm,
+  buildUserUpdatePayload,
   buildSelectionMap,
   formatDate,
   getAssignmentUserSummary,
@@ -210,6 +213,10 @@ export default function App() {
   const [groupsStatus, setGroupsStatus] = useState("");
   const [groupsActionLoading, setGroupsActionLoading] = useState(false);
   const [groupForm, setGroupForm] = useState({
+    team_name: "",
+    member_user_ids: [],
+  });
+  const [groupEditForm, setGroupEditForm] = useState({
     team_name: "",
     member_user_ids: [],
   });
@@ -638,7 +645,7 @@ export default function App() {
   const roomOptions = getControlRoomOptions(controlData.rooms, controlFilters.floorCode, controlFilters.departmentName);
   const selectedAssignmentUser = data.users.find((user) => user.user_id === selectedUserId) || null;
   const assignmentUsers = useMemo(() => {
-    const activeUsers = data.users.filter((user) => user.is_active);
+    const activeUsers = data.users.filter((user) => user.is_active && user.role === "field_worker");
     if (auth?.role === "field_worker") {
       return activeUsers.filter((user) => user.user_id === auth.user_id);
     }
@@ -652,6 +659,18 @@ export default function App() {
   const groupSummary = getGroupSummary(selectedGroup);
   const groupCandidates = data.users.filter((user) => user.is_active && user.role === "field_worker");
   const currentUser = data.users.find((user) => user.user_id === auth?.user_id) || null;
+
+  useEffect(() => {
+    if (!selectedGroup) {
+      setGroupEditForm({ team_name: "", member_user_ids: [] });
+      return;
+    }
+    setGroupEditForm({
+      team_name: selectedGroup.team_name || "",
+      member_user_ids: selectedGroup.members.map((member) => member.user_id),
+    });
+  }, [selectedGroup]);
+
   const configTheme = useMemo(
     () => ({
       algorithm: themeMode === "dark" ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
@@ -796,7 +815,7 @@ export default function App() {
     const payload = await loadGroups();
     groupsLoadedRef.current = true;
     setGroupsData(payload);
-    setSelectedGroupId((current) => current || payload[0]?.team_id || null);
+    setSelectedGroupId((current) => (payload.some((group) => group.team_id === current) ? current : payload[0]?.team_id || null));
   }
 
   async function reloadWarehouseData() {
@@ -814,6 +833,10 @@ export default function App() {
 
   function updateGroupForm(key, value) {
     setGroupForm((current) => ({ ...current, [key]: value }));
+  }
+
+  function updateGroupEditForm(key, value) {
+    setGroupEditForm((current) => ({ ...current, [key]: value }));
   }
 
   async function handleCreateGroup() {
@@ -922,10 +945,23 @@ export default function App() {
     setAuthError("");
     try {
       const payload = await loginOperator(authForm);
+      if (payload.role === "field_worker") {
+        window.sessionStorage.setItem(
+          "infocollect-field-redirect-session",
+          JSON.stringify({
+            login: authForm.login,
+            password: authForm.password,
+            platform: "android",
+            app_version: "0.1.0",
+          }),
+        );
+        window.location.href = "/field";
+        return;
+      }
       setAuth(payload);
       storeAuth(payload);
-      setSelectedUserId(payload.role === "field_worker" ? payload.user_id : null);
-      const nextTab = payload.role === "field_worker" ? "assignments" : activeTab;
+      setSelectedUserId(null);
+      const nextTab = activeTab;
       setActiveTab(nextTab);
       storeActiveTab(nextTab);
     } catch (error) {
@@ -977,10 +1013,7 @@ export default function App() {
     setUserActionLoading(true);
     setProfileStatus("");
     try {
-      const updatedUser = await updateFieldUser(auth.user_id, {
-        ...profileForm,
-        phone: normalizePhone(profileForm.phone),
-      });
+      const updatedUser = await updateFieldUser(auth.user_id, buildUserUpdatePayload(profileForm));
       const finalUser = profileAvatarFile ? await uploadFieldUserAvatar(auth.user_id, profileAvatarFile) : updatedUser;
       await reloadBootstrapUsers();
       const nextAuth = buildAuthFromUser(
@@ -999,6 +1032,50 @@ export default function App() {
       showActionError("Не удалось обновить профиль", message);
     } finally {
       setUserActionLoading(false);
+    }
+  }
+
+  async function handleUpdateGroup() {
+    if (!selectedGroup) return;
+    if (!groupEditForm.team_name.trim() || groupEditForm.member_user_ids.length < 1) {
+      setGroupsStatus("Для обновления группы укажите название и хотя бы одного участника.");
+      return;
+    }
+    setGroupsActionLoading(true);
+    setGroupsStatus("");
+    try {
+      const payload = await updateGroup(selectedGroup.team_id, {
+        team_name: groupEditForm.team_name.trim(),
+        member_user_ids: groupEditForm.member_user_ids,
+      });
+      await reloadGroupsData();
+      if (payload.message === "Group disbanded") {
+        setSelectedGroupId(null);
+        setGroupsStatus("Группа расформирована: остался один участник, незавершенные задачи остаются у него лично.");
+      } else {
+        setSelectedGroupId(payload.team_id);
+        setGroupsStatus(`Группа «${payload.team_name}» обновлена.`);
+      }
+    } catch (error) {
+      setGroupsStatus(error.message || "Не удалось обновить группу.");
+    } finally {
+      setGroupsActionLoading(false);
+    }
+  }
+
+  async function handleDeleteGroup() {
+    if (!selectedGroup) return;
+    setGroupsActionLoading(true);
+    setGroupsStatus("");
+    try {
+      const payload = await deleteGroup(selectedGroup.team_id);
+      await reloadGroupsData();
+      setSelectedGroupId(null);
+      setGroupsStatus(`Группа удалена. В конфликты передано записей: ${payload.conflicts_created || 0}.`);
+    } catch (error) {
+      setGroupsStatus(error.message || "Не удалось удалить группу.");
+    } finally {
+      setGroupsActionLoading(false);
     }
   }
 
@@ -1239,10 +1316,7 @@ export default function App() {
     setUserActionLoading(true);
     setEditStatus("");
     try {
-      const updatedUser = await updateFieldUser(editUser.user_id, {
-        ...editForm,
-        phone: normalizePhone(editForm.phone),
-      });
+      const updatedUser = await updateFieldUser(editUser.user_id, buildUserUpdatePayload(editForm));
       const finalUser = editAvatarFile ? await uploadFieldUserAvatar(editUser.user_id, editAvatarFile) : updatedUser;
       await reloadBootstrapUsers();
       if (auth?.user_id === editUser.user_id) {
@@ -1495,8 +1569,12 @@ export default function App() {
             groupSummary={groupSummary}
             groupCandidates={groupCandidates}
             groupForm={groupForm}
+            groupEditForm={groupEditForm}
             onUpdateGroupForm={updateGroupForm}
+            onUpdateGroupEditForm={updateGroupEditForm}
             onCreateGroup={handleCreateGroup}
+            onUpdateGroup={handleUpdateGroup}
+            onDeleteGroup={handleDeleteGroup}
             onSelectGroup={setSelectedGroupId}
           />
         </Suspense>

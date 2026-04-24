@@ -1,4 +1,5 @@
 import { Button, Input, Select } from "antd";
+
 import { SummaryBadge, SummaryCard, UserAvatar } from "../components.jsx";
 
 export function GroupsTab({
@@ -11,8 +12,12 @@ export function GroupsTab({
   groupSummary,
   groupCandidates,
   groupForm,
+  groupEditForm,
   onUpdateGroupForm,
+  onUpdateGroupEditForm,
   onCreateGroup,
+  onUpdateGroup,
+  onDeleteGroup,
   onSelectGroup,
 }) {
   return (
@@ -22,7 +27,8 @@ export function GroupsTab({
           <div>
             <h2>Группы сотрудников</h2>
             <p className="panel-subtitle">
-              Объединяйте операторов, которые работают по общим помещениям. Общие помещения считаются по пересечению назначений всех участников группы.
+              Объединяйте полевых сотрудников, которые работают по общим помещениям. Общий прогресс считается по
+              пересечению назначений всех участников группы.
             </p>
           </div>
         </div>
@@ -95,13 +101,45 @@ export function GroupsTab({
         <div className="panel-title-row">
           <div>
             <h2>Карточка группы</h2>
-            <p className="panel-subtitle">Краткая сводка по общей зоне работы участников группы.</p>
+            <p className="panel-subtitle">Редактируйте состав группы и контролируйте общий прогресс по пересекающимся помещениям.</p>
           </div>
         </div>
         {!selectedGroup ? (
           <div className="empty-box">Выберите группу слева.</div>
         ) : (
           <div className="groups-detail-layout">
+            <div className="groups-create-card">
+              <div className="groups-create-head">
+                <h3>Состав группы</h3>
+                <SummaryBadge>{selectedGroup.members_count} участников</SummaryBadge>
+              </div>
+              <div className="groups-form-grid">
+                <Input
+                  placeholder="Название группы"
+                  value={groupEditForm.team_name}
+                  onChange={(event) => onUpdateGroupEditForm("team_name", event.target.value)}
+                />
+                <Select
+                  mode="multiple"
+                  placeholder="Участники группы"
+                  value={groupEditForm.member_user_ids}
+                  onChange={(value) => onUpdateGroupEditForm("member_user_ids", value)}
+                  options={groupCandidates.map((user) => ({
+                    value: user.user_id,
+                    label: `${user.full_name} — ${user.phone || "без телефона"}`,
+                  }))}
+                />
+              </div>
+              <div className="groups-create-actions">
+                <Button type="primary" onClick={onUpdateGroup} loading={groupsActionLoading}>
+                  Сохранить состав
+                </Button>
+                <Button danger onClick={onDeleteGroup} loading={groupsActionLoading}>
+                  Удалить группу
+                </Button>
+              </div>
+            </div>
+
             <div className="react-summary-grid assignment-summary-grid">
               <SummaryCard label="Общие помещения" value={groupSummary.assigned} />
               <SummaryCard label="Завершено" value={groupSummary.completed} tone="success" />

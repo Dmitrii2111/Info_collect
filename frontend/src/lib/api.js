@@ -169,6 +169,19 @@ export async function createGroup(payload) {
   });
 }
 
+export async function updateGroup(teamId, payload) {
+  return apiSend(`/api/users/groups/${teamId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteGroup(teamId) {
+  return apiSend(`/api/users/groups/${teamId}`, {
+    method: "DELETE",
+  });
+}
+
 export async function createFieldUser(payload) {
   return apiSend("/api/users/field-workers", {
     method: "POST",
@@ -225,7 +238,7 @@ function extractApiErrorMessage(text, fallback) {
 
   try {
     const parsed = JSON.parse(raw);
-    const detail = typeof parsed?.detail === "string" ? parsed.detail : raw;
+    const detail = parsed?.detail ?? raw;
     return mapApiErrorDetail(detail, fallback);
   } catch {
     return mapApiErrorDetail(raw, fallback);
@@ -233,6 +246,20 @@ function extractApiErrorMessage(text, fallback) {
 }
 
 function mapApiErrorDetail(detail, fallback) {
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => mapValidationIssue(item))
+      .filter(Boolean);
+    return messages[0] || fallback;
+  }
+
+  if (detail && typeof detail === "object") {
+    if (typeof detail.detail !== "undefined") {
+      return mapApiErrorDetail(detail.detail, fallback);
+    }
+    return fallback;
+  }
+
   const normalized = String(detail || "").trim().toLowerCase();
 
   if (normalized.includes("invalid password") || normalized.includes("invalid credentials")) {
@@ -252,4 +279,67 @@ function mapApiErrorDetail(detail, fallback) {
   }
 
   return detail || fallback;
+}
+
+function mapValidationIssue(issue) {
+  const field = Array.isArray(issue?.loc) ? issue.loc.at(-1) : "";
+  const type = String(issue?.type || "").toLowerCase();
+  const message = String(issue?.msg || "").toLowerCase();
+
+  const fieldLabels = {
+    login: "логин",
+    password: "пароль",
+    last_name: "фамилию",
+    first_name: "имя",
+    middle_name: "отчество",
+    phone: "телефон",
+    email: "email",
+    role: "роль",
+  };
+
+  const fieldLabel = fieldLabels[field] || "поле";
+
+  if (type.includes("missing")) {
+    return `Не заполнено поле «${fieldLabel}».`;
+  }
+
+  if (field === "password") {
+    if (type.includes("too_short") || message.includes("at least")) {
+      return "Пароль должен содержать минимум 8 символов, верхний и нижний регистр, цифру и спецсимвол.";
+    }
+    if (type.includes("string_type")) {
+      return "Укажите корректный пароль.";
+    }
+  }
+
+  if (field === "login") {
+    if (type.includes("too_short")) return "Логин слишком короткий.";
+    if (type.includes("string_type")) return "Укажите корректный логин.";
+  }
+
+  if (field === "email") {
+    return "Укажите корректный email.";
+  }
+
+  if (field === "phone") {
+    return "Укажите телефон в формате +7XXXXXXXXXX.";
+  }
+
+  if (field === "last_name") {
+    return "Укажите корректную фамилию.";
+  }
+
+  if (field === "first_name") {
+    return "Укажите корректное имя.";
+  }
+
+  if (field === "middle_name") {
+    return "Укажите корректное отчество.";
+  }
+
+  if (field === "role") {
+    return "Выберите корректную роль.";
+  }
+
+  return issue?.msg || "";
 }

@@ -5,6 +5,7 @@ const STORE_ROOMS = "rooms";
 const STORE_ITEMS = "items";
 const STORE_QUEUE = "queue";
 const SHARED_REFRESH_MS = 30000;
+const FIELD_REDIRECT_STORAGE_KEY = "infocollect-field-redirect-session";
 
 const state = {
   session: null,
@@ -243,6 +244,9 @@ async function loginWorker() {
   }
 
   const profile = await response.json();
+  try {
+    window.sessionStorage.removeItem(FIELD_REDIRECT_STORAGE_KEY);
+  } catch {}
   state.session = {
     user_id: profile.user_id,
     login: profile.login,
@@ -844,6 +848,19 @@ async function init() {
   wireEvents();
   startSharedRefreshLoop();
   renderAll();
+  try {
+    const redirectSessionRaw = window.sessionStorage.getItem(FIELD_REDIRECT_STORAGE_KEY);
+    if (redirectSessionRaw && !state.session) {
+      const redirectSession = JSON.parse(redirectSessionRaw);
+      ui.workerLogin.value = redirectSession.login || "";
+      ui.workerPassword.value = redirectSession.password || "";
+      ui.platformSelect.value = redirectSession.platform || "android";
+      ui.appVersion.value = redirectSession.app_version || "0.1.0";
+      await loginWorker();
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
