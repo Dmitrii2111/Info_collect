@@ -71,10 +71,10 @@ export function UserAvatar({ user, previewUrl = "", size = "default" }) {
   return <Avatar size={avatarSize} icon={<UserOutlined />} shape="circle">{getInitials(user?.full_name)}</Avatar>;
 }
 
-export function AvatarDropzone({ label, previewUrl, onFileSelected, helperText = "" }) {
+export function AvatarDropzone({ label, previewUrl, onFileSelected, helperText = "", compact = false }) {
   return (
     <div className="avatar-dropzone-wrap">
-      <Text strong>{label}</Text>
+      <Text strong className="avatar-dropzone-label">{label}</Text>
       <Dragger
         multiple={false}
         maxCount={1}
@@ -84,7 +84,7 @@ export function AvatarDropzone({ label, previewUrl, onFileSelected, helperText =
           onFileSelected(file);
           return false;
         }}
-        className="avatar-dropzone"
+        className={`avatar-dropzone${compact ? " compact" : ""}`}
       >
         {previewUrl ? <img className="avatar-dropzone-preview" src={previewUrl} alt="Предпросмотр фото" /> : <Paragraph style={{ marginBottom: 0 }}>Перетащите фото или нажмите для выбора</Paragraph>}
       </Dragger>

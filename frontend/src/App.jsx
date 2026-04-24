@@ -11,6 +11,7 @@ import {
   Grid,
   Layout,
   Menu,
+  Modal as AntdModal,
   Progress,
   Row,
   Space,
@@ -737,6 +738,28 @@ export default function App() {
     return true;
   });
 
+  function showValidationDialog(title, errors) {
+    const messages = Object.values(errors || {}).filter(Boolean);
+    if (!messages.length) return;
+    AntdModal.error({
+      title,
+      content: (
+        <ul style={{ margin: 0, paddingLeft: 18 }}>
+          {messages.map((message, index) => (
+            <li key={`${title}-${index}`}>{message}</li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+
+  function showActionError(title, message) {
+    AntdModal.error({
+      title,
+      content: message,
+    });
+  }
+
   async function reloadBootstrapUsers() {
     const nextData = await loadOperatorBootstrap();
     setData((current) => ({
@@ -948,7 +971,7 @@ export default function App() {
     const nextErrors = validateUserForm(profileForm, { requirePassword: false });
     setProfileErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      setProfileStatus("????????? ?????? ? ???????.");
+      showValidationDialog("Проверьте данные профиля", nextErrors);
       return;
     }
     setUserActionLoading(true);
@@ -971,7 +994,9 @@ export default function App() {
       storeAuth(nextAuth);
       closeProfile();
     } catch (error) {
-      setProfileStatus(error.message || "?? ??????? ???????? ???????.");
+      const message = error.message || "Не удалось обновить профиль.";
+      setProfileStatus(message);
+      showActionError("Не удалось обновить профиль", message);
     } finally {
       setUserActionLoading(false);
     }
@@ -1175,11 +1200,11 @@ export default function App() {
     const nextErrors = validateUserForm(createForm, { requirePassword: true });
     setCreateErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      setUsersStatus("????????? ?????? ? ?????.");
+      showValidationDialog("Проверьте форму сотрудника", nextErrors);
       return;
     }
     setUserActionLoading(true);
-    setUsersStatus("?????? ??????????...");
+    setUsersStatus("Создаю сотрудника...");
     try {
       const createdUser = await createFieldUser({
         ...createForm,
@@ -1193,9 +1218,11 @@ export default function App() {
       setCreateAvatarFile(null);
       setCreatePasswordVisible(false);
       await reloadBootstrapUsers();
-      setUsersStatus("????????? ??????.");
+      setUsersStatus("Сотрудник создан.");
     } catch (error) {
-      setUsersStatus(error.message || "?? ??????? ??????? ??????????.");
+      const message = error.message || "Не удалось создать сотрудника.";
+      setUsersStatus(message);
+      showActionError("Не удалось создать сотрудника", message);
     } finally {
       setUserActionLoading(false);
     }
@@ -1206,11 +1233,11 @@ export default function App() {
     const nextErrors = validateUserForm(editForm, { requirePassword: false });
     setEditErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      setEditStatus("????????? ?????? ? ????? ??????????????.");
+      showValidationDialog("Проверьте данные сотрудника", nextErrors);
       return;
     }
     setUserActionLoading(true);
-    setEditStatus("???????? ?????? ??????????...");
+    setEditStatus("");
     try {
       const updatedUser = await updateFieldUser(editUser.user_id, {
         ...editForm,
@@ -1229,10 +1256,12 @@ export default function App() {
         setAuth(nextAuth);
         storeAuth(nextAuth);
       }
-      setUsersStatus("?????? ?????????? ?????????.");
+      setUsersStatus("Данные сотрудника обновлены.");
       closeEditUser();
     } catch (error) {
-      setEditStatus(error.message || "?? ??????? ???????? ??????????.");
+      const message = error.message || "Не удалось обновить сотрудника.";
+      setEditStatus(message);
+      showActionError("Не удалось обновить сотрудника", message);
     } finally {
       setUserActionLoading(false);
     }
@@ -1631,7 +1660,6 @@ export default function App() {
           </>
         }
         >
-        {editStatus ? <Alert type="error" showIcon message={editStatus} style={{ marginBottom: 16 }} /> : null}
         <div className="user-edit-hero">
           <div className="user-edit-summary">
             <UserAvatar user={editUser} previewUrl={editAvatarPreview || editUser?.avatar_url || ""} size="large" />
@@ -1641,7 +1669,7 @@ export default function App() {
               <span>{editUser?.is_active ? "Активная учетная запись" : "Неактивная учетная запись"}</span>
             </div>
           </div>
-          <AvatarDropzone label="Заменить фото" previewUrl={editAvatarPreview || editUser?.avatar_url || ""} onFileSelected={setEditAvatarFile} />
+          <AvatarDropzone label="Заменить фото" previewUrl={editAvatarPreview || editUser?.avatar_url || ""} onFileSelected={setEditAvatarFile} compact />
         </div>
         <div className="form-grid-react modal-form-grid">
           <TextField label="Логин" value={editForm.login} onChange={(event) => updateEditForm("login", event.target.value)} error={editErrors.login} />
@@ -1675,10 +1703,14 @@ export default function App() {
           </>
         }
         >
-        {profileStatus ? <Alert type="error" showIcon message={profileStatus} style={{ marginBottom: 16 }} /> : null}
         <div className="modal-profile-header">
-          <UserAvatar user={auth} previewUrl={profileAvatarPreview} size="large" />
-          <AvatarDropzone label="Обновить фото" previewUrl={profileAvatarPreview || auth?.avatar_url || ""} onFileSelected={setProfileAvatarFile} />
+          <AvatarDropzone
+            label="Обновить фото"
+            previewUrl={profileAvatarPreview || auth?.avatar_url || ""}
+            onFileSelected={setProfileAvatarFile}
+            compact
+            helperText="Фото необязательно. Поддерживаются JPG, PNG и WEBP."
+          />
         </div>
         <div className="form-grid-react modal-form-grid">
           <TextField label="Логин" value={profileForm.login} onChange={(event) => setProfileForm((current) => ({ ...current, login: event.target.value }))} error={profileErrors.login} />

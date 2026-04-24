@@ -99,31 +99,40 @@ export function validateUserForm(form, { requirePassword = true } = {}) {
   const email = String(form.email || "").trim();
 
   if (!login) errors.login = "Укажите логин.";
-  else if (!LOGIN_RE.test(login)) errors.login = "Только латиница и цифры.";
+  else if (!LOGIN_RE.test(login)) errors.login = "Логин может содержать только латиницу и цифры.";
 
   if (requirePassword || password) {
     if (!password) errors.password = "Укажите пароль.";
-    else if (!PASSWORD_RE.test(password)) errors.password = "Минимум 8 символов, верхний/нижний регистр, цифра и спецсимвол.";
+    else if (!PASSWORD_RE.test(password)) {
+      errors.password = "Пароль должен содержать минимум 8 символов, верхний и нижний регистр, цифру и спецсимвол.";
+    }
   }
 
   if (!lastName) errors.last_name = "Укажите фамилию.";
-  else if (lastName.length < 2 || !CYRILLIC_NAME_RE.test(lastName)) errors.last_name = "Только кириллица, минимум 2 буквы.";
+  else if (lastName.length < 2 || !CYRILLIC_NAME_RE.test(lastName)) {
+    errors.last_name = "Фамилия должна быть на кириллице и содержать минимум 2 буквы.";
+  }
 
   if (!firstName) errors.first_name = "Укажите имя.";
-  else if (firstName.length < 2 || !CYRILLIC_NAME_RE.test(firstName)) errors.first_name = "Только кириллица, минимум 2 буквы.";
+  else if (firstName.length < 2 || !CYRILLIC_NAME_RE.test(firstName)) {
+    errors.first_name = "Имя должно быть на кириллице и содержать минимум 2 буквы.";
+  }
 
   if (!middleName) errors.middle_name = "Укажите отчество.";
-  else if (middleName.length < 2 || !CYRILLIC_NAME_RE.test(middleName)) errors.middle_name = "Только кириллица, минимум 2 буквы.";
+  else if (middleName.length < 2 || !CYRILLIC_NAME_RE.test(middleName)) {
+    errors.middle_name = "Отчество должно быть на кириллице и содержать минимум 2 буквы.";
+  }
 
   if (!phone) errors.phone = "Укажите телефон.";
-  else if (!PHONE_RE.test(phone)) errors.phone = "Телефон РФ: +7XXXXXXXXXX.";
+  else if (!PHONE_RE.test(phone)) errors.phone = "Телефон должен быть в формате +7XXXXXXXXXX.";
 
   if (!email) errors.email = "Укажите email.";
-  else if (!EMAIL_RE.test(email)) errors.email = "Некорректный email.";
+  else if (!EMAIL_RE.test(email)) errors.email = "Укажите корректный email.";
 
   if (!form.role) errors.role = "Выберите роль.";
   return errors;
 }
+
 
 export function getVisibleTabsForRole(role) {
   if (role === "admin") return TABS;

@@ -1190,6 +1190,12 @@ h1 {
   padding: 14px;
 }
 
+.avatar-dropzone.compact {
+  min-height: 96px;
+  padding: 10px;
+  border-radius: 16px;
+}
+
 .avatar-dropzone.active {
   border-color: color-mix(in srgb, var(--accent) 48%, var(--line));
   background: color-mix(in srgb, var(--accent) 10%, var(--panel));
@@ -1517,7 +1523,7 @@ h1 {
 }
 
 .modal-profile-header .avatar-dropzone {
-  min-height: 220px;
+  min-height: 96px;
 }
 
 .user-edit-hero {

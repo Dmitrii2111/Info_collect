@@ -53,13 +53,13 @@ test("validateUserForm returns errors for invalid data", () => {
     { requirePassword: true },
   );
 
-  assert.equal(errors.login, "Только латиница и цифры.");
-  assert.ok(errors.password);
-  assert.ok(errors.last_name);
-  assert.ok(errors.first_name);
-  assert.ok(errors.middle_name);
-  assert.ok(errors.phone);
-  assert.ok(errors.email);
+  assert.equal(errors.login, "Логин может содержать только латиницу и цифры.");
+  assert.equal(errors.password, "Пароль должен содержать минимум 8 символов, верхний и нижний регистр, цифру и спецсимвол.");
+  assert.equal(errors.last_name, "Фамилия должна быть на кириллице и содержать минимум 2 буквы.");
+  assert.equal(errors.first_name, "Имя должно быть на кириллице и содержать минимум 2 буквы.");
+  assert.equal(errors.middle_name, "Укажите отчество.");
+  assert.equal(errors.phone, "Телефон должен быть в формате +7XXXXXXXXXX.");
+  assert.equal(errors.email, "Укажите корректный email.");
   assert.equal(errors.role, "Выберите роль.");
 });
 
