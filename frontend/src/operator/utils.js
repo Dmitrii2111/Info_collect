@@ -29,6 +29,28 @@ export function clearStoredAuth() {
   sessionStorage.removeItem("operator-auth");
 }
 
+export function readStoredActiveTab() {
+  try {
+    return sessionStorage.getItem("operator-active-tab") || "control";
+  } catch {
+    return "control";
+  }
+}
+
+export function storeActiveTab(tabId) {
+  try {
+    sessionStorage.setItem("operator-active-tab", tabId);
+  } catch {
+    // ignore storage failures
+  }
+}
+
+export function bumpAvatarUrl(avatarUrl) {
+  if (!avatarUrl) return avatarUrl;
+  const separator = avatarUrl.includes("?") ? "&" : "?";
+  return `${avatarUrl}${separator}v=${Date.now()}`;
+}
+
 export function readStoredThemeMode() {
   try {
     return localStorage.getItem("operator-theme-mode") || "light";

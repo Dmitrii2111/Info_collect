@@ -79,6 +79,7 @@ import {
 } from "./operator/components.jsx";
 import {
   buildAuthFromUser,
+  bumpAvatarUrl,
   buildEditForm,
   buildSelectionMap,
   formatDate,
@@ -92,10 +93,12 @@ import {
   getVisibleTabsForRole,
   normalizePhone,
   clearStoredAuth,
+  readStoredActiveTab,
   readStoredAuth,
   readStoredThemeAccent,
   readStoredThemeMode,
   storeAuth,
+  storeActiveTab,
   storeThemeAccent,
   storeThemeMode,
   validateUserForm,
@@ -127,7 +130,7 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(false);
   const [loginPasswordVisible, setLoginPasswordVisible] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("control");
+  const [activeTab, setActiveTab] = useState(() => readStoredActiveTab());
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(true);
   const [controlLoading, setControlLoading] = useState(false);
@@ -192,12 +195,14 @@ export default function App() {
   const [profileOpen, setProfileOpen] = useState(false);
   const [profileForm, setProfileForm] = useState(EMPTY_USER_FORM);
   const [profileErrors, setProfileErrors] = useState({});
+  const [profileStatus, setProfileStatus] = useState("");
   const [profileAvatarFile, setProfileAvatarFile] = useState(null);
   const [profileAvatarPreview, setProfileAvatarPreview] = useState("");
   const [profilePasswordVisible, setProfilePasswordVisible] = useState(false);
   const [themeSettingsOpen, setThemeSettingsOpen] = useState(false);
   const [themeMode, setThemeMode] = useState(() => readStoredThemeMode());
   const [themeAccent, setThemeAccent] = useState(() => readStoredThemeAccent());
+  const [editStatus, setEditStatus] = useState("");
 
   const [groupsData, setGroupsData] = useState([]);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -354,6 +359,10 @@ export default function App() {
       setActiveTab(visibleTabs[0]?.id || "assignments");
     }
   }, [activeTab, visibleTabs]);
+
+  useEffect(() => {
+    storeActiveTab(activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     if (isMobile) {
@@ -736,6 +745,14 @@ export default function App() {
       errors: nextData.errors,
       planVersions: nextData.planVersions.length ? nextData.planVersions : current.planVersions,
     }));
+    if (auth?.user_id) {
+      const refreshedUser = nextData.users.find((user) => user.user_id === auth.user_id);
+      if (refreshedUser) {
+        const nextAuth = buildAuthFromUser(refreshedUser, auth);
+        setAuth(nextAuth);
+        storeAuth(nextAuth);
+      }
+    }
     startTransition(() => {
       setSelectedUserId((current) => {
         if (auth?.role === "field_worker" && auth.user_id) return auth.user_id;
@@ -885,9 +902,11 @@ export default function App() {
       setAuth(payload);
       storeAuth(payload);
       setSelectedUserId(payload.role === "field_worker" ? payload.user_id : null);
-      setActiveTab(payload.role === "field_worker" ? "assignments" : "control");
+      const nextTab = payload.role === "field_worker" ? "assignments" : activeTab;
+      setActiveTab(nextTab);
+      storeActiveTab(nextTab);
     } catch (error) {
-      setAuthError(error.message || "Не удалось выполнить вход.");
+      setAuthError(error.message || "?? ??????? ????????? ????.");
     } finally {
       setAuthLoading(false);
     }
@@ -899,12 +918,15 @@ export default function App() {
     setAuthForm(EMPTY_LOGIN_FORM);
     setAuthError("");
     setSelectedUserId(null);
+    setActiveTab("control");
+    storeActiveTab("control");
   }
 
   function openProfile() {
     const sourceUser = currentUser || auth;
     setProfileForm(buildEditForm(sourceUser, EMPTY_USER_FORM));
     setProfileErrors({});
+    setProfileStatus("");
     setProfileAvatarFile(null);
     setProfileAvatarPreview("");
     setProfilePasswordVisible(false);
@@ -915,6 +937,7 @@ export default function App() {
     setProfileOpen(false);
     setProfileForm(EMPTY_USER_FORM);
     setProfileErrors({});
+    setProfileStatus("");
     setProfileAvatarFile(null);
     setProfileAvatarPreview("");
     setProfilePasswordVisible(false);
@@ -925,10 +948,11 @@ export default function App() {
     const nextErrors = validateUserForm(profileForm, { requirePassword: false });
     setProfileErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      setUsersStatus("Исправьте ошибки в профиле.");
+      setProfileStatus("????????? ?????? ? ???????.");
       return;
     }
     setUserActionLoading(true);
+    setProfileStatus("");
     try {
       const updatedUser = await updateFieldUser(auth.user_id, {
         ...profileForm,
@@ -936,13 +960,18 @@ export default function App() {
       });
       const finalUser = profileAvatarFile ? await uploadFieldUserAvatar(auth.user_id, profileAvatarFile) : updatedUser;
       await reloadBootstrapUsers();
-      const nextAuth = buildAuthFromUser(finalUser, auth);
+      const nextAuth = buildAuthFromUser(
+        {
+          ...finalUser,
+          avatar_url: profileAvatarFile ? bumpAvatarUrl(finalUser.avatar_url) : finalUser.avatar_url,
+        },
+        auth,
+      );
       setAuth(nextAuth);
       storeAuth(nextAuth);
-      setUsersStatus("Профиль обновлен.");
       closeProfile();
     } catch (error) {
-      setUsersStatus(error.message || "Не удалось обновить профиль.");
+      setProfileStatus(error.message || "?? ??????? ???????? ???????.");
     } finally {
       setUserActionLoading(false);
     }
@@ -985,6 +1014,7 @@ export default function App() {
     setEditUser(user);
     setEditForm(buildEditForm(user, EMPTY_USER_FORM));
     setEditErrors({});
+    setEditStatus("");
     setEditAvatarFile(null);
     setEditAvatarPreview("");
     setEditPasswordVisible(false);
@@ -995,6 +1025,7 @@ export default function App() {
     setEditUser(null);
     setEditForm(EMPTY_USER_FORM);
     setEditErrors({});
+    setEditStatus("");
     setEditAvatarFile(null);
     setEditAvatarPreview("");
   }
@@ -1144,11 +1175,11 @@ export default function App() {
     const nextErrors = validateUserForm(createForm, { requirePassword: true });
     setCreateErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      setUsersStatus("Исправьте ошибки в форме.");
+      setUsersStatus("????????? ?????? ? ?????.");
       return;
     }
     setUserActionLoading(true);
-    setUsersStatus("Создаю сотрудника...");
+    setUsersStatus("?????? ??????????...");
     try {
       const createdUser = await createFieldUser({
         ...createForm,
@@ -1162,9 +1193,9 @@ export default function App() {
       setCreateAvatarFile(null);
       setCreatePasswordVisible(false);
       await reloadBootstrapUsers();
-      setUsersStatus("Сотрудник создан.");
+      setUsersStatus("????????? ??????.");
     } catch (error) {
-      setUsersStatus(error.message || "Не удалось создать сотрудника.");
+      setUsersStatus(error.message || "?? ??????? ??????? ??????????.");
     } finally {
       setUserActionLoading(false);
     }
@@ -1175,24 +1206,33 @@ export default function App() {
     const nextErrors = validateUserForm(editForm, { requirePassword: false });
     setEditErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) {
-      setUsersStatus("Исправьте ошибки в форме редактирования.");
+      setEditStatus("????????? ?????? ? ????? ??????????????.");
       return;
     }
     setUserActionLoading(true);
-    setUsersStatus("Сохраняю данные сотрудника...");
+    setEditStatus("???????? ?????? ??????????...");
     try {
-      await updateFieldUser(editUser.user_id, {
+      const updatedUser = await updateFieldUser(editUser.user_id, {
         ...editForm,
         phone: normalizePhone(editForm.phone),
       });
-      if (editAvatarFile) {
-        await uploadFieldUserAvatar(editUser.user_id, editAvatarFile);
-      }
+      const finalUser = editAvatarFile ? await uploadFieldUserAvatar(editUser.user_id, editAvatarFile) : updatedUser;
       await reloadBootstrapUsers();
-      setUsersStatus("Данные сотрудника обновлены.");
+      if (auth?.user_id === editUser.user_id) {
+        const nextAuth = buildAuthFromUser(
+          {
+            ...finalUser,
+            avatar_url: editAvatarFile ? bumpAvatarUrl(finalUser.avatar_url) : finalUser.avatar_url,
+          },
+          auth,
+        );
+        setAuth(nextAuth);
+        storeAuth(nextAuth);
+      }
+      setUsersStatus("?????? ?????????? ?????????.");
       closeEditUser();
     } catch (error) {
-      setUsersStatus(error.message || "Не удалось обновить сотрудника.");
+      setEditStatus(error.message || "?? ??????? ???????? ??????????.");
     } finally {
       setUserActionLoading(false);
     }
@@ -1590,7 +1630,8 @@ export default function App() {
             <Button onClick={closeEditUser}>Закрыть</Button>
           </>
         }
-      >
+        >
+        {editStatus ? <Alert type="error" showIcon message={editStatus} style={{ marginBottom: 16 }} /> : null}
         <div className="user-edit-hero">
           <div className="user-edit-summary">
             <UserAvatar user={editUser} previewUrl={editAvatarPreview || editUser?.avatar_url || ""} size="large" />
@@ -1633,7 +1674,8 @@ export default function App() {
             <Button onClick={closeProfile}>Закрыть</Button>
           </>
         }
-      >
+        >
+        {profileStatus ? <Alert type="error" showIcon message={profileStatus} style={{ marginBottom: 16 }} /> : null}
         <div className="modal-profile-header">
           <UserAvatar user={auth} previewUrl={profileAvatarPreview} size="large" />
           <AvatarDropzone label="Обновить фото" previewUrl={profileAvatarPreview || auth?.avatar_url || ""} onFileSelected={setProfileAvatarFile} />

@@ -6,7 +6,7 @@ export async function apiGet(path) {
   });
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `Request failed: ${path}`);
+    throw new Error(extractApiErrorMessage(text, path));
   }
   return response.json();
 }
@@ -23,7 +23,7 @@ async function apiSend(path, options = {}) {
   });
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || `Request failed: ${path}`);
+    throw new Error(extractApiErrorMessage(text, path));
   }
   if (response.status === 204) return null;
   return response.json();
@@ -214,7 +214,42 @@ export async function uploadFieldUserAvatar(userId, file) {
   });
   if (!response.ok) {
     const text = await response.text();
-    throw new Error(text || "Avatar upload failed");
+    throw new Error(extractApiErrorMessage(text, "Avatar upload failed"));
   }
   return response.json();
+}
+
+function extractApiErrorMessage(text, fallback) {
+  const raw = String(text || "").trim();
+  if (!raw) return fallback;
+
+  try {
+    const parsed = JSON.parse(raw);
+    const detail = typeof parsed?.detail === "string" ? parsed.detail : raw;
+    return mapApiErrorDetail(detail, fallback);
+  } catch {
+    return mapApiErrorDetail(raw, fallback);
+  }
+}
+
+function mapApiErrorDetail(detail, fallback) {
+  const normalized = String(detail || "").trim().toLowerCase();
+
+  if (normalized.includes("invalid password") || normalized.includes("invalid credentials")) {
+    return "Неверный логин или пароль.";
+  }
+  if (normalized.includes("user not found")) {
+    return "Пользователь не найден.";
+  }
+  if (normalized.includes("already exists") && normalized.includes("login")) {
+    return "Сотрудник с таким логином уже существует.";
+  }
+  if (normalized.includes("email") && normalized.includes("already exists")) {
+    return "Сотрудник с таким email уже существует.";
+  }
+  if (normalized.includes("phone") && normalized.includes("already exists")) {
+    return "Сотрудник с таким телефоном уже существует.";
+  }
+
+  return detail || fallback;
 }
