@@ -1,3 +1,5 @@
+import { Button } from "antd";
+
 import { ROLE_OPTIONS } from "../constants.js";
 import {
   AvatarDropzone,
@@ -7,7 +9,6 @@ import {
   TextField,
   UserDirectoryCard,
 } from "../components.jsx";
-import { validateUserForm } from "../utils.js";
 
 export function UsersTab({
   createForm,
@@ -29,9 +30,6 @@ export function UsersTab({
   onDeactivateUser,
   onRestoreUser,
 }) {
-  const createValidationErrors = validateUserForm(createForm, { requirePassword: true });
-  const createDisabled = userActionLoading || Object.keys(createValidationErrors).length > 0;
-
   return (
     <section className="react-grid users-grid-react">
       <section className="react-panel users-form-panel">
@@ -42,10 +40,11 @@ export function UsersTab({
               Создание учетной записи сотрудника с ролью, контактами и фотографией профиля.
             </p>
           </div>
-          <button type="button" onClick={onCreateUser} disabled={createDisabled}>
-            {userActionLoading ? "Создаю..." : "Создать сотрудника"}
-          </button>
+          <Button type="primary" onClick={onCreateUser} loading={userActionLoading}>
+            Создать сотрудника
+          </Button>
         </div>
+
         <div className="users-create-layout">
           <div className="users-create-main">
             <div className="form-grid-react">
@@ -66,6 +65,7 @@ export function UsersTab({
               <SelectField label="Роль" value={createForm.role} onChange={(event) => onUpdateCreateForm("role", event.target.value)} error={createErrors.role} className="field-span-2" options={ROLE_OPTIONS} />
             </div>
           </div>
+
           <aside className="users-create-side">
             <AvatarDropzone
               label="Фото сотрудника"
@@ -81,6 +81,7 @@ export function UsersTab({
             </div>
           </aside>
         </div>
+
         {usersStatus ? <p className="assignment-status-note">{usersStatus}</p> : null}
       </section>
 
@@ -94,6 +95,7 @@ export function UsersTab({
           </div>
           <span className="status-chip subtle">Актуально</span>
         </div>
+
         <div className="react-summary-grid assignment-summary-grid">
           <SummaryCard label="Всего сотрудников" value={directorySummary.total} />
           <SummaryCard label="В работе" value={directorySummary.inProgress} tone="success" />
@@ -135,3 +137,5 @@ export function UsersTab({
     </section>
   );
 }
+
+export default UsersTab;

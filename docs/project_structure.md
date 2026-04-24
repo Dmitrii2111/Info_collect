@@ -1,6 +1,6 @@
 # Project Structure
 
-Краткая карта проекта для разработчика, который впервые открывает репозиторий.
+Карта проекта для разработчика, который впервые открывает репозиторий.
 
 ## Корень проекта
 
@@ -8,7 +8,7 @@
 - `alembic/` — миграции базы данных
 - `frontend/` — новая операторская панель на React
 - `templates/` — HTML-шаблоны серверного контура
-- `static/` — статические файлы и старый клиентский слой
+- `static/` — статика и старый клиентский слой
 - `docs/` — техническая документация
 - `design/` — дизайн-материалы и обратная связь
 - `scripts/` — служебные скрипты
@@ -21,6 +21,7 @@
 ### `app/api/routes/`
 Маршруты API:
 - `auth.py`
+- `audit.py`
 - `users.py`
 - `rooms.py`
 - `items.py`
@@ -28,11 +29,11 @@
 - `field.py`
 - `sync.py`
 - `stock.py`
+- `conflicts.py`
 - `health.py`
 
 ### `app/services/`
-Сервисный слой.
-Здесь находится основная предметная логика:
+Сервисный слой. Здесь находится основная предметная логика:
 - пользователи
 - назначения
 - группы
@@ -41,6 +42,9 @@
 - действия поля
 - синхронизация
 - diff между версиями плана
+- складской контур
+- конфликты
+- аудит / журнал
 
 ### `app/models/`
 ORM-модели SQLAlchemy:
@@ -54,10 +58,10 @@ ORM-модели SQLAlchemy:
 Pydantic-схемы запросов и ответов.
 
 ### `app/db/`
-Инициализация подключения к БД и session factory.
+Подключение к БД и session factory.
 
 ### `app/server.py`
-Фабрика приложения FastAPI и frontend-маршруты.
+Фабрика FastAPI-приложения и frontend-маршруты.
 
 ### `app/main.py`
 Точка входа для `uvicorn`.
@@ -95,22 +99,33 @@ HTTP-слой frontend.
 - карточки
 - badges
 - login screen
-- drawer/modal helpers
-- assignment tree
+- modal helpers
+- directory/assignment элементы
 
 ### `frontend/src/operator/tabs/`
-Изолированные модули вкладок операторской панели:
+Изолированные вкладки операторской панели:
 - `ControlTab.jsx`
-- `UsersTab.jsx`
+- `AuditTab.jsx`
+- `WarehouseTab.jsx`
+- `ConflictsTab.jsx`
 - `AssignmentsTab.jsx`
+- `UsersTab.jsx`
 - `GroupsTab.jsx`
 - `ExportTab.jsx`
 
 ### `frontend/src/styles.css`
-Глобальные стили текущей версии React-панели.
+Глобальные стили React-панели.
 
 ### `frontend/tests/`
 Тесты frontend-утилит на встроенном `node --test`.
+
+## PWA / мобильный контур
+
+- `templates/index.html` — оболочка полевого PWA
+- `static/app.js` — логика полевого клиента
+- `static/styles.css` — стили PWA
+- `static/sw.js` — service worker
+- `static/manifest.json` — manifest PWA
 
 ## Документация
 
@@ -126,8 +141,9 @@ HTTP-слой frontend.
 - входящих материалов от дизайнера
 - PDF-концептов
 - markdown-замечаний и обратной связи
+- внутреннего UI-плана
 
-## Что сейчас считается самыми чувствительными файлами
+## Самые чувствительные файлы
 
 Если разработчик начинает работу, в первую очередь нужно понимать влияние правок в:
 
@@ -136,12 +152,14 @@ HTTP-слой frontend.
 - `app/services/plan_import.py`
 - `app/services/item_queries.py`
 - `app/services/room_queries.py`
+- `app/services/stock_queries.py`
+- `app/services/conflict_queries.py`
+- `app/services/audit_queries.py`
 - `frontend/src/App.jsx`
 - `frontend/src/styles.css`
 
-## Рекомендация по дальнейшему развитию структуры
+## Следующий шаг по упрощению структуры
 
-Следующий шаг по упрощению архитектуры:
 - дальше дробить `App.jsx`, вынося hooks и сценарные блоки
-- расширить покрытие тестами сервисов и frontend-утилит
+- расширять покрытие тестами сервисов и frontend-утилит
 - постепенно сокращать UI-зависимости в initial bundle

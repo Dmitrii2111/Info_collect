@@ -171,6 +171,79 @@ def list_items(
     return {"total": total, "items": items}
 
 
+def list_items_for_export(
+    session: Session,
+    *,
+    plan_version_id: str | None = None,
+) -> list[dict]:
+    effective_plan_version_id = get_effective_plan_version_id(session, plan_version_id)
+
+    stmt = (
+        select(
+            EquipmentInstance.id.label("equipment_instance_id"),
+            PlannedItem.id.label("planned_item_id"),
+            PlannedPosition.plan_version_id,
+            EquipmentInstance.current_room_id,
+            Room.room_code,
+            Room.room_name,
+            Floor.code.label("floor_code"),
+            Department.name.label("department_name"),
+            PlannedPosition.position_code,
+            PlannedPosition.equipment_name,
+            PlannedPosition.model_mark,
+            PlannedItem.display_label,
+            EquipmentInstance.current_presence_status,
+            EquipmentInstance.serial_state,
+            EquipmentInstance.serial_number,
+            EquipmentInstance.pnr_status,
+            EquipmentInstance.communications_status,
+            EquipmentInstance.actual_condition,
+            EquipmentInstance.completeness_status,
+            EquipmentInstance.last_check_at,
+            User.full_name.label("last_checked_by_name"),
+        )
+        .select_from(EquipmentInstance)
+        .join(PlannedItem, PlannedItem.id == EquipmentInstance.planned_item_id)
+        .join(PlannedPosition, PlannedPosition.id == PlannedItem.planned_position_id)
+        .outerjoin(Room, Room.id == EquipmentInstance.current_room_id)
+        .outerjoin(Floor, Floor.id == Room.floor_id)
+        .outerjoin(Department, Department.id == Room.department_id)
+        .outerjoin(User, User.id == EquipmentInstance.last_checked_by)
+    )
+    stmt = _apply_item_filters(stmt, effective_plan_version_id=effective_plan_version_id)
+
+    rows = session.execute(
+        stmt.order_by(Room.room_code.asc().nullsfirst(), PlannedPosition.position_code.asc(), PlannedItem.display_label.asc())
+    ).all()
+
+    return [
+        {
+            "equipment_instance_id": str(row.equipment_instance_id),
+            "planned_item_id": str(row.planned_item_id),
+            "plan_version_id": str(row.plan_version_id),
+            "room_id": str(row.current_room_id) if row.current_room_id else None,
+            "room_code": row.room_code,
+            "room_name": row.room_name,
+            "floor_code": row.floor_code,
+            "department_name": row.department_name,
+            "position_code": row.position_code,
+            "equipment_name": row.equipment_name,
+            "model_mark": row.model_mark,
+            "display_label": row.display_label,
+            "current_presence_status": row.current_presence_status.value,
+            "serial_state": row.serial_state.value,
+            "serial_number": row.serial_number,
+            "pnr_status": row.pnr_status.value,
+            "communications_status": row.communications_status.value,
+            "actual_condition": row.actual_condition,
+            "completeness_status": row.completeness_status,
+            "last_check_at": row.last_check_at,
+            "last_checked_by_name": row.last_checked_by_name,
+        }
+        for row in rows
+    ]
+
+
 def list_items_for_room_ids(
     session: Session,
     *,

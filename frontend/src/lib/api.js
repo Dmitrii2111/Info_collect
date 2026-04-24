@@ -82,8 +82,7 @@ export async function loadGroups() {
 }
 
 export async function loadExportRows() {
-  const payload = await apiGet("/api/items?limit=10000");
-  return payload.items || [];
+  return apiGet("/api/items/export");
 }
 
 export async function loadWarehouseData() {

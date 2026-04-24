@@ -278,6 +278,11 @@ h1 {
   margin-bottom: 18px;
 }
 
+.react-summary-grid + .filter-grid,
+.summary-strip + .filter-grid {
+  margin-top: 18px;
+}
+
 .status-chip {
   padding: 8px 12px;
   border-radius: 999px;
@@ -1598,7 +1603,9 @@ h1 {
 }
 
 .modal-actions button,
-.panel-title-row button {
+.modal-actions .ant-btn,
+.panel-title-row button,
+.panel-title-row .ant-btn {
   min-height: 46px;
   border-radius: 14px;
   border: 1px solid transparent;
@@ -1730,6 +1737,11 @@ h1 {
   padding: 20px 16px 12px;
 }
 
+.operator-sider-meta.collapsed {
+  justify-content: center;
+  padding: 16px 8px 12px;
+}
+
 .operator-profile-trigger {
   height: auto;
 }
@@ -1748,6 +1760,12 @@ h1 {
   width: 88px !important;
   min-width: 88px !important;
   height: 88px !important;
+}
+
+.operator-sider-meta.collapsed .ant-avatar {
+  width: 56px !important;
+  min-width: 56px !important;
+  height: 56px !important;
 }
 
 .operator-profile-trigger .ant-avatar img,
@@ -1778,6 +1796,12 @@ h1 {
 .export-filter-grid .ant-select-selector {
   min-height: 46px !important;
   border-radius: 14px !important;
+}
+
+.audit-panel .filter-grid,
+.conflicts-panel .filter-grid,
+.export-panel .filter-grid {
+  margin-top: 18px;
 }
 
 .audit-list {

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
@@ -12,7 +13,7 @@ from app.schemas.items import (
     EquipmentItemUpdateResponse,
 )
 from app.services.item_actions import update_item_by_operator
-from app.services.item_queries import get_item_detail, get_items_summary, list_items
+from app.services.item_queries import get_item_detail, get_items_summary, list_items, list_items_for_export
 from app.services.system_user import get_or_create_system_user
 
 
@@ -70,6 +71,11 @@ def items_summary(
         q=q,
     )
     return EquipmentItemSummaryResponse(**payload)
+
+
+@router.get("/export", response_class=JSONResponse)
+def items_export(plan_version_id: str | None = None, db: Session = Depends(get_db)) -> list[dict]:
+    return list_items_for_export(db, plan_version_id=plan_version_id)
 
 
 @router.get("/{planned_item_id}", response_model=EquipmentItemDetail)

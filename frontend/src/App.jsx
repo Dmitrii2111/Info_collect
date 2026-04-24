@@ -1539,7 +1539,7 @@ export default function App() {
                 breakpoint="lg"
                 style={{ background: themeMode === "dark" ? "#11151b" : "#fff", borderRight: `1px solid ${themeMode === "dark" ? "#2a313b" : "#f0f0f0"}` }}
               >
-                <div className="operator-sider-meta">
+                <div className={`operator-sider-meta${sidebarCollapsed ? " collapsed" : ""}`}>
                   <UserAvatar user={auth} size="large" />
                   {!sidebarCollapsed ? (
                     <div>
