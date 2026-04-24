@@ -192,6 +192,37 @@ async function clearLocalData() {
   }
 }
 
+async function clearWorkerSessionState({ keepDeviceUid = true } = {}) {
+  const preservedDeviceUid = keepDeviceUid ? ui.deviceUid.value || (await getMeta("deviceUid")) || generateUuid() : null;
+
+  if (keepDeviceUid) {
+    await withStore(STORE_META, "readwrite", (store) => {
+      store.delete("session");
+      store.delete("bootstrap");
+      if (preservedDeviceUid) {
+        store.put(preservedDeviceUid, "deviceUid");
+      }
+    });
+  } else {
+    await clearLocalData();
+  }
+
+  await replaceStore(STORE_ROOMS, []);
+  await replaceStore(STORE_ITEMS, []);
+  await replaceStore(STORE_QUEUE, []);
+
+  state.session = null;
+  state.bootstrap = null;
+  state.rooms = [];
+  state.items = [];
+  state.queue = [];
+  state.selectedRoomId = null;
+  state.selectedItemId = null;
+  if (preservedDeviceUid) {
+    ui.deviceUid.value = preservedDeviceUid;
+  }
+}
+
 function updateNetworkUi() {
   ui.networkDot.classList.remove("online", "offline");
   if (navigator.onLine) {
@@ -230,6 +261,12 @@ async function loginWorker() {
   if (!payload.login || !payload.password) {
     ui.setupStatus.textContent = "Введите логин и пароль.";
     return;
+  }
+
+  const switchingUser = state.session && state.session.login && state.session.login !== payload.login;
+  if (switchingUser) {
+    await clearWorkerSessionState({ keepDeviceUid: true });
+    renderAll();
   }
 
   ui.setupStatus.textContent = "Проверка учетных данных…";
@@ -780,13 +817,7 @@ function renderAll() {
 }
 
 async function resetApp() {
-  await clearLocalData();
-  state.session = null;
-  state.bootstrap = null;
-  state.rooms = [];
-  state.items = [];
-  state.queue = [];
-  state.selectedRoomId = null;
+  await clearWorkerSessionState({ keepDeviceUid: true });
   ui.workerPassword.value = "";
   ui.setupStatus.textContent = "Локальные данные очищены.";
   await hydrateState();
@@ -850,8 +881,9 @@ async function init() {
   renderAll();
   try {
     const redirectSessionRaw = window.sessionStorage.getItem(FIELD_REDIRECT_STORAGE_KEY);
-    if (redirectSessionRaw && !state.session) {
+    if (redirectSessionRaw) {
       const redirectSession = JSON.parse(redirectSessionRaw);
+      await clearWorkerSessionState({ keepDeviceUid: true });
       ui.workerLogin.value = redirectSession.login || "";
       ui.workerPassword.value = redirectSession.password || "";
       ui.platformSelect.value = redirectSession.platform || "android";
