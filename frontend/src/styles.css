@@ -330,9 +330,20 @@ h1 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
+  align-items: start;
+  grid-auto-rows: minmax(46px, auto);
 }
 
 .filter-grid select {
+  width: 100%;
+}
+
+.filter-cell {
+  min-width: 0;
+  display: flex;
+}
+
+.filter-cell > * {
   width: 100%;
 }
 
@@ -879,6 +890,7 @@ h1 {
 .export-panel {
   display: grid;
   gap: 18px;
+  min-width: 0;
 }
 
 .export-title-row {
@@ -1545,12 +1557,21 @@ h1 {
   color: var(--text);
 }
 
+.export-filter-grid {
+  row-gap: 16px;
+}
+
+.export-filter-grid .filter-cell {
+  align-self: stretch;
+}
+
 .export-table-wrap {
   margin-top: 18px;
   overflow: auto;
   border-radius: 20px;
   border: 1px solid var(--line);
   background: var(--panel);
+  min-width: 0;
 }
 
 .export-table-react {
@@ -1793,6 +1814,7 @@ h1 {
 }
 
 .export-filter-grid .ant-input,
+.export-filter-grid .ant-select,
 .export-filter-grid .ant-select-selector {
   min-height: 46px !important;
   border-radius: 14px !important;

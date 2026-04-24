@@ -1,4 +1,5 @@
 import { Button, Input, Select } from "antd";
+
 import { PRESENCE_FILTER_OPTIONS } from "../constants.js";
 import {
   buildExportCsv,
@@ -38,7 +39,11 @@ export function ExportTab({
         <div className="panel-actions">
           <Button onClick={onResetFilters}>Сбросить фильтры</Button>
           <Button onClick={onRefresh}>Обновить таблицу</Button>
-          <Button type="primary" onClick={() => onExportCsv(buildExportCsv(filteredExportRows))} disabled={!filteredExportRows.length}>
+          <Button
+            type="primary"
+            onClick={() => onExportCsv(buildExportCsv(filteredExportRows))}
+            disabled={!filteredExportRows.length}
+          >
             Выгрузить CSV
           </Button>
         </div>
@@ -64,36 +69,62 @@ export function ExportTab({
       </div>
 
       <div className="filter-grid export-filter-grid antd-filter-grid">
-        <Select
-          value={exportFilters.floorCode}
-          onChange={(value) => onUpdateExportFilter("floorCode", value)}
-          options={[{ value: "", label: "Все этажи" }, ...exportFloors.map((floorCode) => ({ value: floorCode, label: floorCode }))]}
-        />
-        <Select
-          value={exportFilters.departmentName}
-          onChange={(value) => onUpdateExportFilter("departmentName", value)}
-          options={[{ value: "", label: "Все отделения" }, ...exportDepartments.map((departmentName) => ({ value: departmentName, label: departmentName }))]}
-        />
-        <Select
-          value={exportFilters.roomId}
-          onChange={(value) => onUpdateExportFilter("roomId", value)}
-          options={[{ value: "", label: "Все помещения" }, ...exportRoomOptions]}
-        />
-        <Input
-          placeholder="Оборудование, позиция, экземпляр"
-          value={exportFilters.equipmentQuery}
-          onChange={(event) => onUpdateExportFilter("equipmentQuery", event.target.value)}
-        />
-        <Input
-          placeholder="Серийный номер"
-          value={exportFilters.serialQuery}
-          onChange={(event) => onUpdateExportFilter("serialQuery", event.target.value)}
-        />
-        <Select
-          value={exportFilters.presenceStatus}
-          onChange={(value) => onUpdateExportFilter("presenceStatus", value)}
-          options={PRESENCE_FILTER_OPTIONS}
-        />
+        <div className="filter-cell">
+          <Select
+            value={exportFilters.floorCode}
+            onChange={(value) => onUpdateExportFilter("floorCode", value)}
+            options={[
+              { value: "", label: "Все этажи" },
+              ...exportFloors.map((floorCode) => ({ value: floorCode, label: floorCode })),
+            ]}
+          />
+        </div>
+
+        <div className="filter-cell">
+          <Select
+            value={exportFilters.departmentName}
+            onChange={(value) => onUpdateExportFilter("departmentName", value)}
+            options={[
+              { value: "", label: "Все отделения" },
+              ...exportDepartments.map((departmentName) => ({
+                value: departmentName,
+                label: departmentName,
+              })),
+            ]}
+          />
+        </div>
+
+        <div className="filter-cell">
+          <Select
+            value={exportFilters.roomId}
+            onChange={(value) => onUpdateExportFilter("roomId", value)}
+            options={[{ value: "", label: "Все помещения" }, ...exportRoomOptions]}
+          />
+        </div>
+
+        <div className="filter-cell">
+          <Input
+            placeholder="Оборудование, позиция, экземпляр"
+            value={exportFilters.equipmentQuery}
+            onChange={(event) => onUpdateExportFilter("equipmentQuery", event.target.value)}
+          />
+        </div>
+
+        <div className="filter-cell">
+          <Input
+            placeholder="Серийный номер"
+            value={exportFilters.serialQuery}
+            onChange={(event) => onUpdateExportFilter("serialQuery", event.target.value)}
+          />
+        </div>
+
+        <div className="filter-cell">
+          <Select
+            value={exportFilters.presenceStatus}
+            onChange={(value) => onUpdateExportFilter("presenceStatus", value)}
+            options={PRESENCE_FILTER_OPTIONS}
+          />
+        </div>
       </div>
 
       <div className="export-meta-row">
@@ -101,8 +132,13 @@ export function ExportTab({
         <span>В текущей выборке: {filteredExportRows.length}</span>
       </div>
 
-      {exportLoading && !exportRows.length ? <div className="empty-box">Загрузка строк экспорта...</div> : null}
-      {!exportLoading && !filteredExportRows.length ? <div className="empty-box">Строк по выбранным фильтрам нет.</div> : null}
+      {exportLoading && !exportRows.length ? (
+        <div className="empty-box">Загрузка строк экспорта...</div>
+      ) : null}
+      {!exportLoading && !filteredExportRows.length ? (
+        <div className="empty-box">Строк по выбранным фильтрам нет.</div>
+      ) : null}
+
       {filteredExportRows.length ? (
         <div className={`export-table-wrap ${exportLoading ? "panel-busy" : ""}`}>
           <table className="export-table-react">
@@ -124,10 +160,15 @@ export function ExportTab({
             </thead>
             <tbody>
               {filteredExportRows.map((item) => (
-                <tr key={item.planned_item_id} className={`export-row-${getPresenceTone(item.current_presence_status)}`}>
+                <tr
+                  key={item.planned_item_id}
+                  className={`export-row-${getPresenceTone(item.current_presence_status)}`}
+                >
                   <td>{item.floor_code || "—"}</td>
                   <td>{item.department_name || "—"}</td>
-                  <td>{item.room_code || "—"} — {item.room_name || "—"}</td>
+                  <td>
+                    {item.room_code || "—"} — {item.room_name || "—"}
+                  </td>
                   <td>{item.position_code}</td>
                   <td>{item.equipment_name}</td>
                   <td>{item.display_label}</td>
