@@ -1,7 +1,15 @@
 from app.models.inventory import CommunicationHistory, Conflict, EquipmentInstance, ItemCheck, ItemStatusHistory, PnrHistory, RepeatCheck
 from app.models.org import Building, Department, Device, Floor, Room, Team, User, UserAssignment, UserTeamMembership
 from app.models.plan import EquipmentCategory, PlanChangeItem, PlanChangeSet, PlanVersion, PlannedItem, PlannedPosition
-from app.models.stock import StockBalance, StockMovement, StorageZone, WarehouseReceipt, WarehouseReceiptConfirmation, WarehouseReceiptItem
+from app.models.stock import (
+    ReceiptFollowUpTask,
+    StockBalance,
+    StockMovement,
+    StorageZone,
+    WarehouseReceipt,
+    WarehouseReceiptConfirmation,
+    WarehouseReceiptItem,
+)
 from app.models.sync import DomainEvent, ExportSession, ImportRow, ImportSession, SyncBatch
 
 __all__ = [
@@ -33,6 +41,7 @@ __all__ = [
     "StorageZone",
     "StockBalance",
     "StockMovement",
+    "ReceiptFollowUpTask",
     "ImportSession",
     "ImportRow",
     "ExportSession",

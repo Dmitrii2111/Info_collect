@@ -16,7 +16,7 @@ def test_get_field_workers_returns_serialized_users(client, monkeypatch):
                 "last_name": "Иванов",
                 "first_name": "Иван",
                 "middle_name": "Иванович",
-                "role": "field_worker",
+                "role": "operator",
                 "is_active": True,
                 "phone": "+79990001122",
                 "email": "worker@example.local",
@@ -44,7 +44,7 @@ def test_get_field_workers_returns_serialized_users(client, monkeypatch):
 def test_create_field_worker_returns_created_user(client, monkeypatch):
     def fake_create_field_user(_db, **kwargs):
         assert kwargs["login"] == "worker2"
-        assert kwargs["role"].value == "field_worker"
+        assert kwargs["role"].value == "operator"
         return SimpleNamespace(
             id="u-2",
             login="worker2",
@@ -52,7 +52,7 @@ def test_create_field_worker_returns_created_user(client, monkeypatch):
             last_name="Петров",
             first_name="Петр",
             middle_name="Петрович",
-            role=SimpleNamespace(value="field_worker"),
+            role=SimpleNamespace(value="operator"),
             phone="+79991112233",
             email="worker2@example.local",
             avatar_url=None,
@@ -70,7 +70,7 @@ def test_create_field_worker_returns_created_user(client, monkeypatch):
             "middle_name": "Петрович",
             "phone": "+79991112233",
             "email": "worker2@example.local",
-            "role": "field_worker",
+            "role": "operator",
         },
     )
 

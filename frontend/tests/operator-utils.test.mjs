@@ -26,11 +26,11 @@ test("formatRuPhone formats russian phone number", () => {
 
 test("getVisibleTabsForRole respects role access", () => {
   assert.deepEqual(
-    getVisibleTabsForRole("field_worker").map((item) => item.id),
+    getVisibleTabsForRole("operator").map((item) => item.id),
     ["assignments"],
   );
   assert.deepEqual(
-    getVisibleTabsForRole("operator").map((item) => item.id),
+    getVisibleTabsForRole("dispetcher").map((item) => item.id),
     ["control", "audit", "warehouse", "conflicts", "assignments", "groups", "export"],
   );
   assert.deepEqual(
@@ -112,12 +112,12 @@ test("buildAuthFromUser preserves fallback auth and overwrites profile fields fr
       last_name: "Иванов",
       first_name: "Иван",
       middle_name: "Иванович",
-      role: "field_worker",
+      role: "operator",
       phone: "+79990000000",
       email: "worker@example.local",
       avatar_url: "/static/uploads/u-1.png",
     },
-    { token: "session-token", role: "operator" },
+    { token: "session-token", role: "dispetcher" },
   );
 
   assert.deepEqual(auth, {
@@ -128,7 +128,7 @@ test("buildAuthFromUser preserves fallback auth and overwrites profile fields fr
     last_name: "Иванов",
     first_name: "Иван",
     middle_name: "Иванович",
-    role: "field_worker",
+    role: "operator",
     phone: "+79990000000",
     email: "worker@example.local",
     avatar_url: "/static/uploads/u-1.png",
@@ -210,7 +210,7 @@ test("buildUserUpdatePayload omits empty password during edit", () => {
     middle_name: "Иванович",
     phone: "+7 (999) 123-45-67",
     email: "worker@example.local",
-    role: "field_worker",
+    role: "operator",
   });
 
   assert.equal(payload.login, "worker1");

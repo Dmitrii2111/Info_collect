@@ -33,7 +33,7 @@ def test_audit_events_returns_rows(client, monkeypatch):
                 "aggregate_id": "agg-1",
                 "user_id": "user-1",
                 "user_name": "Иванов И.И.",
-                "user_role": "field_worker",
+                "user_role": "operator",
                 "actor_scope": "field",
                 "device_uid": "device-1",
                 "platform": "android",

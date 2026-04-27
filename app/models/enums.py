@@ -2,8 +2,8 @@ from enum import Enum
 
 
 class UserRole(str, Enum):
-    FIELD_WORKER = "field_worker"
     OPERATOR = "operator"
+    DISPATCHER = "dispetcher"
     ADMIN = "admin"
 
 
@@ -94,6 +94,10 @@ class ConflictType(str, Enum):
     PNR_MISMATCH = "pnr_mismatch"
     COMMUNICATIONS_MISMATCH = "communications_mismatch"
     PARALLEL_ROOM_ACTIVITY = "parallel_room_activity"
+    RECEIPT_SHORTAGE = "receipt_shortage"
+    RECEIPT_SURPLUS = "receipt_surplus"
+    UNPLANNED_RECEIPT = "unplanned_receipt"
+    LOCATION_MISMATCH = "location_mismatch"
 
 
 class ConflictStatus(str, Enum):
@@ -107,6 +111,47 @@ class ReceiptStatus(str, Enum):
     AWAITING_CONFIRMATION = "awaiting_confirmation"
     PARTIALLY_CONFIRMED = "partially_confirmed"
     CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+
+
+class ReceiptItemStatus(str, Enum):
+    DRAFT = "draft"
+    CONFIRMED = "confirmed"
+    SHORTAGE = "shortage"
+    SURPLUS = "surplus"
+    UNPLANNED = "unplanned"
+
+
+class PlacementStatus(str, Enum):
+    AWAITING_PLACEMENT = "awaiting_placement"
+    PLACED_TO_STOCK = "placed_to_stock"
+    PLACED_TO_ROOM = "placed_to_room"
+    PARTIALLY_PLACED = "partially_placed"
+
+
+class ConditionStatus(str, Enum):
+    GOOD = "good"
+    DAMAGED = "damaged"
+    REQUIRES_INSPECTION = "requires_inspection"
+    INCOMPLETE = "incomplete"
+    OTHER = "other"
+
+
+class StorageZoneType(str, Enum):
+    PHYSICAL = "physical"
+    SURPLUS = "surplus"
+    AWAITING_PLACEMENT = "awaiting_placement"
+    QUARANTINE = "quarantine"
+
+
+class FollowUpTaskType(str, Enum):
+    SUPPLY_SHORTAGE = "supply_shortage"
+
+
+class FollowUpTaskStatus(str, Enum):
+    OPEN = "open"
+    IN_PROGRESS = "in_progress"
+    RESOLVED = "resolved"
     CANCELLED = "cancelled"
 
 

@@ -29,7 +29,7 @@ export function AssignmentsTab({
   onToggleFloor,
   onSelectRoom,
 }) {
-  const isFieldWorker = auth?.role === "field_worker";
+  const isFieldWorker = auth?.role === "operator";
 
   return (
     <section className={`react-grid assignments-grid-react ${isFieldWorker ? "assignments-single-column" : ""}`}>

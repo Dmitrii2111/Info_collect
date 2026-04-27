@@ -20,9 +20,15 @@ class ConflictListItem(BaseModel):
     room_code: str | None = None
     room_name: str | None = None
     equipment_instance_id: str | None = None
+    planned_position_id: str | None = None
+    warehouse_receipt_id: str | None = None
+    warehouse_receipt_item_id: str | None = None
+    storage_zone_id: str | None = None
+    storage_zone_name: str | None = None
     planned_item_id: str | None = None
     display_label: str | None = None
     equipment_name: str | None = None
+    position_code: str | None = None
     first_event_type: str | None = None
     second_event_type: str | None = None
     first_user_name: str | None = None
@@ -39,4 +45,3 @@ class ConflictUpdateResponse(BaseModel):
     message: str
     conflict_id: str
     status_code: str
-

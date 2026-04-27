@@ -230,7 +230,7 @@ export function ItemCard({ item }) {
 }
 
 export function AssignmentUserCard({ user, selected, onClick }) {
-  const showWorkStatus = user.role === "field_worker";
+  const showWorkStatus = user.role === "operator";
   return (
     <Card hoverable className={`assignment-user-card ${selected ? "selected" : ""}`} onClick={onClick} bordered={selected}>
       <Space direction="vertical" size={8} style={{ width: "100%" }}>
@@ -314,7 +314,7 @@ export function RoomCompletionHistogram({ activity }) {
 }
 
 export function UserDirectoryCard({ user, onEdit, onDeactivate, onRestore }) {
-  const showWorkStatus = user.role === "field_worker" && user.is_active;
+  const showWorkStatus = user.role === "operator" && user.is_active;
 
   return (
     <Card className={`directory-card ${!user.is_active ? "inactive" : ""}`}>

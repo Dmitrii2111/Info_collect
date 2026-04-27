@@ -1,8 +1,8 @@
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TYPE user_role AS ENUM (
-    'field_worker',
     'operator',
+    'dispetcher',
     'admin'
 );
 
@@ -65,7 +65,8 @@ CREATE TYPE pnr_status AS ENUM (
 CREATE TYPE communications_status AS ENUM (
     'missing',
     'done',
-    'done_with_errors'
+    'done_with_errors',
+    'not_provided'
 );
 
 CREATE TYPE check_type AS ENUM (
@@ -91,7 +92,11 @@ CREATE TYPE conflict_type AS ENUM (
     'serial_mismatch',
     'pnr_mismatch',
     'communications_mismatch',
-    'parallel_room_activity'
+    'parallel_room_activity',
+    'receipt_shortage',
+    'receipt_surplus',
+    'unplanned_receipt',
+    'location_mismatch'
 );
 
 CREATE TYPE conflict_status AS ENUM (
@@ -105,6 +110,47 @@ CREATE TYPE receipt_status AS ENUM (
     'awaiting_confirmation',
     'partially_confirmed',
     'confirmed',
+    'cancelled'
+);
+
+CREATE TYPE receipt_item_status AS ENUM (
+    'draft',
+    'confirmed',
+    'shortage',
+    'surplus',
+    'unplanned'
+);
+
+CREATE TYPE placement_status AS ENUM (
+    'awaiting_placement',
+    'placed_to_stock',
+    'placed_to_room',
+    'partially_placed'
+);
+
+CREATE TYPE condition_status AS ENUM (
+    'good',
+    'damaged',
+    'requires_inspection',
+    'incomplete',
+    'other'
+);
+
+CREATE TYPE storage_zone_type AS ENUM (
+    'physical',
+    'surplus',
+    'awaiting_placement',
+    'quarantine'
+);
+
+CREATE TYPE follow_up_task_type AS ENUM (
+    'supply_shortage'
+);
+
+CREATE TYPE follow_up_task_status AS ENUM (
+    'open',
+    'in_progress',
+    'resolved',
     'cancelled'
 );
 
@@ -354,6 +400,7 @@ CREATE TABLE storage_zones (
     building_id UUID NOT NULL REFERENCES buildings(id),
     code TEXT NOT NULL,
     name TEXT NOT NULL,
+    zone_type storage_zone_type NOT NULL DEFAULT 'physical',
     room_id UUID REFERENCES rooms(id),
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     opened_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -506,6 +553,10 @@ CREATE TABLE conflicts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     conflict_type conflict_type NOT NULL,
     equipment_instance_id UUID REFERENCES equipment_instances(id),
+    planned_position_id UUID REFERENCES planned_positions(id),
+    warehouse_receipt_id UUID REFERENCES warehouse_receipts(id),
+    warehouse_receipt_item_id UUID REFERENCES warehouse_receipt_items(id),
+    storage_zone_id UUID REFERENCES storage_zones(id),
     room_id UUID REFERENCES rooms(id),
     first_event_id UUID NOT NULL REFERENCES domain_events(id),
     second_event_id UUID NOT NULL REFERENCES domain_events(id),
@@ -532,14 +583,18 @@ CREATE TABLE warehouse_receipts (
 CREATE TABLE warehouse_receipt_items (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     warehouse_receipt_id UUID NOT NULL REFERENCES warehouse_receipts(id),
+    position_code TEXT NOT NULL,
     planned_position_id UUID REFERENCES planned_positions(id),
     equipment_name TEXT NOT NULL,
     model_mark TEXT,
     category_id UUID REFERENCES equipment_categories(id),
     declared_quantity INT NOT NULL CHECK (declared_quantity >= 0),
     actual_quantity INT NOT NULL CHECK (actual_quantity >= 0),
-    condition_status TEXT,
+    condition_status condition_status,
     completeness_status TEXT,
+    status_code receipt_item_status NOT NULL DEFAULT 'draft',
+    placement_status placement_status NOT NULL DEFAULT 'awaiting_placement',
+    photo_refs_json JSONB NOT NULL DEFAULT '[]'::jsonb,
     comment_text TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -549,9 +604,10 @@ CREATE TABLE warehouse_receipt_confirmations (
     warehouse_receipt_item_id UUID NOT NULL REFERENCES warehouse_receipt_items(id),
     confirmed_by UUID NOT NULL REFERENCES users(id),
     confirmed_quantity INT NOT NULL CHECK (confirmed_quantity >= 0),
-    condition_status TEXT,
+    condition_status condition_status,
     completeness_status TEXT,
     comment_text TEXT,
+    photo_refs_json JSONB NOT NULL DEFAULT '[]'::jsonb,
     created_at_device TIMESTAMPTZ NOT NULL,
     received_at_server TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     device_id UUID REFERENCES devices(id)
@@ -562,13 +618,28 @@ CREATE TABLE stock_balances (
     storage_zone_id UUID NOT NULL REFERENCES storage_zones(id),
     planned_item_id UUID REFERENCES planned_items(id),
     planned_position_id UUID REFERENCES planned_positions(id),
+    warehouse_receipt_item_id UUID REFERENCES warehouse_receipt_items(id),
     quantity_on_hand INT NOT NULL CHECK (quantity_on_hand >= 0),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT chk_stock_balance_target
         CHECK (
             planned_item_id IS NOT NULL
             OR planned_position_id IS NOT NULL
+            OR warehouse_receipt_item_id IS NOT NULL
         )
+);
+
+CREATE TABLE receipt_follow_up_tasks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    warehouse_receipt_item_id UUID NOT NULL REFERENCES warehouse_receipt_items(id),
+    task_type follow_up_task_type NOT NULL,
+    required_quantity INT NOT NULL CHECK (required_quantity > 0),
+    status_code follow_up_task_status NOT NULL DEFAULT 'open',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    resolved_at TIMESTAMPTZ,
+    created_by UUID NOT NULL REFERENCES users(id),
+    resolved_by UUID REFERENCES users(id),
+    comment_text TEXT
 );
 
 CREATE TABLE stock_movements (
@@ -662,9 +733,11 @@ CREATE INDEX ix_conflicts_status_detected_at ON conflicts(status_code, detected_
 CREATE INDEX ix_warehouse_receipts_target_storage_zone_id ON warehouse_receipts(target_storage_zone_id, created_at DESC);
 CREATE INDEX ix_warehouse_receipt_items_receipt_id ON warehouse_receipt_items(warehouse_receipt_id);
 CREATE INDEX ix_stock_balances_storage_zone_id ON stock_balances(storage_zone_id);
+CREATE INDEX ix_stock_balances_receipt_item_id ON stock_balances(warehouse_receipt_item_id);
 CREATE INDEX ix_stock_movements_equipment_instance_id ON stock_movements(equipment_instance_id, received_at_server DESC);
 CREATE INDEX ix_stock_movements_from_storage_zone_id ON stock_movements(from_storage_zone_id, received_at_server DESC);
 CREATE INDEX ix_stock_movements_to_storage_zone_id ON stock_movements(to_storage_zone_id, received_at_server DESC);
+CREATE INDEX ix_receipt_follow_up_tasks_item_id ON receipt_follow_up_tasks(warehouse_receipt_item_id);
 CREATE INDEX ix_plan_change_sets_old_plan_version_id ON plan_change_sets(old_plan_version_id);
 CREATE INDEX ix_plan_change_sets_new_plan_version_id ON plan_change_sets(new_plan_version_id);
 CREATE INDEX ix_plan_change_items_change_set_id ON plan_change_items(plan_change_set_id);

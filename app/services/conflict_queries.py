@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session, aliased
 from app.models.inventory import Conflict, EquipmentInstance
 from app.models.org import Room, User
 from app.models.plan import PlannedItem, PlannedPosition
+from app.models.stock import StorageZone, WarehouseReceiptItem
 from app.models.sync import DomainEvent
 
 
@@ -42,9 +43,15 @@ def list_conflicts(db: Session, status_code: str | None = None, conflict_type: s
             Room.room_code,
             Room.room_name,
             Conflict.equipment_instance_id,
+            Conflict.planned_position_id,
+            Conflict.warehouse_receipt_id,
+            Conflict.warehouse_receipt_item_id,
+            Conflict.storage_zone_id,
+            StorageZone.name,
             EquipmentInstance.planned_item_id,
             PlannedItem.display_label,
-            PlannedPosition.equipment_name,
+            func.coalesce(PlannedPosition.equipment_name, WarehouseReceiptItem.equipment_name),
+            WarehouseReceiptItem.position_code,
             first_event.event_type,
             second_event.event_type,
             first_user.full_name,
@@ -54,7 +61,13 @@ def list_conflicts(db: Session, status_code: str | None = None, conflict_type: s
         .outerjoin(Room, Room.id == Conflict.room_id)
         .outerjoin(EquipmentInstance, EquipmentInstance.id == Conflict.equipment_instance_id)
         .outerjoin(PlannedItem, PlannedItem.id == EquipmentInstance.planned_item_id)
-        .outerjoin(PlannedPosition, PlannedPosition.id == PlannedItem.planned_position_id)
+        .outerjoin(
+            PlannedPosition,
+            (PlannedPosition.id == PlannedItem.planned_position_id)
+            | (PlannedPosition.id == Conflict.planned_position_id),
+        )
+        .outerjoin(WarehouseReceiptItem, WarehouseReceiptItem.id == Conflict.warehouse_receipt_item_id)
+        .outerjoin(StorageZone, StorageZone.id == Conflict.storage_zone_id)
         .outerjoin(first_event, first_event.id == Conflict.first_event_id)
         .outerjoin(second_event, second_event.id == Conflict.second_event_id)
         .outerjoin(first_user, first_user.id == first_event.user_id)
@@ -79,15 +92,20 @@ def list_conflicts(db: Session, status_code: str | None = None, conflict_type: s
             "room_code": row[6],
             "room_name": row[7],
             "equipment_instance_id": str(row[8]) if row[8] else None,
-            "planned_item_id": str(row[9]) if row[9] else None,
-            "display_label": row[10],
-            "equipment_name": row[11],
-            "first_event_type": row[12],
-            "second_event_type": row[13],
-            "first_user_name": row[14],
-            "second_user_name": row[15],
-            "resolution_note": row[16],
+            "planned_position_id": str(row[9]) if row[9] else None,
+            "warehouse_receipt_id": str(row[10]) if row[10] else None,
+            "warehouse_receipt_item_id": str(row[11]) if row[11] else None,
+            "storage_zone_id": str(row[12]) if row[12] else None,
+            "storage_zone_name": row[13],
+            "planned_item_id": str(row[14]) if row[14] else None,
+            "display_label": row[15],
+            "equipment_name": row[16],
+            "position_code": row[17],
+            "first_event_type": row[18],
+            "second_event_type": row[19],
+            "first_user_name": row[20],
+            "second_user_name": row[21],
+            "resolution_note": row[22],
         }
         for row in rows
     ]
-

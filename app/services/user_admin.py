@@ -224,7 +224,7 @@ def build_assignment_overlap_preview(session: Session, *, user_id: str, room_ids
             UserAssignment.ended_at.is_(None),
             UserAssignment.room_id.in_(normalized_room_ids),
             UserAssignment.user_id != user_id,
-            User.role == UserRole.FIELD_WORKER,
+            User.role == UserRole.OPERATOR,
             User.is_active.is_(True),
         )
     ).all()
@@ -419,7 +419,7 @@ def reactivate_field_user(session: Session, *, user_id: str) -> User:
 
 
 def authenticate_field_user(session: Session, *, login: str, password: str) -> User:
-    user = session.scalar(select(User).where(User.login == login, User.role == UserRole.FIELD_WORKER))
+    user = session.scalar(select(User).where(User.login == login, User.role == UserRole.OPERATOR))
     if user is None or not user.is_active:
         raise ValueError("User not found or inactive")
     if user.password_hash != password:
@@ -712,7 +712,7 @@ def _normalize_member_ids(session: Session, member_user_ids: list[str]) -> list[
         for user in session.execute(
             select(User).where(
                 User.id.in_(normalized),
-                User.role == UserRole.FIELD_WORKER,
+                User.role == UserRole.OPERATOR,
                 User.is_active.is_(True),
             )
         ).scalars()

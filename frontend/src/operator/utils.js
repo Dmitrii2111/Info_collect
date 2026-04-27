@@ -136,7 +136,7 @@ export function validateUserForm(form, { requirePassword = true } = {}) {
 
 export function getVisibleTabsForRole(role) {
   if (role === "admin") return TABS;
-  if (role === "operator") return TABS.filter((tab) => tab.id !== "users");
+  if (role === "dispetcher") return TABS.filter((tab) => tab.id !== "users");
   return TABS.filter((tab) => tab.id === "assignments");
 }
 
@@ -267,7 +267,7 @@ export function buildEditForm(user, emptyUserForm) {
     middle_name: user.middle_name || "",
     phone: user.phone || "",
     email: user.email || "",
-    role: user.role || "field_worker",
+    role: user.role || "operator",
   };
 }
 
@@ -279,7 +279,7 @@ export function buildUserUpdatePayload(form) {
     middle_name: String(form.middle_name || "").trim(),
     phone: normalizePhone(form.phone),
     email: String(form.email || "").trim(),
-    role: form.role || "field_worker",
+    role: form.role || "operator",
   };
 
   const password = String(form.password || "");

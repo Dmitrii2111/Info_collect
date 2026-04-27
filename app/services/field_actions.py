@@ -45,7 +45,7 @@ def get_or_create_field_user(session: Session, worker_login: str, worker_full_na
         first_name=first_name,
         middle_name=middle_name,
         full_name=full_name,
-        role=UserRole.FIELD_WORKER,
+        role=UserRole.OPERATOR,
         is_active=True,
     )
     session.add(user)

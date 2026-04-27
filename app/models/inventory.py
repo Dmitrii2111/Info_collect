@@ -117,6 +117,13 @@ class Conflict(Base, UUIDPrimaryKeyMixin):
 
     conflict_type: Mapped[ConflictType] = mapped_column(enum_column(ConflictType, "conflict_type"), nullable=False)
     equipment_instance_id: Mapped[str | None] = mapped_column(UUID(as_uuid=True), ForeignKey("equipment_instances.id"))
+    planned_position_id: Mapped[str | None] = mapped_column(UUID(as_uuid=True), ForeignKey("planned_positions.id"))
+    warehouse_receipt_id: Mapped[str | None] = mapped_column(UUID(as_uuid=True), ForeignKey("warehouse_receipts.id"))
+    warehouse_receipt_item_id: Mapped[str | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("warehouse_receipt_items.id"),
+    )
+    storage_zone_id: Mapped[str | None] = mapped_column(UUID(as_uuid=True), ForeignKey("storage_zones.id"))
     room_id: Mapped[str | None] = mapped_column(UUID(as_uuid=True), ForeignKey("rooms.id"))
     first_event_id: Mapped[str] = mapped_column(UUID(as_uuid=True), ForeignKey("domain_events.id"), nullable=False)
     second_event_id: Mapped[str] = mapped_column(UUID(as_uuid=True), ForeignKey("domain_events.id"), nullable=False)

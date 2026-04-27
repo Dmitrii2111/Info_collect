@@ -308,7 +308,7 @@ export default function App() {
         if (!cancelled) {
           setData(nextData);
           setSelectedUserId((current) => {
-            if (auth.role === "field_worker") return auth.user_id;
+            if (auth.role === "operator") return auth.user_id;
             return current || getFirstActiveUserId(nextData.users);
           });
         }
@@ -385,7 +385,7 @@ export default function App() {
   }, [isMobile]);
 
   useEffect(() => {
-    if (auth?.role === "field_worker" && auth.user_id && selectedUserId !== auth.user_id) {
+    if (auth?.role === "operator" && auth.user_id && selectedUserId !== auth.user_id) {
       setSelectedUserId(auth.user_id);
     }
   }, [auth, selectedUserId]);
@@ -471,7 +471,7 @@ export default function App() {
     async function run() {
       if (!auth || activeTab !== "assignments") return;
       const effectiveUserId =
-        auth.role === "field_worker"
+        auth.role === "operator"
           ? auth.user_id
           : data.users.find((user) => user.user_id === selectedUserId && user.is_active)?.user_id || getFirstActiveUserId(data.users);
       if (!effectiveUserId) return;
@@ -645,8 +645,8 @@ export default function App() {
   const roomOptions = getControlRoomOptions(controlData.rooms, controlFilters.floorCode, controlFilters.departmentName);
   const selectedAssignmentUser = data.users.find((user) => user.user_id === selectedUserId) || null;
   const assignmentUsers = useMemo(() => {
-    const activeUsers = data.users.filter((user) => user.is_active && user.role === "field_worker");
-    if (auth?.role === "field_worker") {
+    const activeUsers = data.users.filter((user) => user.is_active && user.role === "operator");
+    if (auth?.role === "operator") {
       return activeUsers.filter((user) => user.user_id === auth.user_id);
     }
     return activeUsers;
@@ -657,7 +657,7 @@ export default function App() {
   const directorySummary = getDirectorySummary(data.users);
   const selectedGroup = groupsData.find((group) => group.team_id === selectedGroupId) || null;
   const groupSummary = getGroupSummary(selectedGroup);
-  const groupCandidates = data.users.filter((user) => user.is_active && user.role === "field_worker");
+  const groupCandidates = data.users.filter((user) => user.is_active && user.role === "operator");
   const currentUser = data.users.find((user) => user.user_id === auth?.user_id) || null;
 
   useEffect(() => {
@@ -797,7 +797,7 @@ export default function App() {
     }
     startTransition(() => {
       setSelectedUserId((current) => {
-        if (auth?.role === "field_worker" && auth.user_id) return auth.user_id;
+        if (auth?.role === "operator" && auth.user_id) return auth.user_id;
         const stillValid = nextData.users.find((user) => user.user_id === current && user.is_active);
         return stillValid ? current : getFirstActiveUserId(nextData.users);
       });
@@ -945,7 +945,7 @@ export default function App() {
     setAuthError("");
     try {
       const payload = await loginOperator(authForm);
-      if (payload.role === "field_worker") {
+      if (payload.role === "operator") {
         window.sessionStorage.setItem(
           "infocollect-field-redirect-session",
           JSON.stringify({
@@ -1638,7 +1638,7 @@ export default function App() {
                 <div className="operator-brand-block">
                   <Text className="operator-brand-text" type="secondary">InfoCollect</Text>
                   <Title className="operator-page-title" level={4}>
-                    {auth.role === "field_worker" ? "Мой кабинет" : "Операторская панель"}
+                    {auth.role === "operator" ? "Мой кабинет" : "Операторская панель"}
                   </Title>
                 </div>
               </Space>

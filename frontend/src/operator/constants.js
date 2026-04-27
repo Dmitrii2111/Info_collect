@@ -36,14 +36,14 @@ export const PRESENCE_FILTER_OPTIONS = [
 ];
 
 export const ROLE_OPTIONS = [
-  { value: "field_worker", label: "Оператор" },
-  { value: "operator", label: "Диспетчер" },
+  { value: "operator", label: "Оператор" },
+  { value: "dispetcher", label: "Диспетчер" },
   { value: "admin", label: "Супервайзер" },
 ];
 
 export const ROLE_LABELS = {
-  field_worker: "Оператор",
-  operator: "Диспетчер",
+  operator: "Оператор",
+  dispetcher: "Диспетчер",
   admin: "Супервайзер",
 };
 
@@ -55,7 +55,7 @@ export const EMPTY_USER_FORM = {
   middle_name: "",
   phone: "",
   email: "",
-  role: "field_worker",
+  role: "operator",
 };
 
 export const EMPTY_LOGIN_FORM = {

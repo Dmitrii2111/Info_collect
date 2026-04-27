@@ -31,7 +31,7 @@ class FieldUserCreateRequest(BaseModel):
     middle_name: str | None = Field(default=None, max_length=120)
     phone: str | None = Field(default=None, max_length=50)
     email: str | None = Field(default=None, max_length=120)
-    role: str = Field(default="field_worker", max_length=40)
+    role: str = Field(default="operator", max_length=40)
 
 
 class FieldUserResponse(BaseModel):

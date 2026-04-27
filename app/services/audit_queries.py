@@ -11,7 +11,7 @@ from app.models.sync import DomainEvent
 def _actor_scope(login: str | None, role: UserRole | None) -> str:
     if login == "system" or role is None:
         return "system"
-    if role == UserRole.FIELD_WORKER:
+    if role == UserRole.OPERATOR:
         return "field"
     return "office"
 
@@ -81,9 +81,9 @@ def list_audit_events(
     if actor_scope == "system":
         query = query.where((User.login == "system") | (User.id.is_(None)))
     elif actor_scope == "field":
-        query = query.where(User.role == UserRole.FIELD_WORKER)
+        query = query.where(User.role == UserRole.OPERATOR)
     elif actor_scope == "office":
-        query = query.where(User.role.in_([UserRole.OPERATOR, UserRole.ADMIN]), User.login != "system")
+        query = query.where(User.role.in_([UserRole.DISPATCHER, UserRole.ADMIN]), User.login != "system")
 
     rows = session.execute(query).all()
     items: list[dict] = []
