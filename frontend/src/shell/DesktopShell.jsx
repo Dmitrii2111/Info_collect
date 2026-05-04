@@ -11,6 +11,7 @@ import {
   DESKTOP_PRIMARY_SECTIONS,
   DESKTOP_SECTION_META,
 } from "./desktopNavigation.js";
+import { DesktopScreen } from "./DesktopScreen.jsx";
 
 const PREVIEW_USER = {
   name: "Иван Иванов",
@@ -44,21 +45,6 @@ function SidebarSection({ items, activeKey, onSelect }) {
         />
       ))}
     </nav>
-  );
-}
-
-function SectionPlaceholder({ section }) {
-  return (
-    <section className="desktop-shell-placeholder" aria-label={section.title}>
-      <div className="desktop-shell-placeholder-icon">
-        <ToolOutlined aria-hidden="true" />
-      </div>
-      <h2>{section.title}</h2>
-      <p>
-        Preview-режим активен. На этом этапе проверяем визуальный каркас desktop-обвязки
-        без логина и без загрузки данных с backend.
-      </p>
-    </section>
   );
 }
 
@@ -143,7 +129,7 @@ export function DesktopShell() {
           </header>
 
           <main className="desktop-shell-content">
-            <SectionPlaceholder section={activeSection} />
+            <DesktopScreen sectionKey={activeSection.key} />
           </main>
         </div>
       </div>
