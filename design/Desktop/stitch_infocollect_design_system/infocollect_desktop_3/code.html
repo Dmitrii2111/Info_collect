@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fbf8ff;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#eeedf7",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-surface": "#1a1b22",
+                        "tertiary": "#611e00",
+                        "surface-dim": "#dad9e3",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#444653",
+                        "primary-fixed": "#dde1ff",
+                        "on-error": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "secondary-container": "#d5e3fc",
+                        "background": "#fbf8ff",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1a1b22",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-primary-fixed": "#001453",
+                        "surface-variant": "#e3e1eb",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#872d00",
+                        "on-tertiary-container": "#ffa583",
+                        "primary": "#00288e",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-bright": "#fbf8ff",
+                        "secondary": "#515f74",
+                        "outline-variant": "#c4c5d5",
+                        "surface-tint": "#3755c3",
+                        "surface-container-high": "#e8e7f1",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#a8b8ff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-container-low": "#f4f2fc",
+                        "error-container": "#ffdad6",
+                        "outline": "#757684",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-container-highest": "#e3e1eb",
+                        "surface": "#fbf8ff",
+                        "primary-container": "#1e40af",
+                        "inverse-surface": "#2f3037",
+                        "inverse-on-surface": "#f1f0fa",
+                        "inverse-primary": "#b8c4ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "stack-lg": "24px",
+                        "gutter": "12px",
+                        "unit": "8px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 bg-slate-50 dark:bg-slate-950 flex flex-col py-4 z-50">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+</div>
+<div>
+<h1 class="text-lg font-black tracking-tight text-blue-900 dark:text-blue-200 leading-none">InfoCollect</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mt-1">MVP v0.1</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-medium text-sm">Панель управления</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center gap-3 px-3 py-2 bg-blue-100/50 text-blue-800 border-r-4 border-blue-800 font-semibold rounded-l-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
+<span class="font-medium text-sm">Реестр оборудования</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">domain</span>
+<span class="font-medium text-sm">Объекты</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+<span class="font-medium text-sm">Инспекции</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">warehouse</span>
+<span class="font-medium text-sm">Склад</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+<span class="font-medium text-sm">Поступления</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">rule</span>
+<span class="font-medium text-sm">Расхождения</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">sync</span>
+<span class="font-medium text-sm">Синхронизация</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-medium text-sm">История</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">assessment</span>
+<span class="font-medium text-sm">Отчёты</span>
+</a>
+<div class="pt-6 pb-2 px-3">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Администрирование</p>
+</div>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-medium text-sm">Сотрудники</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">shield_person</span>
+<span class="font-medium text-sm">Роли и права</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg transition-transform hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined text-[20px]">settings_suggest</span>
+<span class="font-medium text-sm">Системные настройки</span>
+</a>
+</nav>
+<div class="mt-auto px-3 border-t border-slate-200 pt-4">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-200/50 rounded-lg mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-medium text-sm">Настройки</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-error hover:bg-red-50 rounded-lg" href="#">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span class="font-medium text-sm">Выход</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- TopAppBar -->
+<header class="h-16 px-6 flex justify-between items-center bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+<div class="flex flex-col">
+<h2 class="text-lg font-bold text-blue-800 leading-tight">Реестр оборудования</h2>
+<p class="text-xs text-slate-500 font-medium">Импорт, просмотр, проверка и экспорт основной таблицы оборудования</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-xl">search</span>
+<input class="w-[480px] bg-slate-100 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:bg-white transition-all" placeholder="Поиск по объекту, помещению, оборудованию, ID или позиции" type="text"/>
+</div>
+<div class="flex items-center gap-4 border-l border-slate-200 pl-6">
+<div class="flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 rounded-full border border-green-200">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-xs font-bold uppercase tracking-wider">Сервер подключён</span>
+</div>
+<button class="relative p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+</button>
+<div class="flex items-center gap-3 pl-4">
+<div class="text-right">
+<p class="text-sm font-bold text-slate-800 leading-none">Иван Иванов</p>
+<p class="text-[11px] text-slate-500 font-medium uppercase mt-1">Администратор</p>
+</div>
+<img alt="Admin" class="w-10 h-10 rounded-full border-2 border-slate-200 object-cover" data-alt="A professional headshot of a middle-aged male administrator with a clean-cut appearance. He is wearing a minimalist dark navy professional uniform. The background is a brightly lit, high-key office setting with soft shadows and a modern, high-end feel consistent with a light-mode enterprise dashboard aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3xBkeFoGhwZbb9G7lgTZWwEgYR5g_fy1LX6NUCHc2nXyAHrNWFzENNBkU-VuapbEQmJXcHBciMGcOZbf_BcuJeImnW7iGoHrU8gtiLECD19wVrewlLFM8dfH6EJlVBt680kYQWJIe2YjZo6z_sUkrTiamdr796vDO0BxaBW5saeCNU_hkHIQri2_oE899U6uHUAHoo3UEP5f-xnwjR_g7u437KVfEwpj_e-bptxadMYVcImhxkPxcKhRx7aAwJCU8VoJIFr4kpDzc"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-6 space-y-6">
+<!-- Action Bar -->
+<div class="flex justify-between items-center">
+<div class="flex gap-2">
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-lg flex items-center gap-2 font-semibold hover:opacity-90 transition-all shadow-md"><span class="material-symbols-outlined text-lg">upload_file</span>
+                        Импорт / обновление Excel</button>
+<button class="bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-lg flex items-center gap-2 font-semibold hover:bg-slate-50 transition-all">
+<span class="material-symbols-outlined text-lg">download</span>
+                        Экспорт
+                    </button>
+</div>
+<div class="flex gap-2">
+<button class="text-blue-700 font-semibold px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">description</span>
+                        Скачать шаблон
+                    </button>
+<button class="text-blue-700 font-semibold px-4 py-2 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">history</span>
+                        История импортов
+                    </button>
+</div>
+</div>
+<!-- Summary Cards Grid -->
+<div class="grid grid-cols-5 gap-4">
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Всего позиций</p>
+<div class="flex items-end gap-2">
+<span class="text-2xl font-black text-slate-900">512</span>
+<span class="text-[10px] text-green-600 font-bold bg-green-50 px-1.5 py-0.5 rounded mb-1">+12</span>
+</div>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Объектов</p>
+<span class="text-2xl font-black text-slate-900">3</span>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Помещений</p>
+<span class="text-2xl font-black text-slate-900">74</span>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Ошибки проверки</p>
+<span class="text-2xl font-black text-error">2</span>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1">Последний импорт</p>
+<p class="text-sm font-bold text-slate-900 mt-2">Сегодня, 08:20</p>
+</div>
+</div>
+<!-- Registry Status Card (Highlight) -->
+<div class="bg-blue-50 border border-blue-200 rounded-xl p-5 flex items-center justify-between">
+<div class="flex items-center gap-5">
+<div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-3xl">description</span>
+</div>
+<div>
+<h3 class="font-bold text-blue-900 flex items-center gap-2">
+                            equipment_registry_april.xlsx
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded uppercase font-bold">Текущий реестр</span>
+</h3>
+<div class="flex gap-6 mt-1">
+<div class="flex items-center gap-1.5">
+<span class="text-xs text-slate-500 font-medium">Строк:</span>
+<span class="text-xs font-bold text-slate-900">512</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-xs text-slate-500 font-medium">Успешно:</span>
+<span class="text-xs font-bold text-green-700">510</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="text-xs text-slate-500 font-medium">Ошибки:</span>
+<span class="text-xs font-bold text-amber-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">warning</span> 2
+                                </span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="bg-amber-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm hover:bg-amber-700 transition-colors">Открыть ошибки</button>
+<button class="bg-white border border-blue-300 text-blue-800 px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-100 transition-colors">Импортировать новую версию</button>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm space-y-4">
+<div class="grid grid-cols-7 gap-3">
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Объект</label>
+<select class="w-full border-slate-200 rounded-lg text-sm font-medium py-2 focus:ring-primary focus:border-primary">
+<option>Все объекты</option>
+<option>Корпус А</option>
+<option>Корпус Б</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Этаж</label>
+<select class="w-full border-slate-200 rounded-lg text-sm font-medium py-2">
+<option>Все этажи</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Зона</label>
+<select class="w-full border-slate-200 rounded-lg text-sm font-medium py-2">
+<option>Все зоны</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Помещение</label>
+<select class="w-full border-slate-200 rounded-lg text-sm font-medium py-2">
+<option>Все помещения</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Тип</label>
+<select class="w-full border-slate-200 rounded-lg text-sm font-medium py-2">
+<option>Все типы</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Поставщик</label>
+<select class="w-full border-slate-200 rounded-lg text-sm font-medium py-2">
+<option>Все поставщики</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-[10px] font-bold text-slate-400 uppercase">Статус</label>
+<select class="w-full border-slate-200 rounded-lg text-sm font-medium py-2">
+<option>Все статусы</option>
+</select>
+</div>
+</div>
+<div class="flex justify-between items-center border-t border-slate-100 pt-3">
+<div class="flex items-center gap-2">
+<button class="bg-primary text-white px-4 py-1.5 rounded-full text-xs font-bold">Все</button>
+<button class="bg-red-50 text-error border border-red-100 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-red-100 transition-colors">С ошибками (2)</button>
+<button class="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-slate-200 transition-colors">Без помещения</button>
+<button class="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-slate-200 transition-colors">Без поставщика</button>
+<button class="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-full text-xs font-bold hover:bg-slate-200 transition-colors">Проверено</button>
+</div>
+<button class="text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">filter_alt_off</span>
+                        Сбросить фильтры
+                    </button>
+</div>
+</div>
+<!-- Main Table Section -->
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 border-b border-slate-200">
+<th class="p-4 w-10"><input class="rounded text-primary border-slate-300" type="checkbox"/></th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Объект</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Этаж</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Отделение</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Помещение</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Наим. помещения</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">ID / артикул</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">ПОЗ</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Наим. оборудования</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Тип</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Поставщик</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Количество</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Статус проверки</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Ошибки</th>
+<th class="p-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Действие</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 text-sm font-medium">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="p-4"><input class="rounded text-primary border-slate-300" type="checkbox"/></td>
+<td class="p-4 whitespace-nowrap">Корпус А</td>
+<td class="p-4">2</td>
+<td class="p-4">Приемное</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">2.01.29</td>
+<td class="p-4 whitespace-nowrap">Кабинет врача</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">EQ-201-01</td>
+<td class="p-4">1</td>
+<td class="p-4 font-bold text-slate-900 whitespace-nowrap">Кондиционер LG</td>
+<td class="p-4">Климатическое</td>
+<td class="p-4">MedSupply</td>
+<td class="p-4">1</td>
+<td class="p-4">
+<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tight">Проверено</span>
+</td>
+<td class="p-4 text-slate-400">—</td>
+<td class="p-4"><a class="text-primary hover:underline font-bold" href="#">Открыть</a></td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="p-4"><input class="rounded text-primary border-slate-300" type="checkbox"/></td>
+<td class="p-4 whitespace-nowrap">Корпус А</td>
+<td class="p-4">2</td>
+<td class="p-4">Приемное</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">2.01.29</td>
+<td class="p-4 whitespace-nowrap">Кабинет врача</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">EQ-201-02</td>
+<td class="p-4">2</td>
+<td class="p-4 font-bold text-slate-900 whitespace-nowrap">Щит освещения ЩО-1</td>
+<td class="p-4">Электрика</td>
+<td class="p-4">ЭлектроСнаб</td>
+<td class="p-4">1</td>
+<td class="p-4">
+<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tight">С расхождением</span>
+</td>
+<td class="p-4 text-amber-600 font-bold">Маркировка</td>
+<td class="p-4"><a class="text-primary hover:underline font-bold" href="#">Открыть</a></td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="p-4"><input class="rounded text-primary border-slate-300" type="checkbox"/></td>
+<td class="p-4 whitespace-nowrap">Корпус А</td>
+<td class="p-4">2</td>
+<td class="p-4">Пост</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">2.01.32</td>
+<td class="p-4 whitespace-nowrap">Пост медсестры</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">EQ-201-04</td>
+<td class="p-4">5</td>
+<td class="p-4 font-bold text-slate-900 whitespace-nowrap">Тележка мед.</td>
+<td class="p-4">Медоборудование</td>
+<td class="p-4">HealthLine</td>
+<td class="p-4">1</td>
+<td class="p-4">
+<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tight">В работе</span>
+</td>
+<td class="p-4 text-slate-400">—</td>
+<td class="p-4"><a class="text-primary hover:underline font-bold" href="#">Открыть</a></td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="p-4"><input class="rounded text-primary border-slate-300" type="checkbox"/></td>
+<td class="p-4 whitespace-nowrap">Корпус Б</td>
+<td class="p-4">1</td>
+<td class="p-4">Склад</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">ST-01</td>
+<td class="p-4 whitespace-nowrap">СВХ</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">EQ-201-05</td>
+<td class="p-4">10</td>
+<td class="p-4 font-bold text-slate-900 whitespace-nowrap">Монитор пациента</td>
+<td class="p-4">Медоборудование</td>
+<td class="p-4">MedSupply</td>
+<td class="p-4">30</td>
+<td class="p-4">
+<span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tight">Ожидает проверки</span>
+</td>
+<td class="p-4 text-slate-400">—</td>
+<td class="p-4"><a class="text-primary hover:underline font-bold" href="#">Открыть</a></td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="p-4"><input class="rounded text-primary border-slate-300" type="checkbox"/></td>
+<td class="p-4 whitespace-nowrap">Корпус А</td>
+<td class="p-4">3</td>
+<td class="p-4">Диагностика</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">3.01.14</td>
+<td class="p-4 whitespace-nowrap">Диагностическая</td>
+<td class="p-4 font-mono text-xs whitespace-nowrap">EQ-301-07</td>
+<td class="p-4">3</td>
+<td class="p-4 font-bold text-slate-900 whitespace-nowrap">Проектор Epson</td>
+<td class="p-4">Техника</td>
+<td class="p-4 text-slate-400">—</td>
+<td class="p-4">1</td>
+<td class="p-4">
+<span class="bg-slate-100 text-slate-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tight">Не проверено</span>
+</td>
+<td class="p-4 text-error font-bold">Нет поставщика</td>
+<td class="p-4"><a class="text-blue-700 hover:underline font-bold" href="#">Исправить данные</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+<p class="text-xs font-bold text-slate-500 uppercase">Показано 5 из 512 позиций</p>
+<div class="flex gap-2">
+<button class="p-2 border border-slate-200 rounded-lg bg-white disabled:opacity-50"><span class="material-symbols-outlined">chevron_left</span></button>
+<button class="p-2 border border-slate-200 rounded-lg bg-white"><span class="material-symbols-outlined">chevron_right</span></button>
+</div>
+</div>
+</div>
+<!-- Panels Below Table -->
+<div class="grid grid-cols-2 gap-6">
+<!-- Errors Panel -->
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+<div class="p-4 border-b border-slate-100 flex items-center justify-between">
+<h3 class="font-bold text-slate-900 flex items-center gap-2">
+<span class="material-symbols-outlined text-error">report_problem</span>
+                            Ошибки и предупреждения
+                        </h3>
+<span class="text-xs font-bold text-slate-500">Всего: 3 критических</span>
+</div>
+<div class="p-4 space-y-3">
+<div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-red-500"></div>
+<span class="text-sm font-bold text-red-800">2 строки без поставщика</span>
+</div>
+<button class="text-red-700 text-xs font-black uppercase">Исправить</button>
+</div>
+<div class="flex items-center justify-between p-3 bg-amber-50 rounded-lg border border-amber-100">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-amber-500"></div>
+<span class="text-sm font-bold text-amber-800">1 строка без помещения</span>
+</div>
+<button class="text-amber-700 text-xs font-black uppercase">Указать</button>
+</div>
+<div class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-blue-500"></div>
+<span class="text-sm font-bold text-blue-800">14 строк ожидают валидации ID</span>
+</div>
+<button class="text-blue-700 text-xs font-black uppercase">Проверить</button>
+</div>
+</div>
+</div>
+<!-- History Panel -->
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+<div class="p-4 border-b border-slate-100">
+<h3 class="font-bold text-slate-900 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span>
+                            История импортов
+                        </h3>
+</div>
+<table class="w-full text-xs">
+<thead>
+<tr class="text-left text-slate-400 font-bold uppercase tracking-wider bg-slate-50">
+<th class="p-3">Дата / Время</th>
+<th class="p-3">Файл</th>
+<th class="p-3 text-center">Строк</th>
+<th class="p-3 text-right">Статус проверки</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50">
+<td class="p-3 font-bold">12.04.2024, 08:20</td>
+<td class="p-3 text-blue-700">equip_apr_final.xlsx</td>
+<td class="p-3 text-center">512</td>
+<td class="p-3 text-right"><span class="text-green-600 font-bold">Успешно</span></td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="p-3 font-bold">11.04.2024, 14:15</td>
+<td class="p-3 text-blue-700">equip_apr_draft.xlsx</td>
+<td class="p-3 text-center">508</td>
+<td class="p-3 text-right"><span class="text-amber-600 font-bold">2 ошибки</span></td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="p-3 font-bold">10.04.2024, 09:30</td>
+<td class="p-3 text-blue-700">initial_registry.xlsx</td>
+<td class="p-3 text-center">490</td>
+<td class="p-3 text-right"><span class="text-green-600 font-bold">Успешно</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</body></html>

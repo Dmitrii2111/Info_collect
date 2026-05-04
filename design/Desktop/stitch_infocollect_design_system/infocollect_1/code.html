@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#c4c5d5",
+                    "on-tertiary-fixed-variant": "#802a00",
+                    "surface-container-highest": "#e3e1eb",
+                    "secondary-fixed": "#d5e3fc",
+                    "on-secondary-container": "#57657a",
+                    "surface-container": "#eeedf7",
+                    "primary-fixed": "#dde1ff",
+                    "on-primary": "#ffffff",
+                    "primary-container": "#1e40af",
+                    "on-primary-fixed-variant": "#173bab",
+                    "tertiary-container": "#872d00",
+                    "on-primary-container": "#a8b8ff",
+                    "on-background": "#1a1b22",
+                    "tertiary-fixed-dim": "#ffb59a",
+                    "error-container": "#ffdad6",
+                    "background": "#fbf8ff",
+                    "tertiary-fixed": "#ffdbce",
+                    "primary-fixed-dim": "#b8c4ff",
+                    "surface-variant": "#e3e1eb",
+                    "outline": "#757684",
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#e8e7f1",
+                    "on-tertiary-container": "#ffa583",
+                    "surface-container-low": "#f4f2fc",
+                    "surface": "#fbf8ff",
+                    "on-primary-fixed": "#001453",
+                    "on-tertiary-fixed": "#380d00",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f1f0fa",
+                    "surface-tint": "#3755c3",
+                    "inverse-primary": "#b8c4ff",
+                    "primary": "#00288e",
+                    "on-secondary-fixed": "#0d1c2e",
+                    "inverse-surface": "#2f3037",
+                    "secondary-container": "#d5e3fc",
+                    "surface-dim": "#dad9e3",
+                    "secondary-fixed-dim": "#b9c7df",
+                    "error": "#ba1a1a",
+                    "tertiary": "#611e00",
+                    "surface-bright": "#fbf8ff",
+                    "on-surface-variant": "#444653",
+                    "on-secondary-fixed-variant": "#3a485b",
+                    "on-surface": "#1a1b22",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary": "#515f74"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "touch-target-min": "48px",
+                    "unit": "8px",
+                    "stack-lg": "24px",
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "gutter": "12px",
+                    "margin-mobile": "16px"
+            },
+            "fontFamily": {
+                    "data-compact": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "h1-bold": ["Inter"],
+                    "button-text": ["Inter"],
+                    "h2-bold": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- SideNavBar -->
+<aside class="flex flex-col fixed left-0 top-0 h-full overflow-y-auto bg-white border-r border-outline-variant/30 w-64 z-50 custom-scrollbar">
+<div class="p-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-white">fact_check</span>
+</div>
+<div>
+<h1 class="text-xl font-black tracking-tight text-primary leading-none">InfoCollect</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-outline font-bold mt-1">MVP v0.1</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">dashboard</span>
+<span class="text-sm font-medium">Панель управления</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">inventory_2</span>
+<span class="text-sm font-medium">Реестр оборудования</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">domain</span>
+<span class="text-sm font-medium">Объекты</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">fact_check</span>
+<span class="text-sm font-medium">Инспекции</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">warehouse</span>
+<span class="text-sm font-medium">Склад</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">input</span>
+<span class="text-sm font-medium">Поступления</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">difference</span>
+<span class="text-sm font-medium">Расхождения</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">sync</span>
+<span class="text-sm font-medium">Синхронизация</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 bg-primary-container/20 text-primary border-l-4 border-primary rounded-r-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">history</span>
+<span class="text-sm font-semibold">История</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">assessment</span>
+<span class="text-sm font-medium">Отчёты</span>
+</a>
+<div class="pt-4 mt-4 border-t border-outline-variant/30">
+<p class="px-4 text-[10px] font-bold text-outline uppercase tracking-wider mb-2">Администрирование</p>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">group</span>
+<span class="text-sm font-medium">Сотрудники</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">security</span>
+<span class="text-sm font-medium">Роли и права</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">settings</span>
+<span class="text-sm font-medium">Системные настройки</span>
+</a>
+</div>
+</nav>
+<div class="p-4 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors group" href="#">
+<span class="material-symbols-outlined text-[22px] text-outline group-hover:text-primary">help</span>
+<span class="text-sm font-medium">Помощь</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-error hover:bg-error-container/20 rounded-lg transition-colors" href="#">
+<span class="material-symbols-outlined text-[22px]">logout</span>
+<span class="text-sm font-medium">Выйти</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="ml-64 flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center h-20 px-8 w-full bg-white border-b border-outline-variant/30 sticky top-0 z-40">
+<div class="flex items-center gap-8 flex-1">
+<div>
+<h2 class="text-2xl font-bold text-on-surface">История</h2>
+<p class="text-xs text-outline font-medium mt-0.5">Журнал событий, действий пользователей и системных изменений</p>
+</div>
+<div class="relative w-[480px]">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-12 pr-4 py-2.5 bg-surface-container-lowest border border-outline-variant/50 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Поиск по событиям, пользователям, объектам или ID" type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-full border border-green-200">
+<div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+<span class="text-xs font-bold">Сервер подключён</span>
+</div>
+<div class="flex items-center gap-4 pl-6 border-l border-outline-variant/30">
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface leading-tight">Иван Иванов</p>
+<p class="text-xs text-outline">Администратор</p>
+</div>
+<img alt="Профиль" class="w-10 h-10 rounded-full object-cover ring-2 ring-surface-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBikNATPG4_TsGHo1gZLWlNA-wk5YFPP9wxqKq-wUXboQSO3Qtp7LDnvn-HQePzNnytvcsYS_flmb6eo0RW6mZI_xBz1jozk59jukE5ml9d1YYWXVyewOOVXu-qUFe3IgL5-ux0a2fykwlqcTZrIcxgCrFjH_3ZH6AGEyQu82Sdxxftyl6mTD6cWwNGXd0x1gAFxJ7FDD7uVg0gvQFT4y5ynmP3mAK8EIyTAaN6S67EfzPSyQNNmpyuopPsdaHqkD-y19Hces5VYwbZ"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="p-8 flex flex-col gap-8 max-w-[1440px]">
+<!-- Action Row -->
+<div class="flex justify-between items-center">
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-5 py-2.5 bg-white border border-outline-variant text-on-surface hover:bg-surface-container rounded-lg text-sm font-semibold transition-all shadow-sm">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                    Экспорт журнала
+                </button>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-white border border-outline-variant text-on-surface hover:bg-surface-container rounded-lg text-sm font-semibold transition-all shadow-sm">
+<span class="material-symbols-outlined text-[20px]">refresh</span>
+                    Обновить
+                </button>
+</div>
+<button class="flex items-center gap-2 px-5 py-2.5 bg-white border border-outline-variant text-on-surface hover:bg-surface-container rounded-lg text-sm font-semibold transition-all shadow-sm">
+<span class="material-symbols-outlined text-[20px]">settings_accessibility</span>
+                Настройки аудита
+            </button>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-5 gap-6">
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-outline-variant/30">
+<p class="text-outline text-[11px] font-bold uppercase tracking-wider mb-2">Всего событий</p>
+<p class="text-3xl font-black text-primary">1 248</p>
+<div class="mt-2 flex items-center text-xs text-green-600 font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span> +4.2% за месяц
+                </div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-outline-variant/30">
+<p class="text-outline text-[11px] font-bold uppercase tracking-wider mb-2">Сегодня</p>
+<p class="text-3xl font-black text-on-surface">86</p>
+<div class="mt-2 flex items-center text-xs text-blue-600 font-bold">
+<span class="material-symbols-outlined text-sm">schedule</span> Активно
+                </div>
+</div>
+<div class="bg-red-50 p-5 rounded-2xl shadow-sm border border-red-200">
+<p class="text-red-700 text-[11px] font-bold uppercase tracking-wider mb-2">Критичные</p>
+<p class="text-3xl font-black text-red-700">12</p>
+<div class="mt-2 flex items-center text-xs text-red-600 font-bold">
+<span class="material-symbols-outlined text-sm">warning</span> Требует внимания
+                </div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-outline-variant/30">
+<p class="text-outline text-[11px] font-bold uppercase tracking-wider mb-2">Действия пользователей</p>
+<p class="text-3xl font-black text-on-surface">732</p>
+<div class="mt-2 text-xs text-outline font-medium">
+                    58.6% от всех событий
+                </div>
+</div>
+<div class="bg-white p-5 rounded-2xl shadow-sm border border-outline-variant/30">
+<p class="text-outline text-[11px] font-bold uppercase tracking-wider mb-2">Системные</p>
+<p class="text-3xl font-black text-on-surface">516</p>
+<div class="mt-2 text-xs text-outline font-medium">
+                    41.4% от всех событий
+                </div>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/30 space-y-6">
+<div class="grid grid-cols-6 gap-5">
+<div>
+<label class="block text-xs font-bold text-outline mb-2 uppercase tracking-wide">Тип события</label>
+<select class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
+<option>Все типы</option>
+<option>Инспекция</option>
+<option>Синхронизация</option>
+<option>Поступление</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-outline mb-2 uppercase tracking-wide">Пользователь</label>
+<select class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
+<option>Любой</option>
+<option>Иван Иванов</option>
+<option>Павел Смирнов</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-outline mb-2 uppercase tracking-wide">Роль</label>
+<select class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
+<option>Все роли</option>
+<option>Администратор</option>
+<option>Инспектор</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-outline mb-2 uppercase tracking-wide">Инспекция</label>
+<select class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
+<option>Все инспекции</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-outline mb-2 uppercase tracking-wide">Объект</label>
+<select class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
+<option>Все объекты</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold text-outline mb-2 uppercase tracking-wide">Период</label>
+<select class="w-full bg-surface-container-low border-outline-variant/50 rounded-lg text-sm py-2 px-3 focus:ring-primary/20">
+<option>За сегодня</option>
+<option>Вчера</option>
+<option>Последние 7 дней</option>
+</select>
+</div>
+</div>
+<div class="flex gap-2 items-center">
+<span class="text-[10px] font-black text-outline mr-3 uppercase tracking-[0.1em]">Быстрые фильтры:</span>
+<button class="px-4 py-1.5 bg-primary text-on-primary rounded-full text-xs font-bold shadow-sm">Все</button>
+<button class="px-4 py-1.5 bg-surface-container text-on-surface-variant hover:bg-outline-variant/40 rounded-full text-xs font-semibold transition-colors">Инспекции</button>
+<button class="px-4 py-1.5 bg-surface-container text-on-surface-variant hover:bg-outline-variant/40 rounded-full text-xs font-semibold transition-colors">Назначения</button>
+<button class="px-4 py-1.5 bg-surface-container text-on-surface-variant hover:bg-outline-variant/40 rounded-full text-xs font-semibold transition-colors">Синхронизация</button>
+<button class="px-4 py-1.5 bg-surface-container text-on-surface-variant hover:bg-outline-variant/40 rounded-full text-xs font-semibold transition-colors">Расхождения</button>
+<button class="px-4 py-1.5 bg-surface-container text-on-surface-variant hover:bg-outline-variant/40 rounded-full text-xs font-semibold transition-colors">Сотрудники</button>
+<button class="px-4 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-full text-xs font-bold transition-colors">Ошибки</button>
+</div>
+</div>
+<!-- Split View -->
+<div class="flex gap-8 h-[720px]">
+<!-- Audit List Panel -->
+<div class="w-[68%] bg-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-outline-variant/30 bg-surface-container-lowest flex justify-between items-center">
+<span class="text-sm font-bold text-on-surface">Журнал аудита</span>
+<span class="text-xs text-outline font-medium">Найдено 86 записей за сегодня</span>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar">
+<!-- Table Header -->
+<div class="grid grid-cols-[80px_1fr_120px_130px_120px] px-6 py-3 bg-surface-container/50 border-b border-outline-variant/20 text-[10px] font-bold text-outline uppercase tracking-wider">
+<div>Время</div>
+<div>Событие и описание</div>
+<div>Исполнитель</div>
+<div>Связанный ID</div>
+<div class="text-right">Статус</div>
+</div>
+<!-- Row: Selected -->
+<div class="grid grid-cols-[80px_1fr_120px_130px_120px] px-6 py-4 border-b border-outline-variant/10 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors relative">
+<div class="text-xs font-bold text-primary">09:42</div>
+<div class="pr-6">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[18px] text-primary">rule</span>
+<h4 class="text-sm font-bold text-on-surface">Разрешение расхождения</h4>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-1">Разрешение расхождения серийного номера по объекту 'Склад 4'...</p>
+</div>
+<div class="text-[11px] font-medium text-outline flex items-center">П. Смирнов</div>
+<div class="text-[11px] font-mono text-outline flex items-center">AUDIT-98234-X</div>
+<div class="flex items-center justify-end">
+<span class="px-2 py-0.5 bg-primary/10 text-primary rounded text-[10px] font-bold uppercase">Инспекция</span>
+</div>
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+</div>
+<!-- Row: Error -->
+<div class="grid grid-cols-[80px_1fr_120px_130px_120px] px-6 py-4 border-b border-outline-variant/10 cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="text-xs font-bold text-outline">09:39</div>
+<div class="pr-6">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[18px] text-red-600">sync_problem</span>
+<h4 class="text-sm font-bold text-on-surface">Конфликт синхронизации</h4>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-1">Конфликт версий при синхронизации данных мобильного приложения...</p>
+</div>
+<div class="text-[11px] font-medium text-outline flex items-center">SYSTEM</div>
+<div class="text-[11px] font-mono text-outline flex items-center">SYNC-2024-001</div>
+<div class="flex items-center justify-end">
+<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-bold uppercase">Критично</span>
+</div>
+</div>
+<!-- Row: Warning -->
+<div class="grid grid-cols-[80px_1fr_120px_130px_120px] px-6 py-4 border-b border-outline-variant/10 cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="text-xs font-bold text-outline">09:32</div>
+<div class="pr-6">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[18px] text-amber-600">difference</span>
+<h4 class="text-sm font-bold text-on-surface">Обнаружено расхождение</h4>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-1">Фактическое количество (14) не совпадает с учетным (15)</p>
+</div>
+<div class="text-[11px] font-medium text-outline flex items-center">А. Кузнецов</div>
+<div class="text-[11px] font-mono text-outline flex items-center">DISC-00912</div>
+<div class="flex items-center justify-end">
+<span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[10px] font-bold uppercase">Внимание</span>
+</div>
+</div>
+<!-- Row: Simple -->
+<div class="grid grid-cols-[80px_1fr_120px_130px_120px] px-6 py-4 border-b border-outline-variant/10 cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="text-xs font-bold text-outline">09:20</div>
+<div class="pr-6">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[18px] text-purple-600">assignment_ind</span>
+<h4 class="text-sm font-bold text-on-surface">Переназначение оператора</h4>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-1">Переназначение инспектора для задачи #440-B на завтра</p>
+</div>
+<div class="text-[11px] font-medium text-outline flex items-center">И. Иванов</div>
+<div class="text-[11px] font-mono text-outline flex items-center">TASK-440-B</div>
+<div class="flex items-center justify-end">
+<span class="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded text-[10px] font-bold uppercase">Задачи</span>
+</div>
+</div>
+<!-- Row: Success -->
+<div class="grid grid-cols-[80px_1fr_120px_130px_120px] px-6 py-4 border-b border-outline-variant/10 cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="text-xs font-bold text-outline">09:10</div>
+<div class="pr-6">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-symbols-outlined text-[18px] text-green-600">add_circle</span>
+<h4 class="text-sm font-bold text-on-surface">Создание оборудования</h4>
+</div>
+<p class="text-xs text-on-surface-variant line-clamp-1">Добавлен новый актив 'Генератор G-500' в реестр</p>
+</div>
+<div class="text-[11px] font-medium text-outline flex items-center">П. Смирнов</div>
+<div class="text-[11px] font-mono text-outline flex items-center">AST-90212</div>
+<div class="flex items-center justify-end">
+<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-bold uppercase">Инвентарь</span>
+</div>
+</div>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 bg-surface-container-lowest border-t border-outline-variant/30 flex items-center justify-between">
+<span class="text-xs text-outline font-medium">Показано <span class="text-on-surface font-bold">11</span> из <span class="text-on-surface font-bold">1 248</span> событий</span>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-outline transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold shadow-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-xs font-medium text-outline transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-xs font-medium text-outline transition-colors">3</button>
+<span class="px-2 text-outline text-xs">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-xs font-medium text-outline transition-colors">114</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container text-outline transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Details Panel -->
+<div class="w-[32%] bg-white rounded-2xl shadow-sm border border-outline-variant/30 overflow-hidden flex flex-col h-full">
+<div class="px-6 py-5 border-b border-outline-variant/30 bg-surface-container-low flex justify-between items-center">
+<div>
+<h3 class="text-lg font-bold text-on-surface leading-tight">Детали события</h3>
+<p class="text-[10px] text-outline font-black uppercase tracking-widest mt-1">ID: AUDIT-98234-X</p>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors p-1 bg-surface rounded-lg">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+<!-- Metadata -->
+<div>
+<h5 class="text-[11px] font-black text-outline uppercase tracking-[0.15em] mb-4">Метаданные</h5>
+<div class="space-y-3 bg-surface-container/30 p-4 rounded-xl">
+<div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
+<span class="text-xs text-outline font-medium">Время</span>
+<span class="text-xs font-bold text-on-surface">Сегодня, 09:42:15 (UTC+3)</span>
+</div>
+<div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
+<span class="text-xs text-outline font-medium">Исполнитель</span>
+<span class="text-xs font-bold text-primary">Павел Смирнов</span>
+</div>
+<div class="flex justify-between items-center pb-2 border-b border-outline-variant/10">
+<span class="text-xs text-outline font-medium">Роль</span>
+<span class="text-xs font-bold text-on-surface">Старший инспектор</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-xs text-outline font-medium">Объект</span>
+<span class="text-xs font-bold text-on-surface">Склад 4 (Север)</span>
+</div>
+</div>
+</div>
+<!-- Comparison -->
+<div>
+<h5 class="text-[11px] font-black text-outline uppercase tracking-[0.15em] mb-4">Изменение данных</h5>
+<div class="bg-surface-container/30 rounded-xl p-4">
+<p class="text-[10px] text-outline font-bold uppercase mb-2">Поле: Серийный номер</p>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<span class="text-[9px] font-bold text-outline uppercase mb-1 block">До</span>
+<div class="p-2.5 bg-red-50 text-red-700 rounded-lg border border-red-100 text-xs font-mono line-through">SN-90831</div>
+</div>
+<div>
+<span class="text-[9px] font-bold text-outline uppercase mb-1 block">После</span>
+<div class="p-2.5 bg-green-50 text-green-700 rounded-lg border border-green-100 font-bold text-xs font-mono">SN-90381</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Comment -->
+<div>
+<h5 class="text-[11px] font-black text-outline uppercase tracking-[0.15em] mb-4">Комментарий оператора</h5>
+<div class="p-4 bg-primary/5 border border-primary/10 rounded-xl">
+<p class="italic text-xs text-on-surface-variant leading-relaxed font-medium">
+                                "Исправлена опечатка в серийном номере, допущенная при первичном вводе данных. Сверено с физической шильдой оборудования."
+                            </p>
+</div>
+</div>
+<!-- Technical Section (Quiet) -->
+<div>
+<details class="group">
+<summary class="flex items-center gap-2 text-[11px] font-black text-outline uppercase tracking-[0.15em] cursor-pointer hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[16px] transition-transform group-open:rotate-180">expand_more</span>
+                                Техническая информация
+                            </summary>
+<div class="mt-4 bg-surface-container-low p-4 rounded-xl font-mono text-[10px] text-outline space-y-1.5 break-all">
+<div><span class="font-bold">IP Address:</span> 192.168.1.142</div>
+<div><span class="font-bold">Device:</span> Mozilla/5.0 (Android 12; Mobile)</div>
+<div><span class="font-bold">Session ID:</span> sess_901238490a0f</div>
+</div>
+</details>
+</div>
+</div>
+<!-- Details Actions -->
+<div class="p-6 border-t border-outline-variant/30 bg-surface-container-lowest flex flex-col gap-3">
+<button class="w-full py-3 bg-primary text-white text-sm font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+                        Открыть инспекцию
+                    </button>
+<button class="w-full py-3 bg-white border border-outline-variant text-on-surface text-sm font-bold rounded-xl hover:bg-surface-container transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">difference</span>
+                        Открыть расхождение
+                    </button>
+<button class="w-full py-2.5 bg-white border border-outline-variant text-on-surface text-[13px] font-semibold rounded-xl hover:bg-surface-container transition-colors flex items-center justify-center gap-2 text-outline">
+<span class="material-symbols-outlined text-[18px]">content_copy</span>
+                        Скопировать ID события
+                    </button>
+</div>
+</div>
+</div>
+<!-- UI States Preview Section -->
+<div class="mt-12 pt-12 border-t border-outline-variant/30">
+<h6 class="text-[10px] font-black text-outline uppercase mb-6 tracking-[0.2em]">Примеры состояний интерфейса</h6>
+<div class="grid grid-cols-3 gap-8">
+<!-- Loading State -->
+<div class="bg-white p-10 rounded-2xl border border-outline-variant/30 flex flex-col items-center justify-center h-56 group">
+<div class="w-10 h-10 border-[3px] border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+<span class="text-sm font-bold text-outline group-hover:text-primary transition-colors">Загрузка данных...</span>
+</div>
+<!-- Empty State -->
+<div class="bg-white p-10 rounded-2xl border border-outline-variant/30 flex flex-col items-center justify-center h-56">
+<div class="w-14 h-14 bg-surface-container rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-3xl text-outline">history_toggle_off</span>
+</div>
+<span class="text-sm font-black text-on-surface">История пуста</span>
+<p class="text-[11px] text-outline text-center mt-2 max-w-[200px]">За выбранный период событий не найдено</p>
+</div>
+<!-- Error State -->
+<div class="bg-white p-10 rounded-2xl border border-outline-variant/30 flex flex-col items-center justify-center h-56">
+<div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-3xl text-red-300">cloud_off</span>
+</div>
+<span class="text-sm font-black text-red-700">Ошибка связи с сервером</span>
+<button class="mt-4 px-4 py-1.5 border border-primary text-primary text-[11px] font-bold rounded-full hover:bg-primary hover:text-white transition-all uppercase tracking-wider">
+                        Повторить попытку
+                    </button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

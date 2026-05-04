@@ -1,169 +1,83 @@
 # Project Structure
 
-Карта проекта для разработчика, который впервые открывает репозиторий.
+Карта проекта для разработки и проверки текущего состояния.
 
-## Корень проекта
+## Корень
 
-- `app/` — backend на FastAPI
-- `alembic/` — миграции базы данных
-- `frontend/` — новая операторская панель на React
-- `templates/` — HTML-шаблоны серверного контура
-- `static/` — статика и старый клиентский слой
-- `docs/` — техническая документация
-- `design/` — дизайн-материалы и обратная связь
-- `scripts/` — служебные скрипты
-- `tests/` — backend-тесты
-- `db/` — SQL-схема и материалы по структуре БД
-- `data/` — служебные данные проекта
-
-## Backend
-
-### `app/api/routes/`
-Маршруты API:
-- `auth.py`
-- `audit.py`
-- `users.py`
-- `rooms.py`
-- `items.py`
-- `plans.py`
-- `field.py`
-- `sync.py`
-- `stock.py`
-- `conflicts.py`
-- `health.py`
-
-### `app/services/`
-Сервисный слой. Здесь находится основная предметная логика:
-- пользователи
-- назначения
-- группы
-- импорт плана
-- чтение помещений и экземпляров
-- действия поля
-- синхронизация
-- diff между версиями плана
-- складской контур
-  - приемка по строкам
-  - излишки / внеплановые позиции
-  - follow-up задачи по недостаче
-- конфликты
-- аудит / журнал
-
-### `app/models/`
-ORM-модели SQLAlchemy:
-- организационные сущности
-- план
-- экземпляры оборудования
-- склады
-- синхронизация
-
-### `app/schemas/`
-Pydantic-схемы запросов и ответов.
-
-### `app/db/`
-Подключение к БД и session factory.
-
-### `app/server.py`
-Фабрика FastAPI-приложения и frontend-маршруты.
-
-### `app/main.py`
-Точка входа для `uvicorn`.
+- `app/` - FastAPI backend.
+- `alembic/` - миграции базы данных.
+- `frontend/` - новый desktop frontend на React + Vite.
+- `templates/` - HTML-шаблоны серверного мобильного контура.
+- `static/` - статика мобильного PWA.
+- `docs/` - техническая документация.
+- `design/` - дизайн-материалы. Актуальный desktop-дизайн находится в `design/Desktop/stitch_infocollect_design_system`.
+- `scripts/` - служебные скрипты.
+- `tests/` - backend-тесты.
+- `db/` - SQL-схема и материалы по структуре БД.
+- `data/` - служебные данные проекта.
 
 ## Frontend
 
-### `frontend/src/App.jsx`
-Главный orchestration-контейнер React-операторки:
-- shell
-- общие состояния
-- загрузка данных
-- модалки
-- ролевая маршрутизация вкладок
+Текущий frontend очищен от старой операторской вкладочной верстки. В `frontend/src` остался только desktop shell первого этапа.
 
-### `frontend/src/lib/api.js`
-HTTP-слой frontend.
+- `frontend/src/App.jsx` - точка входа React-приложения и настройка Ant Design theme.
+- `frontend/src/main.jsx` - монтирование React в DOM.
+- `frontend/src/styles.css` - глобальные стили desktop shell.
+- `frontend/src/shell/DesktopShell.jsx` - каркас desktop: sidebar, header, profile menu и placeholder основной области.
+- `frontend/src/shell/desktopNavigation.js` - утвержденная структура разделов sidebar и метаданные экранов.
+- `frontend/tests/desktop-shell.test.mjs` - smoke-тест порядка и адресации пунктов меню.
+- `frontend/vite.config.js` - Vite-конфигурация с base `/operator-next/`.
 
-### `frontend/src/operator/constants.js`
-Константы интерфейса:
-- роли
-- фильтры
-- labels
-- пустые формы
+Удалены из frontend:
 
-### `frontend/src/operator/utils.js`
-Чистые утилиты:
-- форматирование
-- summary-вычисления
-- label/tone helpers
-- form validation
-- storage helpers
+- старая папка `src/operator/`;
+- старый frontend API-слой, привязанный к удаленной операторской панели;
+- тесты утилит старой операторки;
+- зависимость `react-dropzone`.
 
-### `frontend/src/operator/components.jsx`
-Переиспользуемые UI-компоненты:
-- карточки
-- badges
-- login screen
-- modal helpers
-- directory/assignment элементы
+## Backend
 
-### `frontend/src/operator/tabs/`
-Изолированные вкладки операторской панели:
-- `ControlTab.jsx`
-- `AuditTab.jsx`
-- `WarehouseTab.jsx`
-- `ConflictsTab.jsx`
-- `AssignmentsTab.jsx`
-- `UsersTab.jsx`
-- `GroupsTab.jsx`
-- `ExportTab.jsx`
+Основные области:
 
-### `frontend/src/styles.css`
-Глобальные стили React-панели.
+- `app/api/routes/` - маршруты API.
+- `app/services/` - предметная логика.
+- `app/models/` - SQLAlchemy ORM-модели.
+- `app/schemas/` - Pydantic-схемы запросов и ответов.
+- `app/db/` - подключение к БД и session factory.
+- `app/server.py` - фабрика FastAPI-приложения, API и frontend-маршруты.
+- `app/main.py` - точка входа для `uvicorn`.
 
-### `frontend/tests/`
-Тесты frontend-утилит на встроенном `node --test`.
+Frontend-маршруты backend:
 
-## PWA / мобильный контур
+- `/` redirect на `/operator-next`;
+- `/operator-next` отдает Vite-сборку или fallback;
+- `/operator` redirect на `/operator-next`;
+- `/field` отдает мобильный PWA.
 
-- `templates/index.html` — оболочка полевого PWA
-- `static/app.js` — логика полевого клиента
-- `static/styles.css` — стили PWA
-- `static/sw.js` — service worker
-- `static/manifest.json` — manifest PWA
+## Mobile PWA
 
-## Документация
+Мобильный контур пока остается отдельно от desktop frontend:
 
-- `README.md` — быстрый вход в проект
-- `docs/frontend_react_vite_migration.md` — статус новой операторки
-- `docs/testing.md` — как запускать тесты
-- `data_model_design.md` — модель данных
-- `docs/stage_1_2_technical_spec.md` — детальная спецификация приемки и обработки расхождений
-- `designer_brief.md` — бриф для дизайнера
+- `templates/index.html` - HTML-оболочка `/field`;
+- `static/app.js` - логика полевого клиента;
+- `static/styles.css` - стили PWA;
+- `static/sw.js` - service worker;
+- `static/manifest.json` - manifest PWA.
 
 ## Дизайн
 
-Папка `design/` используется как единое место хранения:
-- входящих материалов от дизайнера
-- PDF-концептов
-- markdown-замечаний и обратной связи
-- внутреннего UI-плана
+`design/Desktop/stitch_infocollect_design_system` хранит экспортированные desktop-экраны Stitch. Кодовые изменения не должны редактировать дизайн-исходники.
 
-## Самые чувствительные файлы
+Старые дизайн-документы V1-V5 считаются архивными и не используются для текущей desktop-верстки.
 
-Если разработчик начинает работу, в первую очередь нужно понимать влияние правок в:
+## Чувствительные файлы
 
-- `app/services/user_admin.py`
-- `app/services/field_actions.py`
-- `app/services/plan_import.py`
-- `app/services/item_queries.py`
-- `app/services/room_queries.py`
-- `app/services/stock_queries.py`
-- `app/services/conflict_queries.py`
-- `app/services/audit_queries.py`
+Перед изменениями особенно внимательно проверять:
+
+- `app/server.py`
+- `app/core/config.py`
 - `frontend/src/App.jsx`
+- `frontend/src/shell/DesktopShell.jsx`
+- `frontend/src/shell/desktopNavigation.js`
 - `frontend/src/styles.css`
-
-## Следующий шаг по упрощению структуры
-
-- дальше дробить `App.jsx`, вынося hooks и сценарные блоки
-- расширять покрытие тестами сервисов и frontend-утилит
-- постепенно сокращать UI-зависимости в initial bundle
+- `frontend/vite.config.js`

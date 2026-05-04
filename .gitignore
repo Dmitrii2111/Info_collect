@@ -17,6 +17,8 @@ uvicorn.out.log
 uvicorn.err.log
 .server.out.log
 .server.err.log
+.frontend-shell.out.log
+.frontend-shell.err.log
 
 static/uploads/
 *.tmp

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#3755c3",
+                        "tertiary-container": "#872d00",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#57657a",
+                        "on-primary-container": "#a8b8ff",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-container": "#d5e3fc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "inverse-primary": "#b8c4ff",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-bright": "#fbf8ff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "primary-container": "#1e40af",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf8ff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary": "#515f74",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "surface-container-low": "#f4f2fc",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-background": "#1a1b22",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "outline-variant": "#c4c5d5",
+                        "surface-dim": "#dad9e3",
+                        "error": "#ba1a1a",
+                        "surface-container": "#eeedf7",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary": "#611e00",
+                        "surface-container-highest": "#e3e1eb",
+                        "inverse-on-surface": "#f1f0fa",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "outline": "#757684",
+                        "primary": "#00288e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "stack-lg": "24px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .modal-overlay {
+            background-color: rgba(26, 27, 34, 0.6);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-['Inter']">
+<!-- Background Sync Screen (Dimmed) -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none opacity-40">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-[#f8f9fb] group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e8eaf2] px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-[#0f111a]">
+<div class="size-4">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path></svg>
+</div>
+<h2 class="text-[#0f111a] text-lg font-bold leading-tight tracking-[-0.015em]">InfoCollect Sync</h2>
+</div>
+</div>
+</header>
+<div class="flex h-full min-h-[700px] flex-col justify-between bg-[#f8f9fb] p-4">
+<div class="flex flex-col gap-4">
+<div class="flex flex-col">
+<h1 class="text-[#0f111a] text-base font-medium leading-normal">Sync Center</h1>
+<p class="text-[#536293] text-sm font-normal leading-normal">Enterprise Sync v2.4</p>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-[#e8eaf2]">
+<div class="text-[#0f111a]" data-icon="List" data-size="24px" data-weight="fill">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">list</span>
+</div>
+<p class="text-[#0f111a] text-sm font-medium leading-normal">Очередь</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Container (Scrollable view for all three requested modals) -->
+<div class="relative z-50 flex flex-col items-center gap-12 py-12 px-4 min-h-screen bg-transparent">
+<!-- Modal 1: Игнорировать событие -->
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant overflow-hidden">
+<div class="p-6 flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="text-error" data-icon="warning">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<h3 class="text-on-surface text-xl font-bold">Игнорировать событие?</h3>
+</div>
+<p class="text-on-surface-variant text-body-md">Событие будет исключено из очереди синхронизации без изменения основной записи.</p>
+<div class="bg-error-container/20 border-l-4 border-error p-4 rounded-r-lg">
+<p class="text-on-error-container text-sm font-medium">
+                        Используйте это действие только если событие ошибочное или не должно применяться.
+                    </p>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-on-surface text-sm font-bold">Причина *</label>
+<textarea class="w-full h-24 p-3 bg-surface-container rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-on-surface placeholder:text-outline" placeholder="Укажите причину игнорирования события"></textarea>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col sm:flex-row-reverse gap-3">
+<button class="flex-1 px-6 h-touch-target-min bg-error text-on-error rounded-lg font-button-text hover:bg-red-700 transition-colors">
+                    Игнорировать событие
+                </button>
+<button class="flex-1 px-6 h-touch-target-min bg-surface-container-highest text-on-surface rounded-lg font-button-text hover:bg-outline-variant transition-colors">
+                    Отмена
+                </button>
+</div>
+</div>
+<!-- Modal 2: Запустить синхронизацию -->
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant overflow-hidden">
+<div class="p-6 flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="text-primary" data-icon="sync">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<h3 class="text-on-surface text-xl font-bold">Запустить синхронизацию?</h3>
+</div>
+<p class="text-on-surface-variant text-body-md">Система попробует отправить все события из очереди и повторить обработку ошибок.</p>
+<div class="flex justify-between p-4 bg-secondary-container/30 rounded-lg">
+<div class="flex flex-col items-center">
+<span class="text-on-secondary-container text-xs font-bold uppercase tracking-wider">В очереди</span>
+<span class="text-on-surface text-lg font-bold">12</span>
+</div>
+<div class="w-px bg-outline-variant/30"></div>
+<div class="flex flex-col items-center">
+<span class="text-error text-xs font-bold uppercase tracking-wider">Ошибки</span>
+<span class="text-error text-lg font-bold">3</span>
+</div>
+<div class="w-px bg-outline-variant/30"></div>
+<div class="flex flex-col items-center">
+<span class="text-tertiary text-xs font-bold uppercase tracking-wider">Конфликты</span>
+<span class="text-tertiary text-lg font-bold">2</span>
+</div>
+</div>
+<div class="flex flex-col gap-3">
+<h4 class="text-on-surface text-sm font-bold uppercase">Что произойдёт</h4>
+<ul class="flex flex-col gap-2">
+<li class="flex items-start gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                            События в очереди будут отправлены
+                        </li>
+<li class="flex items-start gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-primary text-[18px]">history</span>
+                            Ошибочные события будут повторены
+                        </li>
+<li class="flex items-start gap-3 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-outline text-[18px]">pause_circle</span>
+                            Конфликты останутся до ручного решения
+                        </li>
+</ul>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col sm:flex-row-reverse gap-3">
+<button class="flex-1 px-6 h-touch-target-min bg-primary text-on-primary rounded-lg font-button-text hover:bg-blue-800 transition-colors">
+                    Синхронизировать всё
+                </button>
+<button class="flex-1 px-6 h-touch-target-min bg-surface-container-highest text-on-surface rounded-lg font-button-text hover:bg-outline-variant transition-colors">
+                    Отмена
+                </button>
+</div>
+</div>
+<!-- Modal 3: Повторить ошибочные события -->
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant overflow-hidden">
+<div class="p-6 flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="text-primary" data-icon="replay">
+<span class="material-symbols-outlined">replay</span>
+</div>
+<h3 class="text-on-surface text-xl font-bold">Повторить ошибочные события?</h3>
+</div>
+<p class="text-on-surface-variant text-body-md">Система повторит отправку событий, которые завершились ошибкой.</p>
+<div class="flex flex-col gap-3 border-t border-outline-variant pt-4">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Всего ошибок к повтору:</span>
+<span class="font-bold text-on-surface bg-error-container/20 px-2 py-0.5 rounded">3 события</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Последняя попытка:</span>
+<span class="text-on-surface">сегодня, 09:42</span>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col sm:flex-row-reverse gap-3">
+<button class="flex-1 px-6 h-touch-target-min bg-primary text-on-primary rounded-lg font-button-text hover:bg-blue-800 transition-colors">
+                    Повторить отправку
+                </button>
+<button class="flex-1 px-6 h-touch-target-min bg-surface-container-highest text-on-surface rounded-lg font-button-text hover:bg-outline-variant transition-colors">
+                    Отмена
+                </button>
+</div>
+</div>
+</div>
+</body></html>

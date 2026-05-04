@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed": "#001453",
+                        "surface": "#fbf8ff",
+                        "surface-container-low": "#f4f2fc",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-background": "#1a1b22",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-fixed": "#380d00",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "tertiary": "#611e00",
+                        "outline-variant": "#c4c5d5",
+                        "surface-dim": "#dad9e3",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary": "#515f74",
+                        "primary-container": "#1e40af",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "error-container": "#ffdad6",
+                        "primary": "#00288e",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "outline": "#757684",
+                        "on-primary-container": "#a8b8ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-bright": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eeedf7",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#3755c3",
+                        "inverse-primary": "#b8c4ff",
+                        "background": "#fbf8ff",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "tertiary-container": "#872d00",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "primary-fixed": "#dde1ff",
+                        "inverse-surface": "#2f3037",
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary-container": "#d5e3fc",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "gutter": "12px",
+                        "stack-lg": "24px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Top AppBar -->
+<header class="fixed top-0 left-0 w-full h-16 z-50 flex items-center justify-between px-6 bg-white border-b border-slate-200 shadow-sm">
+<div class="flex items-center gap-4">
+<span class="text-lg font-bold text-blue-900">Система Инспекции</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center bg-surface-container rounded-full px-4 py-1.5 border border-outline-variant">
+<span class="material-symbols-outlined text-outline text-lg mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-64" placeholder="Поиск по системе..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-50 transition-colors rounded-full relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-fixed overflow-hidden border border-outline-variant">
+<img alt="Аватар диспетчера" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcSmppEEuPYk1xsvb6Oxw-YzStSshhzHtr4yXV6o3afWsa6xsi5udUu6DdCaSjC_2fy5DxKnXxbUQ7mq8Pavko66vEOq0CoWdwJyMvcVUcaP4qFKrBzZ2cW21mv_VcY2vzCLbg0vgCWhFKweUSgOaYDP2UTkapAvxhheAa4ecI3u2JvX_dAayMA21XXiYy0c4Hq5LjDnDeu-MQFskfjAIZps-syiFkuDxbPzrHcSGeM3yHqoPhrXt86qarc3gmcAb_AjljE9whYE0h"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Side Navigation -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 z-40 p-4 flex flex-col gap-2 bg-slate-50 border-r border-slate-200">
+<div class="px-3 py-4 mb-4">
+<h2 class="text-blue-900 font-black uppercase text-xs tracking-widest">Управление</h2>
+<p class="text-xs text-slate-500">Диспетчерская</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 text-slate-600 hover:text-blue-600 px-3 py-2 hover:bg-slate-200/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Дашборд</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 hover:text-blue-600 px-3 py-2 hover:bg-slate-200/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-sm text-label-sm">Партии</span>
+</a>
+<a class="flex items-center gap-3 bg-blue-50 text-blue-700 rounded-lg px-3 py-2 font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse" data-weight="fill" style="font-variation-settings: 'FILL' 1;">warehouse</span>
+<span class="font-label-sm text-label-sm">Поступления</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 hover:text-blue-600 px-3 py-2 hover:bg-slate-200/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="construction">construction</span>
+<span class="font-label-sm text-label-sm">Оборудование</span>
+</a>
+<a class="flex items-center gap-3 text-slate-600 hover:text-blue-600 px-3 py-2 hover:bg-slate-200/50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-label-sm text-label-sm">Отчеты</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-slate-200 pt-4">
+<button class="w-full flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-lg font-button-text text-button-text hover:bg-primary-container transition-all shadow-md active:scale-95 duration-150">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+            Новая инспекция
+        </button>
+</div>
+</aside>
+<!-- Main Content (Dashboard Background - Dimmed) -->
+<main class="ml-64 mt-16 p-8 filter blur-[2px] pointer-events-none opacity-40">
+<div class="flex justify-between items-center mb-8">
+<h1 class="font-h1-bold text-h1-bold text-blue-900">Поступления</h1>
+<div class="flex gap-4">
+<button class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium">Экспорт</button>
+<button class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium">Новое поступление</button>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-sm text-slate-500 mb-1">Всего за месяц</p>
+<p class="text-2xl font-bold">1,240</p>
+<div class="mt-2 text-xs text-emerald-600 flex items-center">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="trending_up">trending_up</span> +12% к пр. мес.
+            </div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-sm text-slate-500 mb-1">Ожидает проверки</p>
+<p class="text-2xl font-bold">48</p>
+<div class="mt-2 text-xs text-blue-600 flex items-center">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="schedule">schedule</span> В процессе
+            </div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-sm text-slate-500 mb-1">Расхождения</p>
+<p class="text-2xl font-bold text-error">3</p>
+<div class="mt-2 text-xs text-error flex items-center">
+<span class="material-symbols-outlined text-xs mr-1" data-icon="warning">warning</span> Требует внимания
+            </div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-sm text-slate-500 mb-1">Складская загрузка</p>
+<p class="text-2xl font-bold">78%</p>
+<div class="w-full bg-slate-100 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-primary h-full w-[78%]"></div>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50 border-b border-slate-200">
+<tr>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">ID</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Позиция</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Статус</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Дата</th>
+<th class="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Действия</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 font-medium text-slate-900">#A-104</td>
+<td class="px-6 py-4">Монитор пациента (B-2024-05)</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">Ожидает проверки</span>
+</td>
+<td class="px-6 py-4 text-slate-500 text-sm">Сегодня, 08:40</td>
+<td class="px-6 py-4">
+<button class="text-blue-600 hover:underline text-sm font-medium">Редактировать</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+<!-- Dimmed Overlay -->
+<div class="fixed inset-0 bg-slate-950/40 z-[60] backdrop-blur-sm"></div>
+<!-- Modal: Редактировать поступление (Locked State) -->
+<div class="fixed inset-0 z-[70] flex items-center justify-center p-6 overflow-hidden">
+<div class="bg-white w-full max-w-6xl max-h-[921px] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant">
+<!-- Modal Header -->
+<div class="px-8 py-6 border-b border-slate-200 flex justify-between items-start">
+<div>
+<h2 class="font-h1-bold text-h1-bold text-slate-900">Редактировать поступление</h2>
+<p class="text-slate-500 font-body-md text-body-md mt-1">Данные подтвержденной партии</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-sm font-semibold border border-emerald-100 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    Подтверждено
+                </div>
+<button class="p-2 text-slate-400 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+</div>
+<!-- Banner Area (Warning) -->
+<div class="px-8 py-3 bg-amber-50 border-b border-amber-100 flex items-center gap-3">
+<span class="material-symbols-outlined text-amber-600" data-icon="warning" data-weight="fill" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="text-sm text-amber-800">Поступление уже проверено оператором. Основные данные доступны только для просмотра.</span>
+</div>
+<!-- Modal Content (Scrollable) -->
+<div class="flex-1 overflow-y-auto p-8 bg-slate-50/50">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Form -->
+<div class="lg:col-span-7 space-y-8">
+<!-- Основные данные Section (Read-only) -->
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-slate-400" data-icon="dataset">dataset</span>
+<h3 class="font-h2-bold text-h2-bold text-slate-900">Основные данные</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="col-span-2">
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Позиция</label>
+<div class="relative">
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="Монитор пациента"/>
+</div>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">ID / Артикул</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="EQ-201-05"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Категория</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="Медоборудование"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Количество</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="30 шт."/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Партия</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="B-2024-05"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Поставщик</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="MedSupply GmbH"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Склад</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="Склад временного хранения"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Дата поступления</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="Сегодня, 08:40"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Создал</label>
+<input class="w-full h-12 bg-slate-100 border-slate-200 text-slate-500 rounded-lg px-4 text-sm cursor-not-allowed" readonly="" type="text" value="Иван Иванов (Диспетчер)"/>
+</div>
+</div>
+</section>
+<!-- Документы Section (Editable) -->
+<div class="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-3 text-blue-800">
+<span class="material-symbols-outlined text-blue-600 shrink-0" data-icon="info">info</span>
+<p class="text-sm leading-relaxed">
+    После проверки можно изменить только документы и внутренний комментарий.
+  </p>
+</div><section>
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-slate-400" data-icon="description">description</span>
+<h3 class="font-h2-bold text-h2-bold text-slate-900">Документы</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Номер документа</label>
+<input class="w-full h-12 border-slate-300 rounded-lg px-4 focus:ring-primary focus:border-primary text-sm shadow-sm" type="text" value="Накладная #A-104"/>
+</div>
+<div>
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Тип документа</label>
+<select class="w-full h-12 border-slate-300 rounded-lg px-4 focus:ring-primary focus:border-primary text-sm shadow-sm">
+<option selected="">Накладная</option>
+<option>Счет-фактура</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Вложения</label>
+<div class="space-y-2">
+<div class="border-2 border-dashed border-slate-200 rounded-xl p-4 flex items-center gap-4 hover:border-primary transition-colors cursor-pointer bg-white">
+<div class="h-10 w-10 bg-blue-50 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600" data-icon="picture_as_pdf">picture_as_pdf</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-slate-900">invoice_A104.pdf</p>
+<p class="text-xs text-slate-400">1.4 MB • Прикреплено</p>
+</div>
+<button class="text-error hover:text-red-700">
+<span class="material-symbols-outlined" data-icon="delete">delete</span>
+</button>
+</div>
+<button class="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-slate-300 rounded-xl text-slate-500 hover:bg-slate-100 transition-colors text-sm font-medium">
+<span class="material-symbols-outlined text-lg" data-icon="upload">upload</span>
+                                        Добавить документ
+                                    </button>
+</div>
+</div>
+<div class="col-span-2">
+<label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5 ml-1">Комментарий диспетчера</label>
+<textarea class="w-full border-slate-300 rounded-lg px-4 py-3 focus:ring-primary focus:border-primary text-sm shadow-sm" rows="3">Партия поступила утром, требуется проверка количества и маркировки.</textarea>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Summary -->
+<div class="lg:col-span-5">
+<div class="bg-white rounded-2xl border border-slate-200 shadow-lg sticky top-0">
+<div class="p-6 border-b border-slate-100">
+<h3 class="font-h2-bold text-h2-bold text-slate-900">Данные поступления</h3>
+</div>
+<div class="p-6 space-y-6">
+<!-- Data Snapshot -->
+<div class="space-y-3">
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">Оборудование</span>
+<span class="font-semibold text-slate-900">Монитор пациента</span>
+</div>
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">ID</span>
+<span class="font-semibold text-slate-900">EQ-201-05</span>
+</div>
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">Кол-во</span>
+<span class="font-semibold text-slate-900">30 шт.</span>
+</div>
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">Партия</span>
+<span class="font-semibold text-slate-900">B-2024-05</span>
+</div>
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">Поставщик</span>
+<span class="font-semibold text-slate-900">MedSupply GmbH</span>
+</div>
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">Склад</span>
+<span class="font-semibold text-slate-900">Склад врем. хран.</span>
+</div>
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">Оператор проверки</span>
+<span class="font-semibold text-slate-900">Алексей С.</span>
+</div>
+<div class="flex justify-between items-center text-sm py-1 border-b border-slate-50">
+<span class="text-slate-500">Статус проверки</span>
+<span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-bold">Подтверждено</span>
+</div></div>
+<!-- Logs Placeholder -->
+<div><p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">История изменений</p>
+<div class="space-y-3">
+<div class="flex gap-3">
+<div class="mt-1.5 w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
+<div>
+<p class="text-sm text-slate-900">Алексей С. подтвердил поступление</p>
+<p class="text-xs text-slate-400">Сегодня, 09:12</p>
+</div>
+</div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-8 py-6 border-t border-slate-200 bg-white flex justify-between items-center">
+<button class="px-6 py-2.5 text-slate-600 font-button-text hover:bg-slate-50 rounded-lg transition-colors">Закрыть</button>
+<div class="flex items-center gap-3">
+<button class="px-8 py-2.5 bg-primary text-white font-button-text hover:bg-primary-container rounded-lg shadow-md transition-all active:scale-95 opacity-50 cursor-not-allowed">Сохранить изменения</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

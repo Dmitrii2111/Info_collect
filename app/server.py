@@ -15,7 +15,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR / "static"
 TEMPLATES_DIR = BASE_DIR / "templates"
 INDEX_FILE = TEMPLATES_DIR / "index.html"
-OPERATOR_FILE = TEMPLATES_DIR / "operator.html"
 FRONTEND_DIR = BASE_DIR / "frontend"
 FRONTEND_DIST_DIR = FRONTEND_DIR / "dist"
 FRONTEND_DIST_INDEX = FRONTEND_DIST_DIR / "index.html"
@@ -28,15 +27,15 @@ def _operator_next_fallback_html() -> str:
         f"<p>Для dev-режима можно указать <code>FRONTEND_DEV_SERVER_URL={dev_url}</code>.</p>"
         if dev_url
         else (
-            "<p>React + Vite каркас уже подготовлен в каталоге "
-            "<code>frontend/</code>, но фронтенд-сборка еще не запущена.</p>"
+            "<p>React + Vite каркас подготовлен в каталоге <code>frontend/</code>, "
+            "но frontend-сборка еще не запущена.</p>"
         )
     )
     return f"""
     <html>
       <body style="font-family: Segoe UI, Tahoma, sans-serif; padding: 32px; color: #1c2d24;">
         <h1>InfoCollect Operator Next</h1>
-        <p>Новая операторская панель на React + Vite еще не собрана.</p>
+        <p>Новая desktop-панель на React + Vite еще не собрана.</p>
         {dev_hint}
         <p>После сборки страница будет доступна здесь же: <code>/operator-next</code>.</p>
       </body>
@@ -70,6 +69,7 @@ def create_app(*, bootstrap_builtin_users: bool = True) -> FastAPI:
     app.include_router(api_router, prefix=settings.api_prefix)
 
     if bootstrap_builtin_users:
+
         @app.on_event("startup")
         def ensure_builtin_users() -> None:
             db: Session = SessionLocal()
@@ -92,9 +92,7 @@ def create_app(*, bootstrap_builtin_users: bool = True) -> FastAPI:
 
     @app.get("/operator", response_class=HTMLResponse, tags=["frontend"])
     def operator() -> str:
-        if OPERATOR_FILE.exists():
-            return OPERATOR_FILE.read_text(encoding="utf-8")
-        return "<html><body><h1>InfoCollect Operator</h1><p>Operator frontend is not available.</p></body></html>"
+        return _redirect_html("/operator-next", "InfoCollect Operator")
 
     @app.get("/operator-next", response_class=HTMLResponse, tags=["frontend"])
     def operator_next() -> str:
@@ -103,15 +101,11 @@ def create_app(*, bootstrap_builtin_users: bool = True) -> FastAPI:
                 "<html><head>"
                 f"<meta http-equiv='refresh' content='0; url={settings.frontend_dev_server_url}'>"
                 "</head><body>"
-                f"<p>Redirecting to <a href='{settings.frontend_dev_server_url}'>{settings.frontend_dev_server_url}</a>…</p>"
+                f"<p>Redirecting to <a href='{settings.frontend_dev_server_url}'>{settings.frontend_dev_server_url}</a>...</p>"
                 "</body></html>"
             )
         if FRONTEND_DIST_INDEX.exists():
             return FRONTEND_DIST_INDEX.read_text(encoding="utf-8")
         return _operator_next_fallback_html()
-
-    @app.get("/operator-template", response_class=HTMLResponse, tags=["frontend"])
-    def operator_template() -> str:
-        return _redirect_html(settings.operator_template_preview_url, "InfoCollect Operator Template")
 
     return app

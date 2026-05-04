@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Панель управления</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#d5e3fc",
+                        "tertiary-container": "#872d00",
+                        "outline": "#757684",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-container": "#57657a",
+                        "surface-container-highest": "#e3e1eb",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-background": "#1a1b22",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "outline-variant": "#c4c5d5",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "surface": "#fbf8ff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-dim": "#dad9e3",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "on-primary-container": "#a8b8ff",
+                        "surface-container": "#eeedf7",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-surface": "#1a1b22",
+                        "on-primary-fixed": "#001453",
+                        "surface-tint": "#3755c3",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "inverse-primary": "#b8c4ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "primary-fixed": "#dde1ff",
+                        "surface-container-low": "#f4f2fc",
+                        "primary": "#00288e",
+                        "secondary": "#515f74",
+                        "tertiary": "#611e00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "background": "#fbf8ff",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "stack-lg": "24px",
+                        "touch-target-min": "48px"
+                    },
+                    "fontFamily": {
+                        "h2-bold": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c4c5d5; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 border-r fixed left-0 top-0 border-slate-200 bg-slate-50 flex flex-col overflow-y-auto z-50">
+<div class="px-6 py-8">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-blue-900 uppercase tracking-tight">InfoCollect</h1>
+<p class="text-[10px] font-bold text-primary-container opacity-70">MVP v0.1</p>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="bg-blue-50 text-blue-700 border-r-4 border-blue-700 flex items-center px-4 py-3 font-semibold transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="text-sm tracking-tight">Панель управления</span>
+</a><a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory">inventory</span>
+<span class="text-sm tracking-tight">Реестр оборудования</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="precision_manufacturing">precision_manufacturing</span>
+<span class="text-sm tracking-tight">Объекты</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="fact_check">fact_check</span>
+<span class="text-sm tracking-tight">Инспекции</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+<span class="text-sm tracking-tight">Склад</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="input">input</span>
+<span class="text-sm tracking-tight">Поступления</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="report_problem">report_problem</span>
+<span class="text-sm tracking-tight">Расхождения</span>
+</a>
+<div class="py-2"><hr class="border-slate-200"/></div>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="sync">sync</span>
+<span class="text-sm tracking-tight">Синхронизация</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="history">history</span>
+<span class="text-sm tracking-tight">История</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+<span class="text-sm tracking-tight">Отчёты</span>
+</a>
+<!-- Admin-only section -->
+<div class="pt-6 pb-2">
+<p class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-2">Администрирование</p>
+</div>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+<span class="text-sm tracking-tight">Сотрудники</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="text-sm tracking-tight">Роли и права</span>
+</a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="text-sm tracking-tight">Системные настройки</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Profile Area -->
+<div class="mt-auto border-t border-slate-200 p-4 bg-white/50">
+<div class="flex items-center gap-3">
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoCnX4g0fUfPPH15i-64lr7YXewid7xLoBK2YGFykaOK4V-Ci6O_-dKLdQj4pWWUNIYWDQo_1W1lDNdsXBkiOLRd7FJwRbFcyZ_961lnFTye1MvKHfkA1mrYRJjAe6m96wQu901bawqWae9taK4RTSqSv88Vvkik2-xXxIfkAVSNqCeq6PDmG-Nh2kXrk_exetB6XpPODnn-nj0r-B2D9dxhJ0zrtET3LTJUqpkgtiZNjf4xtFLnseWwu9lw-e9n2rP-WIMFk_AUPM"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-on-surface truncate">Иван Иванов</p>
+<p class="text-[10px] text-primary font-bold uppercase">Администратор</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar & Content Wrapper -->
+<div class="ml-64 flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-40 flex justify-between items-center px-8 h-20 w-full bg-white border-b border-slate-200 shadow-sm">
+<div class="flex flex-col">
+<h2 class="font-h1-bold text-h1-bold text-primary">Панель управления</h2>
+<p class="text-xs text-slate-500 font-medium">Контроль объектов, инспекций, склада и синхронизации</p>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-primary" placeholder="Поиск по системе..." type="text"/>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-full border border-green-100">
+<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+<span class="text-xs font-semibold text-green-700">Сервер подключён</span>
+</div>
+<div class="flex items-center gap-4 border-l pl-6 border-slate-200">
+<div class="text-right">
+<p class="text-sm font-bold text-on-surface">Иван Иванов</p>
+<p class="text-[11px] text-slate-500 uppercase tracking-widest font-bold">Администратор</p>
+</div>
+<img alt="User Profile" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary-fixed" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoCnX4g0fUfPPH15i-64lr7YXewid7xLoBK2YGFykaOK4V-Ci6O_-dKLdQj4pWWUNIYWDQo_1W1lDNdsXBkiOLRd7FJwRbFcyZ_961lnFTye1MvKHfkA1mrYRJjAe6m96wQu901bawqWae9taK4RTSqSv88Vvkik2-xXxIfkAVSNqCeq6PDmG-Nh2kXrk_exetB6XpPODnn-nj0r-B2D9dxhJ0zrtET3LTJUqpkgtiZNjf4xtFLnseWwu9lw-e9n2rP-WIMFk_AUPM"/>
+</div>
+</div>
+</header>
+<main class="p-8 space-y-8">
+<!-- Quick Actions -->
+<div class="flex flex-wrap gap-4">
+<button class="flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg shadow-md hover:bg-primary-container transition-all font-button-text text-button-text">
+<span class="material-symbols-outlined">add_box</span>
+                    Создать поступление
+                </button>
+<button class="flex items-center gap-2 px-6 py-3 bg-white text-on-surface border border-outline-variant rounded-lg hover:bg-slate-50 transition-all font-button-text text-button-text">
+<span class="material-symbols-outlined">download</span>
+                    Экспорт отчёта
+                </button>
+<button class="flex items-center gap-2 px-6 py-3 bg-white text-on-surface border border-outline-variant rounded-lg hover:bg-slate-50 transition-all font-button-text text-button-text"><span class="material-symbols-outlined">person_add</span>
+                    Добавить сотрудника</button>
+</div>
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+<!-- Objects Card -->
+<div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-50 text-blue-700 rounded-lg">
+<span class="material-symbols-outlined">domain</span>
+</div>
+</div>
+<p class="text-3xl font-black text-on-surface">3</p>
+<p class="text-sm font-medium text-slate-500">Объекты</p>
+</div>
+<!-- Inspections Card -->
+<div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-indigo-50 text-indigo-700 rounded-lg">
+<span class="material-symbols-outlined">assignment</span>
+</div>
+</div>
+<p class="text-3xl font-black text-on-surface">12</p>
+<p class="text-sm font-medium text-slate-500">Инспекции</p>
+</div>
+<!-- Rooms Card -->
+<div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-cyan-50 text-cyan-700 rounded-lg">
+<span class="material-symbols-outlined">meeting_room</span>
+</div>
+</div>
+<p class="text-3xl font-black text-on-surface">74</p>
+<p class="text-sm font-medium text-slate-500">Помещения</p>
+</div>
+<!-- Equipment Card -->
+<div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-purple-50 text-purple-700 rounded-lg">
+<span class="material-symbols-outlined">construction</span>
+</div>
+</div>
+<p class="text-3xl font-black text-on-surface">512</p>
+<p class="text-sm font-medium text-slate-500">Позиций оборудования</p>
+</div>
+<!-- Discrepancies Card -->
+<div class="bg-white p-5 rounded-xl border-2 border-red-100 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-red-50 text-red-700 rounded-lg">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<span class="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded uppercase">Внимание</span>
+</div>
+<p class="text-3xl font-black text-red-700">18</p>
+<p class="text-sm font-medium text-slate-500">Расхождения</p>
+</div>
+<!-- Sync Card -->
+<div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-50 text-blue-700 rounded-lg">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase">Инфо</span>
+</div>
+<p class="text-3xl font-black text-on-surface">12</p>
+<p class="text-sm font-medium text-slate-500">Очередь синхр.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+<!-- Main Content Area (8/12) -->
+<div class="xl:col-span-9 space-y-8">
+<!-- Panel 1: Active Inspections -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+<h3 class="font-h2-bold text-h2-bold text-on-surface">Активные инспекции</h3>
+<button class="text-primary text-sm font-semibold hover:underline">Все инспекции</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-widest border-b border-slate-100">
+<tr>
+<th class="px-6 py-4">№ Инспекции</th>
+<th class="px-6 py-4">Объект</th>
+<th class="px-6 py-4">Зона</th>
+<th class="px-6 py-4">Прогресс</th>
+<th class="px-6 py-4">Опер.</th>
+<th class="px-6 py-4">Статус</th>
+<th class="px-6 py-4 text-right">Действие</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 font-bold text-sm">#INS-2024-001</td>
+<td class="px-6 py-4 text-sm">Складской терминал А</td>
+<td class="px-6 py-4 text-sm text-slate-500">Сектор 4</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-20 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 65%"></div>
+</div>
+<span class="text-[11px] font-bold text-slate-600">65%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700">АП</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-[10px] font-bold uppercase whitespace-nowrap">В работе</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-slate-400 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 font-bold text-sm">#INS-2024-002</td>
+<td class="px-6 py-4 text-sm">Цех сборки №3</td>
+<td class="px-6 py-4 text-sm text-slate-500">Конвейер B</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-20 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-amber-500 h-full" style="width: 5%"></div>
+</div>
+<span class="text-[11px] font-bold text-slate-600">5%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500">?</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-[10px] font-bold uppercase whitespace-nowrap">Не начато</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-slate-400 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 font-bold text-sm">#INS-2024-005</td>
+<td class="px-6 py-4 text-sm">Логистический узел</td>
+<td class="px-6 py-4 text-sm text-slate-500">Приёмка</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-20 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+<div class="bg-red-500 h-full" style="width: 88%"></div>
+</div>
+<span class="text-[11px] font-bold text-slate-600">88%</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center text-xs font-bold text-red-700">МК</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-red-50 text-red-700 rounded-full text-[10px] font-bold uppercase whitespace-nowrap">Требует внимания</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-slate-400 hover:text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Panel 2: Warehouse and Incoming -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center">
+<h3 class="font-h2-bold text-h2-bold text-on-surface">Склад и поступления</h3>
+<button class="text-primary text-sm font-semibold hover:underline">Управление запасами</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase tracking-widest border-b border-slate-100">
+<tr>
+<th class="px-6 py-4">Товар / ТМЦ</th>
+<th class="px-6 py-4">ID / артикул</th>
+<th class="px-6 py-4 text-center">Кол-во</th>
+<th class="px-6 py-4">Статус</th>
+<th class="px-6 py-4">Ответственный</th>
+<th class="px-6 py-4 text-right">Действие</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-slate-100 rounded flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">box</span>
+</div>
+<span class="text-sm font-semibold">Кабель силовой 5х10</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-mono text-slate-500">EL-CB-10-5</td>
+<td class="px-6 py-4 text-center font-bold">150 м</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-[10px] font-bold uppercase whitespace-nowrap">Спорная позиция</span>
+</td>
+<td class="px-6 py-4 text-sm">Петров С.</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1 bg-primary-container text-white text-[11px] font-bold rounded hover:opacity-90 transition-opacity">ПРИНЯТЬ</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-slate-100 rounded flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">settings_input_component</span>
+</div>
+<span class="text-sm font-semibold">Датчик давления P-22</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm font-mono text-slate-500">SN-PR-2212</td>
+<td class="px-6 py-4 text-center font-bold">4 шт</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-[10px] font-bold uppercase whitespace-nowrap">Ожидает проверки</span>
+</td>
+<td class="px-6 py-4 text-sm">Сидоров В.</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1 bg-primary-container text-white text-[11px] font-bold rounded hover:opacity-90 transition-opacity">ПРИНЯТЬ</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Panel 3: High Priority Items -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+<div class="px-6 py-4 border-b border-slate-100">
+<h3 class="font-h2-bold text-h2-bold text-red-700 flex items-center gap-2">
+<span class="material-symbols-outlined">priority_high</span>
+                                Требуют внимания
+                            </h3>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-start gap-4 p-4 bg-red-50 rounded-lg border border-red-100">
+<div class="text-red-700"><span class="material-symbols-outlined">report_problem</span></div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-red-900">Критическое расхождение: Склад А</h4>
+<p class="text-xs text-red-700 mt-1">Обнаружена недостача 5 единиц Оборудования тип-R в ходе инспекции #INS-2024-005.</p>
+</div>
+<button class="text-[10px] font-bold text-white bg-red-700 px-3 py-1 rounded">УСТРАНИТЬ</button>
+</div>
+<div class="flex items-start gap-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+<div class="text-blue-700"><span class="material-symbols-outlined">sync_problem</span></div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-blue-900">Конфликт синхронизации</h4>
+<p class="text-xs text-blue-700 mt-1">Терминал #04 пытается отправить данные, конфликтующие с базой сервера (Объект "Цех сборки").</p>
+</div>
+<button class="text-[10px] font-bold text-white bg-blue-700 px-3 py-1 rounded">РЕШИТЬ</button>
+</div>
+<div class="flex items-start gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+<div class="text-slate-500"><span class="material-symbols-outlined">error</span></div>
+<div class="flex-1">
+<h4 class="text-sm font-bold text-slate-900">Ошибка валидации импорта</h4>
+<p class="text-xs text-slate-500 mt-1">Файл "Inventory_Jan.xlsx" содержит 3 строки с неверным форматом SKU.</p>
+</div>
+<button class="text-[10px] font-bold text-slate-900 border border-slate-300 px-3 py-1 rounded">ЛОГИ</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Activity Panel (3/12) -->
+<div class="xl:col-span-3 space-y-6">
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 sticky top-28">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-h2-bold text-h2-bold text-on-surface">Последние действия</h3>
+<span class="material-symbols-outlined text-outline">history</span>
+</div>
+<div class="space-y-6">
+<div class="relative pl-6 pb-6 border-l-2 border-slate-100">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-600 border-2 border-white"></div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">10:45 • СЕГОДНЯ</p>
+<p class="text-sm font-bold text-on-surface mt-1">Иван Иванов</p>
+<p class="text-xs text-slate-500">Утвердил отчет по инспекции #INS-2024-001</p>
+</div>
+<div class="relative pl-6 pb-6 border-l-2 border-slate-100">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-green-500 border-2 border-white"></div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">09:12 • СЕГОДНЯ</p>
+<p class="text-sm font-bold text-on-surface mt-1">Система</p>
+<p class="text-xs text-slate-500">Автоматическая синхронизация со складской базой завершена успешно</p>
+</div>
+<div class="relative pl-6 pb-6 border-l-2 border-slate-100">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-amber-500 border-2 border-white"></div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">ВЧЕРА • 18:30</p>
+<p class="text-sm font-bold text-on-surface mt-1">Алексей Петров</p>
+<p class="text-xs text-slate-500">Создал новое расхождение (тип: Недостача) в Объекте "Склад А"</p>
+</div>
+<div class="relative pl-6 pb-6 border-l-2 border-slate-100">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-400 border-2 border-white"></div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">ВЧЕРА • 16:15</p>
+<p class="text-sm font-bold text-on-surface mt-1">Мария Кузнецова</p>
+<p class="text-xs text-slate-500">Запросила экспорт отчета за квартал в PDF</p>
+</div>
+<div class="relative pl-6 border-l-2 border-slate-100">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-600 border-2 border-white"></div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">ВЧЕРА • 14:00</p>
+<p class="text-sm font-bold text-on-surface mt-1">Иван Иванов</p>
+<p class="text-xs text-slate-500">Назначил новую инспекцию на Цех сборки №3</p>
+</div>
+</div>
+<button class="w-full mt-8 py-3 text-xs font-bold text-slate-500 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors uppercase tracking-widest">Открыть историю</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "on-error-container": "#93000a",
+                        "background": "#fbf8ff",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-container-low": "#f4f2fc",
+                        "outline": "#757684",
+                        "tertiary": "#611e00",
+                        "on-primary-fixed": "#001453",
+                        "inverse-primary": "#b8c4ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c5d5",
+                        "on-background": "#1a1b22",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "primary-fixed": "#dde1ff",
+                        "on-secondary-container": "#57657a",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-primary-container": "#a8b8ff",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-dim": "#dad9e3",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "surface-tint": "#3755c3",
+                        "primary-container": "#1e40af",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#d5e3fc",
+                        "on-surface-variant": "#444653",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary-container": "#872d00",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-surface": "#1a1b22",
+                        "surface-container": "#eeedf7",
+                        "surface-bright": "#fbf8ff",
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary": "#515f74",
+                        "primary": "#00288e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "data-compact": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h2-bold": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface font-body-md text-body-md min-h-screen">
+<!-- Background Content (Employees Screen) - Dimmed -->
+<div class="fixed inset-0 z-0 opacity-40 grayscale pointer-events-none">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 bg-white shadow-sm flex flex-col h-full font-inter text-sm antialiased">
+<div class="p-6">
+<div class="text-xl font-bold tracking-tight text-blue-800">InfoCollect</div>
+<div class="text-xs text-slate-500">Inspection Management</div>
+</div>
+<nav class="flex-1 overflow-y-auto">
+<div class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>Dashboard
+                </div>
+<div class="flex items-center px-4 py-3 bg-blue-50 text-blue-800 font-semibold border-r-4 border-blue-800">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>Employees
+                </div>
+<div class="flex items-center px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>Registry
+                </div>
+<div class="flex items-center px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined mr-3" data-icon="assignment">assignment</span>Inspections
+                </div>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="h-16 fixed top-0 right-0 left-64 border-b border-slate-200 bg-white/90 backdrop-blur-md z-40 flex justify-between items-center px-8 w-full">
+<div class="flex items-center gap-4">
+<div class="text-lg font-semibold text-slate-900">Admin Panel</div>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
+<div class="w-64 h-10 bg-slate-100 rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500">dns</span>
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a senior system administrator in a high-tech office environment. The lighting is crisp and cool, reflecting a modern corporate atmosphere. The individual is wearing a smart-casual navy shirt, looking directly at the camera with a confident and helpful expression. The background is softly blurred, showing hints of server racks and glowing blue indicator lights, maintaining the clean light-mode aesthetic of the InfoCollect platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZ1ugZBnz8mRUGlvPery77aXFb6h3SKz2DLSsZiYSemxtT1yGBw5yZsWDfZocgZd-j0PHtFFsQBz8Clv_rIgeXQZXlKSNX2MVf0LYJOurYc-9wm5Wg9lukUcGAHfYJS733s6Utug_Iq8MUjNAkiadJENazQIY_DmOv5aCOlvukh0UsmjyTg-4-yzurjkFRfsi7n00IRuhMRMwnLnrUXm5FA2-1C78CM5kJaif98Fu_iC5ywK6PkCBA_NX-tgu7_hmQBA41RnNehPV5"/>
+</div>
+</div>
+</header>
+<!-- Main Content (Table) -->
+<main class="pt-24 pl-72 pr-8 pb-8">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="font-h1-bold text-h1-bold text-slate-900">Сотрудники</h1>
+<p class="text-slate-500 mt-2">Управление пользователями и правами доступа в системе</p>
+</div>
+<div class="bg-primary text-white px-6 py-2 rounded-lg font-semibold">Добавить сотрудника</div>
+</div>
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[11px] font-bold tracking-wider">
+<tr>
+<th class="px-6 py-4">Сотрудник</th>
+<th class="px-6 py-4">Роль</th>
+<th class="px-6 py-4">Статус</th>
+<th class="px-6 py-4 text-right">Действия</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="bg-blue-50/50">
+<td class="px-6 py-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">ИИ</div>
+<div>
+<div class="font-semibold text-slate-900">Иван Иванов</div>
+<div class="text-xs text-slate-500">ivanov@infocollect.ru</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-tight">Администратор</span>
+</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-emerald-600 font-medium text-sm">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    Активен
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-slate-400">more_vert</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-[2px]">
+<!-- Modal Card -->
+<div class="bg-white w-full max-w-[560px] rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<div class="px-8 py-6 flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error text-[28px]" data-icon="lock_person">lock_person</span>
+</div>
+<div class="pt-1">
+<h2 class="font-h2-bold text-h2-bold text-slate-900 leading-tight">Нельзя отключить собственный доступ</h2>
+<p class="text-slate-500 mt-1 font-label-sm text-label-sm">Системное ограничение безопасности</p>
+</div>
+</div>
+<!-- Modal Content -->
+<div class="px-8 pb-8">
+<!-- User Context Card -->
+<div class="bg-slate-50 rounded-lg p-4 border border-slate-200 mb-6 flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-lg">ИИ</div>
+<div>
+<div class="font-bold text-slate-900">Иван Иванов</div>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="text-xs font-semibold text-blue-800 bg-blue-100 px-2 py-0.5 rounded">Администратор</span>
+<span class="text-xs text-slate-500">• Текущая сессия</span>
+</div>
+</div>
+</div>
+<!-- Error Block -->
+<div class="bg-error-container/40 border border-error/20 rounded-lg p-5 flex gap-4">
+<span class="material-symbols-outlined text-error shrink-0" data-icon="warning">warning</span>
+<p class="text-on-error-container font-medium leading-relaxed">
+                        Вы не можете отключить доступ своей активной учётной записи. Назначьте другого администратора или выберите другого сотрудника для выполнения данного действия.
+                    </p>
+</div>
+<!-- Hidden/Disabled Forms Mockup (Grayed out) -->
+<div class="mt-8 space-y-4 opacity-30 select-none grayscale pointer-events-none">
+<div>
+<label class="block text-xs font-bold text-slate-500 uppercase mb-2">Причина отключения</label>
+<div class="h-12 bg-slate-100 border border-slate-300 rounded-lg w-full"></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 bg-slate-100 border border-slate-300 rounded"></div>
+<div class="h-4 bg-slate-100 w-48 rounded"></div>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-8 py-6 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+<button class="flex items-center gap-2 text-slate-600 font-button-text text-button-text hover:text-slate-900 transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_back">arrow_back</span>
+                    Вернуться к сотруднику
+                </button>
+<div class="flex gap-3">
+<!-- The primary 'Disable' button is removed or disabled as requested. Showing it as a ghostly disabled state for context if needed, but per prompt instruction we emphasize the 'Close' action -->
+<button class="bg-primary text-white px-8 py-3 rounded-lg font-button-text text-button-text shadow-sm hover:bg-blue-800 transition-all active:scale-[0.98]">
+                        Закрыть
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

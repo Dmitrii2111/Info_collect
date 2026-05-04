@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-size: 20px; vertical-align: middle; }
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#00288e",
+                        "on-primary": "#ffffff",
+                        "secondary": "#515f74",
+                        "surface": "#fbf8ff",
+                        "background": "#fbf8ff",
+                        "on-surface": "#1a1b22",
+                        "outline": "#757684",
+                        "surface-variant": "#e3e1eb",
+                        "on-surface-variant": "#444653"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "touch-target-min": "48px",
+                        "unit": "8px",
+                        "gutter": "12px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#f8fafc] text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-white border-b border-slate-200 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="flex flex-col">
+<span class="text-xl font-black text-primary tracking-tight">InfoCollect</span>
+<span class="text-[10px] text-slate-400 font-bold -mt-1">MVP v0.1</span>
+</div>
+<div class="h-6 w-px bg-slate-200 mx-2"></div>
+<div class="flex flex-col">
+<span class="font-sans antialiased text-sm font-bold text-slate-700">Отчёты</span>
+<span class="text-[10px] text-slate-500 uppercase tracking-tighter">Формирование и история</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-full border border-green-100">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-xs font-medium text-green-700">Сервер подключён</span>
+</div>
+<div class="flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-2 rounded-lg transition-colors">
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface leading-none">Иван Иванов</p>
+<p class="text-[10px] text-slate-500 uppercase">Администратор</p>
+</div>
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-primary font-bold text-xs">ИИ</div>
+</div>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer" data-icon="cloud_done">cloud_done</span>
+</div>
+</header>
+<div class="flex">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col pt-16 z-30 w-64 bg-white border-r border-slate-200">
+<div class="flex flex-col gap-0.5 p-4 overflow-y-auto h-[calc(100%-80px)]">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-xs font-semibold">Панель управления</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+<span class="text-xs font-semibold">Реестр оборудования</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="text-xs font-semibold">Объекты</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="text-xs font-semibold">Инспекции</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span class="text-xs font-semibold">Склад</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="move_to_inbox">move_to_inbox</span>
+<span class="text-xs font-semibold">Поступления</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="difference">difference</span>
+<span class="text-xs font-semibold">Расхождения</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+<span class="text-xs font-semibold">Синхронизация</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="text-xs font-semibold">История</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary text-white shadow-md font-bold transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="text-xs">Отчёты</span>
+</a>
+<div class="mt-6 mb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Администрирование</div>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-xs font-semibold">Сотрудники</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span class="text-xs font-semibold">Роли и права</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-xs font-semibold">Системные настройки</span>
+</a>
+</div>
+<div class="mt-auto p-4 border-t border-slate-100 bg-slate-50/50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-[10px]">ADMIN</div>
+<div class="flex flex-col">
+<span class="text-xs font-bold text-on-surface">Иван Иванов</span>
+<span class="text-[10px] text-green-600 font-bold uppercase">Онлайн</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="ml-64 flex-1 p-8 max-w-[1440px] mx-auto">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+<div>
+<h1 class="text-2xl font-bold text-slate-900">Отчёты</h1>
+<p class="text-slate-500 text-sm mt-1">Формирование, скачивание и история отчётов по инспекциям</p>
+</div>
+<div class="flex flex-wrap items-center gap-3">
+<span class="text-[11px] text-slate-500 font-medium mr-2">Обновлено: сегодня, 09:42</span>
+<button class="flex items-center gap-2 px-4 h-11 bg-white border border-slate-200 text-slate-700 rounded-lg font-semibold hover:bg-slate-50 transition-colors shadow-sm">
+<span class="material-symbols-outlined" data-icon="refresh">refresh</span>
+                        Обновить
+                    </button>
+<button class="flex items-center gap-2 px-6 h-11 bg-primary text-white rounded-lg font-bold hover:opacity-90 shadow-lg shadow-blue-900/10 transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                        Сформировать отчёт
+                    </button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+<div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col gap-1">
+<span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Всего отчётов</span>
+<span class="text-3xl font-black text-slate-900">64</span>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-l-green-500 border border-slate-200 shadow-sm flex flex-col gap-1">
+<span class="text-[10px] text-green-600 font-bold uppercase tracking-widest">Готово</span>
+<span class="text-3xl font-black text-green-700">51</span>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-l-amber-500 border border-slate-200 shadow-sm flex flex-col gap-1">
+<span class="text-[10px] text-amber-600 font-bold uppercase tracking-widest">Формируются</span>
+<span class="text-3xl font-black text-amber-700">4</span>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-l-red-500 border border-slate-200 shadow-sm flex flex-col gap-1">
+<span class="text-[10px] text-red-600 font-bold uppercase tracking-widest">Ошибки</span>
+<span class="text-3xl font-black text-red-700">2</span>
+</div>
+<div class="bg-white p-5 rounded-xl border-l-4 border-l-slate-400 border border-slate-200 shadow-sm flex flex-col gap-1">
+<span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Запланировано</span>
+<span class="text-3xl font-black text-slate-700">7</span>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-8 mb-8">
+<!-- Report Types Section -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-6">
+<div>
+<h3 class="text-lg font-bold mb-5 text-slate-800">Типы отчётов</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Inspection Report -->
+<div class="bg-white border border-slate-200 p-5 rounded-xl hover:border-primary/30 hover:shadow-md transition-all group flex flex-col relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-blue-50 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="description">description</span>
+</div>
+<span class="px-2.5 py-1 bg-red-100 text-red-700 rounded-md text-[10px] font-black">PDF</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 mb-1">Отчёт по инспекции</h4>
+<p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed">Полный результат проверки объекта с фотографиями и статусами.</p>
+<button class="mt-auto h-9 w-full bg-slate-50 border border-slate-200 text-primary text-xs font-bold rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all">Создать отчёт</button>
+</div>
+<!-- Discrepancy Report -->
+<div class="bg-white border border-slate-200 p-5 rounded-xl hover:border-primary/30 hover:shadow-md transition-all group flex flex-col relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="rule">rule</span>
+</div>
+<span class="px-2.5 py-1 bg-green-100 text-green-700 rounded-md text-[10px] font-black">XLS</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 mb-1">Отчёт по расхождениям</h4>
+<p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed">Список несовпадений между учетными и фактическими данными.</p>
+<button class="mt-auto h-9 w-full bg-slate-50 border border-slate-200 text-primary text-xs font-bold rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all">Создать отчёт</button>
+</div>
+<!-- Sync Log -->
+<div class="bg-white border border-slate-200 p-5 rounded-xl hover:border-primary/30 hover:shadow-md transition-all group flex flex-col relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="sync_alt">sync_alt</span>
+</div>
+<span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-md text-[10px] font-black">CSV</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 mb-1">Журнал синхронизации</h4>
+<p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed">История обмена данными с центральной базой и терминалами.</p>
+<button class="mt-auto h-9 w-full bg-slate-50 border border-slate-200 text-primary text-xs font-bold rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all">Создать отчёт</button>
+</div>
+<!-- Audit Log -->
+<div class="bg-white border border-slate-200 p-5 rounded-xl hover:border-primary/30 hover:shadow-md transition-all group flex flex-col relative overflow-hidden">
+<div class="flex justify-between items-start mb-4">
+<div class="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors shadow-sm">
+<span class="material-symbols-outlined text-2xl" data-icon="shield">shield</span>
+</div>
+<span class="px-2.5 py-1 bg-red-100 text-red-700 rounded-md text-[10px] font-black">PDF</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 mb-1">Журнал аудита</h4>
+<p class="text-xs text-slate-500 mb-5 line-clamp-2 leading-relaxed">Лог действий пользователей в системе для контроля безопасности.</p>
+<button class="mt-auto h-9 w-full bg-slate-50 border border-slate-200 text-primary text-xs font-bold rounded-lg hover:bg-primary hover:text-white hover:border-primary transition-all">Создать отчёт</button>
+</div>
+</div>
+</div>
+<!-- Scheduled Reports Block -->
+<div class="bg-blue-50/40 border border-blue-100 rounded-xl p-5">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="event_repeat">event_repeat</span>
+<h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Запланированные отчёты</h4>
+</div>
+<button class="text-[10px] text-primary font-bold hover:underline">Управление расписанием</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<div class="bg-white p-3 rounded-lg border border-blue-100 flex items-center gap-3 shadow-sm">
+<span class="material-symbols-outlined text-amber-500" data-icon="schedule">schedule</span>
+<div>
+<p class="text-[11px] font-bold text-slate-900">Ежедневный отчёт по расхождениям</p>
+<p class="text-[9px] text-slate-400">Ежедневно, 08:00</p>
+</div>
+</div>
+<div class="bg-white p-3 rounded-lg border border-blue-100 flex items-center gap-3 shadow-sm">
+<span class="material-symbols-outlined text-blue-500" data-icon="sync">sync</span>
+<div>
+<p class="text-[11px] font-bold text-slate-900">Журнал синхронизации</p>
+<p class="text-[9px] text-slate-400">Пн, Ср, Пт, 22:00</p>
+</div>
+</div>
+<div class="bg-white p-3 rounded-lg border border-blue-100 flex items-center gap-3 shadow-sm">
+<span class="material-symbols-outlined text-purple-500" data-icon="archive">archive</span>
+<div>
+<p class="text-[11px] font-bold text-slate-900">Архив инспекций</p>
+<p class="text-[9px] text-slate-400">1-е число месяца</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- New Report Panel -->
+<div class="col-span-12 lg:col-span-4">
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm p-6 h-full">
+<h3 class="text-lg font-bold mb-6 flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="post_add">post_add</span>
+                            Новый отчёт
+                        </h3>
+<div class="space-y-5">
+<div>
+<label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Тип отчёта</label>
+<select class="w-full h-11 rounded-lg border-slate-200 text-sm focus:ring-primary focus:border-primary">
+<option>Отчёт по инспекции</option>
+<option>Отчёт по расхождениям</option>
+<option>Журнал синхронизации</option>
+</select>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Инспекция</label>
+<select class="w-full h-11 rounded-lg border-slate-200 text-sm focus:ring-primary focus:border-primary">
+<option>#INS-2024-042</option>
+<option>#INS-2024-001</option>
+</select>
+</div>
+<div>
+<label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Объект</label>
+<select class="w-full h-11 rounded-lg border-slate-200 text-sm focus:ring-primary focus:border-primary">
+<option>Цех №5</option>
+<option>Корпус А</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Период</label>
+<select class="w-full h-11 rounded-lg border-slate-200 text-sm focus:ring-primary focus:border-primary">
+<option>Сегодня</option>
+<option>Последние 7 дней</option>
+<option>За месяц</option>
+</select>
+</div>
+<div>
+<label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Формат</label>
+<div class="flex gap-2 h-11">
+<button class="flex-1 rounded-lg border-2 border-primary bg-blue-50 text-primary text-[11px] font-black">PDF</button>
+<button class="flex-1 rounded-lg border border-slate-200 text-slate-500 text-[11px] font-bold hover:bg-slate-50">XLS</button>
+<button class="flex-1 rounded-lg border border-slate-200 text-slate-500 text-[11px] font-bold hover:bg-slate-50">CSV</button>
+</div>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-medium text-slate-600 group-hover:text-slate-900 transition-colors">Включить фотофиксацию</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-medium text-slate-600 group-hover:text-slate-900 transition-colors">История изменений</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-xs font-medium text-slate-600 group-hover:text-slate-900 transition-colors">Список расхождений</span>
+</label>
+</div>
+<div class="flex gap-4 pt-6">
+<button class="flex-1 h-12 bg-slate-100 text-slate-600 font-bold rounded-xl text-sm hover:bg-slate-200 transition-colors">Сбросить</button>
+<button class="flex-[2] h-12 bg-primary text-white font-bold rounded-xl text-sm hover:opacity-90 shadow-lg shadow-blue-900/10 transition-all">Сформировать</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter Panel -->
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 mb-6 flex flex-wrap items-center gap-4">
+<div class="relative flex-1 min-w-[300px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" data-icon="search">search</span>
+<input class="w-full pl-10 h-11 rounded-lg border-slate-200 text-sm focus:ring-primary focus:border-primary" placeholder="Поиск по названию или объекту..." type="text"/>
+</div>
+<select class="h-11 rounded-lg border-slate-200 text-sm min-w-[160px]">
+<option>Тип: Все</option>
+</select>
+<select class="h-11 rounded-lg border-slate-200 text-sm min-w-[160px]">
+<option>Автор: Любой</option>
+</select>
+<div class="flex items-center gap-1 bg-slate-50 p-1 rounded-lg border border-slate-200">
+<button class="px-4 py-2 rounded-md bg-white text-xs font-bold text-primary shadow-sm border border-slate-100">Все</button>
+<button class="px-4 py-2 rounded-md text-xs font-bold text-slate-500 hover:text-slate-700 transition-all">Готово</button>
+<button class="px-4 py-2 rounded-md text-xs font-bold text-slate-500 hover:text-slate-700 transition-all">Формируются</button>
+<button class="px-4 py-2 rounded-md text-xs font-bold text-slate-500 hover:text-slate-700 transition-all">Ошибки</button>
+</div>
+</div>
+<!-- Split Layout -->
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Left: History Table -->
+<div class="lg:w-[70%] bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-slate-100 bg-slate-50/30">
+<h3 class="text-base font-bold text-slate-800">История отчётов</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="border-b border-slate-100 bg-slate-50/20">
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Дата</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Название</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Тип</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Объект / инспекция</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Формат</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">Статус</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Автор</th>
+<th class="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Действие</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-50">
+<!-- Error Row -->
+<tr class="bg-red-50/20 border-l-4 border-l-red-500">
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Сегодня, 10:15</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-900">Отчёт_критич_ошибки</td>
+<td class="px-6 py-4 text-xs text-slate-500">Инспекция</td>
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-slate-800">Цех №5</p>
+<p class="text-[10px] text-slate-400">#INS-2024-042</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-black">PDF</span>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-red-100 text-red-700 rounded-full text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-red-500 rounded-full"></span>
+                                            Ошибка
+                                        </span>
+</td>
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Иван Иванов</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Ready Row -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Сегодня, 09:42</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-900">Отчёт_№142_А</td>
+<td class="px-6 py-4 text-xs text-slate-500">Инспекция</td>
+<td class="px-6 py-4">
+<p class="text-xs font-bold text-slate-800">Корпус А</p>
+<p class="text-[10px] text-slate-400">#INS-2024-001</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-0.5 bg-red-100 text-red-700 rounded text-[10px] font-black">PDF</span>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                            Готово
+                                        </span>
+</td>
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Иван Иванов</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Processing Row -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Сегодня, 09:20</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-900">Журнал_синк_финал</td>
+<td class="px-6 py-4 text-xs text-slate-500">Синхронизация</td>
+<td class="px-6 py-4 text-xs text-slate-500">Все терминалы</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-black">CSV</span>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-bold animate-pulse">
+<span class="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+                                            Формируется
+                                        </span>
+</td>
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Петр Петров</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Ready Row XLS -->
+<tr class="hover:bg-slate-50 transition-colors">
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Вчера, 16:30</td>
+<td class="px-6 py-4 text-xs font-bold text-slate-900">Свод_Расхожд_04</td>
+<td class="px-6 py-4 text-xs text-slate-500">Расхождения</td>
+<td class="px-6 py-4 text-xs text-slate-500">Склад Центр</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-[10px] font-black">XLS</span>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                            Готово
+                                        </span>
+</td>
+<td class="px-6 py-4 text-xs font-medium text-slate-600">Анна Сидорова</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="mt-auto px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/20">
+<span class="text-xs text-slate-500 font-medium">Показано 4 из 64 отчётов</span>
+<div class="flex gap-1.5">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-400 hover:bg-white transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-white font-bold text-xs shadow-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-600 font-medium text-xs hover:bg-white transition-colors">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-600 font-medium text-xs hover:bg-white transition-colors">3</button>
+<span class="px-1 text-slate-400 text-xs self-end pb-2">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 text-slate-400 hover:bg-white transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Right: Details Panel -->
+<div class="lg:w-[30%] space-y-6">
+<div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+<div>
+<h3 class="text-slate-900 font-bold text-sm">Детали отчёта</h3>
+<p class="text-slate-400 text-[10px] font-bold mt-0.5 tracking-wider uppercase">Просмотр и экспорт</p>
+</div>
+<span class="px-2.5 py-1 bg-blue-50 text-primary text-[10px] font-bold rounded-md">ID: 8421</span>
+</div>
+<div class="p-6">
+<!-- Preview Box -->
+<div class="flex justify-center mb-8">
+<div class="relative w-28 h-36 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center group overflow-hidden shadow-inner">
+<span class="material-symbols-outlined text-slate-300 text-5xl group-hover:scale-110 transition-transform" data-icon="picture_as_pdf">picture_as_pdf</span>
+<div class="absolute inset-0 bg-red-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="absolute top-2 right-2">
+<span class="material-symbols-outlined text-red-500 text-xl" data-icon="error">error</span>
+</div>
+</div>
+</div>
+<!-- Detail Info -->
+<div class="space-y-4 mb-8">
+<div class="flex justify-between items-center border-b border-slate-50 pb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Тип</span>
+<span class="text-xs font-bold text-slate-800">Инспекция</span>
+</div>
+<div class="flex justify-between items-center border-b border-slate-50 pb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Инспекция</span>
+<span class="text-xs font-bold text-slate-800">#INS-2024-042</span>
+</div>
+<div class="flex justify-between items-center border-b border-slate-50 pb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Объект</span>
+<span class="text-xs font-bold text-slate-800">Цех №5</span>
+</div>
+<div class="flex justify-between items-center border-b border-slate-50 pb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Размер</span>
+<span class="text-xs font-bold text-slate-800">--</span>
+</div>
+<div class="flex justify-between items-center border-b border-slate-50 pb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Создан</span>
+<span class="text-xs font-bold text-slate-800">Сегодня 10:15</span>
+</div>
+<div class="flex justify-between items-center border-b border-slate-50 pb-2">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Статус</span>
+<span class="text-xs font-bold text-red-600">Ошибка</span>
+</div>
+</div>
+<!-- Error Case Block -->
+<div class="p-4 bg-red-50 border border-red-100 rounded-xl mb-6">
+<div class="flex items-center gap-2 mb-2 text-red-700">
+<span class="material-symbols-outlined text-sm font-bold" data-icon="report">report</span>
+<span class="text-xs font-black uppercase tracking-wider">Ошибка формирования</span>
+</div>
+<p class="text-[11px] text-red-600 leading-relaxed mb-4">Не удалось сформировать отчёт: часть вложений недоступна. Проверьте соединение с хранилищем медиафайлов.</p>
+<button class="w-full h-10 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="autorenew">autorenew</span>
+                                    Повторить формирование
+                                </button>
+</div>
+<!-- Standard Actions (Normally Visible for 'Ready' state) -->
+<div class="space-y-3 opacity-50 pointer-events-none">
+<button class="w-full flex items-center justify-center gap-2 h-11 bg-primary text-white font-bold rounded-lg shadow-sm">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                                    Скачать отчёт
+                                </button>
+<button class="w-full flex items-center justify-center gap-2 h-11 border border-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+                                    Открыть предпросмотр
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

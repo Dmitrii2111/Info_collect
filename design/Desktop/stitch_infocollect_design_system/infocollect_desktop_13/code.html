@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Назначить оператора</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#00288e",
+                    "tertiary-container": "#872d00",
+                    "surface-container": "#eeedf7",
+                    "secondary-container": "#d5e3fc",
+                    "primary-fixed": "#dde1ff",
+                    "on-error": "#ffffff",
+                    "on-background": "#1a1b22",
+                    "outline-variant": "#c4c5d5",
+                    "on-tertiary-fixed-variant": "#802a00",
+                    "on-primary-fixed": "#001453",
+                    "secondary-fixed": "#d5e3fc",
+                    "background": "#fbf8ff",
+                    "tertiary": "#611e00",
+                    "surface-container-highest": "#e3e1eb",
+                    "inverse-on-surface": "#f1f0fa",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#fbf8ff",
+                    "primary-container": "#1e40af",
+                    "error-container": "#ffdad6",
+                    "on-surface-variant": "#444653",
+                    "secondary": "#515f74",
+                    "secondary-fixed-dim": "#b9c7df",
+                    "tertiary-fixed": "#ffdbce",
+                    "surface-container-low": "#f4f2fc",
+                    "error": "#ba1a1a",
+                    "on-surface": "#1a1b22",
+                    "tertiary-fixed-dim": "#ffb59a",
+                    "surface-variant": "#e3e1eb",
+                    "on-tertiary-container": "#ffa583",
+                    "surface-container-lowest": "#ffffff",
+                    "outline": "#757684",
+                    "surface-dim": "#dad9e3",
+                    "surface-tint": "#3755c3",
+                    "on-tertiary-fixed": "#380d00",
+                    "on-secondary-container": "#57657a",
+                    "on-primary-fixed-variant": "#173bab",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "on-secondary-fixed": "#0d1c2e",
+                    "inverse-surface": "#2f3037",
+                    "surface-container-high": "#e8e7f1",
+                    "surface": "#fbf8ff",
+                    "primary-fixed-dim": "#b8c4ff",
+                    "on-secondary-fixed-variant": "#3a485b",
+                    "inverse-primary": "#b8c4ff",
+                    "on-primary-container": "#a8b8ff",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "stack-md": "16px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "8px",
+                    "stack-lg": "24px",
+                    "touch-target-min": "48px",
+                    "gutter": "12px"
+            },
+            "fontFamily": {
+                    "h2-bold": ["Inter"],
+                    "button-text": ["Inter"],
+                    "body-md": ["Inter"],
+                    "h1-bold": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "data-compact": ["Inter"]
+            },
+            "fontSize": {
+                    "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Background Content (Simulated "Инспекции" screen) -->
+<div class="fixed inset-0 z-0 opacity-40 grayscale pointer-events-none overflow-hidden">
+<header class="flex justify-between items-center h-14 px-4 w-full z-40 bg-white border-b border-slate-200 shadow-sm">
+<div class="text-xl font-bold tracking-tight text-blue-900">InfoCollect</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+<span class="material-symbols-outlined text-slate-500">account_circle</span>
+</div>
+</header>
+<main class="p-8">
+<h1 class="font-h1-bold text-h1-bold mb-6">Инспекции</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+<div class="h-4 w-24 bg-slate-100 rounded mb-4"></div>
+<div class="h-8 w-full bg-slate-100 rounded mb-4"></div>
+<div class="h-2 w-full bg-slate-100 rounded"></div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+<div class="h-4 w-24 bg-slate-100 rounded mb-4"></div>
+<div class="h-8 w-full bg-slate-100 rounded mb-4"></div>
+<div class="h-2 w-full bg-slate-100 rounded"></div>
+</div>
+<div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+<div class="h-4 w-24 bg-slate-100 rounded mb-4"></div>
+<div class="h-8 w-full bg-slate-100 rounded mb-4"></div>
+<div class="h-2 w-full bg-slate-100 rounded"></div>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[2px]">
+<!-- Desktop Modal Container -->
+<div class="bg-white w-full max-w-[880px] h-full max-h-[calc(100vh-80px)] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<div class="px-8 py-6 border-b border-slate-100 shrink-0 shadow-sm z-10">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-h2-bold text-h2-bold text-primary mb-1">Назначить другого оператора</h2>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Выберите сотрудника, который будет выполнять обход на мобильном устройстве</p>
+</div>
+<button class="text-outline hover:bg-slate-50 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<!-- Modal Body (Scrollable) -->
+<div class="p-8 overflow-y-auto flex-1 space-y-8 pb-[120px]">
+<!-- Top Context Card -->
+<section class="bg-surface-container-low rounded-xl p-5 border border-slate-200/50">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary-container/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary-container">inventory</span>
+</div>
+<div>
+<h3 class="font-button-text text-button-text text-primary">#INS-2024-001</h3>
+<p class="text-on-surface-variant text-data-compact font-data-compact">Корпус А • 2 этаж • Приемное отделение</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-fixed-variant text-label-sm font-label-sm rounded-full">В работе</span>
+</div>
+<div class="grid grid-cols-3 gap-6">
+<div>
+<div class="flex justify-between text-label-sm font-label-sm mb-1.5">
+<span class="text-on-surface-variant">Прогресс</span>
+<span class="text-primary font-bold">38%</span>
+</div>
+<div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 38%"></div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error" style="font-size: 20px;">report</span>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface">8 несоответствий</p>
+<p class="text-[11px] text-on-surface-variant">Обнаружено в ходе осмотра</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" style="font-size: 20px;">cloud_sync</span>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface">12 изменений</p>
+<p class="text-[11px] text-on-surface-variant">В очереди на выгрузку</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Current Operator & Selection Section -->
+<div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+<!-- Sidebar: Current Operator -->
+<div class="md:col-span-2 space-y-4">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Текущий исполнитель</h4>
+<div class="bg-white rounded-xl border border-slate-100 p-4 shadow-sm">
+<div class="flex items-center gap-3 mb-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="A professional headshot of a male worker in a clean uniform, smiling slightly against a soft grey background. The lighting is bright and even, reflecting a modern corporate aesthetic with high clarity and a friendly professional mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6IXyJh1GEHqKie-Bjm1fGtbdfNuLGeX3l3fhMqnChgFBCcypbLx0sDUghZhTwbNap0yxyRiDjBUbQyS08Xn2CqNA3XXTAZAgatue-Q2SA7DztgYrSmo8sLYu_Jz3ZdoP2lI6tNOkUcutj-Ueo20fj7VCliLZBryYyRPUBh-Q8Sx90IzPy44l51GXgPQQBWyjgyOsyxdUJyN0wbL5q80c1J-VoaPLrAhTFgtbaw08O44m8VUfjUtJRxqGAWy9N-c2k3pl5qAsC9RXb"/>
+<div>
+<p class="font-button-text text-button-text text-on-surface">Иван Иванов</p>
+<div class="flex items-center gap-1 text-data-compact font-data-compact text-green-600">
+<span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                        В сети
+                                    </div>
+</div>
+</div>
+<div class="bg-slate-50 p-3 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-outline">smartphone</span>
+<div>
+<p class="text-[11px] text-on-surface-variant">Устройство</p>
+<p class="text-data-compact font-medium text-on-surface">iPhone 13 • Safari PWA</p>
+</div>
+</div>
+</div>
+<!-- Assignment Summary -->
+<div class="pt-4 border-t border-slate-100">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant mb-3 uppercase tracking-wider">После назначения</h4>
+<div class="flex items-start gap-3 text-data-compact font-data-compact text-on-surface">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<p><span class="font-bold">Анна Смирнова</span> станет основным оператором инспекции.</p>
+</div>
+<div class="flex items-start gap-3 mt-2 text-data-compact font-data-compact text-on-surface-variant">
+<span class="material-symbols-outlined" style="font-size: 18px;">sync_alt</span>
+<p>Доступ будет предоставлен после синхронизации данных.</p>
+</div>
+</div>
+</div>
+<!-- Main: Operator Selection -->
+<div class="md:col-span-3 space-y-4">
+<div class="space-y-4">
+<!-- Search & Filters -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" style="font-size: 20px;">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-lg text-body-md font-body-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Поиск по имени, роли или доступности" type="text"/>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full bg-primary text-white text-[12px] font-medium">Все</button>
+<button class="px-3 py-1.5 rounded-full bg-slate-100 text-on-surface-variant hover:bg-slate-200 text-[12px] font-medium">В сети</button>
+<button class="px-3 py-1.5 rounded-full bg-slate-100 text-on-surface-variant hover:bg-slate-200 text-[12px] font-medium">Свободные</button>
+<button class="px-3 py-1.5 rounded-full bg-slate-100 text-on-surface-variant hover:bg-slate-200 text-[12px] font-medium">С активными</button>
+<button class="px-3 py-1.5 rounded-full bg-slate-100 text-on-surface-variant hover:bg-slate-200 text-[12px] font-medium">Офлайн</button>
+</div>
+<!-- List of Operators -->
+<div class="space-y-2 max-h-[320px] overflow-y-auto pr-2">
+<!-- Recommended -->
+<div class="relative p-4 rounded-xl border-2 border-primary bg-primary/5 cursor-pointer ring-offset-2 ring-primary">
+<div class="absolute top-3 right-3">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+</div>
+<div class="flex gap-4">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A vibrant professional portrait of a young woman with a warm and confident expression, set against a bright, airy office interior with soft natural lighting. The image maintains a clean, light-mode aesthetic with high professional quality and focused clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGlKTCEHH0f669WU4gfGFMvC_lO_y6P9jchX5ww7cn2w5_-k-WL-wUCLCDGUV40wl4tq_TQhAcJ7G8x7d1KXW_1B_27OgIohoo0hmcKMrB182wrk-vW3zLsRldhKgTo291stL7Zc3c-wHfWxFlsQLgCNfXp_EdqtN-JLZpZFI0swThGygSbGIiraAreAN5X9stoKZoxq31VZPF2oZoP-5hJhP3ttDa0J5YcOLx99XaSCoj1_SpwXFtfI2GNaAzyM4mJjFEkKdFPlZD"/>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-button-text text-button-text text-on-surface">Анна Смирнова</p>
+<span class="text-[10px] px-2 py-0.5 bg-primary text-white rounded font-bold uppercase">Рекомендуется</span>
+</div>
+<div class="flex items-center gap-3 mt-1 text-data-compact font-data-compact">
+<span class="text-green-600 flex items-center gap-1 font-medium">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>В сети
+                                                </span>
+<span class="text-on-surface-variant">0 активных</span>
+<span class="text-on-surface-variant">8 помещений сегодня</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Current -->
+<div class="p-4 rounded-xl border border-slate-200 hover:border-primary/40 bg-white transition-all cursor-pointer">
+<div class="flex gap-4 opacity-70">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of a male worker in a clean uniform, smiling slightly against a soft grey background. The lighting is bright and even, reflecting a modern corporate aesthetic with high clarity and a friendly professional mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoTlyIJ-DgHI8oaGhiGOsBQwvuDJbwxCYJIfNYhwTBvXZG-GudolrBwnfmSSjsejD45EJuLlIyrAwxY9htzs7cOEOR8h7BkEoAEsdQYuZ2ayFZH5QZmFBbuT6-c6BZJoEYaoV4lzdI1MKIxdEIobfBNz7DKd7P8H833MlWiNuqSL8AzrByYgOqk2uk9pJ7te9xGEjGhLfcDxXsdRIZf01zOIN9hS6xgzuXTmWX7tCuHvmNeDmMRmJRKgQW2P5AS1Uvo7jG55BB91wp"/>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-button-text text-button-text text-on-surface">Иван Иванов</p>
+<span class="text-[10px] px-2 py-0.5 bg-slate-200 text-on-surface-variant rounded font-bold uppercase">Текущий оператор</span>
+</div>
+<div class="flex items-center gap-3 mt-1 text-data-compact font-data-compact">
+<span class="text-green-600 flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>В сети
+                                                </span>
+<span class="text-on-surface-variant">2 активные</span>
+<span class="text-on-surface-variant">16 помещений сегодня</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Offline -->
+<div class="p-4 rounded-xl border border-slate-200 hover:border-primary/40 bg-white transition-all cursor-pointer">
+<div class="flex gap-4">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A sharp, professional portrait of a man in his late 30s with a clean-shaven, focused look, wearing a white shirt in a modern bright setting. The image uses soft studio lighting for a crisp, high-fidelity light-mode appearance with a sophisticated and reliable mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoF5C88-CPAaUILFdA1ocKKBpKuEIC8QauVM1-AmVFLuw7SH238QvjlNOl4u56GM40226z-V9M6nST-7ondT7dFW_bp8u_4g6-UQbCAHc7I0dIpIgl19XEgFvwim5SnqnUCIGd_2qXSqAdmR99K5on-PZU2EFw7JqQLSy5UB5kHKgIWDK56F9Mz7S38HwBkFVOZUv_LAuc4-9ztjDQHzxnzJjNUxmE4LuThN0pS_ukIS5Cq-a_Y6P_-YCIRbaYBdQDQMWVAFrZfV_9"/>
+<div>
+<p class="font-button-text text-button-text text-on-surface">Пётр Смирнов</p>
+<div class="flex items-center gap-3 mt-1 text-data-compact font-data-compact">
+<span class="text-outline flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-slate-300 rounded-full"></span>Офлайн
+                                                </span>
+<span class="text-on-surface-variant">1 активная</span>
+<span class="text-on-surface-variant">Sync: вчера, 18:20</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Available -->
+<div class="p-4 rounded-xl border border-slate-200 hover:border-primary/40 bg-white transition-all cursor-pointer">
+<div class="flex gap-4">
+<img class="w-10 h-10 rounded-full object-cover" data-alt="A professional and bright close-up portrait of a woman with dark hair and a friendly, intelligent expression. She is in a well-lit contemporary space that emphasizes a clean and corporate atmosphere. The lighting is natural and inviting, conveying competence and warmth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr4RBIptxNHeRjbFq9RpSUYLzyn81_kXlmeLJW_EY_C7pMuDFQkxFR4gdag9Rxw8zDvpq3PxcSiOcNxfUrir4dE42NE_quGMgh3YTukcx0WUqs6npN33htYhsBFDs75V9AAhGGf2RfdLfbIQG3zbXxUgixwr0K_LtE-3kTD7GloH8wXhsWZBw2UdEuxiLK2GK1fIWVILnnISmlQ5qn6H-ATcSE7ORpr3oUVrV4pxOzATfX1YwOVyA7Qy-gYCPtHS6maItR5_FixxAQ"/>
+<div>
+<div class="flex items-center gap-2">
+<p class="font-button-text text-button-text text-on-surface">Мария Кузнецова</p>
+<span class="text-[10px] px-2 py-0.5 bg-secondary-container text-on-secondary-fixed-variant rounded font-bold uppercase">Доступна</span>
+</div>
+<div class="flex items-center gap-3 mt-1 text-data-compact font-data-compact">
+<span class="text-green-600 flex items-center gap-1 font-medium">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>В сети
+                                                </span>
+<span class="text-on-surface-variant">1 активная</span>
+<span class="text-on-surface-variant">12 помещений сегодня</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Warnings Section -->
+<div class="space-y-3">
+<div class="flex gap-4 p-4 bg-error-container/10 border border-error/20 rounded-xl">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="space-y-1">
+<p class="text-label-sm font-bold text-error">Внимание: несинхронизированные данные</p>
+<p class="text-data-compact text-on-surface-variant">У текущего оператора имеется 12 локальных изменений. При назначении без предварительной синхронизации эти данные могут быть утеряны или привести к конфликтам.</p>
+</div>
+</div>
+<div class="flex gap-4 p-4 bg-surface-container-highest/30 rounded-xl">
+<span class="material-symbols-outlined text-outline">info</span>
+<p class="text-data-compact text-on-surface-variant">После смены исполнителя Иван Иванов потеряет доступ к редактированию этой инспекции на мобильном устройстве.</p>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex gap-4 p-4 bg-error-container/10 border border-error/20 rounded-xl">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<div class="space-y-1">
+<p class="text-label-sm font-bold text-error">Внимание: несинхронизированные данные</p>
+<p class="text-data-compact text-on-surface-variant">У текущего оператора имеется 12 локальных изменений. При назначении без предварительной синхронизации эти данные могут быть утеряны или привести к конфликтам.</p>
+</div>
+</div>
+<div class="flex gap-4 p-4 bg-surface-container-highest/30 rounded-xl">
+<span class="material-symbols-outlined text-outline">info</span>
+<p class="text-data-compact text-on-surface-variant">После смены исполнителя Иван Иванов потеряет доступ к редактированию этой инспекции на мобильном устройстве.</p>
+</div>
+</div></div>
+<!-- Modal Footer -->
+<div class="px-8 py-6 bg-white border-t border-slate-100 flex justify-between items-center shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
+<button class="px-6 py-2.5 text-on-surface-variant font-button-text text-button-text hover:bg-slate-200/50 rounded-lg transition-colors">
+                    Отмена
+                </button>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 border border-primary text-primary font-button-text text-button-text rounded-lg hover:bg-primary/5 transition-colors">
+                        Синхронизировать перед назначением
+                    </button>
+<button class="px-6 py-2.5 bg-primary text-white font-button-text text-button-text rounded-lg shadow-lg shadow-primary/20 hover:bg-primary-container active:scale-95 transition-all">
+                        Назначить другого оператора
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

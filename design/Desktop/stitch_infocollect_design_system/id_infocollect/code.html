@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - История инспекций</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "background": "#fbf8ff",
+                        "secondary": "#515f74",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "outline-variant": "#c4c5d5",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#dad9e3",
+                        "on-background": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e3e1eb",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container": "#eeedf7",
+                        "tertiary": "#611e00",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-primary": "#ffffff",
+                        "primary": "#00288e",
+                        "outline": "#757684",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-surface": "#1a1b22",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-container": "#872d00",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#3755c3",
+                        "on-secondary-container": "#57657a",
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#a8b8ff",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-container": "#d5e3fc",
+                        "surface-bright": "#fbf8ff",
+                        "primary-container": "#1e40af",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "on-tertiary-fixed-variant": "#802a00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Success Toast Notification -->
+<div class="fixed top-6 right-6 z-[100] flex items-center gap-3 bg-inverse-surface text-inverse-on-surface px-4 py-3 rounded-lg shadow-xl border border-outline-variant/10 animate-in fade-in slide-in-from-top-4 duration-300">
+<span class="material-symbols-outlined text-green-400" data-icon="check_circle">check_circle</span>
+<span class="font-label-sm text-label-sm">ID события скопирован</span>
+</div>
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 bg-white shadow-sm flex flex-col h-full z-50">
+<div class="p-6">
+<h1 class="text-xl font-black text-blue-800">InfoCollect</h1>
+<p class="text-xs text-slate-500 uppercase tracking-widest mt-1">Inspection System</p>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Control Panel</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+<span class="font-label-sm text-label-sm">Equipment Registry</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-label-sm text-label-sm">Objects</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-800 bg-blue-50 font-semibold border-r-4 border-blue-800 rounded-l-lg" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-label-sm text-label-sm">Inspections</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span class="font-label-sm text-label-sm">Warehouse</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 rounded-lg" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-sm text-label-sm">System Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed overflow-hidden">
+<img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a senior industrial administrator in a clean white office setting. The lighting is soft and natural, emphasizing a modern corporate atmosphere. The style is crisp and high-definition, consistent with an enterprise inspection software's high-end user interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7MUFe0H7iXJw5emnwPFmyILizXzlna9fH_7pYENQjpt4ReJbcA2dn7jO_EZe96-3Qy7hr1RfkUbVt2iQgkMYrdEDkoUXB8YPsgXsQm67kRgqIiEdjNXT7OuOUQ_QSFYiHI8YPZLq7u7qH7T_TEqXxXakyyL4VUdO97fTfbRgZF_jMTjh8Sr1_atYQy9xcOCPU6fh8XW7Xnkcy9fXkQp4rkZciPUUNCcyMolGxhq6hz5ASz-x7fGMcJdXYUyOUv8C2nLmX__ur7Zz9"/>
+</div>
+<div>
+<p class="text-sm font-bold text-on-surface">Admin User</p>
+<p class="text-[10px] text-slate-400 uppercase font-bold">Administrator</p>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-64 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 z-40">
+<div class="flex items-center flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-800 transition-colors" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 border-transparent focus:bg-white focus:ring-2 focus:ring-blue-500/50 rounded-lg text-sm transition-all outline-none" placeholder="Поиск по ID или объекту..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-4">
+<button class="text-slate-500 hover:text-blue-800 transition-colors relative">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+</button>
+<button class="text-slate-500 hover:text-blue-800 transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="text-slate-500 hover:text-blue-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 min-h-screen bg-background">
+<div class="p-8 max-w-7xl mx-auto">
+<!-- Page Header -->
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="font-h1-bold text-h1-bold text-on-surface">История инспекций</h2>
+<p class="text-on-surface-variant font-body-md mt-1">Обзор завершенных проверок оборудования и систем</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline rounded-lg font-button-text text-button-text text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="filter_list">filter_list</span>
+                        Фильтры
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-button-text text-button-text shadow-md active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+                        Новая запись
+                    </button>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-12 gap-6">
+<!-- History Table Area -->
+<div class="col-span-12 lg:col-span-9 space-y-6">
+<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-slate-50 border-b border-slate-200">
+<th class="px-6 py-4 font-label-sm text-label-sm text-slate-500">ID События</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-slate-500">Объект / Оборудование</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-slate-500">Дата</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-slate-500">Статус</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-slate-500">Инспектор</th>
+<th class="px-6 py-4"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<code class="font-data-compact text-data-compact bg-slate-100 px-2 py-1 rounded">#IC-99231</code>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-blue-100 rounded text-blue-800" title="Копировать ID">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface">Цех №4 - Котлоагрегат</span>
+<span class="text-xs text-on-surface-variant">Система охлаждения</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface">12.10.2023, 14:20</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                Завершено
+                                            </span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface">Иванов А.С.</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-blue-800">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<code class="font-data-compact text-data-compact bg-slate-100 px-2 py-1 rounded">#IC-99215</code>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-blue-100 rounded text-blue-800">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface">Склад Север - Погрузчик 2</span>
+<span class="text-xs text-on-surface-variant">Плановое ТО</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface">11.10.2023, 09:15</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                В работе
+                                            </span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface">Петров К.Д.</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-blue-800">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<code class="font-data-compact text-data-compact bg-slate-100 px-2 py-1 rounded">#IC-99198</code>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-blue-100 rounded text-blue-800">
+<span class="material-symbols-outlined text-[18px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface">ГРЩ - Секция А</span>
+<span class="text-xs text-on-surface-variant">Аварийный выезд</span>
+</div>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface">10.10.2023, 18:45</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                Требует внимания
+                                            </span>
+</td>
+<td class="px-6 py-4 text-sm text-on-surface">Сидоров М.В.</td>
+<td class="px-6 py-4 text-right">
+<button class="text-slate-400 hover:text-blue-800">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+<span class="text-xs text-slate-500">Показано 1-10 из 256 записей</span>
+<div class="flex gap-2">
+<button class="p-1 border rounded hover:bg-white text-slate-400 hover:text-blue-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-white border border-blue-800 text-blue-800 rounded font-label-sm text-xs">1</button>
+<button class="px-3 py-1 hover:bg-white border-transparent hover:border-slate-200 rounded font-label-sm text-xs">2</button>
+<button class="px-3 py-1 hover:bg-white border-transparent hover:border-slate-200 rounded font-label-sm text-xs">3</button>
+<button class="p-1 border rounded hover:bg-white text-slate-400 hover:text-blue-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Statistics / Quick Actions -->
+<div class="col-span-12 lg:col-span-3 space-y-6">
+<!-- Summary Card -->
+<div class="bg-primary p-6 rounded-xl text-on-primary shadow-lg relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="font-label-sm text-label-sm mb-4 opacity-80">Статистика за октябрь</h3>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-black">42</span>
+<span class="text-sm opacity-80">инспекции</span>
+</div>
+<div class="mt-4 pt-4 border-t border-white/20 flex justify-between text-xs">
+<span>Выполнено: 38</span>
+<span>В процессе: 4</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl opacity-10 pointer-events-none" data-icon="show_chart">show_chart</span>
+</div>
+<!-- Quick Filter Card -->
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h3 class="font-label-sm text-label-sm text-on-surface mb-4 uppercase tracking-wider text-[11px]">Быстрый выбор</h3>
+<div class="space-y-3">
+<button class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-left group">
+<span class="text-sm font-medium text-slate-700">Мои инспекции</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-blue-800 text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-left group">
+<span class="text-sm font-medium text-slate-700">Критические ошибки</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-red-600 text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="w-full flex items-center justify-between p-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors text-left group">
+<span class="text-sm font-medium text-slate-700">Отложенные</span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-blue-800 text-[20px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Recent Photos Bento Card -->
+<div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+<h3 class="font-label-sm text-label-sm text-on-surface mb-4">Последние фотоотчеты</h3>
+<div class="grid grid-cols-2 gap-2">
+<div class="aspect-square rounded-lg bg-slate-100 overflow-hidden group relative">
+<img alt="Inspection Detail 1" class="w-full h-full object-cover transition-transform group-hover:scale-110" data-alt="A macro close-up photograph of a metallic industrial turbine blade, showing detailed texture and wear patterns under cool, artificial factory lighting. The image captures the rugged, functional aesthetic of heavy machinery maintenance documentation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbyGtm5larSJssNdK6j5nt_6l6l7AB8pzzRqptP0BQ1Vq_s6hVfnGMyH35fKQOyY0gkCkeQ3GXhEhPaDHIMXZaJheBCQNJoZ0ml_MO7-9H1IFyOLVktsWaYGZiRHbnMwedrJu0Hd-zCyV8TzKQI9zROKIGVFVpAALSQfcPgy7cFQudASLjL73hNJGtJnajc8YjtgQOzg-LWT46TMZlu2tzR5Bcbp0k1OKvVTe4zGZyVwH4ssUSzRoi-7t9tpJTNDwhYXASgrfR8nON"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+<span class="material-symbols-outlined text-white text-sm" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="aspect-square rounded-lg bg-slate-100 overflow-hidden group relative">
+<img alt="Inspection Detail 2" class="w-full h-full object-cover transition-transform group-hover:scale-110" data-alt="A detailed shot of a high-voltage electrical panel with various switches and cables, properly labeled. The lighting is sharp, highlighting the safety indicators and meticulous organization. The scene conveys a sense of professional electrical inspection and compliance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjvxL480F_igyj7LSoxQvdR6TYBppWZRQkUyHae6zbcdrJVq_E1prv5opEjlxg9MpbQUwYunO8dfIJG_N4h9QiICjkOWu5bkqobMOn8gBmvoxCa3nByMCew-ymbhJ9YCnqGbt5kC0U5YuKbGv9jVhw0lFNIS2jSKsqMBIlaj8MaAUUmBmNJUlmz8GzXDpDnXnqRaH-3Bm6uI3P8lqjsKKMSb0o4cMJmii9z9GXmb-G-FeZpFPlvy9Slc_JOlXfoZQSXiilAhqv9cmH"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+<span class="material-symbols-outlined text-white text-sm" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="aspect-square rounded-lg bg-slate-100 overflow-hidden group relative">
+<img alt="Inspection Detail 3" class="w-full h-full object-cover transition-transform group-hover:scale-110" data-alt="An expansive wide-angle view of an industrial facility's exterior pipeline network during the early morning hours. The lighting is soft and blue-toned, emphasizing the scale of the infrastructure. The composition is clean and focused on structural integrity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiw39IbSmrqionaTm_bTA8eoFELguzGDyGKE6p_Ocub1FIIvNfvSW6f1ho9JYZjYekfL_BvuTR3wNbGnO5S6s0ngJqrzR_iAr-YUbELJBrgwhSYcIRaL5FwYe7PcjgdN5BIOXG2gO3At2NOieXewlPxZV9Ou78rcVUUtJze5NOn0XdjQyJ2SQmFl7b0ZSyru0-hDqJfnSYeCnV5PR3_pf7b0HcAD37A1dIN-1Zl0hfcM7a1R7kKWhwM-Hpd3CkvY49jGMs0D3Iv03q"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+<span class="material-symbols-outlined text-white text-sm" data-icon="visibility">visibility</span>
+</div>
+</div>
+<div class="aspect-square rounded-lg bg-slate-100 overflow-hidden group relative">
+<img alt="Inspection Detail 4" class="w-full h-full object-cover transition-transform group-hover:scale-110" data-alt="A digital tablet displaying a checklist on top of a weathered wooden workbench in a workshop. The screen is bright and clear, showing a user interface with green checkmarks. The environment is warm and authentic, suggesting a thorough field inspection process." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9NIQvSaeNRHLQfU1hy4MR99lUCtTyWOh26eCAm6VkJo4p87uIv17o_NaZy3foXlJDvcgHSCaYyi0mDXmWIVXv48JQnAEJ82z_RKXhk1NW4xS3zuYHnuPT4yAC_uv6ufg1kPto65HW49HRCvHHXgvmwtSMAuc8n2VbPwQRdxEdXMT0nCP4Zvtg3K0FROF1FMtJ2v-gf51gdvlM9nTVfYkdQTyYvzEQCTCbZ6YZMPzlwzD8UmV1PAtX9MwlYp7Ao76Cc8EuIDb-HEEb"/>
+<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+<span class="material-symbols-outlined text-white text-sm" data-icon="visibility">visibility</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

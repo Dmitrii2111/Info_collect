@@ -27,9 +27,6 @@ export default defineConfig({
             }
             return "vendor";
           }
-          if (id.includes("/src/operator/tabs/")) {
-            return "operator-tabs";
-          }
         },
       },
     },

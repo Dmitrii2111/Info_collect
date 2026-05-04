@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "inverse-surface": "#2f3037",
+                        "surface-variant": "#e3e1eb",
+                        "background": "#fbf8ff",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-bright": "#fbf8ff",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e8e7f1",
+                        "outline": "#757684",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b8c4ff",
+                        "on-tertiary-container": "#ffa583",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container-highest": "#e3e1eb",
+                        "primary": "#00288e",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-surface": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "on-secondary-container": "#57657a",
+                        "surface-tint": "#3755c3",
+                        "tertiary-container": "#872d00",
+                        "outline-variant": "#c4c5d5",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-container": "#a8b8ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#dde1ff",
+                        "secondary-fixed": "#d5e3fc",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-background": "#1a1b22",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-container": "#eeedf7",
+                        "on-primary-fixed": "#001453",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary": "#611e00",
+                        "surface-dim": "#dad9e3",
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "secondary": "#515f74",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "secondary-container": "#d5e3fc",
+                        "primary-container": "#1e40af"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen">
+<!-- Sidebar Component (Shared Identity) -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 bg-white shadow-sm flex flex-col z-50">
+<div class="p-6">
+<h1 class="text-xl font-black text-blue-800">InfoCollect</h1>
+<p class="text-xs text-slate-500 font-medium">Inspection System</p>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Control Panel</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+<span class="font-label-sm text-label-sm">Equipment Registry</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-label-sm text-label-sm">Objects</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-label-sm text-label-sm">Inspections</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span class="font-label-sm text-label-sm">Warehouse</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-blue-800 bg-blue-50 font-semibold border-r-4 border-blue-800 transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-sm text-label-sm">System Settings</span>
+</div>
+</nav>
+<div class="p-4 border-t border-slate-200">
+<div class="flex items-center gap-3">
+<img alt="Admin User" class="w-10 h-10 rounded-full object-cover" data-alt="A professional headshot of a corporate administrator in a bright, modern office environment. The lighting is soft and high-key, emphasizing a clean and reliable professional aesthetic. He is wearing a crisp blue dress shirt, reflecting the enterprise brand colors of the InfoCollect system. The overall mood is focused and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAn3gsxFo2YFIIQ0aTwrtRZLv4lMcXbiuj7O-iBDkjpB-KtaMPn6ig4I1JNRhzEQUy6czP0piLxaheK4fK3ck-W4KsVAveichxFPWJhaefbb6_pvqYot76wYPn4V_-FiQOibLf9Y2kr7BCATxAHfRaP8zkp1BbiX0SDTt49n_LkWjRJdjqi_qlALVTGyyYnVB2cAR940mTQphQY3_KFHVfvNY6-M8GYXSjOi5u9I_3uDXuGBI3GXy-aR7EMqB2uzUIuWyyY_jfsb6m8"/>
+<div class="overflow-hidden">
+<p class="text-sm font-bold truncate">Администратор</p>
+<p class="text-xs text-slate-400 truncate">admin@infocollect.ru</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar Component -->
+<header class="fixed top-0 right-0 left-64 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96 group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-lg focus:ring-2 focus:ring-blue-500/50 text-sm transition-all" placeholder="Поиск настроек..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-slate-500 hover:text-blue-800 transition-colors"><span class="material-symbols-outlined" data-icon="dns">dns</span></button>
+<button class="text-slate-500 hover:text-blue-800 transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="text-slate-500 hover:text-blue-800 transition-colors"><span class="material-symbols-outlined" data-icon="help">help</span></button>
+</div>
+</header>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 bg-on-surface/40 backdrop-blur-sm z-[60] flex items-center justify-center p-stack-lg">
+<!-- Large Desktop Modal -->
+<div class="bg-surface-container-lowest w-full max-w-4xl max-h-[921px] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<div class="px-stack-lg py-stack-md border-b border-outline-variant flex items-center justify-between">
+<div>
+<h2 class="font-h1-bold text-h1-bold text-on-surface">Управление расписанием отчётов</h2>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Настройка автоматической генерации и отправки документации</p>
+</div>
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="close">close</span>
+</button>
+</div>
+<!-- Modal Content -->
+<div class="flex-1 overflow-y-auto p-stack-lg space-y-stack-md">
+<!-- Table of Scheduled Reports -->
+<div class="border border-outline-variant rounded-lg overflow-hidden bg-white">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">
+<th class="px-gutter py-3 font-semibold">Название отчёта</th>
+<th class="px-gutter py-3 font-semibold">Расписание</th>
+<th class="px-gutter py-3 font-semibold">Формат</th>
+<th class="px-gutter py-3 font-semibold">Статус</th>
+<th class="px-gutter py-3 font-semibold text-right">Действия</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-gutter py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-blue-50 text-blue-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="description">description</span>
+</div>
+<span class="font-body-md text-body-md font-medium">Ежедневный отчёт по расхождениям</span>
+</div>
+</td>
+<td class="px-gutter py-4">
+<div class="flex flex-col">
+<span class="text-body-md font-data-compact text-on-surface">Ежедневно</span>
+<span class="text-xs text-on-surface-variant">08:00</span>
+</div>
+</td>
+<td class="px-gutter py-4">
+<span class="px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800">XLSX</span>
+</td>
+<td class="px-gutter py-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-medium text-primary">Активен</span>
+</div>
+</td>
+<td class="px-gutter py-4 text-right space-x-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-2 text-on-surface-variant hover:text-warning transition-colors hover:bg-slate-100 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="pause_circle">pause_circle</span></button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors hover:bg-error/5 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span></button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-gutter py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-purple-50 text-purple-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="sync">sync</span>
+</div>
+<span class="font-body-md text-body-md font-medium">Журнал синхронизации</span>
+</div>
+</td>
+<td class="px-gutter py-4">
+<div class="flex flex-col">
+<span class="text-body-md font-data-compact text-on-surface">Пн / Ср / Пт</span>
+<span class="text-xs text-on-surface-variant">22:00</span>
+</div>
+</td>
+<td class="px-gutter py-4">
+<span class="px-2 py-0.5 rounded text-xs font-bold bg-slate-100 text-slate-800">CSV</span>
+</td>
+<td class="px-gutter py-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-medium text-primary">Активен</span>
+</div>
+</td>
+<td class="px-gutter py-4 text-right space-x-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-2 text-on-surface-variant hover:text-warning transition-colors hover:bg-slate-100 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="pause_circle">pause_circle</span></button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors hover:bg-error/5 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span></button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="px-gutter py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-orange-50 text-orange-800 flex items-center justify-center">
+<span class="material-symbols-outlined text-sm" data-icon="archive">archive</span>
+</div>
+<span class="font-body-md text-body-md font-medium">Архив инспекций</span>
+</div>
+</td>
+<td class="px-gutter py-4">
+<div class="flex flex-col">
+<span class="text-body-md font-data-compact text-on-surface">1-е число месяца</span>
+<span class="text-xs text-on-surface-variant">00:00</span>
+</div>
+</td>
+<td class="px-gutter py-4">
+<span class="px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800">PDF</span>
+</td>
+<td class="px-gutter py-4">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-xs font-medium text-primary">Активен</span>
+</div>
+</td>
+<td class="px-gutter py-4 text-right space-x-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors hover:bg-primary/5 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span></button>
+<button class="p-2 text-on-surface-variant hover:text-warning transition-colors hover:bg-slate-100 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="pause_circle">pause_circle</span></button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors hover:bg-error/5 rounded-full"><span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Add Button -->
+<button class="flex items-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary hover:bg-primary/5 transition-all w-full justify-center group">
+<span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+<span class="font-button-text text-button-text">+ Добавить расписание</span>
+</button>
+<!-- Helpful Tip Bento Item -->
+<div class="p-stack-md bg-surface-container-low rounded-lg flex gap-4 items-start">
+<span class="material-symbols-outlined text-primary" data-icon="info">info</span>
+<div>
+<h4 class="text-sm font-bold text-on-surface">Совет по оптимизации</h4>
+<p class="text-xs text-on-surface-variant leading-relaxed">Для экономии ресурсов сервера рекомендуется распределять время генерации тяжелых отчётов (таких как 'Архив инспекций') на ночные часы с 00:00 до 05:00.</p>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-stack-lg py-stack-md border-t border-outline-variant bg-surface-container-low flex justify-end gap-3">
+<button class="px-6 h-touch-target-min font-button-text text-button-text rounded-lg border border-outline text-on-surface-variant hover:bg-surface-variant transition-colors active:scale-[0.98]">
+                    Закрыть
+                </button>
+<button class="px-6 h-touch-target-min font-button-text text-button-text rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-all shadow-md active:scale-[0.98]">
+                    Сохранить расписание
+                </button>
+</div>
+</div>
+</div>
+<!-- Background Content Simulator (Blurred Main UI) -->
+<main class="pl-64 pt-16 p-8 min-h-screen">
+<div class="max-w-6xl mx-auto opacity-20 pointer-events-none">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="text-3xl font-black text-on-surface">Контрольная панель</h2>
+<p class="text-on-surface-variant">Система мониторинга оборудования</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-6">
+<div class="h-64 bg-white rounded-xl shadow-sm border border-slate-200"></div>
+<div class="h-64 bg-white rounded-xl shadow-sm border border-slate-200"></div>
+<div class="h-64 bg-white rounded-xl shadow-sm border border-slate-200"></div>
+<div class="col-span-2 h-96 bg-white rounded-xl shadow-sm border border-slate-200"></div>
+<div class="h-96 bg-white rounded-xl shadow-sm border border-slate-200"></div>
+</div>
+</div>
+</main>
+</body></html>

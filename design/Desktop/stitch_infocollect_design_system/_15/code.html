@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#380d00",
+                      "surface-variant": "#e3e1eb",
+                      "secondary": "#515f74",
+                      "on-secondary-fixed-variant": "#3a485b",
+                      "on-primary-container": "#a8b8ff",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#d5e3fc",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#b8c4ff",
+                      "on-tertiary-fixed-variant": "#802a00",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#57657a",
+                      "inverse-on-surface": "#f1f0fa",
+                      "tertiary": "#611e00",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#0d1c2e",
+                      "on-surface": "#1a1b22",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#dde1ff",
+                      "on-primary-fixed": "#001453",
+                      "tertiary-container": "#872d00",
+                      "on-background": "#1a1b22",
+                      "outline": "#757684",
+                      "inverse-surface": "#2f3037",
+                      "background": "#fbf8ff",
+                      "surface-container": "#eeedf7",
+                      "on-tertiary-container": "#ffa583",
+                      "surface-tint": "#3755c3",
+                      "surface-container-low": "#f4f2fc",
+                      "surface-container-high": "#e8e7f1",
+                      "surface-container-highest": "#e3e1eb",
+                      "surface": "#fbf8ff",
+                      "secondary-fixed-dim": "#b9c7df",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#ffdbce",
+                      "surface-bright": "#fbf8ff",
+                      "on-primary-fixed-variant": "#173bab",
+                      "tertiary-fixed-dim": "#ffb59a",
+                      "primary-container": "#1e40af",
+                      "outline-variant": "#c4c5d5",
+                      "primary-fixed-dim": "#b8c4ff",
+                      "primary": "#00288e",
+                      "on-surface-variant": "#444653",
+                      "surface-dim": "#dad9e3",
+                      "secondary-fixed": "#d5e3fc"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "24px",
+                      "stack-md": "16px",
+                      "margin-mobile": "16px",
+                      "stack-sm": "8px",
+                      "touch-target-min": "48px",
+                      "gutter": "12px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "data-compact": ["Inter"],
+                      "button-text": ["Inter"],
+                      "h1-bold": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "h2-bold": ["Inter"]
+              },
+              "fontSize": {
+                      "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                      "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen overflow-hidden">
+<!-- Background Layer: SideNavBar -->
+<nav class="docked h-full w-64 border-r fixed left-0 top-0 border-slate-200 bg-slate-50 flex flex-col h-screen py-4 overflow-y-auto">
+<div class="px-6 mb-8">
+<div class="text-lg font-black text-blue-900">InfoCollect</div>
+<div class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Enterprise Admin</div>
+</div>
+<div class="flex-1 space-y-1">
+<div class="px-3">
+<div class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-['Inter'] text-[13px] tracking-wide">Панель управления</span>
+</div>
+<div class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span class="font-['Inter'] text-[13px] tracking-wide">Реестр</span>
+</div>
+<div class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">domain</span>
+<span class="font-['Inter'] text-[13px] tracking-wide">Объекты</span>
+</div>
+<div class="flex items-center space-x-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">fact_check</span>
+<span class="font-['Inter'] text-[13px] tracking-wide">Инспекции</span>
+</div>
+</div>
+</div>
+<div class="mt-auto px-3 pt-4 border-t border-slate-200">
+<div class="flex items-center space-x-3 px-3 py-2 text-blue-700 font-bold border-r-4 border-blue-700 bg-blue-50/50 translate-x-1">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-['Inter'] text-[13px] tracking-wide">Настройки</span>
+</div>
+</div>
+</nav>
+<!-- Background Layer: TopNavBar -->
+<header class="fixed top-0 right-0 left-64 z-40 flex items-center justify-between px-6 bg-white h-16 border-b border-slate-200 shadow-sm">
+<div class="flex items-center space-x-4">
+<h1 class="text-xl font-bold tracking-tight text-blue-800">Системные настройки</h1>
+</div>
+<div class="flex items-center space-x-4">
+<span class="material-symbols-outlined text-slate-500 cursor-pointer">notifications</span>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer">help_outline</span>
+<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a senior system administrator in a high-tech corporate office. The individual is wearing a crisp white shirt and has a confident, reliable expression. The lighting is bright and clean, typical of a modern light-mode enterprise software interface, with soft blue and grey tones in the background to match the InfoCollect corporate identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7YXJ3d-gMbUD8rPJVb6WVXk1TkmGG_eUK3-T3j_YeGv6-1lX4_2Gr2J04v8Vm-KpqqQjc37IAm28jX_Kzwstap13o-EgW54jKBAKeWYHgnasb4U6vCEumdtTbdYNP38P0We5ep_qfYSbEhHdZ1mSN6eYBS_jyM5lw1NkPb4x5kRjqCW2Ba_nBh3CAolNC4xjPDbjMkvC-tBkjNMSPArdf7fANrpSnlvzpmIxutApNCY1g_kDOiVnZF0JGkfBXgFVDkxsN8fx8m3K4"/>
+</div>
+</div>
+</header>
+<!-- Main Content (Dimmed) -->
+<main class="pl-64 pt-16 min-h-screen opacity-40 grayscale-[0.2]">
+<div class="p-8 max-w-5xl mx-auto space-y-8">
+<div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+<h3 class="text-h2-bold font-h2-bold text-on-surface mb-6">Резервное копирование</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+<div>
+<div class="font-semibold">Автоматическое сохранение</div>
+<div class="text-sm text-slate-500">Ежедневно в 03:00</div>
+</div>
+<div class="w-12 h-6 bg-blue-600 rounded-full relative">
+<div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+<div>
+<div class="font-semibold">Облачное хранилище</div>
+<div class="text-sm text-slate-500">Подключено: Enterprise Cloud S3</div>
+</div>
+<div class="text-blue-700 font-medium text-sm cursor-pointer">Изменить</div>
+</div>
+</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+<h3 class="text-h2-bold font-h2-bold text-on-surface mb-6">Безопасность</h3>
+<div class="space-y-4">
+<div class="p-4 border border-slate-100 rounded-lg flex items-center space-x-4">
+<span class="material-symbols-outlined text-slate-400">lock</span>
+<div class="flex-1">
+<div class="font-medium">Двухфакторная аутентификация</div>
+<div class="text-sm text-slate-500">Обязательно для всех администраторов</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+<!-- Confirmation Modal -->
+<div class="bg-white rounded-xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
+<!-- Modal Header -->
+<div class="p-6 text-center space-y-4">
+<div class="mx-auto w-16 h-16 bg-error-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-error text-[32px]">warning</span>
+</div>
+<div class="space-y-2">
+<h2 class="text-h1-bold font-h1-bold text-on-surface">Восстановить из резервной копии?</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">
+                        Текущие данные могут быть заменены данными из выбранной резервной копии.
+                    </p>
+</div>
+</div>
+<!-- Context Block -->
+<div class="px-6 py-4 bg-surface-container-low border-y border-slate-100">
+<div class="flex flex-col space-y-2">
+<div class="flex items-center justify-between text-data-compact font-data-compact">
+<span class="text-on-surface-variant">Последняя копия:</span>
+<span class="font-semibold text-on-surface">сегодня, 14:45</span>
+</div>
+<div class="flex items-center justify-between text-data-compact font-data-compact">
+<span class="text-on-surface-variant">Статус копии:</span>
+<div class="flex items-center space-x-1 text-emerald-600 font-bold">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span>OK</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Impact Block -->
+<div class="p-6 space-y-3">
+<h4 class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">Что изменится</h4>
+<ul class="space-y-3">
+<li class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-error text-[20px] mt-0.5">change_circle</span>
+<span class="text-data-compact font-data-compact text-on-surface">Текущая база будет заменена</span>
+</li>
+<li class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">sync_problem</span>
+<span class="text-data-compact font-data-compact text-on-surface">Несинхронизированные изменения могут потребовать повторной проверки</span>
+</li>
+<li class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">history_edu</span>
+<span class="text-data-compact font-data-compact text-on-surface">Действие будет записано в журнал</span>
+</li>
+</ul>
+</div>
+<!-- Footer -->
+<div class="p-6 flex items-center space-x-4 bg-surface-container-lowest">
+<button class="flex-1 h-12 rounded-lg border border-outline-variant text-on-surface-variant font-button-text text-button-text hover:bg-slate-50 transition-colors">
+                    Отмена
+                </button>
+<button class="flex-1 h-12 rounded-lg bg-error text-on-error font-button-text text-button-text shadow-sm hover:opacity-90 active:scale-[0.98] transition-all">
+                    Восстановить
+                </button>
+</div>
+</div>
+</div>
+</body></html>

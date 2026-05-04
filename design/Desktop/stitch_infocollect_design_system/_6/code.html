@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "surface-container-high": "#e8e7f1",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "inverse-surface": "#2f3037",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#a8b8ff",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "inverse-primary": "#b8c4ff",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "outline": "#757684",
+                        "surface-dim": "#dad9e3",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-tint": "#3755c3",
+                        "on-surface-variant": "#444653",
+                        "secondary": "#515f74",
+                        "surface-bright": "#fbf8ff",
+                        "primary-container": "#1e40af",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "on-tertiary-container": "#ffa583",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "surface-variant": "#e3e1eb",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1b22",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container-low": "#f4f2fc",
+                        "outline-variant": "#c4c5d5",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "on-primary-fixed": "#001453",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary-container": "#d5e3fc",
+                        "primary-fixed": "#dde1ff",
+                        "on-error": "#ffffff",
+                        "on-background": "#1a1b22",
+                        "primary": "#00288e",
+                        "tertiary-container": "#872d00",
+                        "surface-container": "#eeedf7",
+                        "tertiary": "#611e00",
+                        "surface-container-highest": "#e3e1eb",
+                        "background": "#fbf8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "touch-target-min": "48px",
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "unit": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .modal-overlay {
+            background-color: rgba(26, 27, 34, 0.6);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-background font-[Inter]">
+<!-- Background: Dimmed Dashboard -->
+<div class="fixed inset-0 overflow-hidden pointer-events-none opacity-40">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-[#f8f9fb] group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<div class="px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e8eaf2] px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-[#0f111a]">
+<div class="size-4">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-[#0f111a] text-lg font-bold leading-tight tracking-[-0.015em]">InfoCollect</h2>
+</div>
+<div class="flex items-center gap-9">
+<a class="text-[#0f111a] text-sm font-medium leading-normal" href="#">Объекты</a>
+<a class="text-[#0f111a] text-sm font-medium leading-normal" href="#">Инспекции</a>
+<a class="text-[#0f111a] text-sm font-medium leading-normal" href="#">Расхождения</a>
+<a class="text-[#0f111a] text-sm font-medium leading-normal" href="#">Настройки</a>
+</div>
+</div>
+</header>
+<div class="p-4">
+<h1 class="text-h1-bold text-on-background mb-4">Активные расхождения</h1>
+<div class="grid grid-cols-3 gap-4">
+<div class="h-32 bg-surface-container rounded-lg border border-outline-variant"></div>
+<div class="h-32 bg-surface-container rounded-lg border border-outline-variant"></div>
+<div class="h-32 bg-surface-container rounded-lg border border-outline-variant"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Grid Display -->
+<div class="relative z-10 p-8 grid grid-cols-2 gap-8 min-h-screen items-start overflow-y-auto">
+<!-- MODAL 1: Accept Operator Data -->
+<div class="bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant flex flex-col">
+<div class="px-6 py-5 border-b border-outline-variant">
+<h3 class="text-h2-bold text-on-surface">Принять данные оператора?</h3>
+</div>
+<div class="p-6 space-y-6">
+<p class="text-body-md text-on-surface-variant">Плановые данные системы будут заменены фактическими данными, полученными от оператора. Это действие обновит паспорт оборудования.</p>
+<div class="bg-surface-container-low p-4 rounded-lg space-y-2 text-sm">
+<div class="flex justify-between"><span class="text-outline">Инспекция:</span> <span class="font-medium">#INS-2024-001</span></div>
+<div class="flex justify-between"><span class="text-outline">Помещение:</span> <span class="font-medium">2.01.30</span></div>
+<div class="flex justify-between"><span class="text-outline">Оборудование:</span> <span class="font-medium">Система клапанная</span></div>
+<div class="flex justify-between"><span class="text-outline">Оператор:</span> <span class="font-medium">Иван Иванов</span></div>
+</div>
+<div class="border border-outline-variant rounded-lg overflow-hidden">
+<table class="w-full text-sm">
+<thead class="bg-surface-container-high">
+<tr class="text-left">
+<th class="p-3 font-medium">Параметр</th>
+<th class="p-3 font-medium">План</th>
+<th class="p-3 font-medium">Оператор</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr>
+<td class="p-3 text-outline">Серийный номер</td>
+<td class="p-3">SN-90831</td>
+<td class="p-3 font-semibold text-primary">SN-90381</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="space-y-2">
+<label class="text-label-sm text-on-surface">Комментарий решения <span class="text-error">*</span></label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface focus:ring-primary h-24" placeholder="Опишите причину принятия данных..."></textarea>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant flex justify-end gap-3">
+<button class="px-5 py-2 text-button-text text-secondary bg-transparent hover:bg-surface-container rounded-lg">Отмена</button>
+<button class="px-5 py-2 text-button-text text-on-primary bg-primary hover:bg-primary-container rounded-lg">Принять данные оператора</button>
+</div>
+</div>
+<!-- MODAL 2: Keep Planned Data -->
+<div class="bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant flex flex-col">
+<div class="px-6 py-5 border-b border-outline-variant">
+<h3 class="text-h2-bold text-on-surface">Оставить плановые данные?</h3>
+</div>
+<div class="p-6 space-y-6">
+<p class="text-body-md text-on-surface-variant">Данные оператора будут отклонены. В системе сохранятся текущие плановые значения. Расхождение будет помечено как разрешенное.</p>
+<div class="border border-outline-variant rounded-lg overflow-hidden">
+<table class="w-full text-sm">
+<thead class="bg-surface-container-high">
+<tr class="text-left">
+<th class="p-3 font-medium">Параметр</th>
+<th class="p-3 font-medium">План (Сохранить)</th>
+<th class="p-3 font-medium">Оператор</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr>
+<td class="p-3 text-outline">Серийный номер</td>
+<td class="p-3 font-semibold text-primary">SN-90831</td>
+<td class="p-3 text-outline line-through">SN-90381</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="space-y-2">
+<label class="text-label-sm text-on-surface">Комментарий решения <span class="text-error">*</span></label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface focus:ring-primary h-24" placeholder="Укажите причину отклонения данных оператора..."></textarea>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant flex justify-end gap-3">
+<button class="px-5 py-2 text-button-text text-secondary bg-transparent hover:bg-surface-container rounded-lg">Отмена</button>
+<button class="px-5 py-2 text-button-text text-on-primary bg-primary hover:bg-primary-container rounded-lg">Оставить плановые данные</button>
+</div>
+</div>
+<!-- MODAL 3: Close/Archive Discrepancy -->
+<div class="bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant flex flex-col">
+<div class="px-6 py-5 border-b border-outline-variant">
+<h3 class="text-h2-bold text-on-surface">Закрыть расхождение?</h3>
+</div>
+<div class="p-6 space-y-6">
+<p class="text-body-md text-on-surface-variant">Запись будет перенесена в архив без изменения системных данных. Это действие необратимо.</p>
+<div class="bg-surface-container-low p-4 rounded-lg space-y-2 text-sm border-l-4 border-error">
+<div class="flex justify-between"><span class="text-outline">ID Расхождения:</span> <span class="font-medium">#DIS-772-B</span></div>
+<div class="flex justify-between"><span class="text-outline">Объект:</span> <span class="font-medium">Система клапанная</span></div>
+<div class="flex justify-between"><span class="text-outline">Статус:</span> <span class="text-error font-medium">Критическое</span></div>
+</div>
+<div class="space-y-2">
+<label class="text-label-sm text-on-surface">Причина закрытия <span class="text-error">*</span></label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface focus:ring-primary h-24" placeholder="Например: Техническая ошибка при вводе..."></textarea>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant flex justify-end gap-3">
+<button class="px-5 py-2 text-button-text text-secondary bg-transparent hover:bg-surface-container rounded-lg">Отмена</button>
+<button class="px-5 py-2 text-button-text text-on-error bg-error hover:bg-on-error-container rounded-lg flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 20px;">archive</span>
+                    Закрыть расхождение
+                </button>
+</div>
+</div>
+<!-- MODAL 4: Error State -->
+<div class="bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant flex flex-col">
+<div class="px-6 py-5 border-b border-outline-variant flex items-center gap-3">
+<div class="text-error">
+<span class="material-symbols-outlined" style="font-size: 32px; font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<h3 class="text-h2-bold text-on-surface">Не удалось разрешить расхождение</h3>
+</div>
+<div class="p-6 space-y-6">
+<div class="bg-error-container p-4 rounded-lg">
+<p class="text-on-error-container font-medium">Произошла ошибка при сохранении изменений в центральной базе данных.</p>
+</div>
+<div class="space-y-4">
+<div class="flex flex-col gap-1">
+<span class="text-label-sm text-outline">Причина:</span>
+<span class="text-body-md font-semibold text-on-surface">Сервер временно недоступен</span>
+</div>
+<details class="group border border-outline-variant rounded-lg overflow-hidden">
+<summary class="p-3 bg-surface-container-high cursor-pointer list-none flex justify-between items-center text-sm font-medium">
+                            Технические детали
+                            <span class="material-symbols-outlined group-open:rotate-180 transition-transform">expand_more</span>
+</summary>
+<div class="p-3 bg-surface text-[12px] font-mono text-outline leading-relaxed border-t border-outline-variant">
+                            Error Code: 503_SERVICE_UNAVAILABLE<br/>
+                            Request ID: 09812-AF-992<br/>
+                            Timestamp: 2024-05-20T14:22:11Z<br/>
+                            Attempt: 3 of 5
+                        </div>
+</details>
+</div>
+</div>
+<div class="px-6 py-4 border-t border-outline-variant flex justify-end items-center gap-3">
+<button class="mr-auto px-4 py-2 text-button-text text-secondary hover:underline">Закрыть</button>
+<button class="px-5 py-2 text-button-text text-primary border border-primary hover:bg-primary-fixed rounded-lg">Открыть синхронизацию</button>
+<button class="px-5 py-2 text-button-text text-on-primary bg-primary hover:bg-primary-container rounded-lg">Повторить</button>
+</div>
+</div>
+</div>
+</body></html>

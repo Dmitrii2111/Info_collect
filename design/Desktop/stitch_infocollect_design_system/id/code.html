@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Copy Event ID Toast</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts for Inter (standard enterprise font) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style data-purpose="typography">
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] min-h-screen relative overflow-hidden">
+<!-- BEGIN: Mock Background -->
+<!-- This represents the 'История' screen (SCREEN_155) as a background context for the toast -->
+<div class="fixed inset-0 opacity-40 pointer-events-none" data-purpose="screen-context">
+<div class="flex h-full">
+<!-- Sidebar Mock -->
+<aside class="w-64 bg-white border-r border-slate-200 p-6 flex flex-col gap-4">
+<div class="h-8 w-32 bg-slate-200 rounded mb-8"></div>
+<div class="space-y-4">
+<div class="h-10 w-full bg-slate-100 rounded"></div>
+<div class="h-10 w-full bg-slate-100 rounded"></div>
+<div class="h-10 w-full bg-indigo-50 border-r-4 border-indigo-500 rounded"></div>
+<div class="h-10 w-full bg-slate-100 rounded"></div>
+</div>
+</aside>
+<!-- Main Content Mock -->
+<main class="flex-1 p-8">
+<header class="flex justify-between items-center mb-8">
+<div class="h-8 w-48 bg-slate-200 rounded"></div>
+<div class="h-8 w-64 bg-slate-200 rounded"></div>
+</header>
+<div class="grid grid-cols-4 gap-6 mb-8">
+<div class="h-32 bg-white border border-slate-200 rounded-xl"></div>
+<div class="h-32 bg-white border border-slate-200 rounded-xl"></div>
+<div class="h-32 bg-white border border-slate-200 rounded-xl"></div>
+<div class="h-32 bg-white border border-slate-200 rounded-xl"></div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl h-96"></div>
+</main>
+</div>
+</div>
+<!-- END: Mock Background -->
+<!-- BEGIN: Toast Notification Layer -->
+<div class="fixed bottom-8 right-8 z-50 flex flex-col gap-4" data-purpose="notification-layer" id="toast-container">
+<!-- BEGIN: Success Toast -->
+<div class="flex items-center gap-4 bg-white border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl p-4 min-w-[320px] animate-in slide-in-from-right-10 duration-300" data-purpose="copy-success-toast" role="alert">
+<!-- Success Icon -->
+<div class="flex-shrink-0 w-10 h-10 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center" data-purpose="toast-icon">
+<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2.5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</div>
+<!-- Toast Content -->
+<div class="flex-1 flex flex-col" data-purpose="toast-text-content">
+<span class="text-[15px] font-semibold text-slate-900 leading-tight">
+          ID события скопирован
+        </span>
+<span class="text-sm text-slate-500 font-medium mt-0.5">
+          AUDIT-98234-X
+        </span>
+</div>
+<!-- Close Button (Optional but common in UI) -->
+<button aria-label="Закрыть уведомление" class="flex-shrink-0 text-slate-400 hover:text-slate-600 transition-colors p-1" onclick="this.parentElement.remove()">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- END: Success Toast -->
+</div>
+<!-- END: Toast Notification Layer -->
+<!-- BEGIN: Interactive Logic -->
+<script data-purpose="toast-interactivity">
+    /**
+     * Logic to handle the toast appearance and auto-removal.
+     * In a production environment, this would be triggered by the 
+     * 'Скопировать ID события' button click.
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+      const toast = document.querySelector('[data-purpose="copy-success-toast"]');
+      
+      // Auto-dismiss logic after 5 seconds
+      if (toast) {
+        setTimeout(() => {
+          toast.classList.add('opacity-0', 'translate-x-10', 'transition-all', 'duration-500');
+          setTimeout(() => toast.remove(), 500);
+        }, 5000);
+      }
+    });
+  </script>
+<!-- END: Interactive Logic -->
+</body></html>

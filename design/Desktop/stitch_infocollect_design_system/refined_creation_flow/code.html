@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Добавить сотрудника | Admin Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1e40af",
+                        "on-primary-container": "#a8b8ff",
+                        "primary": "#00288e",
+                        "on-surface": "#1a1b22",
+                        "surface-dim": "#dad9e3",
+                        "background": "#fbf8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "tertiary-container": "#872d00",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "inverse-surface": "#2f3037",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-container-high": "#e8e7f1",
+                        "outline-variant": "#c4c5d5",
+                        "primary-fixed": "#dde1ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "outline": "#757684",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1b22",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary": "#515f74",
+                        "surface-container": "#eeedf7",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-tint": "#3755c3",
+                        "secondary-container": "#d5e3fc",
+                        "surface": "#fbf8ff",
+                        "on-secondary-container": "#57657a",
+                        "on-primary-fixed": "#001453",
+                        "tertiary": "#611e00",
+                        "on-tertiary-fixed": "#380d00",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container-low": "#f4f2fc",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-bright": "#fbf8ff",
+                        "on-surface-variant": "#444653"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "unit": "8px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- Background Mock (Context) -->
+<div class="fixed inset-0 overflow-hidden flex pointer-events-none grayscale opacity-30 select-none">
+<aside class="hidden md:flex flex-col h-full p-4 space-y-2 bg-slate-50 w-64 border-r border-slate-200">
+<div class="flex items-center gap-3 px-4 py-6 mb-4">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">corporate_fare</span>
+</div>
+<div>
+<h1 class="text-lg font-black tracking-tighter text-blue-800">Enterprise Shell</h1>
+<p class="text-xs text-slate-500">Management v2.4</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600"><span class="material-symbols-outlined">dashboard</span> Dashboard</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600"><span class="material-symbols-outlined">badge</span> Employees</div>
+</nav>
+</aside>
+<main class="flex-1 flex flex-col bg-background">
+<header class="h-16 border-b border-slate-200 bg-white/80"></header>
+<div class="p-8">
+<h2 class="text-h1-bold mb-6">Сотрудники</h2>
+<div class="w-full h-[600px] bg-white rounded-xl border border-slate-200"></div>
+</div>
+</main>
+</div>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+<!-- Main Modal Container -->
+<div class="bg-surface-bright w-full max-w-5xl h-[90vh] max-h-[921px] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant">
+<!-- Modal Header -->
+<div class="px-8 py-6 border-b border-outline-variant flex justify-between items-start shrink-0 bg-white">
+<div>
+<h2 class="text-h1-bold font-h1-bold text-on-surface">Добавить сотрудника</h2>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">Создание учётной записи и настройка доступа к InfoCollect</p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Scrollable Content Area -->
+<div class="flex-1 overflow-hidden flex flex-col lg:flex-row">
+<!-- Left Column: Form -->
+<div class="flex-1 overflow-y-auto p-8 scrollbar-hide space-y-stack-lg">
+<!-- Info Banner -->
+<div class="bg-primary-container/10 border border-primary-container/20 rounded-lg p-gutter flex items-start gap-3">
+<span class="material-symbols-outlined text-primary-container mt-0.5">info</span>
+<p class="text-data-compact font-data-compact text-on-surface-variant leading-relaxed">
+                            После создания сотрудник сможет войти в систему с назначенной ролью. Права доступа определяются разделом <span class="font-semibold text-primary">"Роли и права"</span>.
+                        </p>
+</div>
+<!-- Form Sections -->
+<div class="space-y-10">
+<!-- Section: Основные данные -->
+<section>
+<div class="flex items-center gap-2 mb-stack-md border-b border-surface-container-highest pb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">person</span>
+<h3 class="text-label-sm font-h2-bold uppercase tracking-wider text-on-surface-variant">Основные данные</h3>
+</div>
+<div class="grid grid-cols-2 gap-stack-md">
+<div class="col-span-2">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">ФИО <span class="text-error">*</span></label>
+<input class="w-full h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md" type="text" value="Анна Смирнова"/>
+</div>
+<div class="col-span-1">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Логин <span class="text-error">*</span></label>
+<input class="w-full h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md" type="text" value="a.smirnova"/>
+<p class="text-[11px] text-on-surface-variant mt-1">Используется для входа в систему.</p>
+</div>
+<div class="col-span-1">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Должность <span class="text-error">*</span></label>
+<input class="w-full h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md" type="text" value="Оператор"/>
+</div>
+<div class="col-span-1">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Email <span class="text-error">*</span></label>
+<input class="w-full h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md" type="email" value="a.smirnova@company.ru"/>
+</div>
+<div class="col-span-1">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Телефон</label>
+<input class="w-full h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md" type="tel" value="+7 (999) 123-45-67"/>
+</div>
+</div>
+</section>
+<!-- Section: Роль и доступ -->
+<section>
+<div class="flex items-center gap-2 mb-stack-md border-b border-surface-container-highest pb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">admin_panel_settings</span>
+<h3 class="text-label-sm font-h2-bold uppercase tracking-wider text-on-surface-variant">Роль и доступ</h3>
+</div>
+<div class="grid grid-cols-2 gap-stack-md">
+<div class="col-span-1">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Роль <span class="text-error">*</span></label>
+<select class="w-full h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md bg-white">
+<option selected="">Оператор</option>
+<option>Бригадир</option>
+<option>Администратор</option>
+</select>
+</div>
+<div class="col-span-1">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Статус доступа <span class="text-error">*</span></label>
+<select class="w-full h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md bg-white">
+<option selected="">Активен</option>
+<option>Приостановлен</option>
+</select>
+</div>
+<div class="col-span-2">
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1">Уровень доступа</label>
+<div class="w-full h-touch-target-min px-4 flex items-center bg-surface-container-low rounded-lg border border-outline-variant text-on-surface font-medium cursor-not-allowed">
+                                        Мобильный доступ
+                                    </div>
+</div>
+<div class="col-span-2 space-y-3 pt-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">Разрешить вход в мобильное приложение</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">Разрешить вход в desktop-интерфейс</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md text-on-surface">Показывать сотрудника в списке назначения</span>
+</label>
+</div>
+</div>
+</section>
+<!-- Section: Пароль -->
+<section>
+<div class="flex items-center gap-2 mb-stack-md border-b border-surface-container-highest pb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">lock</span>
+<h3 class="text-label-sm font-h2-bold uppercase tracking-wider text-on-surface-variant">Пароль</h3>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-6">
+<label class="flex items-center gap-2 cursor-pointer">
+<input checked="" class="text-primary focus:ring-primary w-4 h-4" name="pwd_type" type="radio"/>
+<span class="text-label-sm font-label-sm">Создать временный пароль</span>
+</label>
+<label class="flex items-center gap-2 cursor-pointer">
+<input class="text-primary focus:ring-primary w-4 h-4" name="pwd_type" type="radio"/>
+<span class="text-label-sm font-label-sm">Отправить ссылку</span>
+</label>
+</div>
+<div class="flex gap-2">
+<input class="flex-1 h-touch-target-min px-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md" type="password" value="••••••••"/>
+<button class="px-4 h-touch-target-min bg-surface-container-high hover:bg-surface-container-highest text-on-surface-variant rounded-lg font-button-text text-sm flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-[18px]">key</span>
+                                        Сгенерировать
+                                    </button>
+</div>
+<label class="flex items-center gap-3 cursor-pointer">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary" type="checkbox"/>
+<span class="text-body-md font-body-md">Потребовать смену пароля при первом входе</span>
+</label>
+</div>
+</section>
+<!-- Section: Устройство и синхронизация -->
+<section>
+<div class="flex items-center gap-2 mb-stack-md border-b border-surface-container-highest pb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">sync</span>
+<h3 class="text-label-sm font-h2-bold uppercase tracking-wider text-on-surface-variant">Устройство и синхронизация</h3>
+</div>
+<div class="space-y-gutter">
+<div class="flex justify-between items-center bg-surface-container-lowest p-gutter rounded-lg border border-outline-variant">
+<div>
+<p class="text-[11px] font-bold text-on-surface-variant uppercase mb-0.5">Основное устройство</p>
+<p class="text-body-md text-on-surface-variant italic">Устройство не назначено (будет определено после первого входа)</p>
+</div>
+<span class="material-symbols-outlined text-outline">smartphone</span>
+</div>
+<div class="space-y-1">
+<div class="flex items-center justify-between py-2">
+<span class="text-body-md">Разрешить офлайн-работу</span>
+<button class="w-10 h-5 bg-primary rounded-full relative transition-colors">
+<span class="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></span>
+</button>
+</div>
+<div class="flex items-center justify-between py-2 border-t border-surface-container-low">
+<span class="text-body-md">Разрешить синхронизацию фото</span>
+<button class="w-10 h-5 bg-primary rounded-full relative transition-colors">
+<span class="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Комментарий -->
+<section>
+<div class="flex items-center gap-2 mb-stack-md border-b border-surface-container-highest pb-2">
+<span class="material-symbols-outlined text-primary text-[20px]">sticky_note_2</span>
+<h3 class="text-label-sm font-h2-bold uppercase tracking-wider text-on-surface-variant">Комментарий администратора</h3>
+</div>
+<textarea class="w-full p-4 rounded-lg border-outline-variant focus:ring-primary focus:border-primary text-body-md font-body-md bg-white" placeholder="Добавьте примечание..." rows="3"></textarea>
+</section>
+</div>
+</div>
+<!-- Right Column: Preview Panel -->
+<div class="w-full lg:w-80 shrink-0 bg-surface-container-low border-l border-outline-variant p-6 space-y-6 overflow-y-auto">
+<!-- Profile Summary -->
+<div class="flex flex-col items-center text-center">
+<div class="w-20 h-20 rounded-full bg-primary-fixed-dim text-on-primary-fixed flex items-center justify-center text-h1-bold font-black mb-4 border-4 border-white shadow-sm">
+                            АС
+                        </div>
+<h4 class="text-h2-bold font-h2-bold text-on-surface">Анна Смирнова</h4>
+<span class="mt-2 px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[11px] font-bold uppercase tracking-tight">Оператор</span>
+<p class="mt-3 text-label-sm text-primary font-semibold flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+                            Мобильный доступ
+                        </p>
+</div>
+<!-- Permissions & Restrictions -->
+<div class="space-y-6">
+<div>
+<p class="text-label-sm font-bold text-on-surface mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+                                Доступные возможности
+                            </p>
+<ul class="space-y-1.5 ml-6 text-data-compact text-on-surface-variant">
+<li>• Выполнение назначенных инспекций</li>
+<li>• Проверка оборудования</li>
+<li>• Синхронизация своих данных</li>
+</ul>
+</div>
+<div>
+<p class="text-label-sm font-bold text-on-surface mb-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[18px]">block</span>
+                                Ограничения
+                            </p>
+<ul class="space-y-1.5 ml-6 text-data-compact text-on-surface-variant">
+<li>• Нет доступа к системным настройкам</li>
+<li>• Не может создавать инспекции</li>
+</ul>
+</div>
+</div>
+<!-- Checklist Status -->
+<div class="bg-white rounded-lg p-4 border border-outline-variant space-y-3">
+<p class="text-[11px] font-bold text-on-surface-variant uppercase border-b border-surface-container pb-2">Статус готовности</p>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface">Профиль заполнен</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface">Роль назначена</span>
+<span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Пароль установлен</span>
+<span class="material-symbols-outlined text-outline text-[18px]">circle</span>
+</div>
+</div>
+<!-- Access Summary -->
+<div class="bg-white rounded-lg p-4 border border-outline-variant space-y-2.5">
+<p class="text-[11px] font-bold text-on-surface-variant uppercase border-b border-surface-container pb-2">Доступ в системе</p>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Мобильное приложение</span>
+<span class="font-semibold text-primary">разрешено</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Desktop-интерфейс</span>
+<span class="font-semibold text-error">запрещён</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Офлайн-работа</span>
+<span class="font-semibold text-primary">разрешена</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">Синхронизация фото</span>
+<span class="font-semibold text-primary">разрешена</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-on-surface-variant">В списке назначения</span>
+<span class="font-semibold text-primary">да</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Footer -->
+<div class="px-8 py-5 bg-white border-t border-outline-variant flex items-center justify-between shrink-0">
+<button class="px-6 h-11 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-variant transition-colors font-button-text">
+                    Отмена
+                </button>
+<div class="flex gap-3">
+<button class="px-6 h-11 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-button-text transition-all">
+                        Создать и добавить ещё
+                    </button>
+<button class="px-10 h-11 rounded-lg bg-primary hover:bg-primary-container text-white shadow-md active:scale-[0.98] transition-all font-button-text">
+                        Добавить сотрудника
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

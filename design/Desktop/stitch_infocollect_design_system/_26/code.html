@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Ошибка создания сотрудника</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1e40af",
+                        "on-primary-container": "#a8b8ff",
+                        "primary": "#00288e",
+                        "on-surface": "#1a1b22",
+                        "surface-dim": "#dad9e3",
+                        "background": "#fbf8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "tertiary-container": "#872d00",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "inverse-surface": "#2f3037",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-container-high": "#e8e7f1",
+                        "outline-variant": "#c4c5d5",
+                        "primary-fixed": "#dde1ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "outline": "#757684",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1b22",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary": "#515f74",
+                        "surface-container": "#eeedf7",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-tint": "#3755c3",
+                        "secondary-container": "#d5e3fc",
+                        "surface": "#fbf8ff",
+                        "on-secondary-container": "#57657a",
+                        "on-primary-fixed": "#001453",
+                        "tertiary": "#611e00",
+                        "on-tertiary-fixed": "#380d00",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container-low": "#f4f2fc",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-bright": "#fbf8ff",
+                        "on-surface-variant": "#444653"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "unit": "8px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background">
+<!-- Background Shell (Dimmed Dashboard) -->
+<div class="fixed inset-0 flex">
+<!-- SideNavBar -->
+<aside class="bg-slate-50 border-r border-slate-200 flex flex-col h-full py-6 px-4 fixed left-0 top-0 w-64 z-10">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="inventory_2">inventory_2</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-blue-900 uppercase tracking-wider">InfoCollect</h1>
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Enterprise System</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="bg-blue-100 text-blue-800 border-r-4 border-blue-700 flex items-center gap-3 px-3 py-3 rounded-l-lg transition-all font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    Главная
+                </a>
+<a class="text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center gap-3 px-3 py-3 rounded-lg transition-all font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+                    Поступления
+                </a>
+<a class="text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center gap-3 px-3 py-3 rounded-lg transition-all font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                    Инвентарь
+                </a>
+<a class="text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center gap-3 px-3 py-3 rounded-lg transition-all font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="precision_manufacturing">precision_manufacturing</span>
+                    Оборудование
+                </a>
+<a class="text-slate-500 hover:bg-slate-100 hover:text-slate-900 flex items-center gap-3 px-3 py-3 rounded-lg transition-all font-inter text-sm font-medium" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+                    Отчеты
+                </a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 z-40 flex items-center justify-between px-6">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full bg-slate-100 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary" placeholder="Поиск сотрудников..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-slate-200">
+<img alt="User Avatar" class="w-full h-full object-cover" data-alt="Professional corporate headshot of a middle-aged male executive with a confident expression, wearing a sharp navy blue suit in a brightly lit modern office setting. The image is clean and high-contrast, reflecting the reliable and professional brand identity of the enterprise system. The lighting is soft and natural, emphasizing efficiency and clarity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnMkE7e3XVguAnIOL29znQwV5OglyTsR-4SqzE2G_5I6xTTo45V16AxpUdXSGkjPPAyiOF-_majJ0dDQ7Zonif8uQLyNmoG0-dFigmGG0EBdvfn8JDfLpXw_hVSimnyOIMrvafqUP86Y__iSWmpOuvVC8BQF3ya7Bx1UWDXfxvTvKvU2pLefWjNxBpF08dZeMVL69TufvXyUbKiacDWMEiUmshOGjrbxeJKgBvRPHEftAh79jxcxX35SHOcFrYK9doWO2qDO4p52UT"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Content Placeholder (Blurred) -->
+<div class="pt-20 px-6 blur-sm pointer-events-none select-none">
+<div class="mb-8">
+<h2 class="font-h1-bold text-h1-bold text-on-surface">Управление персоналом</h2>
+<p class="text-on-surface-variant">Обзор активных сотрудников и учетных записей</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg shadow-sm">
+<div class="text-label-sm font-label-sm text-outline mb-1">Всего сотрудников</div>
+<div class="text-h1-bold font-h1-bold text-primary">1,248</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg shadow-sm">
+<div class="text-label-sm font-label-sm text-outline mb-1">В поле</div>
+<div class="text-h1-bold font-h1-bold text-secondary">892</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg shadow-sm">
+<div class="text-label-sm font-label-sm text-outline mb-1">Ожидают проверки</div>
+<div class="text-h1-bold font-h1-bold text-on-tertiary-fixed-variant">14</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-h2-bold text-h2-bold">Список сотрудников</h3>
+<div class="flex gap-2">
+<div class="bg-surface-container p-2 rounded-lg"></div>
+<div class="bg-surface-container p-2 rounded-lg"></div>
+</div>
+</div>
+<div class="p-6 space-y-4">
+<div class="flex items-center gap-4 border-b border-outline-variant pb-4">
+<div class="w-10 h-10 rounded-full bg-surface-container"></div>
+<div class="flex-1">
+<div class="h-4 w-32 bg-surface-container rounded"></div>
+<div class="h-3 w-48 bg-surface-container-low rounded mt-2"></div>
+</div>
+<div class="h-6 w-20 bg-surface-container rounded-full"></div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container"></div>
+<div class="flex-1">
+<div class="h-4 w-32 bg-surface-container rounded"></div>
+<div class="h-3 w-48 bg-surface-container-low rounded mt-2"></div>
+</div>
+<div class="h-6 w-20 bg-surface-container rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Error Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-2xl overflow-hidden border border-outline-variant animate-in fade-in zoom-in duration-300">
+<!-- Modal Header with Red Accent -->
+<div class="relative p-6 text-center">
+<div class="mx-auto mb-4 w-16 h-16 bg-error-container flex items-center justify-center rounded-full">
+<span class="material-symbols-outlined text-error text-4xl" data-icon="error">error</span>
+</div>
+<h2 class="font-h2-bold text-h2-bold text-on-surface leading-tight">
+                    Не удалось создать сотрудника
+                </h2>
+</div>
+<!-- Modal Content -->
+<div class="px-8 pb-4">
+<p class="text-body-md font-body-md text-on-surface-variant text-center">
+                    Система не смогла создать учётную запись. Проверьте введённые данные или повторите попытку.
+                </p>
+<!-- Reason Block -->
+<div class="mt-6 bg-error-container/40 border border-error/20 p-4 rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-error text-xl shrink-0" data-icon="warning">warning</span>
+<div class="text-data-compact font-data-compact text-on-error-container">
+<span class="font-bold">Ошибка валидации:</span> Логин a.smirnova уже занят.
+                    </div>
+</div>
+</div>
+<!-- Modal Footer / Actions -->
+<div class="p-6 flex flex-col sm:flex-row-reverse gap-3 bg-surface-container-low">
+<button class="flex-1 bg-primary text-on-primary font-button-text text-button-text py-3 rounded-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    Повторить
+                </button>
+<button class="flex-1 bg-white border border-outline-variant text-on-surface-variant font-button-text text-button-text py-3 rounded-lg hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    Закрыть
+                </button>
+</div>
+</div>
+</div>
+</body></html>

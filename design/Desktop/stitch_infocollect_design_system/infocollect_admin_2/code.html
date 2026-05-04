@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "secondary": "#515f74",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "secondary-container": "#d5e3fc",
+                        "primary-container": "#1e40af",
+                        "surface-container": "#eeedf7",
+                        "on-primary-fixed": "#001453",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary": "#611e00",
+                        "surface-dim": "#dad9e3",
+                        "secondary-fixed": "#d5e3fc",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-background": "#1a1b22",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-primary-container": "#a8b8ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#dde1ff",
+                        "surface-tint": "#3755c3",
+                        "tertiary-container": "#872d00",
+                        "outline-variant": "#c4c5d5",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-container-highest": "#e3e1eb",
+                        "primary": "#00288e",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-surface": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-bright": "#fbf8ff",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e8e7f1",
+                        "outline": "#757684",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b8c4ff",
+                        "on-tertiary-container": "#ffa583",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "inverse-surface": "#2f3037",
+                        "surface-variant": "#e3e1eb",
+                        "background": "#fbf8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "gutter": "12px",
+                        "stack-sm": "8px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface min-h-screen flex items-center justify-center p-6">
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+<!-- Modal Container -->
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[921px] overflow-hidden flex flex-col">
+<!-- Modal Header (Summary) -->
+<div class="bg-surface-container-low border-b border-outline-variant p-6 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div>
+<h1 class="font-h1-bold text-h1-bold text-on-surface mb-1">Щит освещения ЩО-1</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">fingerprint</span>
+                            ID: EQ-201-02 • Электрика
+                        </p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-error-container text-on-error-container text-label-sm font-label-sm rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                            С расхождением
+                        </span>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container text-label-sm font-label-sm rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">fact_check</span>
+                            В инспекции
+                        </span>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container text-label-sm font-label-sm rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">sync_disabled</span>
+                            1 не отправлено
+                        </span>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-white rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-primary">location_on</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline">Местоположение</p>
+<p class="font-button-text text-on-surface">2.01.29 — Кабинет врача</p>
+<p class="text-[12px] text-on-surface-variant">Корпус A • Этаж 2</p>
+</div>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline">Кол-во по реестру</p>
+<p class="font-button-text text-on-surface">1 шт.</p>
+</div>
+<div><p class="font-label-sm text-label-sm text-outline">Проверка</p><p class="font-button-text text-primary flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">check_circle</span>выполнена</p></div>
+<div><p class="font-label-sm text-label-sm text-outline">Статус проверки</p><p class="font-button-text text-error flex items-center gap-1"><span class="material-symbols-outlined text-[18px]">warning</span>с расхождением</p></div>
+</div>
+</div>
+<!-- Modal Body (Two Column Content) -->
+<div class="flex-1 overflow-y-auto p-6 bg-surface-container-lowest">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- LEFT COLUMN -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<!-- Данные из реестра -->
+<section class="bg-white p-4 rounded-lg border border-outline-variant">
+<h2 class="font-h2-bold text-[16px] text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+                                Данные из реестра
+                            </h2>
+<div class="grid grid-cols-2 gap-y-3 gap-x-6">
+<div>
+<p class="text-[12px] text-outline uppercase font-semibold">ID</p>
+<p class="font-data-compact text-data-compact text-on-surface">EQ-201-02</p>
+</div>
+<div>
+<p class="text-[12px] text-outline uppercase font-semibold">Наименование</p>
+<p class="font-data-compact text-data-compact text-on-surface">Щит освещения ЩО-1</p>
+</div>
+<div>
+<p class="text-[12px] text-outline uppercase font-semibold">Тип</p>
+<p class="font-data-compact text-data-compact text-on-surface">Электрика</p>
+</div>
+<div>
+<p class="text-[12px] text-outline uppercase font-semibold">Поставщик</p>
+<p class="font-data-compact text-data-compact text-on-surface">ЭлектроСнаб</p>
+</div>
+<div>
+<p class="text-[12px] text-outline uppercase font-semibold">Кол-во / Партия</p>
+<p class="font-data-compact text-data-compact text-on-surface">1 (EL-22)</p>
+</div>
+<div>
+<p class="text-[12px] text-outline uppercase font-semibold">Источник</p>
+<p class="font-data-compact text-data-compact text-on-surface">Реестр оборудования</p>
+</div>
+</div>
+</section>
+<!-- Статус проверки -->
+<section class="bg-white p-4 rounded-lg border border-outline-variant">
+<h2 class="font-h2-bold text-[16px] text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                                Статус проверки
+                            </h2>
+<div class="space-y-4">
+<div class="flex items-center justify-between p-3 bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed text-primary flex items-center justify-center font-bold">ИИ</div>
+<div>
+<p class="font-label-sm text-label-sm text-on-surface">Иван Иванов</p>
+<p class="text-[12px] text-on-surface-variant">Оператор инспекции</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[12px] text-outline">Дата</p>
+<p class="font-data-compact text-data-compact text-on-surface">Сегодня, 09:31</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 border border-outline-variant rounded-lg">
+<p class="text-[12px] text-outline">Фотоматериалы</p>
+<p class="font-button-text text-on-surface">1 фото</p>
+</div>
+<div class="p-3 border border-outline-variant rounded-lg">
+<p class="text-[12px] text-outline">Коммментарий</p>
+<p class="font-data-compact text-data-compact text-on-surface truncate">"Отсутствует маркировка..."</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Расхождение -->
+<section class="bg-error-container/20 p-4 rounded-lg border border-error/20">
+<div class="flex justify-between items-start mb-4">
+<h2 class="font-h2-bold text-[16px] text-error flex items-center gap-2">
+<span class="material-symbols-outlined">report_problem</span>
+                                    Отсутствует маркировка
+                                </h2>
+<span class="px-2 py-0.5 bg-error text-on-error text-[10px] font-bold uppercase rounded">Критично</span>
+</div>
+<div class="flex gap-4">
+<div class="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional close-up of a gray electrical distribution panel in an industrial setting. The panel has several switches and wires but is missing proper identification labels or markings on the metal surface. The lighting is crisp and cool, emphasizing a clean but incomplete enterprise infrastructure detail. The overall style is functional and diagnostic, shot in a high-key light mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJ_N40l3L4bCxWDsRDa2KslOHztylrLfGxxKpTh31QdVK89vyASP49yrp6aU_wb29Ml1XEmXdLoINL0QHVoCLavxWyTKpIVv4tbSHAxXDZDK_Kv3Aq2g0rft1T3SFwtXrWF33u3XavVYxk-H3DEWeMhbZFEjhvCrvCScz30Pc1-1k5hFyHXz6tarTpyq_7AP_dcTa63lRRLVsMeOYGZcoFb2yIYfiErmKhcXo9ZD7W5Hoc4fGhj96C86EySOqK9T7HrD_VENlvO5G8"/>
+</div>
+<div class="flex-1 flex flex-col justify-between">
+<div>
+<p class="text-[12px] text-on-surface-variant mb-1">Статус: <span class="font-bold text-on-surface">Новое</span></p>
+<p class="text-label-sm text-on-surface-variant italic">Маркировочная табличка повреждена или отсутствует на лицевой панели щита.</p>
+</div>
+<div class="flex gap-2">
+<div class="mb-2 text-[12px] text-on-surface-variant space-y-0.5"><p>Ожидалось: <span class="font-semibold">SN-90831</span></p><p>Найдено: <span class="font-semibold text-error">отсутствует</span></p></div><button class="px-3 py-1.5 bg-white border border-error text-error text-[12px] font-semibold rounded-lg hover:bg-error/5 transition-colors">Открыть детали</button>
+<button class="px-3 py-1.5 bg-error text-on-error text-[12px] font-semibold rounded-lg hover:opacity-90 transition-opacity">Решить расхождение</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN -->
+<div class="lg:col-span-5 flex flex-col gap-6">
+<!-- Связанные данные -->
+<section class="bg-white p-4 rounded-lg border border-outline-variant">
+<h2 class="font-h2-bold text-[16px] text-on-surface mb-3">Связанные данные</h2>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex items-center gap-2 p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors text-left">
+<span class="material-symbols-outlined text-primary text-[20px]">list_alt</span>
+<span class="text-[12px] font-medium">Реестр оборудования</span>
+</button>
+<button class="flex items-center gap-2 p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors text-left">
+<span class="material-symbols-outlined text-primary text-[20px]">apartment</span>
+<span class="text-[12px] font-medium">Помещение</span>
+</button>
+<button class="flex items-center gap-2 p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors text-left">
+<span class="material-symbols-outlined text-primary text-[20px]">assignment</span>
+<span class="text-[12px] font-medium">Инспекция</span>
+</button>
+<button class="flex items-center gap-2 p-2 border border-outline-variant rounded hover:bg-surface-container transition-colors text-left">
+<span class="material-symbols-outlined text-error text-[20px]">error_outline</span>
+<span class="text-[12px] font-medium">Расхождение</span>
+</button>
+</div>
+</section>
+<!-- Склад и перемещения -->
+<section class="bg-white p-4 rounded-lg border border-outline-variant">
+<h2 class="font-h2-bold text-[16px] text-on-surface mb-3 flex items-center justify-between">Склад и перемещения <span class="text-[11px] font-normal text-outline">Текущий складской остаток: нет</span></h2>
+<div class="p-3 bg-surface-container-low rounded-lg border border-dashed border-outline mb-3"><p class="text-[11px] text-outline uppercase font-bold mb-1">Последнее перемещение</p><div class="flex items-center gap-2 text-[13px]"><span class="font-medium">Склад Б</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span><span class="font-medium">2.01.29</span></div><p class="text-[11px] text-on-surface-variant mt-1">Дата: вчера, 16:10</p></div>
+<button class="w-full py-2 bg-surface-container-high text-on-surface text-[12px] font-semibold rounded-lg hover:bg-outline-variant transition-colors">Открыть историю перемещений</button>
+</section>
+<!-- Синхронизация -->
+<section class="bg-primary/5 p-4 rounded-lg border border-primary/10">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary animate-pulse">sync</span>
+<h2 class="font-h2-bold text-[14px] text-primary">Синхронизация</h2>
+</div>
+<span class="text-[11px] text-primary font-bold">1 изменение</span>
+</div>
+<p class="text-[12px] text-on-primary-fixed-variant mb-2">Есть изменения в очереди на отправку</p>
+<div class="flex justify-between text-[11px] text-outline">
+<span>Обновлено: 09:42</span>
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                                    В очереди
+                                </span>
+</div>
+</section>
+<!-- История оборудования -->
+<section class="bg-white p-4 rounded-lg border border-outline-variant flex-1 min-h-[200px]">
+<h2 class="font-h2-bold text-[16px] text-on-surface mb-4">История</h2>
+<div class="space-y-4 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-outline-variant"><div class="relative pl-7"><span class="absolute left-0 top-1 w-[22px] h-[22px] rounded-full bg-primary-container text-on-primary-container flex items-center justify-center z-10"><span class="material-symbols-outlined text-[14px]">pending</span></span><p class="text-[13px] font-semibold text-on-surface">09:42 — изменение ожидает отправки</p></div><div class="relative pl-7"><span class="absolute left-0 top-1 w-[22px] h-[22px] rounded-full bg-error text-white flex items-center justify-center z-10"><span class="material-symbols-outlined text-[14px]">report</span></span><p class="text-[13px] font-semibold text-on-surface">09:31 — Иван Иванов создал расхождение</p></div><div class="relative pl-7"><span class="absolute left-0 top-1 w-[22px] h-[22px] rounded-full bg-primary text-white flex items-center justify-center z-10"><span class="material-symbols-outlined text-[14px]">check</span></span><p class="text-[13px] font-semibold text-on-surface">09:18 — оборудование проверено в помещении 2.01.29</p></div><div class="relative pl-7"><span class="absolute left-0 top-1 w-[22px] h-[22px] rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center z-10"><span class="material-symbols-outlined text-[14px]">local_shipping</span></span><p class="text-[13px] font-semibold text-on-surface">Вчера, 16:10 — перемещено из Склад Б в 2.01.29</p></div><div class="relative pl-7"><span class="absolute left-0 top-1 w-[22px] h-[22px] rounded-full bg-outline-variant text-white flex items-center justify-center z-10"><span class="material-symbols-outlined text-[14px]">sync</span></span><p class="text-[13px] font-semibold text-on-surface">Сегодня, 08:20 — данные обновлены из реестра</p></div></div>
+</section>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="bg-surface-container p-4 border-t border-outline-variant flex items-center justify-between">
+<button class="px-6 py-2 bg-white border border-outline text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-container-highest transition-colors">
+                    Закрыть
+                </button>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-white border border-primary text-primary font-button-text text-button-text rounded-lg hover:bg-primary/5 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">table_rows</span>
+                        Открыть в реестре
+                    </button>
+<button class="px-4 py-2 bg-white border border-primary text-primary font-button-text text-button-text rounded-lg hover:bg-primary/5 transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">apartment</span>
+                        Открыть помещение
+                    </button>
+<button class="px-6 py-2 bg-primary text-on-primary font-button-text text-button-text rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 shadow-md">
+<span class="material-symbols-outlined text-[20px]">report</span>
+                        Открыть расхождение
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Background Content Mockup (Dimmed underneath) -->
+<div class="fixed inset-0 -z-10 bg-surface grid grid-cols-12 p-8 gap-6 opacity-40 blur-[2px]">
+<div class="col-span-12 h-16 bg-white rounded-lg shadow-sm"></div>
+<div class="col-span-3 h-screen bg-white rounded-lg shadow-sm"></div>
+<div class="col-span-9 h-screen bg-white rounded-lg shadow-sm p-4">
+<div class="h-10 bg-surface-container-low rounded mb-4"></div>
+<div class="space-y-2">
+<div class="h-12 bg-surface-container-low rounded w-full"></div>
+<div class="h-12 bg-primary-fixed/20 rounded w-full border border-primary/20"></div>
+<div class="h-12 bg-surface-container-low rounded w-full"></div>
+<div class="h-12 bg-surface-container-low rounded w-full"></div>
+</div>
+</div>
+</div>
+</body></html>

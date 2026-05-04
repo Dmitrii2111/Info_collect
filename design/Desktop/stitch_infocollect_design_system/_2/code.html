@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>История — Система контроля InfoCollect</title>
+<!-- Tailwind CSS CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration for Design System Colors -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ic-blue-primary': '#003399',
+            'ic-blue-hover': '#002673',
+            'ic-bg-sidebar': '#F8FAFC',
+            'ic-text-main': '#1E293B',
+            'ic-text-secondary': '#64748B',
+            'ic-border': '#E2E8F0',
+            'ic-error-bg': '#FEF2F2',
+            'ic-error-text': '#991B1B',
+            'ic-error-border': '#FEE2E2',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-layouts">
+    .sidebar-active {
+      background-color: #DBEAFE;
+      border-right: 4px solid #003399;
+      color: #003399;
+    }
+    .modal-overlay {
+      background-color: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-ic-text-main font-sans min-h-screen flex overflow-hidden">
+<!-- BEGIN: Sidebar Navigation -->
+<aside class="w-64 bg-ic-bg-sidebar border-r border-ic-border flex flex-col shrink-0" data-purpose="main-sidebar">
+<div class="p-6">
+<div class="flex items-center gap-2 mb-8">
+<div class="w-8 h-8 bg-ic-blue-primary rounded flex items-center justify-center">
+<span class="text-white font-bold">IC</span>
+</div>
+<div>
+<h1 class="font-bold text-lg leading-none">InfoCollect</h1>
+<span class="text-[10px] text-ic-text-secondary">MVP V0.1</span>
+</div>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 p-2 rounded hover:bg-gray-200 transition-colors" href="#">
+<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6h16M4 12h16m-7 6h7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-sm">Панель управления</span>
+</a>
+<a class="flex items-center gap-3 p-2 rounded hover:bg-gray-200 transition-colors" href="#">
+<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-sm">Реестр оборудования</span>
+</a>
+<!-- Add more nav items as placeholders to match the background screen -->
+<a class="sidebar-active flex items-center gap-3 p-2 rounded transition-colors" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="text-sm font-medium">История</span>
+</a>
+</nav>
+</div>
+</aside>
+<!-- END: Sidebar Navigation -->
+<!-- BEGIN: Main Dashboard Content -->
+<main class="flex-1 flex flex-col min-w-0 relative">
+<!-- Top Header -->
+<header class="h-16 border-b border-ic-border bg-white flex items-center justify-between px-8">
+<div>
+<h2 class="text-2xl font-bold">История</h2>
+<p class="text-xs text-ic-text-secondary">Журнал событий и системных изменений</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-medium border border-green-100">
+<span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+          Сервер подключён
+        </div>
+<div class="flex items-center gap-2">
+<div class="text-right">
+<p class="text-sm font-bold">Иван Иванов</p>
+<p class="text-[10px] text-ic-text-secondary">Администратор</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+<img alt="Avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtBWbHBTz4JYxECPIwmI-bSDUNewMMKb3V0j4HXcQoXUUAYJclJrU5xu6uRNEF-7vWaFnpXSr3jCxhgA9iVvOiiZh_eNAe0hMXFc02mnZV57a9-f1ICXrQM4pYlsQHJ4J3q7HLnSncoCCuzQXv5Yeq-Bu6voGsbIm5TQJaX2QcS6E1jCBwqKWUnAXClvJJkj0or_MddSFxtRVaazQ-pRft56_OTxuN6-APE9sZzYjO9a2_U9nGYtXMhMJhTIn7pSyDwJ9aMl8IbX19"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Background Content Mock (Dimmed for Modal) -->
+<div class="p-8 space-y-6 opacity-40 pointer-events-none select-none">
+<div class="flex gap-4">
+<button class="bg-white border border-ic-border px-4 py-2 rounded text-sm font-medium">Экспорт журнала</button>
+<button class="bg-white border border-ic-border px-4 py-2 rounded text-sm font-medium">Обновить</button>
+</div>
+<div class="grid grid-cols-5 gap-4">
+<div class="bg-white p-4 border border-ic-border rounded-xl">
+<span class="text-[10px] uppercase font-bold text-ic-text-secondary">Всего событий</span>
+<p class="text-3xl font-bold text-ic-blue-primary">1 248</p>
+</div>
+<!-- Repeat items... -->
+</div>
+</div>
+<!-- BEGIN: Error Modal Overlay -->
+<div class="modal-overlay absolute inset-0 z-50 flex items-center justify-center p-4">
+<!-- BEGIN: Error Modal -->
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200" data-purpose="error-modal">
+<!-- Modal Body -->
+<div class="p-6">
+<div class="flex items-start gap-4">
+<!-- Red Error Icon -->
+<div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div class="flex-1">
+<h3 class="text-lg font-bold text-gray-900 leading-tight">
+                Не удалось сохранить настройки аудита
+              </h3>
+<p class="mt-2 text-sm text-ic-text-secondary leading-relaxed">
+                Система не смогла применить изменения. Повторите попытку или проверьте подключение.
+              </p>
+</div>
+</div>
+<!-- Reason Block -->
+<div class="mt-6 p-4 bg-gray-50 rounded-lg border border-ic-border" data-purpose="error-reason-block">
+<h4 class="text-xs font-bold uppercase tracking-wider text-ic-text-secondary mb-1">Причина</h4>
+<p class="text-sm font-medium text-gray-700">Сервер временно недоступен.</p>
+</div>
+<!-- Technical Details Accordion (Collapsed) -->
+<div class="mt-4 border-t border-ic-border pt-4">
+<button class="flex items-center justify-between w-full text-xs font-medium text-ic-text-secondary hover:text-ic-blue-primary transition-colors">
+<span>Технические подробности</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-4 bg-gray-50 flex items-center justify-between border-t border-ic-border">
+<button class="px-4 py-2 text-sm font-medium text-ic-text-secondary hover:text-gray-900 transition-colors" data-purpose="close-button">
+            Закрыть
+          </button>
+<div class="flex gap-3">
+<button class="px-6 py-2 bg-ic-blue-primary text-white text-sm font-bold rounded hover:bg-ic-blue-hover shadow-sm transition-all" data-purpose="retry-button">
+              Повторить
+            </button>
+</div>
+</div>
+</div>
+<!-- END: Error Modal -->
+</div>
+<!-- END: Error Modal Overlay -->
+</main>
+<!-- END: Main Dashboard Content -->
+</body></html>

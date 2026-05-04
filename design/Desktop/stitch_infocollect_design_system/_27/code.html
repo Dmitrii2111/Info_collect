@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1e40af",
+                        "on-primary-container": "#a8b8ff",
+                        "primary": "#00288e",
+                        "on-surface": "#1a1b22",
+                        "surface-dim": "#dad9e3",
+                        "background": "#fbf8ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "tertiary-container": "#872d00",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "inverse-surface": "#2f3037",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-container-high": "#e8e7f1",
+                        "outline-variant": "#c4c5d5",
+                        "primary-fixed": "#dde1ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "outline": "#757684",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1b22",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary": "#515f74",
+                        "surface-container": "#eeedf7",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-tint": "#3755c3",
+                        "secondary-container": "#d5e3fc",
+                        "surface": "#fbf8ff",
+                        "on-secondary-container": "#57657a",
+                        "on-primary-fixed": "#001453",
+                        "tertiary": "#611e00",
+                        "on-tertiary-fixed": "#380d00",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container-low": "#f4f2fc",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-bright": "#fbf8ff",
+                        "on-surface-variant": "#444653"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "unit": "8px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "gutter": "12px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background antialiased">
+<!-- Background: Admin Dashboard Shell (Blurred) -->
+<div class="fixed inset-0 overflow-hidden blur-md grayscale-[0.2] pointer-events-none">
+<!-- SideNavBar -->
+<nav class="bg-slate-50 border-r border-slate-200 fixed left-0 top-0 h-screen w-64 flex flex-col h-full py-6 px-4">
+<div class="mb-8 px-2">
+<div class="text-lg font-black text-blue-900 uppercase tracking-wider">InfoCollect</div>
+<div class="text-xs text-slate-500 font-medium">Enterprise System</div>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-3 p-3 text-slate-500 rounded-lg"><span class="material-symbols-outlined">dashboard</span> Главная</div>
+<div class="flex items-center gap-3 p-3 bg-blue-100 text-blue-800 border-r-4 border-blue-700 rounded-sm font-semibold"><span class="material-symbols-outlined">group</span> Сотрудники</div>
+<div class="flex items-center gap-3 p-3 text-slate-500"><span class="material-symbols-outlined">inventory_2</span> Инвентарь</div>
+<div class="flex items-center gap-3 p-3 text-slate-500"><span class="material-symbols-outlined">assessment</span> Отчеты</div>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 z-40 flex items-center justify-between px-6">
+<div class="flex items-center gap-4 bg-slate-100 px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-slate-400">search</span>
+<span class="text-slate-400">Поиск сотрудников...</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-600">notifications</span>
+<span class="material-symbols-outlined text-slate-600">settings</span>
+<div class="w-8 h-8 rounded-full bg-slate-300"></div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-64 pt-24 px-8">
+<div class="max-w-5xl mx-auto">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="text-h1-bold font-h1-bold text-on-surface">Список сотрудников</h1>
+<p class="text-on-surface-variant">Управление доступом и персоналом</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-6">
+<div class="h-48 bg-white border border-slate-200 rounded-xl shadow-sm"></div>
+<div class="h-48 bg-white border border-slate-200 rounded-xl shadow-sm"></div>
+<div class="h-48 bg-white border border-slate-200 rounded-xl shadow-sm"></div>
+</div>
+</div>
+</main>
+</div>
+<!-- Success Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-sm">
+<!-- Modal Card -->
+<div class="bg-surface-container-lowest w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<div class="p-8 flex flex-col items-center text-center">
+<!-- Success Icon -->
+<div class="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-6">
+<div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600 text-4xl" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Title & Message -->
+<h2 class="text-h2-bold font-h2-bold text-on-surface mb-2">Сотрудник добавлен</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6">
+                    Анна Смирнова успешно зарегистрирована в системе.
+                </p>
+<!-- Summary Card (Bento Style) -->
+<div class="w-full bg-surface-container-low border border-outline-variant rounded-lg p-4 mb-6 text-left">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border-2 border-white shadow-sm">
+<img alt="Анна Смирнова" class="w-full h-full object-cover" data-alt="A professional portrait of a young woman with a friendly smile, Anna Smirnova, in a bright corporate environment. She has a clean, approachable look consistent with a modern enterprise system aesthetic. The lighting is soft and high-key, reflecting a light-mode UI theme with subtle blue and white tones. Professional headshot quality, cinematic soft focus background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDd5N-VXR59bJgw0xo0K7U6cshk3i360MbZqNpm1P7y3saudpOdzb0pbj89d7CNp7NdOyAt2see55bjp6KKXyCcIikhadSvlDL7ypddYjkpW7A0rxiKzoZcUkWNoNdE-lu0IXim-zkPxTWkKszYH-YcKm2T8iakK-Ne82gAwjNxuLPz6WtVEupj8HRnBmbEK3Z-wYrY-QR1EXJvqZq55tXL8Muwa9icZPduAEva5GpFwsrQliEhgBEmlK4o_Lwen8pevjXkmSP3o_0q"/>
+</div>
+<div>
+<div class="text-label-sm font-label-sm text-on-surface">Анна Смирнова</div>
+<div class="text-data-compact font-data-compact text-on-surface-variant">ID: IC-8842-AS</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-y-3 border-t border-outline-variant/30 pt-4">
+<div>
+<div class="text-data-compact font-data-compact text-outline mb-1 uppercase tracking-wider text-[10px] font-bold">Роль</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-label-sm font-label-sm text-on-surface">Оператор</span>
+</div>
+</div>
+<div>
+<div class="text-data-compact font-data-compact text-outline mb-1 uppercase tracking-wider text-[10px] font-bold">Доступ</div>
+<div class="inline-flex px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[11px] font-semibold">
+                                Мобильный
+                            </div>
+</div>
+</div>
+</div>
+<!-- Helper Text -->
+<div class="flex items-start gap-2 mb-8 text-left bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+<span class="material-symbols-outlined text-blue-600 text-sm mt-0.5" data-icon="info">info</span>
+<p class="text-data-compact font-data-compact text-on-primary-fixed-variant">
+                        Сотрудник получит данные для входа на указанный email.
+                    </p>
+</div>
+<!-- Actions -->
+<div class="w-full flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-primary-container text-on-primary py-3 rounded-lg font-button-text text-button-text shadow-sm transition-all active:scale-[0.98]">
+                        Открыть профиль
+                    </button>
+<button class="w-full bg-surface-container-high hover:bg-surface-dim text-on-surface py-3 rounded-lg font-button-text text-button-text transition-all active:scale-[0.98]">
+                        К списку сотрудников
+                    </button>
+<button class="w-full py-2 text-primary font-button-text text-button-text hover:underline transition-all">
+                        Создать ещё
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

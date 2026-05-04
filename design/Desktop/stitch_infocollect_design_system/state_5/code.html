@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "on-error-container": "#93000a",
+                        "background": "#fbf8ff",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-container-low": "#f4f2fc",
+                        "outline": "#757684",
+                        "tertiary": "#611e00",
+                        "on-primary-fixed": "#001453",
+                        "inverse-primary": "#b8c4ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-primary": "#ffffff",
+                        "outline-variant": "#c4c5d5",
+                        "on-background": "#1a1b22",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "primary-fixed": "#dde1ff",
+                        "on-secondary-container": "#57657a",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-primary-container": "#a8b8ff",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-dim": "#dad9e3",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "surface-tint": "#3755c3",
+                        "primary-container": "#1e40af",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#d5e3fc",
+                        "on-surface-variant": "#444653",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary-container": "#872d00",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-surface": "#1a1b22",
+                        "surface-container": "#eeedf7",
+                        "surface-bright": "#fbf8ff",
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary": "#515f74",
+                        "primary": "#00288e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "data-compact": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h2-bold": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased">
+<!-- Sidebar Shell -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 bg-white shadow-sm flex flex-col h-full z-10 font-inter text-sm antialiased">
+<div class="px-6 py-8">
+<h1 class="text-xl font-bold tracking-tight text-blue-800">InfoCollect</h1>
+<p class="text-xs text-slate-500">Inspection Management</p>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">dashboard</span> Dashboard
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">inventory_2</span> Registry
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">precision_manufacturing</span> Objects
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">assignment</span> Inspections
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">warehouse</span> Warehouse
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">local_shipping</span> Arrivals
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">difference</span> Discrepancies
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">sync</span> Sync
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">history</span> History
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">analytics</span> Reports
+            </a>
+<!-- Active Navigation -->
+<a class="flex items-center px-4 py-3 bg-blue-50 text-blue-800 font-semibold border-r-4 border-blue-800 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">group</span> Employees
+            </a>
+<a class="flex items-center px-4 py-3 text-slate-600 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined mr-3">settings</span> Settings
+            </a>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<div class="flex items-center gap-3">
+<img alt="User Profile" class="w-10 h-10 rounded-full border border-slate-200" data-alt="A professional headshot of a corporate administrator in a bright office environment. The person has a friendly but professional expression, wearing business casual attire. The lighting is high-key and clean, reflecting a modern light-mode UI aesthetic with soft shadows and a focused, reliable corporate atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-KjesBF2t3IILESS-8CYg-Sk7lEnPLpypVW2upcr3ByirTCW6bIIQews34k5-JTYJM1L8GW_TXnnFYsGmCp5jLWuyL7NdC2BxZqbTJc-rGGLwcAq9dCrl31MX5c7grZGKY6mmZt1mRqndvbHfFLVLTTjPKeWiO3Fj3hLbsHZPMKByjC719vopI1kAVB3dqZs9AxY7vHr7FyhCxT74hwGTudtxpdIqxS64xj_tWo7FYki0ZIWgekAPpXR-Bt9XDVvVo_2qaaMtwza4"/>
+<div>
+<p class="text-sm font-semibold text-slate-900">Admin User</p>
+<p class="text-xs text-slate-500">Super Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="h-16 fixed top-0 right-0 left-64 bg-white/90 backdrop-blur-md z-40 flex justify-between items-center px-8 w-full border-b border-slate-200">
+<div class="flex items-center gap-4">
+<span class="text-lg font-semibold text-slate-900">Admin Panel</span>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500 w-64" placeholder="Поиск сотрудников..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-all duration-200">
+<span class="material-symbols-outlined">dns</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full transition-all duration-200 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-20 p-8 min-h-screen">
+<div class="flex justify-between items-end mb-8">
+<div>
+<nav class="flex text-sm text-slate-500 mb-2 gap-2">
+<span>Сотрудники</span>
+<span>/</span>
+<span class="text-blue-800 font-medium">Управление доступом</span>
+</nav>
+<h2 class="text-h1-bold font-h1-bold text-on-background">Сотрудники</h2>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded-lg font-button-text text-button-text flex items-center gap-2">
+<span class="material-symbols-outlined">person_add</span> Добавить сотрудника
+            </button>
+</div>
+<!-- Employee List Bento Grid (Visual Background) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-40 select-none pointer-events-none">
+<!-- Active Employee Card -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm col-span-2">
+<div class="flex items-start justify-between mb-4">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-800 text-xl font-bold">АС</div>
+<div>
+<h3 class="font-h2-bold text-h2-bold">Анна Смирнова</h3>
+<p class="text-slate-500">Оператор терминала №4</p>
+</div>
+</div>
+<span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-semibold">Активен</span>
+</div>
+<div class="grid grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+<div>
+<p class="text-xs text-slate-400 uppercase tracking-wider">ID</p>
+<p class="font-medium">EMP-00421</p>
+</div>
+<div>
+<p class="text-xs text-slate-400 uppercase tracking-wider">Доступ</p>
+<p class="font-medium">Полный</p>
+</div>
+<div>
+<p class="text-xs text-slate-400 uppercase tracking-wider">Последний вход</p>
+<p class="font-medium">Сегодня, 09:15</p>
+</div>
+</div>
+</div>
+<!-- Stats Card -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+<div>
+<h4 class="font-semibold text-slate-900 mb-1">Выполнено проверок</h4>
+<p class="text-3xl font-bold text-blue-800">142</p>
+</div>
+<div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mt-4">
+<div class="bg-blue-600 h-full w-[85%]"></div>
+</div>
+</div>
+<!-- List Placeholder -->
+<div class="bg-white rounded-xl border border-slate-200 shadow-sm col-span-3 overflow-hidden">
+<div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex gap-8">
+<span class="text-sm font-semibold text-blue-800">Все сотрудники</span>
+<span class="text-sm font-medium text-slate-500">В отпуске</span>
+<span class="text-sm font-medium text-slate-500">Уволенные</span>
+</div>
+<div class="divide-y divide-slate-100">
+<div class="p-4 flex items-center justify-between">
+<div class="flex gap-4 items-center">
+<div class="w-10 h-10 bg-slate-200 rounded-full"></div>
+<div class="h-4 w-32 bg-slate-100 rounded"></div>
+</div>
+<div class="h-4 w-24 bg-slate-100 rounded"></div>
+<div class="h-8 w-8 bg-slate-100 rounded-full"></div>
+</div>
+<div class="p-4 flex items-center justify-between">
+<div class="flex gap-4 items-center">
+<div class="w-10 h-10 bg-slate-200 rounded-full"></div>
+<div class="h-4 w-40 bg-slate-100 rounded"></div>
+</div>
+<div class="h-4 w-24 bg-slate-100 rounded"></div>
+<div class="h-8 w-8 bg-slate-100 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+<!-- Modal Content -->
+<div class="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden border border-slate-200">
+<!-- Modal Header -->
+<div class="px-8 py-6 border-b border-slate-100 bg-surface flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">warning</span>
+</div>
+<div class="flex-1">
+<h3 class="text-h2-bold font-h2-bold text-on-background">Отключить доступ?</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">
+                        Вы собираетесь ограничить доступ для <span class="font-bold text-on-background">Анны Смирновой</span> (Оператор).
+                    </p>
+</div>
+</div>
+<!-- Modal Body -->
+<div class="px-8 py-6 space-y-6">
+<!-- Consequence List -->
+<div class="bg-surface-container-low rounded-lg p-4">
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-3 uppercase tracking-wider">Последствия отключения:</p>
+<ul class="space-y-2">
+<li class="flex items-center gap-2 text-sm text-slate-700">
+<span class="material-symbols-outlined text-sm text-slate-400">check_circle</span>
+                            Немедленный выход из всех сессий
+                        </li>
+<li class="flex items-center gap-2 text-sm text-slate-700">
+<span class="material-symbols-outlined text-sm text-slate-400">check_circle</span>
+                            Блокировка доступа к мобильному приложению
+                        </li>
+<li class="flex items-center gap-2 text-sm text-slate-700">
+<span class="material-symbols-outlined text-sm text-slate-400">check_circle</span>
+                            Остановка всех активных инспекций
+                        </li>
+</ul>
+</div>
+<!-- Reason Textarea with Validation Error -->
+<div class="space-y-2">
+<label class="block text-label-sm font-label-sm text-on-surface-variant">Причина отключения <span class="text-error">*</span></label>
+<textarea class="w-full h-24 p-3 rounded-lg border-2 border-error bg-white focus:ring-0 focus:outline-none text-body-md font-body-md placeholder:text-slate-400" placeholder="Опишите причину блокировки..."></textarea>
+<div class="flex items-center gap-1.5 text-error">
+<span class="material-symbols-outlined text-[18px]">error</span>
+<p class="text-sm font-medium">Укажите причину отключения доступа</p>
+</div>
+</div>
+<!-- Checkboxes -->
+<div class="space-y-3">
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="mt-1 relative flex items-center justify-center w-5 h-5 border-2 border-outline rounded bg-white group-hover:border-primary-container transition-colors">
+<input class="sr-only" type="checkbox"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-on-surface">Уведомить сотрудника по email</p>
+<p class="text-xs text-slate-500">Письмо будет отправлено на a.smirnova@infocollect.ru</p>
+</div>
+</label>
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="mt-1 relative flex items-center justify-center w-5 h-5 border-2 border-outline rounded bg-white group-hover:border-primary-container transition-colors">
+<input class="sr-only" type="checkbox"/>
+</div>
+<div class="flex-1">
+<p class="text-sm font-medium text-on-surface">Аннулировать все выданные сертификаты</p>
+</div>
+</label>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-8 py-6 bg-slate-50 flex gap-4">
+<button class="flex-1 py-3 px-4 rounded-lg bg-error text-on-error font-button-text text-button-text hover:bg-red-700 transition-colors shadow-sm">
+                    Отключить доступ
+                </button>
+<button class="flex-1 py-3 px-4 rounded-lg border border-slate-200 bg-white text-slate-700 font-button-text text-button-text hover:bg-slate-50 transition-colors">
+                    Отмена
+                </button>
+</div>
+</div>
+</div>
+</body></html>

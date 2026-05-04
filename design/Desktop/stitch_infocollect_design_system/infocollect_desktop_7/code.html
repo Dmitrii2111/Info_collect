@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Карточка поступления</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-container": "#1e40af",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container-low": "#f4f2fc",
+                        "surface-container-high": "#e8e7f1",
+                        "on-secondary-container": "#57657a",
+                        "surface-container-highest": "#e3e1eb",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "inverse-primary": "#b8c4ff",
+                        "tertiary-container": "#872d00",
+                        "surface-dim": "#dad9e3",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-tertiary-container": "#ffa583",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d5e3fc",
+                        "tertiary": "#611e00",
+                        "surface-tint": "#3755c3",
+                        "on-error-container": "#93000a",
+                        "secondary": "#515f74",
+                        "primary-fixed": "#dde1ff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "background": "#fbf8ff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-container-lowest": "#ffffff",
+                        "outline": "#757684",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-surface": "#1a1b22",
+                        "surface-variant": "#e3e1eb",
+                        "on-background": "#1a1b22",
+                        "surface": "#fbf8ff",
+                        "primary": "#00288e",
+                        "outline-variant": "#c4c5d5",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-primary-container": "#a8b8ff",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "on-surface-variant": "#444653",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#eeedf7",
+                        "surface-bright": "#fbf8ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-fixed": "#001453",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2f3037",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-compact": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-hidden">
+<!-- Background: "Поступления" Table Screen (Blurred/Dimmed) -->
+<div class="fixed inset-0 flex">
+<!-- Predicted SideNavBar -->
+<aside class="flex flex-col h-screen w-64 z-50 bg-slate-50 border-r border-slate-200">
+<div class="p-6">
+<div class="text-xl font-bold tracking-tight text-blue-800">InfoCollect</div>
+<div class="text-xs text-slate-500">Admin Console</div>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 bg-blue-100/50 text-blue-800 border-r-4 border-blue-800">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Registry</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined">location_city</span>
+<span class="font-label-sm text-label-sm">Objects</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined">checklist</span>
+<span class="font-label-sm text-label-sm">Inspections</span>
+</div>
+</nav>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<!-- Predicted TopAppBar -->
+<header class="flex items-center justify-between px-6 w-full h-16 bg-white border-b border-slate-200">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400">search</span>
+<input class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm w-80 focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="Поиск по реестру..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500">dns</span>
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male administrator with a confident smile, wearing a clean white shirt. The background is a soft-focus office environment with neutral tones, perfectly capturing a modern corporate identity. The lighting is bright and professional, highlighting the reliable character of the system administrator." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqndE9G-hAWFPinrTQhAmT8189Ut10F1zSkudjUqPC_k1NQH3vVUcmEI_Ge0szKaWf4iXIXLJhlRhrtBCAZLVK2a3a5spGxZo0Aj6Yh8TERzwfQdCt-AP_eAd4c0KwIxRLa6maiw7uWXzzlZi8-6adbBPLQe769CAMIA2RYmGuqvwCuOXHnE3E0q3dHPEGD1AO4NdZ_FGrSOOrngrAFcte-2D1iIr9Y9TxcDXPoQftw5ICjiijXwMCTZVwqrBNxTrAyCQPzO2Nf1PT"/>
+</div>
+</div>
+</header>
+<!-- Table Background -->
+<div class="p-8 bg-background flex-1 overflow-auto opacity-40 blur-[2px]">
+<h1 class="font-h1-bold text-h1-bold mb-6">Поступления</h1>
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container border-b border-outline-variant">
+<tr>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant">ID Партии</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant">Объект</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant">Статус</th>
+<th class="p-4 font-label-sm text-label-sm text-on-surface-variant">Дата</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-4 text-body-md font-medium">B-2024-05</td>
+<td class="p-4 text-body-md">Монитор пациента</td>
+<td class="p-4"><span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Ожидает проверки</span></td>
+<td class="p-4 text-body-md">Сегодня, 08:40</td>
+</tr>
+<!-- Repeat rows -->
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+<!-- Batch Card Modal -->
+<div class="bg-white w-full max-w-[1100px] max-h-[921px] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+<!-- TOP MODAL HEADER -->
+<div class="px-8 py-6 border-b border-outline-variant flex items-start justify-between bg-white sticky top-0 z-10">
+<div>
+<h2 class="font-h1-bold text-h1-bold text-on-surface">Карточка поступления</h2>
+<p class="text-body-md text-on-surface-variant mt-1">Просмотр партии, статуса проверки и связанных действий</p>
+</div>
+<button class="w-10 h-10 flex items-center justify-center hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-8 space-y-8 pb-24">
+<!-- COMPACT BATCH SUMMARY -->
+<div class="flex flex-wrap items-center justify-between gap-6 p-6 bg-surface-container-low border border-outline-variant rounded-xl">
+<div class="space-y-2">
+<div class="flex items-center gap-3">
+<h3 class="font-h2-bold text-h2-bold text-primary">B-2024-05 • Монитор пациента</h3>
+<span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold uppercase tracking-wider">Ожидает проверки</span>
+<span class="px-3 py-1 bg-secondary-container text-secondary rounded-full text-xs font-bold uppercase tracking-wider">Создано диспетчером</span>
+</div>
+<div class="flex items-center gap-4 text-body-md text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">fingerprint</span> ID: EQ-201-05</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">person</span> Иван Иванов (Диспетчер)</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">calendar_today</span> Сегодня, 08:40</span>
+</div>
+</div>
+<div class="flex items-center gap-6 border-l border-outline-variant pl-6">
+<div class="text-center">
+<div class="text-xs font-bold text-on-surface-variant uppercase">Количество</div>
+<div class="text-3xl font-extrabold text-on-surface">30 шт.</div>
+</div>
+<div class="px-4 py-2 bg-white rounded-lg border border-outline-variant shadow-sm text-sm">
+<div class="font-semibold text-primary">Склад временного хранения</div>
+<div class="text-on-surface-variant text-xs">Основной терминал</div>
+</div>
+</div>
+</div>
+<!-- MAIN TWO-COLUMN CONTENT -->
+<div class="grid grid-cols-12 gap-8">
+<!-- LEFT COLUMN -->
+<div class="col-span-12 lg:col-span-7 space-y-8">
+<!-- Данные поступления -->
+<section>
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">list_alt</span> Данные поступления
+                            </h4>
+<div class="grid grid-cols-2 gap-y-4 gap-x-6 p-4 bg-surface-bright border border-outline-variant rounded-lg">
+<div>
+<label class="block text-xs text-on-surface-variant font-medium">Партия</label>
+<div class="text-body-md font-semibold">B-2024-05</div>
+</div>
+<div>
+<label class="block text-xs text-on-surface-variant font-medium">Позиция</label>
+<div class="text-body-md font-semibold">Монитор пациента</div>
+</div>
+<div>
+<label class="block text-xs text-on-surface-variant font-medium">ID / Артикул</label>
+<div class="text-body-md font-semibold">EQ-201-05</div>
+</div>
+<div>
+<label class="block text-xs text-on-surface-variant font-medium">Категория</label>
+<div class="text-body-md font-semibold">Медоборудование</div>
+</div>
+<div>
+<label class="block text-xs text-on-surface-variant font-medium">Поставщик</label>
+<div class="text-body-md font-semibold">MedSupply GmbH</div>
+</div>
+<div>
+<label class="block text-xs text-on-surface-variant font-medium">Дата поступления</label>
+<div class="text-body-md font-semibold">Сегодня, 08:40</div>
+</div>
+</div>
+</section>
+<!-- Документы -->
+<section>
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">description</span> Документы
+                            </h4>
+<div class="flex items-center justify-between p-4 bg-white border border-outline-variant rounded-lg hover:border-primary-container transition-colors group cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 bg-error-container text-error rounded flex items-center justify-center">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface">Накладная #A-104</div>
+<div class="text-xs text-on-surface-variant">invoice_A104.pdf • 1.2 MB</div>
+</div>
+</div>
+<button class="flex items-center gap-1 text-primary font-semibold text-sm group-hover:underline">
+                                    Открыть документ <span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+</section>
+<!-- Комментарий диспетчера -->
+<section><h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">chat_bubble</span> Комментарий диспетчера
+</h4>
+<div class="p-4 bg-surface-container-low border border-outline-variant rounded-xl flex gap-3">
+<span class="material-symbols-outlined text-on-surface-variant">format_quote</span>
+<div class="text-body-md text-on-surface italic">
+        "Партия поступила утром, требуется проверка количества и маркировки."
+    </div>
+</div></section>
+<!-- Связанные данные -->
+<section>
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">link</span> Связанные данные
+                            </h4>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="p-4 border border-outline-variant rounded-lg space-y-3">
+<div class="text-xs font-bold text-on-surface-variant uppercase">Реестр оборудования</div>
+<div class="font-semibold text-on-surface">EQ-201-05</div>
+<button class="w-full py-2 bg-secondary-container text-secondary rounded font-semibold text-sm hover:opacity-90 transition-opacity">Открыть в реестре</button>
+</div>
+<div class="p-4 border border-outline-variant rounded-lg space-y-3">
+<div class="text-xs font-bold text-on-surface-variant uppercase">Карточка склада</div>
+<div class="font-semibold text-on-surface">Монитор пациента</div>
+<button class="w-full py-2 bg-secondary-container text-secondary rounded font-semibold text-sm hover:opacity-90 transition-opacity">Открыть на складе</button>
+</div>
+</div>
+</section>
+</div>
+<!-- RIGHT COLUMN -->
+<div class="col-span-12 lg:col-span-5 space-y-8">
+<!-- Статус проверки -->
+<section class="p-6 bg-amber-50 border border-amber-200 rounded-xl">
+<h4 class="font-label-sm text-label-sm text-amber-900 uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">fact_check</span> Статус проверки
+                            </h4>
+<div class="space-y-4"><div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-amber-600">hourglass_empty</span>
+<p class="text-sm text-amber-900 leading-relaxed">
+        Запись уже находится в очереди на проверку. Оператор получит уведомление в мобильном приложении.
+    </p>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-center gap-2 py-3 bg-amber-100 text-amber-900 rounded-lg font-semibold text-sm border border-amber-200"><span class="material-symbols-outlined text-lg">done_all</span> Уже в очереди на проверку</div>
+<button class="w-full text-center text-secondary font-semibold text-sm hover:underline">Отправить повторно</button>
+<button class="w-full py-3 bg-white border border-outline-variant text-on-surface rounded-lg font-button-text text-button-text hover:bg-surface-container-low transition-colors">
+        Редактировать поступление
+    </button>
+</div></div>
+</section>
+<!-- Синхронизация -->
+<section class="p-6 border border-outline-variant rounded-xl bg-white">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">sync</span> Синхронизация
+                            </h4>
+<div class="space-y-3">
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Статус очереди</span>
+<span class="font-semibold text-amber-600">Ожидает отправки</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Изменений в очереди</span>
+<span class="font-bold">1</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-on-surface-variant">Последняя синхронизация</span>
+<span>сегодня, 09:42</span>
+</div>
+<button class="w-full mt-2 text-primary font-semibold text-sm flex items-center justify-center gap-2 border border-primary-container/20 py-2 rounded-lg hover:bg-primary-container/5 transition-colors">
+                                    Открыть синхронизацию <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- История -->
+<section>
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">history</span> История
+                            </h4>
+<div class="space-y-4 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant">
+<div class="flex gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-primary border-4 border-white shadow-sm z-10 flex-shrink-0"></div>
+<div class="pb-1">
+<div class="text-xs font-bold text-on-surface-variant">09:42</div>
+<div class="text-sm font-semibold">Ожидание синхронизации</div>
+<div class="text-xs text-on-surface-variant">Статус обновлен системой</div>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-outline-variant border-4 border-white shadow-sm z-10 flex-shrink-0"></div>
+<div class="pb-1">
+<div class="text-xs font-bold text-on-surface-variant">08:41</div>
+<div class="text-sm font-semibold">Отправлено в очередь</div>
+<div class="text-xs text-on-surface-variant">Пользователь: Иван Иванов</div>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="w-6 h-6 rounded-full bg-outline-variant border-4 border-white shadow-sm z-10 flex-shrink-0"></div>
+<div class="pb-1">
+<div class="text-xs font-bold text-on-surface-variant">08:40</div>
+<div class="text-sm font-semibold">Запись создана</div>
+<div class="text-xs text-on-surface-variant">Тип: Прямой ввод данных</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Дополнительные действия -->
+<section>
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">settings</span> Действия
+                            </h4>
+<div class="grid grid-cols-1 gap-2"><button class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-on-surface hover:bg-surface-container rounded-lg transition-colors border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant">ios_share</span> Экспорт карточки
+</button>
+<button class="flex items-center gap-3 px-4 py-2 text-sm font-medium text-outline hover:text-error hover:bg-error-container/10 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-lg">block</span> Аннулировать поступление
+</button></div>
+</section>
+</div>
+</div>
+</div>
+<!-- FOOTER -->
+<div class="px-8 py-5 border-t border-outline-variant bg-surface-container-lowest flex items-center justify-between sticky bottom-0 z-10"><button class="px-6 py-2.5 bg-white border border-outline-variant text-on-surface rounded-lg font-button-text text-button-text hover:bg-surface-container transition-colors shadow-sm">
+    Закрыть
+</button>
+<div class="flex items-center gap-3">
+<button class="px-6 py-2.5 bg-secondary-container text-secondary rounded-lg font-button-text text-button-text hover:opacity-90 transition-colors">
+        Открыть в реестре
+    </button>
+<button class="px-6 py-2.5 bg-primary text-white rounded-lg font-button-text text-button-text shadow-sm hover:bg-primary-container transition-all">
+        Открыть карточку склада
+    </button>
+</div></div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "inverse-surface": "#2f3037",
+                        "surface-variant": "#e3e1eb",
+                        "background": "#fbf8ff",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-bright": "#fbf8ff",
+                        "error": "#ba1a1a",
+                        "surface-container-high": "#e8e7f1",
+                        "outline": "#757684",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b8c4ff",
+                        "on-tertiary-container": "#ffa583",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container-highest": "#e3e1eb",
+                        "primary": "#00288e",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-surface": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "on-secondary-container": "#57657a",
+                        "surface-tint": "#3755c3",
+                        "tertiary-container": "#872d00",
+                        "outline-variant": "#c4c5d5",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-container": "#a8b8ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#dde1ff",
+                        "secondary-fixed": "#d5e3fc",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-background": "#1a1b22",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-container": "#eeedf7",
+                        "on-primary-fixed": "#001453",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary": "#611e00",
+                        "surface-dim": "#dad9e3",
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "secondary": "#515f74",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "secondary-container": "#d5e3fc",
+                        "primary-container": "#1e40af"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "12px"
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background min-h-screen">
+<!-- Sidebar Anchor -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 bg-white shadow-sm flex flex-col h-full font-['Inter'] text-sm antialiased z-50">
+<div class="p-6">
+<h1 class="text-xl font-black text-blue-800">InfoCollect</h1>
+<p class="text-slate-500 text-xs">Inspection System</p>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Control Panel
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+                Equipment Registry
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+                Objects
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-800 bg-blue-50 font-semibold border-r-4 border-blue-800" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+                Inspections
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+                Warehouse
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                System Settings
+            </a>
+</nav>
+<div class="p-4 border-t border-slate-100 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary font-bold">AU</div>
+<div>
+<p class="text-on-surface font-semibold">Admin User</p>
+<p class="text-xs text-slate-500">Administrator</p>
+</div>
+</div>
+</aside>
+<!-- Header Anchor -->
+<header class="fixed top-0 right-0 left-64 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md z-40 flex items-center justify-between px-8 w-full">
+<div class="flex items-center bg-surface-container-low rounded-lg px-3 py-1.5 w-96 border border-outline-variant">
+<span class="material-symbols-outlined text-slate-400 mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full outline-none" placeholder="Поиск инспекций..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:text-blue-800 transition-colors"><span class="material-symbols-outlined" data-icon="dns">dns</span></button>
+<button class="p-2 text-slate-500 hover:text-blue-800 transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-slate-500 hover:text-blue-800 transition-colors"><span class="material-symbols-outlined" data-icon="help">help</span></button>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-64 pt-24 p-8 min-h-screen">
+<div class="mb-8">
+<h2 class="text-h1-bold font-h1-bold text-on-surface">Состояние отчётов</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Системный обзор модальных окон управления отчётами</p>
+</div>
+<!-- Bento Grid for Modals Preview (Static Background) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg">
+<!-- 1. Generation Progress Modal -->
+<div class="relative bg-surface-container-high rounded-xl p-stack-lg min-h-[400px] flex items-center justify-center border border-outline-variant overflow-hidden">
+<div class="absolute inset-0 z-0 opacity-10">
+<img alt="Background pattern" class="w-full h-full object-cover" data-alt="A clean, minimalist enterprise dashboard background with blurred data tables and charts in soft gray and blue tones. The atmosphere is professional and orderly, with high-key lighting that emphasizes a modern light-mode user interface. Subtle geometric patterns provide depth without distracting from the main modal elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApneIlBdTNFjL4Y0-OTmaSj-5VOUvaNw5TDDGqOXrjy0rKUHDMDL1_ozKJ1xkPY5kOb3G-dt3MVcRdIqojcIz-_0lroSC76MmTEF-r0xsQxyubm8chcrrifUe7-NaOU_M63KLJXot3gNjXAMBHxonVt7I9ONj_x5fT00F-LCl2jY_PJP5Km4jx4EhUmxx8Akp7USn8RgoAvFlaw47TeFpgknxi4axHYeU_TB9K9tj2Vfwg0nTCcsjFW_BVajsZFKqK7PGzRkg5pN9K"/>
+</div>
+<!-- Modal -->
+<div class="relative z-10 w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant p-stack-lg">
+<div class="flex flex-col items-center text-center">
+<div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full mb-stack-md animate-spin"></div>
+<h3 class="text-h2-bold font-h2-bold text-on-surface mb-stack-sm">Отчёт формируется</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mb-stack-md">Пожалуйста, подождите. Идет сбор данных для объекта #INS-2024-001.</p>
+<div class="w-full bg-surface-container rounded-full h-1">
+<div class="bg-primary h-1 rounded-full w-2/3"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. Success Modal -->
+<div class="relative bg-surface-container-high rounded-xl p-stack-lg min-h-[400px] flex items-center justify-center border border-outline-variant overflow-hidden">
+<div class="absolute inset-0 z-0 opacity-10">
+<img alt="Background pattern" class="w-full h-full object-cover" data-alt="A bright and airy architectural office setting with clean desks and large windows. The lighting is natural and soft, creating a calm and efficient workspace vibe. The color scheme is dominated by whites and light blues, echoing the corporate modern style of the InfoCollect system board." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQTrVlFW08sWTpDPnCqgKymPZ5Kr1DjneZUox6LbNyqV0m0FHgR4zaqHyVEYt4z9ni6T1jrTh0th3Rolr80xSaBAH23-QT8Gf6rlt28H0u57BMl5WiDzKtIuTFTDzkTsdQoMzE8iE-D3qPki4tTPe-LNuCagHvSgd0Kay_MIoXb1QOBst3lwfs6ezWyChP56PU3sYDz3DghaUb2nfmS3j2AautjRLV8WgBwYh1VCwjJxAFDdBpts0epaxgMOl9hzn6piFtTk3rhQlb"/>
+</div>
+<!-- Modal -->
+<div class="relative z-10 w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant p-stack-lg">
+<div class="flex flex-col items-center text-center mb-stack-lg">
+<div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-stack-md">
+<span class="material-symbols-outlined text-4xl" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h3 class="text-h2-bold font-h2-bold text-on-surface mb-stack-sm">Отчёт сформирован</h3>
+<div class="bg-surface-container-low w-full rounded-lg p-stack-sm border border-outline-variant flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="description">description</span>
+<div class="text-left">
+<p class="text-label-sm font-label-sm text-on-surface truncate">report_ins_2024_001.pdf</p>
+<p class="text-data-compact font-data-compact text-on-surface-variant">2.4 MB • PDF</p>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<button class="w-full h-[48px] bg-primary text-on-primary font-button-text text-button-text rounded-lg hover:bg-primary-container transition-colors">
+                            Скачать отчёт
+                        </button>
+<button class="w-full h-[48px] text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-container transition-colors">
+                            Закрыть
+                        </button>
+</div>
+</div>
+</div>
+<!-- 3. Error Modal -->
+<div class="relative bg-surface-container-high rounded-xl p-stack-lg min-h-[400px] flex items-center justify-center border border-outline-variant overflow-hidden">
+<div class="absolute inset-0 z-0 opacity-10">
+<img alt="Background pattern" class="w-full h-full object-cover" data-alt="A macro shot of a sleek industrial server room with blinking status lights and neatly organized cabling. The colors are cool-toned with subtle red highlights indicating a technical environment. The mood is high-tech and serious, fitting for a system error context in a professional application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXjVqhP4IgQid4_ggED0bhlbFreASTMrAqc3fb3SHBR1Cnfi4EyBn78jzJITJrXtkPDMYc7ePtfUr8zFe4d4SMbq611FnA6REVcLPU4pGOqfBFPkhKR6ss3NImXAFgXBtVozL5XBFMuvRoW8Rtg_joCJvudPu0r14EbrpZTjk-tvLc96BtSExB-DivMukmRUNDWrpmVxQGyyvQ7MiTc-UTZgA3kmhytuj2gFZz3jO2_LaNym8S3jMhjvOY56G_FnKSRBm3V8HkqLAA"/>
+</div>
+<!-- Modal -->
+<div class="relative z-10 w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant p-stack-lg">
+<div class="flex flex-col items-center text-center mb-stack-lg">
+<div class="w-16 h-16 bg-error-container text-error rounded-full flex items-center justify-center mb-stack-md">
+<span class="material-symbols-outlined text-4xl" data-icon="error" style="font-variation-settings: 'FILL' 1;">error</span>
+</div>
+<h3 class="text-h2-bold font-h2-bold text-on-surface mb-stack-sm">Не удалось сформировать отчёт</h3>
+<div class="bg-error-container/20 w-full rounded-lg p-stack-md border border-error/20">
+<p class="text-label-sm font-label-sm text-error flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+                                Вложение недоступно
+                            </p>
+<p class="text-data-compact font-data-compact text-on-surface-variant mt-1">Сервер не смог получить доступ к медиафайлам инспекции. Проверьте подключение.</p>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<button class="w-full h-[48px] bg-primary text-on-primary font-button-text text-button-text rounded-lg hover:bg-primary-container transition-colors">
+                            Повторить
+                        </button>
+<button class="w-full h-[48px] text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-container transition-colors">
+                            Отмена
+                        </button>
+</div>
+</div>
+</div>
+<!-- 4. Delete Confirmation Modal -->
+<div class="relative bg-surface-container-high rounded-xl p-stack-lg min-h-[400px] flex items-center justify-center border border-outline-variant overflow-hidden">
+<div class="absolute inset-0 z-0 opacity-10">
+<img alt="Background pattern" class="w-full h-full object-cover" data-alt="A sophisticated digital interface displaying file structures and directory trees in a sleek, dark-to-light gradient. The aesthetic is purely functional and enterprise-grade, emphasizing the precision and reliability of the InfoCollect system while using soft light-mode tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1oFAYgf72QDXmfJb43BMQK27Veuws_mj9ZdirwZcGmafriCoq-dX9HrvsTnXrk2BkszlGU0JAJps4waZUoWFqrmgbyHuPich9YcRYeT-VCdqIiXWn4efaPXS_lZ0scSFart50vaK78e4td6pHRllFvIWCoQZRqyObKY2iEuLYdPV0PtfW2naGzMErCK7vPeTGpwQVvaFCZhOKk_J9NKSRwRUq8USeCzYrG4clO65fudXPDhl95OEHIF3LoD1pz74fPFqG0JWRYn8H"/>
+</div>
+<!-- Modal -->
+<div class="relative z-10 w-full max-w-sm bg-surface-container-lowest rounded-xl shadow-xl border border-outline-variant p-stack-lg">
+<div class="mb-stack-lg">
+<h3 class="text-h2-bold font-h2-bold text-on-surface mb-stack-sm">Удалить отчёт?</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">Вы собираетесь безвозвратно удалить файл:</p>
+<div class="mt-stack-sm p-stack-sm bg-surface-container-low rounded border border-outline-variant flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400" data-icon="delete_forever">delete_forever</span>
+<span class="text-label-sm font-label-sm text-on-surface font-semibold">report_ins_2024_001.pdf</span>
+</div>
+<p class="text-data-compact font-data-compact text-error mt-stack-md">Это действие нельзя будет отменить.</p>
+</div>
+<div class="flex gap-stack-sm">
+<button class="flex-1 h-[48px] text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-container transition-colors border border-outline-variant">
+                            Отмена
+                        </button>
+<button class="flex-1 h-[48px] bg-error text-on-error font-button-text text-button-text rounded-lg hover:bg-red-700 transition-colors">
+                            Удалить отчёт
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB Suppression Logic: Not rendering FAB as this is a dashboard/system view -->
+</body></html>

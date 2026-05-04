@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Экспорт журнала аудита - InfoCollect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "background": "#fbf8ff",
+                        "secondary": "#515f74",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "outline-variant": "#c4c5d5",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#dad9e3",
+                        "on-background": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e3e1eb",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container": "#eeedf7",
+                        "tertiary": "#611e00",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-primary": "#ffffff",
+                        "primary": "#00288e",
+                        "outline": "#757684",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-surface": "#1a1b22",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-container": "#872d00",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#3755c3",
+                        "on-secondary-container": "#57657a",
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#a8b8ff",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-container": "#d5e3fc",
+                        "surface-bright": "#fbf8ff",
+                        "primary-container": "#1e40af",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "on-tertiary-fixed-variant": "#802a00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased overflow-hidden">
+<!-- BACKGROUND: Dimmed History Screen (SCREEN_255) -->
+<div class="fixed inset-0 z-0 flex blur-[2px] opacity-40 pointer-events-none">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 bg-white shadow-sm flex flex-col h-full font-['Inter'] text-sm antialiased">
+<div class="p-6">
+<span class="text-xl font-black text-blue-800">InfoCollect</span>
+<p class="text-xs text-slate-500">Inspection System</p>
+</div>
+<nav class="flex-1">
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Control Panel</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+<span>Equipment Registry</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span>Objects</span>
+</div>
+<!-- Active Item for History/Inspections -->
+<div class="flex items-center gap-3 px-4 py-3 text-blue-800 bg-blue-50 font-semibold border-r-4 border-blue-800">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span>Inspections</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span>Warehouse</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>System Settings</span>
+</div>
+</nav>
+</aside>
+<!-- Main Content Canvas Placeholder -->
+<main class="ml-64 w-full h-screen bg-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-64 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md z-40 flex items-center justify-between px-8 w-full font-['Inter'] text-base font-medium">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+<span class="material-symbols-outlined text-sm" data-icon="search">search</span>
+</span>
+<input class="pl-10 pr-4 py-1.5 bg-slate-100 border-none rounded-lg text-sm focus:ring-2 focus:ring-blue-500/50 w-64" placeholder="Search events..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-slate-500 cursor-pointer" data-icon="dns">dns</span>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-slate-500 cursor-pointer" data-icon="help">help</span>
+<div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male administrator with a confident and friendly expression, wearing a navy blue corporate suit. The background is a clean, blurred office environment with soft morning light filtering through large windows, creating a bright and high-end enterprise atmosphere that aligns with the professional blue and white UI color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOibxB6ZGgyq2DpYMvM_JMkfSsZQXjurhy-t99jCXbFK8lYFA8i2fMdDf7dh3ticIhgJwpeaR-sLXv6Xi2tcD7iFL29ZYsiLAYNEFwGUesyz23AjuhloS4PoPQDofiGouippcZlG9cbY_Ez3R9Bkmyi1H3J19aTPPirRLMeMqcVbtxlRX23wJJ3fRBf-FhYEdceyIAssV2mq7RS255darhM5XNJQEh0jGUdfx-12zBQKq24ZmfD7o8BQMA0BwrnAkJ9gk1J0S2ejvD"/>
+</div>
+</div>
+</header>
+<!-- Table Content Mockup -->
+<div class="pt-24 px-8">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h1 class="font-h1-bold text-h1-bold text-on-surface">Журнал аудита</h1>
+<p class="text-secondary font-body-md">История системных событий и действий пользователей</p>
+</div>
+<button class="bg-primary text-white px-6 py-2 rounded-lg font-button-text flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                        Экспорт
+                    </button>
+</div>
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-surface-container text-on-surface-variant font-label-sm border-b border-outline-variant">
+<tr>
+<th class="px-6 py-4">Дата и время</th>
+<th class="px-6 py-4">Пользователь</th>
+<th class="px-6 py-4">Событие</th>
+<th class="px-6 py-4">Статус</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-slate-50">
+<td class="px-6 py-4 font-data-compact text-data-compact">Сегодня, 14:20</td>
+<td class="px-6 py-4 font-data-compact text-data-compact">Иванов А.С.</td>
+<td class="px-6 py-4 font-data-compact text-data-compact">Вход в систему</td>
+<td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-bold">Успешно</span></td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="px-6 py-4 font-data-compact text-data-compact">Сегодня, 13:45</td>
+<td class="px-6 py-4 font-data-compact text-data-compact">Сидоров П.В.</td>
+<td class="px-6 py-4 font-data-compact text-data-compact">Изменение реестра оборудования</td>
+<td class="px-6 py-4"><span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full font-bold">Успешно</span></td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="px-6 py-4 font-data-compact text-data-compact">Сегодня, 12:10</td>
+<td class="px-6 py-4 font-data-compact text-data-compact">Петрова Е.М.</td>
+<td class="px-6 py-4 font-data-compact text-data-compact">Ошибка авторизации</td>
+<td class="px-6 py-4"><span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full font-bold">Ошибка</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- MODAL OVERLAY -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-on-background/40 backdrop-blur-[4px]">
+<!-- EXPORT MODAL -->
+<div class="w-full max-w-[480px] bg-white rounded-xl shadow-2xl border border-outline-variant overflow-hidden flex flex-col">
+<!-- Modal Header -->
+<div class="px-6 pt-6 pb-4">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="file_export" style="font-variation-settings: 'FILL' 0;">ios_share</span>
+</div>
+<h2 class="font-h2-bold text-h2-bold text-on-surface">Экспортировать журнал?</h2>
+</div>
+<p class="text-secondary font-body-md leading-relaxed">
+                    Будет сформирован файл с событиями, соответствующими текущим фильтрам.
+                </p>
+</div>
+<!-- Context Summary / Bento-like details -->
+<div class="px-6 py-4 grid grid-cols-3 gap-3">
+<div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/30">
+<p class="text-[11px] uppercase tracking-wider text-on-surface-variant font-bold mb-1">Период</p>
+<p class="text-on-surface font-semibold text-sm">за сегодня</p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/30">
+<p class="text-[11px] uppercase tracking-wider text-on-surface-variant font-bold mb-1">Записей</p>
+<p class="text-on-surface font-semibold text-sm">86</p>
+</div>
+<div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/30 text-center">
+<p class="text-[11px] uppercase tracking-wider text-on-surface-variant font-bold mb-1">Формат</p>
+<div class="flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-green-600 text-sm" data-icon="description">description</span>
+<p class="text-on-surface font-semibold text-sm">XLSX</p>
+</div>
+</div>
+</div>
+<!-- Options / Checkboxes -->
+<div class="px-6 py-4 space-y-4">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center">
+<input checked="" class="w-5 h-5 rounded border-outline text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+</div>
+<span class="font-label-sm text-on-surface group-hover:text-primary transition-colors">Текущие фильтры</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+</div>
+<span class="font-label-sm text-on-surface group-hover:text-primary transition-colors">Все события за период</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative flex items-center">
+<input class="w-5 h-5 rounded border-outline text-primary focus:ring-primary/20 transition-all" type="checkbox"/>
+</div>
+<span class="font-label-sm text-on-surface group-hover:text-primary transition-colors">Включить техническую информацию</span>
+</label>
+</div>
+<!-- Modal Footer -->
+<div class="mt-4 px-6 py-5 bg-surface-container-lowest border-t border-outline-variant flex items-center justify-between">
+<button class="px-5 py-2.5 rounded-lg font-button-text text-secondary hover:bg-surface-container-high transition-colors active:scale-95">
+                    Отмена
+                </button>
+<button class="px-8 py-2.5 rounded-lg bg-primary text-white font-button-text shadow-sm hover:bg-primary-container active:scale-[0.98] transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                    Экспортировать
+                </button>
+</div>
+</div>
+</div>
+<!-- UI Overlay elements to enhance "History Screen" vibe under the modal -->
+<div class="fixed bottom-8 right-8 z-10 pointer-events-none opacity-20">
+<div class="bg-white p-4 rounded-2xl shadow-xl border border-outline-variant">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-800">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</div>
+<div>
+<div class="h-4 w-32 bg-slate-200 rounded mb-2"></div>
+<div class="h-3 w-20 bg-slate-100 rounded"></div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

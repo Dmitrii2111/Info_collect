@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#3755c3",
+                        "tertiary-container": "#872d00",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "on-secondary-container": "#57657a",
+                        "on-primary-container": "#a8b8ff",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-container": "#d5e3fc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "inverse-primary": "#b8c4ff",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-bright": "#fbf8ff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "primary-container": "#1e40af",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf8ff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary": "#515f74",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "surface-container-low": "#f4f2fc",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-background": "#1a1b22",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "outline-variant": "#c4c5d5",
+                        "surface-dim": "#dad9e3",
+                        "error": "#ba1a1a",
+                        "surface-container": "#eeedf7",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "tertiary": "#611e00",
+                        "surface-container-highest": "#e3e1eb",
+                        "inverse-on-surface": "#f1f0fa",
+                        "error-container": "#ffdad6",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "outline": "#757684",
+                        "primary": "#00288e",
+                        "success-base": "#15803d",
+                        "success-container": "#dcfce7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "stack-lg": "24px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface-container-low min-h-screen p-4 md:p-8">
+<div class="max-w-5xl mx-auto">
+<!-- Header -->
+<header class="mb-stack-lg border-b border-outline-variant pb-stack-md flex items-center justify-between">
+<div>
+<h1 class="text-on-surface text-h1-bold text-2xl font-black tracking-tight">Состояния синхронизации</h1>
+<p class="text-on-surface-variant text-body-md mt-1">Доска референсов для действий InfoCollect</p>
+</div>
+<button class="flex h-10 items-center justify-center rounded-lg bg-surface-container-highest px-4 text-on-surface-variant hover:bg-outline-variant">
+<span class="material-symbols-outlined mr-2">arrow_back</span>
+<span class="text-sm font-semibold">Назад</span>
+</button>
+</header>
+<!-- Variants Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-stack-lg">
+<!-- Variant 1: Conflict Resolved (Operator Data) -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-stack-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant">
+<div class="mb-4 flex items-center justify-between">
+<div class="bg-success-container text-success-base p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Вариант 1</span>
+</div>
+<h2 class="text-on-surface text-lg font-bold leading-tight">Конфликт разрешён</h2>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Приняты данные оператора.</p>
+<div class="mt-stack-lg flex gap-2">
+<button class="flex-1 h-touch-target-min bg-primary text-on-primary rounded-lg font-semibold text-sm transition-colors hover:bg-primary-container">Понятно</button>
+</div>
+</div>
+<!-- Variant 2: Conflict Resolved (Server Data) -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-stack-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant">
+<div class="mb-4 flex items-center justify-between">
+<div class="bg-success-container text-success-base p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">published_with_changes</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Вариант 2</span>
+</div>
+<h2 class="text-on-surface text-lg font-bold leading-tight">Конфликт разрешён</h2>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Оставлены серверные данные.</p>
+<div class="mt-stack-lg flex gap-2">
+<button class="flex-1 h-touch-target-min bg-primary text-on-primary rounded-lg font-semibold text-sm transition-colors hover:bg-primary-container">Ок</button>
+</div>
+</div>
+<!-- Variant 3: Event Ignored -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-stack-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant">
+<div class="mb-4 flex items-center justify-between">
+<div class="bg-surface-container-high text-on-surface-variant p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">visibility_off</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Вариант 3</span>
+</div>
+<h2 class="text-on-surface text-lg font-bold leading-tight">Событие проигнорировано</h2>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Изменение не повлияет на итоговый отчет.</p>
+<div class="mt-stack-lg flex gap-2">
+<button class="flex-1 h-touch-target-min border border-outline text-on-surface rounded-lg font-semibold text-sm hover:bg-surface-container-low">Закрыть</button>
+</div>
+</div>
+<!-- Variant 4: Sync Completed -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-stack-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant">
+<div class="mb-4 flex items-center justify-between">
+<div class="bg-success-container text-success-base p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Вариант 4</span>
+</div>
+<h2 class="text-on-surface text-lg font-bold leading-tight">Синхронизация завершена</h2>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Все доступные изменения отправлены на сервер.</p>
+<div class="mt-stack-lg flex gap-2">
+<button class="flex-1 h-touch-target-min bg-primary text-on-primary rounded-lg font-semibold text-sm transition-colors hover:bg-primary-container">Продолжить работу</button>
+</div>
+</div>
+<!-- Variant 5: Partial Success -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-stack-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant">
+<div class="mb-4 flex items-center justify-between">
+<div class="bg-tertiary-fixed text-tertiary p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">cloud_sync</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Вариант 5</span>
+</div>
+<h2 class="text-on-surface text-lg font-bold leading-tight">Синхронизация завершена с предупреждениями</h2>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Часть событий не была отправлена из-за ошибок сети.</p>
+<div class="mt-stack-lg flex gap-2 flex-col">
+<button class="h-touch-target-min bg-primary text-on-primary rounded-lg font-semibold text-sm">Повторить попытку</button>
+<button class="h-touch-target-min text-on-surface-variant font-medium text-sm">Посмотреть ошибки</button>
+</div>
+</div>
+<!-- Variant 6: Retry Succeeded -->
+<div class="flex flex-col bg-surface-container-lowest rounded-xl p-stack-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant">
+<div class="mb-4 flex items-center justify-between">
+<div class="bg-success-container text-success-base p-3 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">task_alt</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-widest text-outline">Вариант 6</span>
+</div>
+<h2 class="text-on-surface text-lg font-bold leading-tight">Ошибочные события повторены</h2>
+<p class="text-on-surface-variant text-sm mt-2 leading-relaxed">Локальная очередь данных пуста.</p>
+<div class="mt-stack-lg flex gap-2">
+<button class="flex-1 h-touch-target-min bg-primary text-on-primary rounded-lg font-semibold text-sm transition-colors hover:bg-primary-container">Завершить</button>
+</div>
+</div>
+</div>
+<!-- System Context Visualizers -->
+<section class="mt-12 bg-white rounded-xl p-8 border border-outline-variant overflow-hidden">
+<h3 class="text-on-surface font-bold text-xl mb-6">Визуализация в интерфейсе (PWA Mobile)</h3>
+<div class="flex flex-col md:flex-row gap-12 items-center justify-center">
+<!-- Mobile Mockup -->
+<div class="w-[320px] h-[580px] bg-[#f8f9fb] border-[8px] border-[#2f3037] rounded-[40px] relative shadow-2xl overflow-hidden">
+<div class="absolute top-0 w-full h-6 bg-[#2f3037] flex justify-center items-center">
+<div class="w-20 h-4 bg-[#1a1b22] rounded-full"></div>
+</div>
+<!-- App UI Content -->
+<div class="pt-10 px-4">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<span class="font-bold text-on-surface">Инспекция #4421</span>
+</div>
+<div class="space-y-4 opacity-40 select-none">
+<div class="h-12 bg-surface-container rounded-lg"></div>
+<div class="h-32 bg-surface-container rounded-lg"></div>
+<div class="h-12 bg-surface-container rounded-lg"></div>
+</div>
+</div>
+<!-- Overlay Modal (Sync Completed) -->
+<div class="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6">
+<div class="bg-white rounded-2xl p-6 w-full shadow-2xl text-center">
+<div class="w-16 h-16 bg-success-container text-success-base rounded-full mx-auto mb-4 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">cloud_done</span>
+</div>
+<h4 class="text-on-surface font-bold text-lg leading-tight">Синхронизация завершена</h4>
+<p class="text-on-surface-variant text-sm mt-2">Все доступные изменения отправлены на сервер.</p>
+<button class="w-full mt-6 h-12 bg-primary text-on-primary rounded-xl font-bold">Закрыть</button>
+</div>
+</div>
+</div>
+<div class="max-w-md space-y-4 text-on-surface-variant text-body-md">
+<p class="font-bold text-on-surface">Рекомендации по применению:</p>
+<ul class="list-disc pl-5 space-y-2">
+<li>Используйте <span class="text-success-base font-semibold">Emerald/Green (success-base)</span> для подтвержденных синхронизаций без потерь данных.</li>
+<li>Для конфликтов, разрешенных в пользу сервера, допускается использование нейтральных синих тонов для индикации "обновления" состояния.</li>
+<li>Модальные окна на мобильных устройствах должны занимать 90% ширины экрана с четким отступом от краев.</li>
+<li>Текст кнопки должен отражать действие, которое пользователь совершит после закрытия (например, "Продолжить" или "Завершить").</li>
+</ul>
+<div class="mt-8">
+<div class="w-full aspect-video rounded-xl bg-center bg-cover border border-outline-variant" data-alt="Professional UI kit documentation showcasing digital interface components for enterprise applications. The image is clean and bright with a modern light mode aesthetic, using a minimalist palette of whites and soft grays with calm blue accents. The mood is highly organized and reliable, suggesting precision and efficiency in a corporate industrial context." style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCjlASXMv1vSEYSTdLHxmTksEIXiK46N2Cx2YhtNI1CJvbWnxi21tAg-hpkJk8p5TOoVfqJrxb6-1VuckdbjO3ckrpLgL6fftDNXhnhc1JdhAR2YsPYelOeN9d13uBcncmjpaTbKCaOf76VaZ-G2QI1GRx1IT7hNu5JWXEc7--RUJPgPcb4qbAxBj0X8TjZCWHLCy7CNBWn72vXRJa30e1uwjW7jLFjzfNI65zeQ5s_3DUZ0HRqnYClzhMRBBRVLA1Oq1lYoshEbfDY")'>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Footer Meta -->
+<footer class="max-w-5xl mx-auto mt-12 py-8 border-t border-outline-variant text-center">
+<p class="text-sm text-on-surface-variant opacity-60">Design System: InfoCollect Standard v2.1 • 2024</p>
+</footer>
+</body></html>

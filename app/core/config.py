@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     app_description: str = "Backend skeleton for offline-first equipment inventory and warehouse control."
     api_prefix: str = "/api"
     frontend_dev_server_url: str | None = None
-    operator_template_preview_url: str = "http://127.0.0.1:4174"
 
     postgres_host: str = "127.0.0.1"
     postgres_port: int = 5432

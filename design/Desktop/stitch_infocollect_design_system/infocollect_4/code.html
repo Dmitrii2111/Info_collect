@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "surface-bright": "#fbf8ff",
+                        "on-tertiary-container": "#ffa583",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-background": "#1a1b22",
+                        "surface-dim": "#dad9e3",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-container": "#872d00",
+                        "surface-variant": "#e3e1eb",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e3e1eb",
+                        "inverse-primary": "#b8c4ff",
+                        "secondary-container": "#d5e3fc",
+                        "primary": "#00288e",
+                        "surface-container": "#eeedf7",
+                        "primary-container": "#1e40af",
+                        "outline-variant": "#c4c5d5",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "primary-fixed": "#dde1ff",
+                        "background": "#fbf8ff",
+                        "tertiary": "#611e00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "inverse-on-surface": "#f1f0fa",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#57657a",
+                        "on-primary": "#ffffff",
+                        "on-surface": "#1a1b22",
+                        "error-container": "#ffdad6",
+                        "secondary": "#515f74",
+                        "inverse-surface": "#2f3037",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-surface-variant": "#444653",
+                        "surface-container-low": "#f4f2fc",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#3755c3",
+                        "outline": "#757684",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-container": "#a8b8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "gutter": "12px",
+                        "touch-target-min": "48px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md">
+<div class="min-h-screen flex flex-col">
+<!-- TopNavBar (Shared Component) -->
+<nav class="sticky top-0 w-full z-40 flex justify-between items-center px-6 h-16 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
+<div class="flex items-center gap-4">
+<span class="text-xl font-bold text-blue-900 font-h1-bold">Admin Portal</span>
+<div class="hidden md:flex gap-4 ml-8">
+<span class="font-['Inter'] text-sm tracking-tight text-slate-500 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all duration-150">Dashboard</span>
+<span class="font-['Inter'] text-sm tracking-tight text-blue-700 font-bold border-b-2 border-blue-700 px-3 py-2">Objects</span>
+<span class="font-['Inter'] text-sm tracking-tight text-slate-500 hover:bg-slate-50 px-3 py-2 rounded-lg transition-all duration-150">Reports</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full active:scale-95 transition-all duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full active:scale-95 transition-all duration-150">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full border border-slate-200" data-alt="A professional headshot of a corporate administrator, looking directly at the camera with a friendly and reliable expression. The individual is dressed in modern business casual attire against a clean, softly lit office background that emphasizes professional clarity and efficiency. The lighting is bright and even, reinforcing the modern light-mode UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3ygBmFFx8UYlXvknVbaI2qFNGPWKji9SOhpcogeOHfAkqwYbeSB4GM6WE_Jusipq4MYlIMAVmoPjNmz_wdkrqUdAaVkGcHtAs7Iwgn8K0wHOJFD5X_1Luqz0AUdcwFeg3Tsemfr7BYzvS2fUBDNbGtRb7Frs7mjPoDcexpd65Nb4uqxm_cgESsQZwKgU_r8uqSKTHZab69hcSrj1QDIZHl8S_G4JEonA3Ddd8FuItfRQBCVE6Vj0rpjibtAVg__5YhHa_8pOVE2WY"/>
+</div>
+</nav>
+<main class="flex-1 p-6 md:p-12 bg-surface-container-low">
+<div class="max-w-6xl mx-auto space-y-12">
+<!-- Section Header -->
+<div class="space-y-2">
+<h1 class="font-h1-bold text-h1-bold text-on-surface">Статусы сброса пароля</h1>
+<p class="text-on-surface-variant font-body-md">Визуализация состояний системы InfoCollect для сценария восстановления доступа.</p>
+</div>
+<!-- Component Board: Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+<!-- 1. Success (Temp Password) -->
+<div class="lg:col-span-4 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="p-6 space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined" data-icon="lock_reset">lock_reset</span>
+</div>
+<h2 class="font-h2-bold text-h2-bold">Пароль сброшен</h2>
+</div>
+<div class="space-y-4">
+<div class="p-3 bg-surface-container rounded-lg flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center overflow-hidden">
+<img alt="Ivan Ivanov" data-alt="A small circular avatar placeholder representing a field worker, styled with a clean and professional look using a soft corporate color palette of blues and grays. The icon is simple and geometric, maintaining the functional utility of an enterprise mobile application used for inspections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHpZlGZ1pGl_Wt2A5Pg3Obpk6LQT6WsFlCKS7yct8RqStwaGIS1smedpgFb-w3oDJSBt0vGlej5iwRL8KHRXBADXpzoUkv07PK3DdIFyR5t9c5PH3Gnxh4ggbdowtVOsT-7pES4NKEpsRI3HhLfyEu79iJVENrNnlKnyMCzF0xp4QgT0sD5w66LeZurFu5lKCDS8idZNJSX2KD8HYfsmPH7Fu_lowP-fdGop-xciGiRYSHbSSFK6UlOi6l-BB_foyvDitFNlQ7sdeJ"/>
+</div>
+<div>
+<div class="text-label-sm font-label-sm text-on-surface">Ivan Ivanov</div>
+<div class="text-[12px] text-on-surface-variant">Инженер-инспектор</div>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-on-surface-variant">Временный пароль</label>
+<div class="relative group">
+<div class="h-12 w-full bg-surface-container-high border border-outline-variant rounded-lg flex items-center px-4 font-mono font-bold tracking-widest text-primary">
+                                            TR89-XP21
+                                        </div>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-primary hover:bg-primary/5 rounded transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_copy">content_copy</span>
+</button>
+</div>
+<p class="text-[12px] text-tertiary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="visibility_off">visibility_off</span>
+                                        Shown only once
+                                    </p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex gap-3">
+<button class="flex-1 h-12 bg-primary text-on-primary font-button-text text-button-text rounded-lg hover:bg-primary-container transition-colors shadow-sm">Скопировать</button>
+<button class="px-6 h-12 border border-outline text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-variant transition-colors">Закрыть</button>
+</div>
+</div>
+<!-- 2. Success (Reset Link) -->
+<div class="lg:col-span-4 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="p-6 space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700">
+<span class="material-symbols-outlined" data-icon="mark_email_read" style="font-variation-settings: 'FILL' 1;">mark_email_read</span>
+</div>
+<h2 class="font-h2-bold text-h2-bold">Ссылка отправлена</h2>
+</div>
+<div class="space-y-4">
+<div class="text-body-md font-body-md text-on-surface-variant">
+                                    Инструкции по восстановлению отправлены на:
+                                    <span class="block mt-1 font-semibold text-on-surface">ivan.ivanov@company.ru</span>
+</div>
+<div class="flex items-start gap-3 p-3 bg-secondary-container/30 border border-secondary-container rounded-lg">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="info">info</span>
+<p class="text-data-compact font-data-compact text-on-secondary-container leading-tight">
+                                        Ссылка действительна в течение 24 часов. Если вы не получили письмо, проверьте папку «Спам».
+                                    </p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex flex-col gap-2">
+<button class="w-full h-12 bg-primary text-on-primary font-button-text text-button-text rounded-lg hover:bg-primary-container transition-colors">Открыть профиль</button>
+<button class="w-full h-12 border border-outline text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-variant transition-colors">Закрыть</button>
+</div>
+</div>
+<!-- 3. Error State -->
+<div class="lg:col-span-4 bg-surface-container-lowest rounded-lg border border-outline-variant shadow-[0px_2px_4px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="p-6 space-y-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-error-container/30 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="error_outline">error_outline</span>
+</div>
+<h2 class="font-h2-bold text-h2-bold">Ошибка сброса</h2>
+</div>
+<div class="space-y-4">
+<div class="space-y-2">
+<p class="text-body-md font-body-md text-on-surface">System could not perform the reset. Check connection.</p>
+<div class="inline-flex items-center px-2 py-1 bg-error-container/20 text-error rounded-md text-[12px] font-bold uppercase tracking-wider">
+                                        Server unavailable
+                                    </div>
+</div>
+<div class="border border-outline-variant rounded-lg overflow-hidden">
+<button class="w-full px-4 py-2 flex justify-between items-center bg-surface-container-low text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="text-label-sm font-label-sm">Технические детали</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="expand_more">expand_more</span>
+</button>
+<!-- Collapsed by default in static HTML representation -->
+<div class="hidden p-3 bg-surface text-[11px] font-mono text-on-surface-variant leading-relaxed">
+                                        Error: 503 Service Unavailable<br/>
+                                        TraceID: 4a2b-9e8c-11fd<br/>
+                                        Timestamp: 2023-10-27T14:22:01Z
+                                    </div>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 flex gap-3">
+<button class="flex-1 h-12 bg-error text-on-error font-button-text text-button-text rounded-lg hover:opacity-90 transition-all active:scale-[0.98]">Повторить</button>
+<button class="px-6 h-12 border border-outline text-on-surface-variant font-button-text text-button-text rounded-lg hover:bg-surface-variant transition-colors">Закрыть</button>
+</div>
+</div>
+</div>
+<!-- Contextual Section: Detailed Info -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-12 border-t border-outline-variant">
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" data-icon="shield_person">shield_person</span>
+</div>
+<div class="space-y-2">
+<h3 class="font-h2-bold text-on-surface">Безопасность доступа</h3>
+<p class="text-on-surface-variant text-body-md leading-relaxed">
+                                Все временные пароли генерируются с высокой энтропией и требуют немедленной смены при первом входе в систему InfoCollect.
+                            </p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-12 h-12 rounded-xl bg-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container" data-icon="support_agent">support_agent</span>
+</div>
+<div class="space-y-2">
+<h3 class="font-h2-bold text-on-surface">Служба поддержки</h3>
+<p class="text-on-surface-variant text-body-md leading-relaxed">
+                                В случае возникновения технических ошибок при сбросе, обратитесь к системному администратору через внутренний портал поддержки.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Mobile Overlay (Simulated) -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-[0_-4px_12px_rgba(0,0,0,0.05)] px-6 py-3 flex justify-between items-center z-50">
+<div class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-medium">Главная</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-blue-700">
+<span class="material-symbols-outlined" data-icon="list_alt" style="font-variation-settings: 'FILL' 1;">list_alt</span>
+<span class="text-[10px] font-bold">Задачи</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-[10px] font-medium">Склад</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="text-[10px] font-medium">Профиль</span>
+</div>
+</div>
+</div>
+</body></html>

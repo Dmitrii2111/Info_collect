@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#fbf8ff",
+                    "on-error-container": "#93000a",
+                    "background": "#fbf8ff",
+                    "primary-fixed-dim": "#b8c4ff",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed-variant": "#173bab",
+                    "surface-container-low": "#f4f2fc",
+                    "outline": "#757684",
+                    "tertiary": "#611e00",
+                    "on-primary-fixed": "#001453",
+                    "inverse-primary": "#b8c4ff",
+                    "inverse-on-surface": "#f1f0fa",
+                    "on-secondary-fixed": "#0d1c2e",
+                    "surface-variant": "#e3e1eb",
+                    "tertiary-fixed": "#ffdbce",
+                    "on-primary": "#ffffff",
+                    "outline-variant": "#c4c5d5",
+                    "on-background": "#1a1b22",
+                    "on-tertiary-fixed-variant": "#802a00",
+                    "primary-fixed": "#dde1ff",
+                    "on-secondary-container": "#57657a",
+                    "surface-container-highest": "#e3e1eb",
+                    "on-primary-container": "#a8b8ff",
+                    "surface-container-high": "#e8e7f1",
+                    "surface-dim": "#dad9e3",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-tertiary-container": "#ffa583",
+                    "surface-tint": "#3755c3",
+                    "primary-container": "#1e40af",
+                    "secondary-fixed": "#d5e3fc",
+                    "on-secondary": "#ffffff",
+                    "secondary-container": "#d5e3fc",
+                    "on-surface-variant": "#444653",
+                    "tertiary-fixed-dim": "#ffb59a",
+                    "tertiary-container": "#872d00",
+                    "on-tertiary-fixed": "#380d00",
+                    "on-secondary-fixed-variant": "#3a485b",
+                    "on-surface": "#1a1b22",
+                    "surface-container": "#eeedf7",
+                    "surface-bright": "#fbf8ff",
+                    "inverse-surface": "#2f3037",
+                    "secondary-fixed-dim": "#b9c7df",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "secondary": "#515f74",
+                    "primary": "#00288e"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "margin-mobile": "16px",
+                    "touch-target-min": "48px",
+                    "gutter": "12px",
+                    "unit": "8px",
+                    "stack-lg": "24px"
+            },
+            "fontFamily": {
+                    "data-compact": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "button-text": ["Inter"],
+                    "h1-bold": ["Inter"],
+                    "body-md": ["Inter"],
+                    "h2-bold": ["Inter"]
+            },
+            "fontSize": {
+                    "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased overflow-hidden">
+<!-- Dashboard Background (Dimmed Overlay) -->
+<div class="flex h-screen w-full blur-[2px] pointer-events-none opacity-50">
+<!-- Sidebar Navigation -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-slate-200 bg-white shadow-sm flex flex-col z-10">
+<div class="p-6">
+<span class="text-xl font-bold tracking-tight text-blue-800">InfoCollect</span>
+<p class="text-xs text-slate-500">Inspection Management</p>
+</div>
+<nav class="flex-1">
+<div class="flex items-center px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</div>
+<div class="flex items-center px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-sm text-label-sm">Registry</span>
+</div>
+<div class="flex items-center px-4 py-3 bg-blue-50 text-blue-800 font-semibold border-r-4 border-blue-800">
+<span class="material-symbols-outlined mr-3" data-icon="group">group</span>
+<span class="font-label-sm text-label-sm">Employees</span>
+</div>
+<!-- Other Nav Items Hidden for Brevity -->
+</nav>
+</aside>
+<!-- Main Content (Dimmed) -->
+<main class="ml-64 flex-1 pt-16">
+<header class="h-16 fixed top-0 right-0 left-64 border-b border-slate-200 bg-white/90 backdrop-blur-md z-20 flex justify-between items-center px-8">
+<h1 class="text-lg font-semibold text-slate-900">Сотрудники</h1>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500" data-icon="notifications">notifications</span>
+<div class="w-8 h-8 rounded-full bg-slate-200"></div>
+</div>
+</header>
+<div class="p-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-800">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+</div>
+<div>
+<h3 class="font-h2-bold text-h2-bold">Анна Смирнова</h3>
+<p class="text-slate-500">Оператор</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[50] flex items-center justify-center p-4">
+<!-- Centered Modal -->
+<div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col border border-slate-200">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+<h2 class="font-h1-bold text-h1-bold text-slate-900">Отключить доступ?</h2>
+<button class="text-slate-400 hover:text-slate-600">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Modal Content -->
+<div class="p-6 space-y-6 max-h-[716px] overflow-y-auto">
+<!-- Employee Summary -->
+<div class="flex items-start gap-4 p-4 bg-slate-50 rounded-lg">
+<div class="w-10 h-10 rounded-full bg-blue-600/10 flex items-center justify-center">
+<img alt="Анна Смирнова" class="w-full h-full rounded-full object-cover" data-alt="A professional headshot of a female operator in a corporate environment. She has a friendly but professional expression, wearing a neutral-toned business casual outfit. The lighting is bright and clean, typical of a modern office setting. The background is slightly out of focus, showing a collaborative tech workspace with soft blue and white highlights." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0-3UWBOW6S9uWUiYWdVg8m-BaRIhJONIy2fvYYTyZgWoDwxGQssuhvM0w7FgVPEhb26ziPwJMOBWrxR1EGbPe3JeAu16pj6XVajAgEgG5-j6i8UhHeFBVRIfAwe2im-WuNTFR-upPiE-ahZGebVxd451PEhwk9Mp0S5pr47C-CF-fVHKcDBngcPlrFBAcXtPNqPSrkE5oDbzUKfTJsmaJ2ix8IlzGIVQjfBcEJkkU8Ggx9KE8f5cqh1NGCoc-HPhlWNb88Uf-3bRP"/>
+</div>
+<div>
+<p class="font-button-text text-button-text text-slate-900 leading-tight">Анна Смирнова</p>
+<p class="text-slate-500 text-data-compact font-data-compact uppercase tracking-wider mt-0.5">Оператор • ID: 88421</p>
+</div>
+</div>
+<!-- Warning Block -->
+<div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-amber-600 shrink-0" data-icon="warning">warning</span>
+<div class="space-y-2">
+<p class="text-label-sm font-label-sm text-amber-900">
+                                У сотрудника есть 2 активные инспекции. Перед отключением доступа рекомендуется назначить другого оператора.
+                            </p>
+<a class="inline-flex items-center text-blue-700 font-semibold text-sm hover:underline" href="#">
+                                Назначить другого оператора
+                                <span class="material-symbols-outlined text-sm ml-1" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+<!-- Consequences List -->
+<div class="space-y-3">
+<h4 class="text-slate-900 font-semibold text-sm">После отключения доступа:</h4>
+<ul class="space-y-2">
+<li class="flex items-center gap-3 text-slate-600">
+<span class="material-symbols-outlined text-slate-400 text-lg" data-icon="block">block</span>
+<span class="text-body-md font-body-md">Сотрудник не сможет войти в систему</span>
+</li>
+<li class="flex items-center gap-3 text-slate-600">
+<span class="material-symbols-outlined text-slate-400 text-lg" data-icon="sync_disabled">sync_disabled</span>
+<span class="text-body-md font-body-md">Синхронизация данных будет приостановлена</span>
+</li>
+</ul>
+</div>
+<!-- Reason Field -->
+<div class="space-y-2">
+<label class="block font-label-sm text-label-sm text-slate-700">Причина отключения <span class="text-error">*</span></label>
+<textarea class="w-full h-24 p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-body-md font-body-md resize-none" placeholder="Укажите причину для отчетности..."></textarea>
+</div>
+<!-- Checkboxes -->
+<div class="space-y-4 pt-2">
+<label class="flex items-start gap-3 cursor-pointer group">
+<input class="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" type="checkbox"/>
+<span class="text-body-md font-body-md text-slate-700 select-none">
+                            Отправить уведомление на электронную почту сотрудника
+                        </span>
+</label>
+<label class="flex items-start gap-3 cursor-pointer group">
+<input class="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500" type="checkbox"/>
+<span class="text-body-md font-body-md text-slate-700 select-none">
+                            Сохранить историю инспекций в архиве организации
+                        </span>
+</label>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-6 py-5 bg-slate-50 flex flex-col md:flex-row items-center justify-between gap-4">
+<button class="w-full md:w-auto px-6 h-12 text-slate-600 font-semibold hover:bg-slate-100 rounded-lg transition-colors">
+                    Отмена
+                </button>
+<div class="w-full md:w-auto flex flex-col md:flex-row gap-3">
+<button class="px-6 h-12 bg-white border border-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-100 transition-colors">
+                        Назначить другого оператора
+                    </button>
+<button class="px-6 h-12 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 shadow-md shadow-red-200 transition-all">
+                        Отключить доступ
+                    </button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

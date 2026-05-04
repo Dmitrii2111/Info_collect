@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "background": "#fbf8ff",
+                        "secondary": "#515f74",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "outline-variant": "#c4c5d5",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#dad9e3",
+                        "on-background": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e3e1eb",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container": "#eeedf7",
+                        "tertiary": "#611e00",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-primary": "#ffffff",
+                        "primary": "#00288e",
+                        "outline": "#757684",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-surface": "#1a1b22",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-container": "#872d00",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#3755c3",
+                        "on-secondary-container": "#57657a",
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#a8b8ff",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-container": "#d5e3fc",
+                        "surface-bright": "#fbf8ff",
+                        "primary-container": "#1e40af",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "success": "#2e7d32"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 bg-white shadow-sm flex flex-col h-full z-30">
+<div class="p-6">
+<h1 class="text-xl font-black text-blue-800">InfoCollect</h1>
+<p class="text-xs text-slate-500 font-label-sm mt-1">Inspection System</p>
+</div>
+<nav class="flex-1 px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm">Control Panel</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+<span class="font-label-sm">Equipment Registry</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<span class="font-label-sm">Objects</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-blue-800 bg-blue-50 font-semibold border-r-4 border-blue-800" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-label-sm">Inspections</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="warehouse">warehouse</span>
+<span class="font-label-sm">Warehouse</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-sm">System Settings</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100 mt-auto">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="person">person</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface">Admin User</p>
+<p class="text-[10px] text-slate-400">ADMINISTRATOR</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-64 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md flex items-center justify-between px-8 z-20">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" data-icon="search">search</span>
+<input class="w-full h-10 pl-10 pr-4 rounded-lg border-slate-200 bg-slate-50 focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 border outline-none transition-all text-sm" placeholder="Поиск в истории..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-slate-500 hover:text-blue-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+</button>
+<button class="text-slate-500 hover:text-blue-800 transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+</button>
+<button class="text-slate-500 hover:text-blue-800 transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+</header>
+<!-- Background Content (History Screen) -->
+<main class="ml-64 mt-16 p-8 min-h-screen bg-surface-container-lowest">
+<div class="mb-8 flex items-center justify-between">
+<div>
+<h2 class="font-h1-bold text-on-surface">История инспекций</h2>
+<p class="text-on-surface-variant font-body-md mt-1">Архив выполненных проверок и отчетности</p>
+</div>
+<button class="bg-primary text-white px-6 py-2 rounded-lg font-button-text flex items-center gap-2 shadow-sm hover:bg-blue-700 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="file_download">file_download</span>
+                Экспортировать отчет
+            </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-slate-500 font-label-sm">Всего записей</p>
+<p class="text-3xl font-black text-blue-800 mt-2">1,284</p>
+<div class="mt-4 flex items-center gap-1 text-xs text-green-600">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span>+12% за месяц</span>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-slate-500 font-label-sm">Завершено успешно</p>
+<p class="text-3xl font-black text-on-surface mt-2">1,240</p>
+<div class="mt-4 w-full bg-slate-100 h-1.5 rounded-full">
+<div class="bg-blue-600 h-full rounded-full" style="width: 96%"></div>
+</div>
+</div>
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-slate-500 font-label-sm">Ожидают выгрузки</p>
+<p class="text-3xl font-black text-on-surface mt-2">0</p>
+<p class="mt-4 text-xs text-slate-400">Все данные синхронизированы</p>
+</div>
+</div>
+<div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="bg-slate-50 border-b border-slate-200">
+<tr>
+<th class="px-6 py-4 font-label-sm text-slate-600">ID</th>
+<th class="px-6 py-4 font-label-sm text-slate-600">Объект</th>
+<th class="px-6 py-4 font-label-sm text-slate-600">Дата</th>
+<th class="px-6 py-4 font-label-sm text-slate-600">Инспектор</th>
+<th class="px-6 py-4 font-label-sm text-slate-600">Статус</th>
+<th class="px-6 py-4"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-6 py-4 font-data-compact text-slate-400">#INS-9821</td>
+<td class="px-6 py-4 font-body-md font-medium">Складской терминал А1</td>
+<td class="px-6 py-4 font-data-compact">18.04.2024</td>
+<td class="px-6 py-4 font-body-md">Петров И.С.</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold">ЗАВЕРШЕНО</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-blue-700 hover:underline font-label-sm">Детали</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/50 transition-colors">
+<td class="px-6 py-4 font-data-compact text-slate-400">#INS-9820</td>
+<td class="px-6 py-4 font-body-md font-medium">Главный конвейер</td>
+<td class="px-6 py-4 font-data-compact">18.04.2024</td>
+<td class="px-6 py-4 font-body-md">Иванов Д.А.</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-bold">ЗАВЕРШЕНО</span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-blue-700 hover:underline font-label-sm">Детали</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</main>
+<!-- Overlay Backdrop -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+<!-- Success Modal -->
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header / Icon -->
+<div class="p-8 text-center border-b border-slate-50">
+<div class="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-green-600 text-4xl" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h3 class="font-h1-bold text-on-surface mb-2">Журнал экспортирован</h3>
+<p class="text-on-surface-variant font-body-md">Файл журнала готов к скачиванию.</p>
+</div>
+<!-- Context Info Body -->
+<div class="px-8 py-6 bg-slate-50/50 space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-slate-500 font-label-sm">Имя файла</span>
+<span class="font-data-compact font-semibold text-on-surface select-all">audit_log_2024-04-18.xlsx</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-slate-500 font-label-sm">Размер</span>
+<span class="font-data-compact text-on-surface">1.2 MB</span>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="px-8 py-6 flex items-center gap-4 bg-white">
+<button class="flex-1 px-4 py-3 rounded-lg border border-slate-200 text-slate-600 font-button-text hover:bg-slate-50 active:scale-[0.98] transition-all">
+                    Закрыть
+                </button>
+<button class="flex-1 px-4 py-3 rounded-lg bg-primary text-white font-button-text flex items-center justify-center gap-2 hover:bg-blue-700 active:scale-[0.98] shadow-md shadow-blue-500/20 transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                    Скачать файл
+                </button>
+</div>
+</div>
+</div>
+<!-- Hidden Background Image for reference context -->
+<img class="hidden" data-alt="A clean, professional industrial inspection dashboard interface with subtle blue accents and organized data tables. The atmosphere is highly productive and tech-focused, reflecting a high-stakes enterprise environment with pristine modern lighting. The visual language uses soft gray backgrounds and sharp typography to emphasize data clarity and functional efficiency in a professional light-mode aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4jAa-QL_QyyMZPS-bGGouw68DEjERyRjENGIlRxlb-hv9JgSTMHOVDREddXzs9vJ-vuJMyLxeD1D6b5QA7luI0mJGCNl7hCHiiWGA42XXeeR8FwWr2Shtmjk1evjN9hI6pRkxNV5cPrhSja3MmeB1X63MuZEIezdZcypUiFqsZyexZl5PVtspy5tBVIYGiU7D0qzuC1UXlN2DwbwmgidxQLIGqQ2jfqFqSpTx0rVtxFyh97kHglS033td3xeZzVyzmiD3dQhfwbNI"/>
+</body></html>

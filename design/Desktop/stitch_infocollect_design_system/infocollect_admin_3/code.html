@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Сброс пароля</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#d5e3fc",
+                        "on-primary-fixed": "#001453",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "surface-bright": "#fbf8ff",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "inverse-primary": "#b8c4ff",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "on-background": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "on-surface": "#1a1b22",
+                        "on-primary-container": "#a8b8ff",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container": "#eeedf7",
+                        "primary": "#00288e",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-tertiary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#1e40af",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "secondary-container": "#d5e3fc",
+                        "surface-variant": "#e3e1eb",
+                        "inverse-surface": "#2f3037",
+                        "background": "#fbf8ff",
+                        "outline": "#757684",
+                        "outline-variant": "#c4c5d5",
+                        "surface": "#fbf8ff",
+                        "error": "#ba1a1a",
+                        "secondary": "#515f74",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-surface-variant": "#444653",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-tint": "#3755c3",
+                        "surface-dim": "#dad9e3",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e8e7f1",
+                        "inverse-on-surface": "#f1f0fa",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#611e00",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "on-secondary-container": "#57657a",
+                        "tertiary-container": "#872d00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-blur-overlay {
+            backdrop-filter: blur(8px);
+            background-color: rgba(26, 27, 34, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-surface">
+<!-- Background Content: Mocking the 'Employees' Dashboard -->
+<div class="fixed inset-0 overflow-hidden select-none pointer-events-none opacity-50">
+<!-- TopAppBar Placeholder -->
+<header class="sticky top-0 w-full z-40 flex justify-between items-center px-6 h-16 bg-white/80 border-b border-slate-200">
+<span class="text-xl font-bold text-blue-900">Admin Portal</span>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+<span class="material-symbols-outlined text-slate-500">settings</span>
+<div class="w-8 h-8 rounded-full bg-primary/20"></div>
+</div>
+</header>
+<div class="flex h-screen">
+<!-- SideNav Placeholder -->
+<aside class="w-64 border-r border-slate-200 bg-slate-50 p-4 space-y-2">
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 bg-blue-100 text-blue-800 rounded-lg font-semibold">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-medium">Employees</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-medium">Reports</span>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 p-8 bg-background">
+<h1 class="text-2xl font-bold text-on-surface mb-6">Сотрудники</h1>
+<div class="grid grid-cols-1 gap-4">
+<div class="h-16 w-full bg-white rounded-lg border border-slate-200"></div>
+<div class="h-16 w-full bg-white rounded-lg border border-slate-200"></div>
+<div class="h-16 w-full bg-white rounded-lg border border-slate-200"></div>
+<div class="h-16 w-full bg-white rounded-lg border border-slate-200"></div>
+</div>
+</main>
+</div>
+</div>
+<!-- Modal Backdrop Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-blur-overlay p-4">
+<!-- Modal Card: 600px Width -->
+<div class="bg-surface-container-lowest w-full max-w-[600px] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[921px]" style="height: 90vh;">
+<!-- Header -->
+<header class="px-6 py-5 flex justify-between items-start border-b border-outline-variant">
+<div>
+<h2 class="text-h2-bold font-h2-bold text-on-surface">Сбросить пароль?</h2>
+<p class="text-label-sm font-label-sm text-secondary mt-1">Выберите способ восстановления доступа сотрудника</p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors text-outline">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<!-- Body (Scrollable if content overflows) -->
+<div class="flex-1 overflow-y-auto px-6 py-6 space-y-6 pb-[120px] pb-12"><div class="p-4 bg-error-container border border-error rounded-lg flex gap-3 items-start"><span class="material-symbols-outlined text-error fill-1">warning</span>
+<p class="text-label-sm font-label-sm text-on-error-container font-medium">
+        Вы сбрасываете пароль собственной учётной записи. Текущая сессия администратора может быть завершена.
+</p></div>
+<!-- 1. Employee context card -->
+<div class="p-4 bg-secondary-container/30 rounded-lg border border-secondary-container flex items-start gap-4">
+<div class="w-12 h-12 rounded-lg bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male corporate employee with short dark hair and a confident expression. He is wearing a crisp white dress shirt and a professional blue blazer. The background is a soft, out-of-focus corporate office environment with subtle blue and grey lighting to match the modern enterprise UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAX1SXC70mikYv-F7Nz9mHbMzXyY2C0Cn0IbYd_pdWhlQO8MDFRspUmKASXsFLlfkUY1HrQduCQjhnAtJSkIJLMCtrrlVcjzyUf_hyyy-aEaNtQNnKbIWUhumfbLLiGKuhiUSLoBLQx6qpOvqxRN84zU0Qb6HHOyLn4e-WCfzlJK0HffG0_h__uI_97Po83UWMKYC-qEOZsSk0i60sSebM4EiXFAF6SZHl9sOSVbIEsmmqwf7Dam6mPkDIdOVrNPiYpgbiHiQCq5Sz6"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-center mb-1">
+<h3 class="font-bold text-on-surface-variant">Иван Иванов</h3>
+<span class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase tracking-wider">Активен</span>
+</div>
+<div class="grid grid-cols-2 gap-y-1">
+<div class="text-data-compact font-data-compact text-secondary">Логин: <span class="text-on-surface">ivan_admin</span></div>
+<div class="text-data-compact font-data-compact text-secondary">Роль: <span class="text-on-surface">Администратор</span></div>
+<div class="text-data-compact font-data-compact text-secondary col-span-2">Email: <span class="text-on-surface">ivan.ivanov@company.ru</span></div>
+</div>
+</div>
+</div>
+<!-- 2. Security Info Block -->
+<div class="flex gap-3 p-4 bg-blue-50/50 rounded-lg border border-blue-100">
+<span class="material-symbols-outlined text-primary-container shrink-0">info</span>
+<p class="text-label-sm font-label-sm text-on-surface-variant leading-relaxed">
+                        После сброса текущий пароль перестанет действовать. Сотруднику потребуется войти с временным паролем или установить новый пароль по ссылке.
+                    </p>
+</div>
+<!-- 3. Reset Method Selection -->
+<div class="space-y-3">
+<label class="text-label-sm font-h2-bold text-on-surface block">Способ сброса</label>
+<div class="grid grid-cols-1 gap-3">
+<!-- Option 1: Selected -->
+<div class="relative p-4 rounded-lg border-2 border-primary bg-primary/5 cursor-pointer flex gap-4 transition-all duration-200">
+<div class="mt-1">
+<div class="w-5 h-5 rounded-full border-2 border-primary flex items-center justify-center">
+<div class="w-2.5 h-2.5 bg-primary rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="font-semibold text-primary">Создать временный пароль</div>
+<div class="text-label-sm font-label-sm text-on-secondary-container mt-1">Администратор сможет передать временный пароль сотруднику вручную.</div>
+</div>
+</div>
+<!-- Option 2: Inactive -->
+<div class="relative p-4 rounded-lg border border-outline-variant hover:border-primary/50 cursor-pointer flex gap-4 transition-all duration-200 group bg-surface-container-lowest">
+<div class="mt-1">
+<div class="w-5 h-5 rounded-full border-2 border-outline group-hover:border-primary/50"></div>
+</div>
+<div class="flex-1">
+<div class="font-semibold text-on-surface group-hover:text-primary transition-colors">Отправить ссылку для смены пароля</div>
+<div class="text-label-sm font-label-sm text-secondary mt-1">Ссылка будет отправлена на email сотрудника: <span class="font-medium text-on-surface-variant">ivan.ivanov@company.ru</span></div>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. Password Field (visible for option 1) -->
+<div class="space-y-2">
+<label class="text-label-sm font-h2-bold text-on-surface block">Временный пароль</label>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<input class="w-full h-[48px] px-4 pr-12 rounded-lg border border-outline-variant bg-surface-container-low text-on-surface font-mono tracking-widest cursor-not-allowed" disabled="" type="password" value="••••••••••"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+<button class="h-[48px] px-4 flex items-center gap-2 text-primary font-semibold hover:bg-primary/5 rounded-lg border border-primary/20 transition-colors">
+<span class="material-symbols-outlined text-sm">refresh</span>
+<span>Сгенерировать</span>
+</button>
+</div>
+</div>
+<!-- 5. Options (Checkboxes) -->
+<div class="space-y-4 pt-2">
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center mt-0.5">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer" type="checkbox"/>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface leading-tight">Потребовать смену пароля при следующем входе</span>
+</label>
+<label class="flex items-start gap-3 cursor-pointer group">
+<div class="relative flex items-center justify-center mt-0.5">
+<input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer" type="checkbox"/>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface leading-tight">Завершить активные сессии сотрудника</span>
+</label>
+</div>
+<!-- 6. Sync Note -->
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-secondary pt-2">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>Действие будет записано в историю.</span>
+</div></div>
+<!-- Footer (Sticky) -->
+<footer class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between"><button class="px-4 py-2 text-secondary hover:text-on-surface font-button-text text-button-text transition-colors">
+    Отмена
+</button>
+<div class="flex gap-3">
+<button class="px-8 h-[48px] bg-primary text-on-primary font-button-text text-button-text rounded-lg shadow-sm hover:bg-primary-container active:scale-95 transition-all">
+        Сбросить пароль
+    </button>
+</div></footer>
+</div>
+</div>
+</body></html>

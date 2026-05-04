@@ -1,117 +1,63 @@
 # Testing
 
-Документ описывает текущий тестовый контур проекта и команды запуска.
+Текущий тестовый контур разделен на backend-проверки и frontend smoke-тесты.
 
-## Что уже покрыто
+## Backend
 
-### Backend
-
-Тесты находятся в `tests/`.  
-Сейчас покрыты:
-- `auth` API
-- `users` API
-- `stock` API
-- `conflicts` API
-- `audit` API
-- `items export` API
-
-Подход:
-- `pytest`
-- `fastapi.testclient.TestClient`
-- monkeypatch сервисных функций
-
-### Frontend
-
-Тесты находятся в `frontend/tests/`.  
-Сейчас покрыты базовые utility-функции:
-- нормализация телефона
-- форматирование телефона
-- доступные вкладки по ролям
-- валидация формы сотрудника
-- подписи статусов назначений
-- сводки по назначениям и справочнику сотрудников
-- нормализация auth-профиля
-- сводка группы
-- сводка экспорта
-- CSV-генерация
-
-Подход:
-- встроенный `node --test`
-
-## Установка зависимостей
-
-### Python
-
-```powershell
-pip install -r requirements-dev.txt
-```
-
-### Frontend
-
-```powershell
-cd frontend
-npm install
-cd ..
-```
-
-## Запуск тестов
-
-### Backend
+Backend-тесты находятся в `tests/` и запускаются через `pytest`.
 
 ```powershell
 pytest
 ```
 
-### Frontend
+Покрываются API-контракты и сервисные сценарии без полноценного PostgreSQL integration run.
+
+## Frontend
+
+Frontend-тесты находятся в `frontend/tests/` и запускаются встроенным `node --test` через npm/pnpm script.
 
 ```powershell
 cd frontend
-npm test
-cd ..
+pnpm test
 ```
 
-### Production build smoke
+На текущем этапе есть smoke-тест `desktop-shell.test.mjs`, который фиксирует:
+
+- утвержденный порядок пунктов sidebar;
+- наличие метаданных для ключевых разделов.
+
+## Сборка frontend
 
 ```powershell
 cd frontend
-npm run build
-cd ..
+pnpm build
 ```
 
-## Почему тесты устроены так
+В локальной среде Codex также можно запускать Vite напрямую через bundled Node, если глобальные npm-команды недоступны:
 
-Проект находится в стадии активной структурной доработки.  
-Поэтому первый полезный уровень тестов — это:
+```powershell
+& "C:\Users\localadmin\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" ".\node_modules\vite\bin\vite.js" build
+```
 
-- проверка маршрутов API без реальной БД;
-- проверка чистых frontend-утилит;
-- защита базовой ролевой логики и форм.
+## Dev server
 
-Это дает быстрый feedback и позволяет безопаснее продолжать рефакторинг.
+```powershell
+cd frontend
+pnpm dev
+```
 
-## Что стоит покрывать дальше
+Локальный адрес:
 
-1. Сервисный слой backend:
-   - `user_admin`
-   - `field_actions`
-   - `plan_import`
-   - `room_queries`
-   - `item_queries`
-   - `stock_queries`
-   - `conflict_queries`
-   - `audit_queries`
-2. Frontend hooks и вычислительную логику вкладок.
-3. Интеграционные сценарии:
-   - логин
-   - создание сотрудника
-   - назначение помещений
-   - preview пересечений
-   - экспортные фильтры
-   - складские действия
-   - журнал событий
+```text
+http://127.0.0.1:5173/operator-next/
+```
 
-## Важное ограничение
+## Что проверять визуально
 
-Текущие backend-тесты не проверяют реальный PostgreSQL и миграции.  
-Они проверяют API-контракт и маршрутизацию через подмену сервисов.  
-Для проверки миграций и БД в будущем нужен отдельный интеграционный контур.
+После изменений desktop shell нужно открыть frontend и проверить:
+
+- sidebar не растягивает страницу по горизонтали;
+- header находится в основной области справа от sidebar;
+- контентная заглушка видна под header;
+- переключение пунктов меню меняет заголовок и subtitle;
+- скролл основной области не двигает sidebar/header как отдельный второй экран.

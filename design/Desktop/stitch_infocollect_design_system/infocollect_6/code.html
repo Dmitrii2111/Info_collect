@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "background": "#fbf8ff",
+                        "secondary": "#515f74",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "outline-variant": "#c4c5d5",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#dad9e3",
+                        "on-background": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "error-container": "#ffdad6",
+                        "surface-container-highest": "#e3e1eb",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container": "#eeedf7",
+                        "tertiary": "#611e00",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-primary": "#ffffff",
+                        "primary": "#00288e",
+                        "outline": "#757684",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-surface": "#1a1b22",
+                        "surface-variant": "#e3e1eb",
+                        "tertiary-container": "#872d00",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#3755c3",
+                        "on-secondary-container": "#57657a",
+                        "inverse-surface": "#2f3037",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#a8b8ff",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-fixed": "#d5e3fc",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-container": "#d5e3fc",
+                        "surface-bright": "#fbf8ff",
+                        "primary-container": "#1e40af",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "on-tertiary-fixed-variant": "#802a00"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased overflow-hidden">
+<!-- Background Content: InfoCollect History Screen (Blurred/Dimmed) -->
+<div class="flex h-screen w-screen filter blur-sm brightness-75 select-none pointer-events-none">
+<!-- SideNavBar (Shared Component JSON Mapping) -->
+<aside class="fixed left-0 top-0 h-screen w-64 border-r border-slate-200 bg-white shadow-sm flex flex-col h-full font-['Inter'] text-sm antialiased">
+<div class="p-6 border-b border-slate-200">
+<span class="text-xl font-black text-blue-800">InfoCollect</span>
+<p class="text-xs text-slate-500">Inspection System</p>
+</div>
+<nav class="flex-1 py-4">
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined">dashboard</span>
+                    Control Panel
+                </div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined">inventory</span>
+                    Equipment Registry
+                </div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined">location_on</span>
+                    Objects
+                </div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined">fact_check</span>
+                    Inspections
+                </div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 transition-colors duration-200">
+<span class="material-symbols-outlined">warehouse</span>
+                    Warehouse
+                </div>
+<div class="flex items-center gap-3 px-4 py-3 text-blue-800 bg-blue-50 font-semibold border-r-4 border-blue-800">
+<span class="material-symbols-outlined">settings</span>
+                    System Settings
+                </div>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col">
+<!-- TopAppBar (Shared Component JSON Mapping) -->
+<header class="fixed top-0 right-0 left-64 h-16 border-b border-slate-200 bg-white/80 backdrop-blur-md z-40 flex items-center justify-between px-8 w-full font-['Inter'] text-base font-medium">
+<div class="flex items-center gap-4">
+<span class="text-blue-800 font-bold">История аудита</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-slate-500">
+<span class="material-symbols-outlined">dns</span>
+<span class="material-symbols-outlined">notifications</span>
+<span class="material-symbols-outlined">help</span>
+</div>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full bg-slate-200" data-alt="A professional, close-up portrait of a corporate administrator in a modern office environment. The lighting is bright and airy, typical of a high-end commercial workspace. The subject is wearing business casual attire, conveying a sense of competence and reliability. The background is softly blurred, showing hints of a clean, minimalist interior with glass and steel elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVZUcm7qQrQT1jDy0qk0htZzXMg1HHxDkealqDVuNPnyAJmsgGIffvmQqtkl0L3hovydsAfqMtEl1d6isYT1Aa6OAeHSaj14_13f0WxxDo4hSnGfzWUbCom0YPLNqgJ2dbrL3fEArUPjlrnCy7U2-ITBnZU4_oiKYBsaisgTx6HmpGBfIjxu24DGOnvoCUr1kBXiTcIQTjUJq5ynTD_Rxa2XzzIcoVzp72E7YwGkpQ0SLQTfrLJ_cWYcmmgd4f0j7p19Y80bd_cTOs"/>
+</div>
+</header>
+<!-- History Content Mock -->
+<div class="mt-16 p-8">
+<div class="flex justify-between items-center mb-8">
+<h1 class="font-h1-bold text-h1-bold text-on-surface">Журнал событий</h1>
+</div>
+<div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-slate-50 border-b border-slate-200">
+<tr>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary">Дата и время</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary">Пользователь</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary">Действие</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-secondary">Статус</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr><td class="px-6 py-4 text-sm">24.10.2023 14:30</td><td class="px-6 py-4 text-sm">Admin_01</td><td class="px-6 py-4 text-sm">Изменение настроек доступа</td><td class="px-6 py-4 text-sm">Успешно</td></tr>
+<tr><td class="px-6 py-4 text-sm">24.10.2023 12:15</td><td class="px-6 py-4 text-sm">Inspector_V</td><td class="px-6 py-4 text-sm">Начало инспекции #4421</td><td class="px-6 py-4 text-sm">Успешно</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-on-background/40 backdrop-blur-[2px]">
+<!-- Unified System Modal -->
+<div class="bg-surface-container-lowest w-full max-w-[560px] rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<div class="px-8 py-6 border-b border-outline-variant">
+<div class="flex justify-between items-start">
+<div>
+<h2 class="font-h1-bold text-h1-bold text-on-surface">Настройки аудита</h2>
+<p class="font-body-md text-label-sm text-on-surface-variant mt-1">Параметры хранения и логирования действий</p>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-container p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<!-- Modal Content (Rows/Fields) -->
+<div class="px-8 py-6 space-y-6">
+<!-- Select Row 1 -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface">Срок хранения активности</label>
+<div class="relative">
+<select class="w-full h-[48px] px-4 bg-white border border-outline rounded-lg text-on-surface appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md">
+<option>12 месяцев</option>
+<option selected="">24 месяца</option>
+<option>36 месяцев</option>
+<option>Бессрочно</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-3 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Select Row 2 -->
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface">Хранение системных логов</label>
+<div class="relative">
+<select class="w-full h-[48px] px-4 bg-white border border-outline rounded-lg text-on-surface appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-body-md">
+<option>30 дней</option>
+<option>60 дней</option>
+<option selected="">90 дней</option>
+<option>180 дней</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-3 pointer-events-none text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<div class="h-px bg-outline-variant my-2"></div>
+<!-- Toggle Rows -->
+<div class="space-y-4">
+<!-- Toggle 1 -->
+<div class="flex items-center justify-between py-2">
+<div class="flex flex-col">
+<span class="font-body-md text-on-surface font-medium">Логировать технические ошибки</span>
+<span class="text-xs text-on-surface-variant">Запись стека вызовов и системных сбоев</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Toggle 2 -->
+<div class="flex items-center justify-between py-2">
+<div class="flex flex-col">
+<span class="font-body-md text-on-surface font-medium">Подробный лог синхронизации</span>
+<span class="text-xs text-on-surface-variant">Детальная информация об обмене данными</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Toggle 3 -->
+<div class="flex items-center justify-between py-2">
+<div class="flex flex-col">
+<span class="font-body-md text-on-surface font-medium">Аудит изменений настроек</span>
+<span class="text-xs text-on-surface-variant">Отслеживание правок конфигурации системы</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="px-8 py-6 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<button class="px-6 h-[48px] font-button-text text-button-text text-secondary hover:bg-slate-200/50 rounded-lg transition-colors active:scale-95">
+                    Отмена
+                </button>
+<button class="px-8 h-[48px] font-button-text text-button-text text-on-primary bg-primary hover:bg-primary-container rounded-lg shadow-sm transition-all active:scale-95">
+                    Сохранить настройки
+                </button>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Создать инспекцию</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "tertiary": "#611e00",
+                "on-tertiary-fixed": "#380d00",
+                "tertiary-fixed": "#ffdbce",
+                "surface-container-low": "#f4f2fc",
+                "surface-container-highest": "#e3e1eb",
+                "on-primary-fixed-variant": "#173bab",
+                "surface-bright": "#fbf8ff",
+                "on-surface-variant": "#444653",
+                "surface": "#fbf8ff",
+                "on-secondary-container": "#57657a",
+                "on-primary-fixed": "#001453",
+                "surface-tint": "#3755c3",
+                "secondary-container": "#d5e3fc",
+                "surface-container": "#eeedf7",
+                "on-primary": "#ffffff",
+                "inverse-primary": "#b8c4ff",
+                "on-secondary": "#ffffff",
+                "secondary-fixed": "#d5e3fc",
+                "secondary": "#515f74",
+                "on-secondary-fixed": "#0d1c2e",
+                "error": "#ba1a1a",
+                "on-tertiary": "#ffffff",
+                "on-error-container": "#93000a",
+                "on-background": "#1a1b22",
+                "on-error": "#ffffff",
+                "surface-variant": "#e3e1eb",
+                "on-secondary-fixed-variant": "#3a485b",
+                "primary-fixed": "#dde1ff",
+                "inverse-on-surface": "#f1f0fa",
+                "outline": "#757684",
+                "secondary-fixed-dim": "#b9c7df",
+                "on-tertiary-fixed-variant": "#802a00",
+                "error-container": "#ffdad6",
+                "surface-container-high": "#e8e7f1",
+                "outline-variant": "#c4c5d5",
+                "tertiary-container": "#872d00",
+                "tertiary-fixed-dim": "#ffb59a",
+                "inverse-surface": "#2f3037",
+                "primary-fixed-dim": "#b8c4ff",
+                "surface-container-lowest": "#ffffff",
+                "on-tertiary-container": "#ffa583",
+                "on-primary-container": "#a8b8ff",
+                "primary": "#00288e",
+                "on-surface": "#1a1b22",
+                "surface-dim": "#dad9e3",
+                "background": "#fbf8ff",
+                "primary-container": "#1e40af"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "stack-sm": "8px",
+                "unit": "8px",
+                "stack-lg": "24px",
+                "stack-md": "16px",
+                "margin-mobile": "16px",
+                "touch-target-min": "48px",
+                "gutter": "12px"
+            },
+            "fontFamily": {
+                "label-sm": ["Inter"],
+                "h1-bold": ["Inter"],
+                "button-text": ["Inter"],
+                "h2-bold": ["Inter"],
+                "data-compact": ["Inter"],
+                "body-md": ["Inter"]
+            },
+            "fontSize": {
+                "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-surface-dim overflow-hidden">
+<!-- Background Dashboard (Dimmed) -->
+<div class="fixed inset-0 z-0 flex pointer-events-none opacity-40">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col h-full py-6 bg-white border-r w-72 divide-y divide-slate-100">
+<div class="px-6 pb-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-white">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-blue-800">ИнфоКоллект</h2>
+<p class="text-xs text-slate-500 font-label-sm">Панель управления</p>
+</div>
+</div>
+<nav class="space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-700 font-bold border-r-4 border-blue-700">
+<span class="material-symbols-outlined">inventory</span>
+<span class="font-body-md text-sm">Инспекции</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-slate-600">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+<span class="font-body-md text-sm">Оборудование</span>
+</div>
+</nav>
+</div>
+</aside>
+<!-- Main Content Area Mockup -->
+<main class="flex-1 flex flex-col">
+<header class="h-14 px-6 bg-white border-b border-slate-200 flex justify-between items-center shadow-sm">
+<h1 class="text-xl font-bold tracking-tight text-blue-900">Инспекции</h1>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-slate-500">notifications</span>
+<span class="material-symbols-outlined text-slate-500">account_circle</span>
+</div>
+</header>
+<div class="p-8">
+<div class="w-full h-96 bg-white rounded-xl shadow-sm border border-slate-200"></div>
+</div>
+</main>
+</div>
+<!-- Modal Backdrop -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+<!-- Large Desktop Modal -->
+<div class="bg-white w-full max-w-[1100px] h-[921px] rounded-xl shadow-2xl flex flex-col overflow-hidden relative">
+<!-- Modal Header -->
+<header class="flex items-center justify-between px-8 py-6 border-b border-slate-100">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined">close</span>
+</button>
+<div>
+<h1 class="font-h1-bold text-h1-bold text-on-background">Создать инспекцию</h1>
+<p class="font-label-sm text-label-sm text-slate-500">Заполнение параметров нового обхода</p>
+</div>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span class="text-xs font-semibold uppercase tracking-wider">Новый черновик</span>
+</div>
+</header>
+<!-- Modal Content Scrollable Area -->
+<div class="flex-1 overflow-y-auto custom-scrollbar flex p-8 gap-8 pb-[120px]">
+<!-- Left Column: Forms -->
+<div class="flex-1 space-y-stack-lg max-w-[640px]">
+<!-- Section: Основные данные -->
+<section class="space-y-4">
+<div class="flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+<span class="material-symbols-outlined text-blue-700">edit_note</span>
+<h3 class="font-h2-bold text-h2-bold text-on-background">Основные данные</h3>
+</div>
+<div class="grid grid-cols-6 gap-4">
+<div class="col-span-2 space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">ID Инспекции</label>
+<input class="w-full bg-slate-50 border-slate-200 rounded-lg text-sm text-slate-500 h-[48px] px-4" readonly="" type="text" value="#INS-2024-006"/>
+</div>
+<div class="col-span-4 space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Название</label>
+<input class="w-full border-slate-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500 h-[48px] px-4" placeholder="Например: Приемное отделение — 2 этаж" type="text"/>
+</div>
+<div class="col-span-3 space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Объект</label>
+<select class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4">
+<option selected="">Корпус А</option>
+<option>Корпус Б</option>
+</select>
+</div>
+<div class="col-span-3 space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Этаж</label>
+<select class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4">
+<option selected="">2 этаж</option>
+<option>1 этаж</option>
+</select>
+</div>
+<div class="col-span-3 space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Зона / Отделение</label>
+<select class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4">
+<option selected="">Приемное отделение</option>
+<option>Диагностика</option>
+</select>
+</div>
+<div class="col-span-3 space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Тип инспекции</label>
+<select class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4">
+<option selected="">Плановая</option>
+<option>Внеплановая</option>
+</select>
+</div>
+<!-- New Fields: Охват и Помещения -->
+<div class="col-span-6 space-y-3 pt-2">
+<div class="space-y-2">
+<label class="text-label-sm font-label-sm text-slate-600">Охват инспекции</label>
+<div class="flex p-1 bg-slate-100 rounded-lg w-fit">
+<button class="px-4 py-1.5 text-xs font-semibold rounded-md text-slate-500 hover:text-slate-700">Вся зона</button>
+<button class="px-4 py-1.5 text-xs font-semibold rounded-md bg-white text-blue-700 shadow-sm">Выбранные помещения</button>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Помещения</label>
+<div class="relative min-h-[48px] p-2 border border-slate-200 rounded-lg flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 bg-white"><!-- Logic: if 'Вся зона' is selected, this div should contain: <span class="text-sm text-slate-500 p-2">Будут включены все помещения выбранной зоны.</span> --><div class="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 rounded-md border border-blue-100"><span class="text-xs font-medium">2.01.29 — Кабинет врача</span><button class="material-symbols-outlined text-xs">close</button></div><div class="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 rounded-md border border-blue-100"><span class="text-xs font-medium">2.01.30 — Процедурная</span><button class="material-symbols-outlined text-xs">close</button></div><div class="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2 py-1 rounded-md border border-blue-100"><span class="text-xs font-medium">2.01.32 — Пост медсестры</span><button class="material-symbols-outlined text-xs">close</button></div><input class="flex-1 border-none focus:ring-0 text-sm h-full min-w-[120px] p-1" placeholder="Поиск помещения..." type="text"/><span class="material-symbols-outlined absolute right-3 top-3 text-slate-400">search</span></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section: Назначение -->
+<section class="space-y-4 pt-4">
+<div class="flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+<span class="material-symbols-outlined text-blue-700">assignment_ind</span>
+<h3 class="font-h2-bold text-h2-bold text-on-background">Назначение</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Оператор</label>
+<select class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4">
+<option selected="">Иван Иванов</option>
+<option>Петр Петров</option>
+</select>
+</div>
+<div class="col-span-2 bg-blue-50/50 border border-blue-100 rounded-lg p-3 mt-2 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+<span class="material-symbols-outlined">person</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-slate-800">Иван Иванов</span>
+<span class="flex items-center gap-1 text-[10px] text-green-600 font-bold uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                            в сети
+                                        </span>
+</div>
+<p class="text-[11px] text-slate-500">2 активные инспекции • 16 помещений сегодня</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-[10px] text-slate-400 uppercase font-bold tracking-tight">Синхронизация</p>
+<p class="text-[11px] font-medium text-slate-600">сегодня, 09:42</p>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Приоритет</label>
+<select class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4">
+<option selected="">Обычный</option>
+<option>Высокий</option>
+</select>
+</div>
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Начало</label>
+<div class="relative">
+<input class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4" type="text" value="Сегодня, 10:00"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-slate-400">calendar_today</span>
+</div>
+</div>
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Завершение</label>
+<div class="relative">
+<input class="w-full border-slate-200 rounded-lg text-sm h-[48px] px-4" type="text" value="Завтра, 18:00"/>
+<span class="material-symbols-outlined absolute right-3 top-3 text-slate-400">event</span>
+</div>
+</div>
+<div class="col-span-2 space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Создатель</label>
+<input class="w-full bg-slate-50 border-slate-200 rounded-lg text-sm text-slate-500 h-[48px] px-4" readonly="" type="text" value="Иван Иванов (Администратор)"/>
+</div>
+</div>
+</section>
+<!-- Section: Охват инспекции -->
+<section class="space-y-4 pt-4">
+<div class="flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+<span class="material-symbols-outlined text-blue-700">analytics</span>
+<h3 class="font-h2-bold text-h2-bold text-on-background">Охват инспекции</h3>
+</div>
+<div class="grid grid-cols-4 gap-4">
+<div class="p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col items-center justify-center text-center">
+<span class="text-xl font-bold text-blue-900">3</span>
+<span class="text-[10px] uppercase font-bold text-slate-500 tracking-tight">Помещения</span>
+</div>
+<div class="p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col items-center justify-center text-center">
+<span class="text-xl font-bold text-blue-900">29</span>
+<span class="text-[10px] uppercase font-bold text-slate-500 tracking-tight">Позиции</span>
+</div>
+<div class="p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col items-center justify-center text-center">
+<span class="text-xl font-bold text-blue-900">11</span>
+<span class="text-[10px] uppercase font-bold text-slate-500 tracking-tight">Тип обор.</span>
+</div>
+<div class="p-3 bg-slate-50 rounded-lg border border-slate-100 flex flex-col items-center justify-center text-center">
+<span class="text-[11px] font-bold text-blue-700 leading-tight">Приемное<br/>отд.</span>
+<span class="text-[10px] uppercase font-bold text-slate-500 tracking-tight">Зона отв.</span>
+</div>
+</div>
+<div class="bg-white border border-slate-100 rounded-lg overflow-hidden">
+<div class="px-3 py-2 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+<span class="text-[11px] font-bold text-slate-600 uppercase tracking-tight">Помещения в инспекции</span>
+<button class="text-[11px] text-blue-700 font-bold hover:underline">Выбрано 3 из 42</button>
+</div>
+<div class="divide-y divide-slate-50">
+<div class="px-3 py-2 flex justify-between items-center text-xs text-slate-700">
+<span>2.01.29 — Кабинет врача</span>
+<span class="font-medium text-slate-500">8 поз.</span>
+</div>
+<div class="px-3 py-2 flex justify-between items-center text-xs text-slate-700">
+<span>2.01.30 — Процедурная</span>
+<span class="font-medium text-slate-500">12 поз.</span>
+</div>
+<div class="px-3 py-2 flex justify-between items-center text-xs text-slate-700">
+<span>2.01.32 — Пост медсестры</span>
+<span class="font-medium text-slate-500">9 поз.</span>
+</div>
+</div>
+</div>
+<div class="p-3 bg-slate-50 border border-slate-100 rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-slate-400">database</span>
+<div class="flex-1">
+<p class="text-[11px] font-bold text-slate-600 uppercase tracking-tight mb-1">Источник данных</p>
+<div class="flex justify-between items-center">
+<div class="space-y-0.5">
+<p class="text-xs font-bold text-blue-900">Реестр оборудования</p>
+<p class="text-[11px] text-slate-500">file: equipment_registry_april.xlsx</p>
+</div>
+<div class="text-right space-y-0.5">
+<p class="text-xs font-bold text-slate-800">512 позиций</p>
+<p class="text-[11px] text-error font-medium">2 ошибки импорта</p>
+</div>
+</div>
+<p class="text-[10px] text-slate-400 mt-1">Последний импорт: сегодня, 08:20</p>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+<div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+</div>
+<span class="text-sm text-slate-700 font-medium">Включить только помещения с оборудованием</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<div class="relative">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-blue-600 transition-colors"></div>
+<div class="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
+</div>
+<span class="text-sm text-slate-700 font-medium">Добавить складские позиции зоны</span>
+</label>
+</div>
+</section>
+<!-- Section: Дополнительно -->
+<section class="space-y-4 pt-4">
+<div class="flex items-center gap-2 border-b border-slate-100 pb-2 mb-4">
+<span class="material-symbols-outlined text-blue-700">settings_applications</span>
+<h3 class="font-h2-bold text-h2-bold text-on-background">Дополнительно</h3>
+</div>
+<div class="space-y-4">
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Комментарий диспетчера</label>
+<textarea class="w-full border-slate-200 rounded-lg text-sm p-4" placeholder="Введите внутренние заметки..." rows="2"></textarea>
+</div>
+<div class="space-y-1">
+<label class="text-label-sm font-label-sm text-slate-600">Инструкции оператору</label>
+<textarea class="w-full border-slate-200 rounded-lg text-sm p-4" placeholder="Что именно должен проверить сотрудник?" rows="2"></textarea>
+</div>
+<div class="grid grid-cols-1 gap-3">
+<label class="flex items-start gap-3">
+<input checked="" class="mt-1 rounded text-blue-600 border-slate-300" type="checkbox"/>
+<span class="text-sm text-slate-700">Сразу отправить оператору в работу после создания</span>
+</label>
+<label class="flex items-start gap-3">
+<input checked="" class="mt-1 rounded text-blue-600 border-slate-300" type="checkbox"/>
+<span class="text-sm text-slate-700">Требуется фотофиксация при обнаружении расхождений</span>
+</label>
+<label class="flex items-start gap-3">
+<input checked="" class="mt-1 rounded text-blue-600 border-slate-300" type="checkbox"/>
+<span class="text-sm text-slate-700">Разрешить завершение с непроверенными позициями (статус "Пропущено")</span>
+</label>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Sticky Summary -->
+<aside class="w-[320px]">
+<div class="sticky top-0 space-y-6">
+<div class="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+<div class="bg-blue-900 p-4">
+<h4 class="text-white font-bold text-sm">Предпросмотр инспекции</h4>
+</div>
+<div class="p-5 space-y-5">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID ИНСПЕКЦИИ</p>
+<p class="text-lg font-black text-blue-900 leading-tight">#INS-2024-006</p>
+</div>
+<div class="bg-amber-100 text-amber-700 text-[10px] px-2 py-1 rounded font-bold">ОБЫЧНЫЙ</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-white border border-slate-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-[18px]">location_on</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-800">Корпус А, 2 этаж</p>
+<p class="text-[11px] text-slate-500">Охват: 3 помещения (2.01.29, 2.01.30, 2.01.32)</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-white border border-slate-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-[18px]">person</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-800">Иван Иванов</p>
+<p class="text-[11px] text-slate-500">Оператор</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-white border border-slate-200 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400 text-[18px]">schedule</span>
+</div>
+<div>
+<p class="text-xs font-bold text-slate-800">Сегодня, 10:00 — Завтра, 18:00</p>
+<p class="text-[11px] text-slate-500">График выполнения</p>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-slate-200">
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID ИНСПЕКЦИИ</p>
+<p class="text-md font-bold text-blue-900">3 ед.</p>
+</div>
+<div>
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID ИНСПЕКЦИИ</p>
+<p class="text-md font-bold text-blue-900">29 шт.</p>
+</div>
+</div>
+<div class="bg-blue-100/50 rounded-lg p-3">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span>
+<span class="text-[11px] font-bold text-blue-800 uppercase">Готовность к запуску</span>
+</div>
+<div class="grid grid-cols-1 gap-1"><div class="flex items-center gap-2 text-[11px] text-blue-700"><span class="material-symbols-outlined text-[14px]">check_circle</span> Объект выбран</div><div class="flex items-center gap-2 text-[11px] text-blue-700"><span class="material-symbols-outlined text-[14px]">check_circle</span> Этаж выбран</div><div class="flex items-center gap-2 text-[11px] text-blue-700"><span class="material-symbols-outlined text-[14px]">check_circle</span> Зона выбрана</div><div class="flex items-center gap-2 text-[11px] text-blue-700"><span class="material-symbols-outlined text-[14px]">check_circle</span> Помещения определены</div><div class="flex items-center gap-2 text-[11px] text-blue-700"><span class="material-symbols-outlined text-[14px]">check_circle</span> Оператор назначен</div><div class="flex items-center gap-2 text-[11px] text-blue-700"><span class="material-symbols-outlined text-[14px]">check_circle</span> Охват рассчитан</div><div class="flex items-center gap-2 text-[11px] text-blue-700"><span class="material-symbols-outlined text-[14px]">check_circle</span> Реестр актуален</div></div>
+</div>
+</div>
+</div>
+<div class="p-4 bg-slate-100 border-t border-slate-200">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">ID ИНСПЕКЦИИ</p>
+<div class="flex items-center justify-between mb-2">
+<span class="text-xs font-bold text-slate-600">Статус</span>
+<span class="px-2 py-0.5 bg-slate-200 text-slate-600 text-[10px] font-bold rounded">НЕ НАЧАТО</span>
+</div>
+<p class="text-[11px] leading-relaxed text-slate-500">Инспекция будет доступна оператору в мобильном приложении.</p>
+</div>
+</div>
+<!-- Map Placeholder -->
+<div class="rounded-xl overflow-hidden h-32 relative bg-slate-200">
+<img class="w-full h-full object-cover grayscale opacity-60" data-alt="A detailed digital architectural floor plan of a modern hospital wing showing multiple examination rooms and corridors." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAsTh2xhkOsOyXtAepUGB0e-auzL47utZPdNYZz7Y70WVwBINC0V_5rNVV1Rg-yLLtjh60RnU-CcuVzA_Q88M1fmAqJ4sDnG-0jBujhn-Ls-zMMxTu6vfdhDvOo4d1-KRlhNbq2SBZGR52UWZliBGDjastDjevfLATlrB71317ghgu0X7SD6JEYiyLNbxbwLAi7HukXwFZck24fG78HrFXlZ_ueAqCVKSKtDgb52vW50vuLfRC-aoOdlb3vOgX8F7ygeUJ8CXiDwKFi"/>
+<div class="absolute inset-0 bg-gradient-to-t from-blue-900/40 to-transparent flex items-end p-3">
+<span class="text-white text-[10px] font-bold">Карта зоны: Корпус А / 2 Этаж</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+<!-- Modal Footer (Sticky) -->
+<footer class="sticky bottom-0 bg-white border-t border-slate-100 px-8 py-5 flex items-center justify-between z-10">
+<button class="px-6 py-3 text-slate-600 font-button-text text-button-text hover:bg-slate-50 rounded-lg transition-colors">
+                Отмена
+            </button>
+<div class="flex gap-3">
+<button class="px-6 py-3 border border-slate-200 text-slate-700 font-button-text text-button-text hover:bg-slate-50 rounded-lg transition-colors">
+                    Создать и ещё одну
+                </button>
+<button class="px-10 py-3 bg-primary text-on-primary font-button-text text-button-text rounded-lg shadow-lg shadow-blue-900/20 active:scale-95 transition-transform">
+                    Создать инспекцию
+                </button>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

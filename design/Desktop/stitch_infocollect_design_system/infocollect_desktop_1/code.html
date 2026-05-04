@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Импорт реестра оборудования</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "outline-variant": "#c4c5d5",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#1e40af",
+                        "primary-fixed": "#dde1ff",
+                        "primary": "#00288e",
+                        "background": "#fbf8ff",
+                        "surface-container": "#eeedf7",
+                        "surface-container-low": "#f4f2fc",
+                        "on-error-container": "#93000a",
+                        "on-primary-container": "#a8b8ff",
+                        "on-surface": "#1a1b22",
+                        "inverse-surface": "#2f3037",
+                        "outline": "#757684",
+                        "tertiary-container": "#872d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#3755c3",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-tertiary-container": "#ffa583",
+                        "surface-variant": "#e3e1eb",
+                        "on-background": "#1a1b22",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "secondary": "#515f74",
+                        "on-secondary-container": "#57657a",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-container": "#d5e3fc",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "tertiary": "#611e00",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-primary-fixed": "#001453",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f1f0fa",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fbf8ff",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "inverse-primary": "#b8c4ff",
+                        "surface-dim": "#dad9e3",
+                        "on-surface-variant": "#444653",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "data-compact": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .dimmed-bg {
+            background: linear-gradient(rgba(26, 27, 34, 0.6), rgba(26, 27, 34, 0.6)), url('image-placeholder-bg.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface antialiased">
+<!-- Background Screen Simulation (Dimmed) -->
+<div class="fixed inset-0 dimmed-bg z-0" data-alt="A professional enterprise software dashboard blurred in the background. The interface shows various data charts, equipment lists, and navigation menus in a clean, light-mode corporate aesthetic. Soft blue and gray tones dominate the layout, creating a calm and reliable atmosphere for high-stakes industrial management. The lighting is bright and even, suggesting a focused office environment."></div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-stack-lg">
+<!-- Modal Container -->
+<div class="bg-surface-container-lowest w-full max-w-[1100px] max-h-[921px] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-outline-variant/30">
+<!-- TopAppBar / Header -->
+<header class="flex justify-between items-center h-16 px-6 border-b border-slate-200 dark:border-slate-800 bg-white sticky top-0 z-10">
+<div class="flex flex-col">
+<h1 class="font-h1-bold text-h1-bold text-primary tracking-tight">Импорт реестра оборудования</h1>
+<p class="text-label-sm font-label-sm text-secondary">Загрузка, проверка и обновление основной Excel-таблицы оборудования</p>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors active:opacity-80">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="close">close</span>
+</button>
+</header>
+<!-- Content Area -->
+<main class="flex-1 overflow-y-auto p-stack-lg space-y-stack-lg bg-surface pb-24">
+<!-- Section 1: Текущий реестр -->
+<section>
+<h2 class="font-h2-bold text-h2-bold text-on-surface mb-stack-sm">Текущий реестр</h2>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter mb-stack-sm">
+<div class="bg-white border border-outline-variant p-stack-md rounded-lg col-span-2 shadow-sm flex flex-col justify-between">
+<div class="flex items-center gap-stack-sm mb-stack-sm">
+<span class="material-symbols-outlined text-primary" data-icon="description">description</span>
+<span class="font-button-text text-button-text text-on-surface">equipment_registry_april.xlsx</span>
+</div>
+<div class="text-data-compact font-data-compact text-secondary">Последний импорт: сегодня, 08:20</div>
+</div>
+<div class="bg-white border border-outline-variant p-stack-md rounded-lg shadow-sm">
+<div class="text-label-sm font-label-sm text-secondary uppercase tracking-wider mb-1">Строк / объектов</div>
+<div class="font-h2-bold text-h2-bold text-on-surface">512 <span class="text-secondary font-normal">/</span> 3</div>
+</div>
+<div class="bg-white border border-outline-variant p-stack-md rounded-lg shadow-sm">
+<div class="text-label-sm font-label-sm text-secondary uppercase tracking-wider mb-1">Помещений / ошибок</div>
+<div class="flex items-baseline gap-2">
+<div class="font-h2-bold text-h2-bold text-on-surface">74</div>
+<div class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-bold text-[12px]">2 ошибки</div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 p-4 bg-primary-fixed/30 rounded-lg border border-primary-fixed text-on-primary-fixed-variant">
+<span class="material-symbols-outlined" data-icon="info">info</span>
+<p class="text-label-sm font-label-sm">Если исходная таблица была изменена вне приложения, загрузите новую версию и нажмите «Обновить данные».</p>
+</div>
+</section>
+<!-- Section 2: Выберите файл -->
+<section>
+<h2 class="font-h2-bold text-h2-bold text-on-surface mb-stack-sm">Выбран файл</h2>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Dropzone -->
+<div class="lg:col-span-2 border-2 border-dashed border-outline-variant bg-surface-container-low rounded-lg p-stack-lg flex flex-col items-center justify-center text-center cursor-pointer hover:bg-surface-container transition-colors group">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container mb-stack-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" data-icon="upload_file">upload_file</span>
+</div>
+<div class="font-h2-bold text-h2-bold text-on-surface mb-1">Перетащите файл или выберите новую версию Excel</div>
+<div class="text-label-sm font-label-sm text-secondary">Поддерживаются форматы .xlsx, .xls до 10 МБ</div>
+</div>
+<!-- File State Card -->
+<div class="bg-white border border-outline-variant p-stack-md rounded-lg shadow-sm flex flex-col gap-stack-sm relative overflow-hidden">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary"></div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="table_view">table_view</span>
+<span class="font-button-text text-button-text text-on-surface break-all">equipment_registry_may.xlsx</span>
+</div>
+<span class="material-symbols-outlined text-error cursor-pointer" data-icon="delete_outline">delete_outline</span>
+</div>
+<div class="flex justify-between items-center mt-auto">
+<div class="text-data-compact font-data-compact text-secondary">124 KB • Изменён: сегодня, 10:14</div>
+<div class="flex items-center text-primary font-bold text-[12px]">
+<span class="material-symbols-outlined text-sm mr-1" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                    ВЫБРАН
+                                </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Проверка файла & Сравнение (Asymmetric Bento Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-stack-lg">
+<!-- Проверка файла -->
+<section class="lg:col-span-2">
+<h2 class="font-h2-bold text-h2-bold text-on-surface mb-stack-sm">Проверка файла</h2>
+<div class="bg-white border border-outline-variant rounded-lg p-stack-md shadow-sm space-y-stack-sm">
+<ul class="space-y-3">
+<li class="flex items-center gap-3 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-on-primary-fixed-variant" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Файл прочитан</span>
+</li>
+<li class="flex items-center gap-3 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-on-primary-fixed-variant" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Структура распознана</span>
+</li>
+<li class="flex items-center gap-3 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-on-primary-fixed-variant" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Обязательные колонки найдены</span>
+</li>
+<li class="flex items-center gap-3 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-on-primary-fixed-variant" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Формат строк корректен</span>
+</li>
+<li class="flex items-center gap-3 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-on-primary-fixed-variant" data-icon="check_circle" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span>Дубликаты ID проверены</span>
+</li>
+</ul>
+<hr class="border-outline-variant/30 my-stack-sm"/>
+<div class="space-y-2"><div class="flex items-center gap-2 text-green-700 bg-green-50 p-2 rounded mb-2"><span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span><span class="text-data-compact font-data-compact">Критических ошибок нет</span></div>
+<div class="flex items-center gap-2 text-on-error-container bg-error-container/20 p-2 rounded">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+<span class="text-data-compact font-data-compact">2 строки без поставщика</span>
+</div>
+<div class="flex items-center gap-2 text-on-error-container bg-error-container/20 p-2 rounded">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+<span class="text-data-compact font-data-compact">1 строка без помещения</span>
+</div>
+<p class="text-[12px] text-secondary mt-2 italic">Предупреждения можно исправить позже, но они будут отмечены в реестре.</p></div>
+<div class="pt-2">
+<a class="text-primary font-button-text text-label-sm hover:underline flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="download">download</span>
+                                    Скачать отчёт об ошибках
+                                </a>
+</div>
+</div>
+</section>
+<!-- Сравнение с текущими данными -->
+<section class="lg:col-span-3">
+<h2 class="font-h2-bold text-h2-bold text-on-surface mb-stack-sm">Сравнение с текущими данными</h2>
+<div class="mb-stack-sm p-4 bg-surface-container-low border border-outline-variant rounded-lg">
+<h3 class="font-label-sm font-bold text-on-surface mb-2 uppercase tracking-tight">Что изменится после обновления</h3>
+<ul class="grid grid-cols-1 md:grid-cols-2 gap-x-gutter gap-y-1 text-data-compact font-data-compact text-on-surface-variant">
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            Будет добавлено: 16 строк
+        </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            Будет обновлено: 4 строки
+        </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+            Будет добавлено: 2 помещения
+        </li>
+<li class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+            Ошибок проверки станет меньше: 2 → 1
+        </li>
+</ul>
+</div><div class="bg-white border border-outline-variant rounded-lg overflow-hidden shadow-sm">
+<table class="w-full border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-4 py-3 text-left text-label-sm font-label-sm text-secondary">Параметр</th>
+<th class="px-4 py-3 text-left text-label-sm font-label-sm text-secondary">Текущий</th>
+<th class="px-4 py-3 text-left text-label-sm font-label-sm text-secondary">Новый</th>
+<th class="px-4 py-3 text-left text-label-sm font-label-sm text-secondary">Изменения</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<tr>
+<td class="px-4 py-3 text-data-compact font-data-compact text-on-surface">Строки</td>
+<td class="px-4 py-3 text-data-compact font-data-compact">512</td>
+<td class="px-4 py-3 text-data-compact font-data-compact font-bold">528</td>
+<td class="px-4 py-3 text-data-compact font-data-compact text-primary font-medium">+16 строк</td>
+</tr>
+<tr>
+<td class="px-4 py-3 text-data-compact font-data-compact text-on-surface">Объекты</td>
+<td class="px-4 py-3 text-data-compact font-data-compact">3</td>
+<td class="px-4 py-3 text-data-compact font-data-compact font-bold">3</td>
+<td class="px-4 py-3 text-data-compact font-data-compact text-secondary">0</td>
+</tr>
+<tr>
+<td class="px-4 py-3 text-data-compact font-data-compact text-on-surface">Помещения</td>
+<td class="px-4 py-3 text-data-compact font-data-compact">74</td>
+<td class="px-4 py-3 text-data-compact font-data-compact font-bold">76</td>
+<td class="px-4 py-3 text-data-compact font-data-compact text-primary font-medium">+2 помещения</td>
+</tr>
+<tr class="bg-primary-fixed/5">
+<td class="px-4 py-3 text-data-compact font-data-compact text-on-surface">Обновление</td>
+<td class="px-4 py-3 text-data-compact font-data-compact text-secondary" colspan="2">Существующие записи</td>
+<td class="px-4 py-3 text-data-compact font-data-compact text-primary font-medium">4 строки обновлены</td>
+</tr>
+<tr class="bg-error-container/5">
+<td class="px-4 py-3 text-data-compact font-data-compact text-on-surface">Ошибки проверки</td>
+<td class="px-4 py-3 text-data-compact font-data-compact">2</td>
+<td class="px-4 py-3 text-data-compact font-data-compact font-bold">1</td>
+<td class="px-4 py-3 text-data-compact font-data-compact text-error font-medium"><span class="text-green-600">-1 ошибка</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+<!-- Decision Area -->
+<div class="mt-stack-lg p-stack-md bg-surface-container-low rounded-lg border border-outline-variant flex flex-col gap-1"><label class="flex items-center gap-3 cursor-pointer group"><input checked="" class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary/20" type="checkbox"/><span class="text-label-sm font-label-sm text-on-surface group-hover:text-primary transition-colors font-semibold">Сохранить текущую версию в истории импортов</span></label><p class="text-[12px] text-secondary ml-8">Можно будет вернуться к предыдущему файлу при необходимости.</p></div>
+</main>
+<!-- Sticky Footer -->
+<footer class="h-20 bg-white border-t border-slate-200 px-6 flex items-center justify-between sticky bottom-0 z-10">
+<button class="px-6 h-touch-target-min border border-outline-variant text-secondary font-button-text rounded-lg hover:bg-surface-container transition-colors active:scale-95">
+                    Отмена
+                </button>
+<div class="flex items-center gap-stack-sm">
+<button class="px-6 h-touch-target-min border border-primary text-primary font-button-text rounded-lg hover:bg-primary-fixed/30 transition-colors active:scale-95">Проверить заново</button>
+<button class="px-8 h-touch-target-min bg-primary text-on-primary font-button-text rounded-lg shadow-md hover:bg-primary-container transition-all active:scale-95 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="sync">sync</span>
+                        Обновить данные
+                    </button>
+</div>
+</footer>
+</div>
+</div>
+</body></html>

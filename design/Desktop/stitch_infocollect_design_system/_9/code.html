@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#380d00",
+                      "surface-variant": "#e3e1eb",
+                      "secondary": "#515f74",
+                      "on-secondary-fixed-variant": "#3a485b",
+                      "on-primary-container": "#a8b8ff",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#d5e3fc",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#b8c4ff",
+                      "on-tertiary-fixed-variant": "#802a00",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#57657a",
+                      "inverse-on-surface": "#f1f0fa",
+                      "tertiary": "#611e00",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#0d1c2e",
+                      "on-surface": "#1a1b22",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#dde1ff",
+                      "on-primary-fixed": "#001453",
+                      "tertiary-container": "#872d00",
+                      "on-background": "#1a1b22",
+                      "outline": "#757684",
+                      "inverse-surface": "#2f3037",
+                      "background": "#fbf8ff",
+                      "surface-container": "#eeedf7",
+                      "on-tertiary-container": "#ffa583",
+                      "surface-tint": "#3755c3",
+                      "surface-container-low": "#f4f2fc",
+                      "surface-container-high": "#e8e7f1",
+                      "surface-container-highest": "#e3e1eb",
+                      "surface": "#fbf8ff",
+                      "secondary-fixed-dim": "#b9c7df",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#ffdbce",
+                      "surface-bright": "#fbf8ff",
+                      "on-primary-fixed-variant": "#173bab",
+                      "tertiary-fixed-dim": "#ffb59a",
+                      "primary-container": "#1e40af",
+                      "outline-variant": "#c4c5d5",
+                      "primary-fixed-dim": "#b8c4ff",
+                      "primary": "#00288e",
+                      "on-surface-variant": "#444653",
+                      "surface-dim": "#dad9e3",
+                      "secondary-fixed": "#d5e3fc"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "24px",
+                      "stack-md": "16px",
+                      "margin-mobile": "16px",
+                      "stack-sm": "8px",
+                      "touch-target-min": "48px",
+                      "gutter": "12px",
+                      "unit": "8px"
+              },
+              "fontFamily": {
+                      "data-compact": ["Inter"],
+                      "button-text": ["Inter"],
+                      "h1-bold": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "h2-bold": ["Inter"]
+              },
+              "fontSize": {
+                      "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                      "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                      "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                      "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen">
+<!-- SIDE NAV BAR -->
+<aside class="docked h-full w-64 border-r fixed left-0 top-0 bg-slate-50 border-slate-200 flex flex-col h-screen py-4 overflow-y-auto z-50">
+<div class="px-6 mb-8">
+<h1 class="text-lg font-black text-blue-900 tracking-tight">InfoCollect</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise Admin</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span> Панель управления
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span> Реестр
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="domain">domain</span> Объекты
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="fact_check">fact_check</span> Инспекции
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="warehouse">warehouse</span> Склад
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="move_to_inbox">move_to_inbox</span> Приемка
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="difference">difference</span> Расхождения
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="sync">sync</span> Синхронизация
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="history">history</span> История
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span> Отчеты
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="admin_panel_settings">admin_panel_settings</span> Администрирование
+            </a>
+</nav>
+<div class="mt-auto pt-4 border-t border-slate-200">
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="badge">badge</span> Сотрудники
+            </a>
+<a class="flex items-center px-6 py-3 text-slate-600 hover:bg-slate-100 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="manage_accounts">manage_accounts</span> Роли
+            </a>
+<a class="flex items-center px-6 py-3 text-blue-700 font-bold border-r-4 border-blue-700 bg-blue-50/50 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide translate-x-1" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span> Настройки
+            </a>
+</div>
+</aside>
+<!-- TOP NAV BAR -->
+<header class="fixed top-0 right-0 left-64 z-40 flex items-center justify-between px-6 bg-white border-b border-slate-200 h-16 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-50 border-none rounded-lg text-sm w-64 focus:ring-2 focus:ring-primary-container" placeholder="Поиск настроек..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-500 hover:bg-slate-50 transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 transition-colors rounded-full">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-xs">
+                JD
+            </div>
+</div>
+</header>
+<!-- MAIN CONTENT CANVAS -->
+<main class="ml-64 pt-24 px-8 pb-12 min-h-screen">
+<div class="max-w-5xl mx-auto">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="font-h1-bold text-h1-bold text-on-surface">Системные настройки</h2>
+<p class="font-body-md text-on-surface-variant">Конфигурация сервера и управление фоновыми процессами</p>
+</div>
+<button class="bg-primary text-white px-6 py-2 rounded-lg font-button-text hover:bg-primary-container transition-all shadow-md">
+                    Сохранить изменения
+                </button>
+</div>
+<!-- BENTO GRID FOR SETTINGS -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Server Info Card -->
+<div class="col-span-12 lg:col-span-8 bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+<div class="flex items-center gap-3 mb-6">
+<div class="p-2 bg-blue-50 text-blue-700 rounded-lg">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold">Параметры сервера</h3>
+</div>
+<div class="grid grid-cols-2 gap-y-6">
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Адрес хоста</p>
+<p class="font-data-compact text-data-compact text-on-surface">localhost:8080</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Версия ядра</p>
+<p class="font-data-compact text-data-compact text-on-surface">v2.4.12-enterprise</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Время работы</p>
+<p class="font-data-compact text-data-compact text-on-surface">14д 05ч 22м</p>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mb-1">Статус</p>
+<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-[12px] font-bold">Работает</span>
+</div>
+</div>
+</div>
+<!-- Quick Actions Card -->
+<div class="col-span-12 lg:col-span-4 bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col justify-between">
+<div>
+<h3 class="font-h2-bold text-h2-bold mb-4">Быстрые действия</h3>
+<div class="space-y-3">
+<button class="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-200 group">
+<span class="flex items-center gap-2 font-label-sm text-on-surface">
+<span class="material-symbols-outlined text-blue-600" data-icon="refresh">refresh</span>
+                                    Перезапустить сервис
+                                </span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors" data-icon="chevron_right">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-3 bg-slate-50 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-200 group">
+<span class="flex items-center gap-2 font-label-sm text-on-surface">
+<span class="material-symbols-outlined text-blue-600" data-icon="history">history</span>
+                                    Логи сервера
+                                </span>
+<span class="material-symbols-outlined text-slate-400 group-hover:text-blue-600 transition-colors" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-slate-100">
+<p class="text-[11px] text-slate-400">Последнее обновление системы: 12.10.2023</p>
+</div>
+</div>
+<!-- Background Image Decor -->
+<div class="col-span-12 rounded-lg h-48 relative overflow-hidden bg-slate-900 shadow-md">
+<img class="w-full h-full object-cover opacity-60" data-alt="A sophisticated server room with rows of sleek, glowing data towers illuminated by soft blue ambient lighting. The atmosphere is quiet and technologically advanced, conveying a sense of immense processing power and enterprise reliability. Cool professional tones and clean industrial surfaces define the modern digital infrastructure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJ46TqpvjmgFYedss0Br-a1ffwyPMFwLRDx5M7WMG0p1n5c8DxttEIYHWYTZIYGbH3z7iZSz_TA0BN_aDylrQIYjcnSUAvyUCmwEmFO8hL98l2SgikkArxhTTHdELrzsv0o87CHAuVomis_Veeuow9QsAhiN_uWR5a3IPSbkPvZU7Ljv0aSKyzo7s_8R0xppqKq6qFAcES6uh5ASlf0ijiGzfECFUpnyfQjk01tVhGzcoLmRtJx1g6zJeKKwek5q0gs_6jmB_FrGku"/>
+<div class="absolute inset-0 bg-gradient-to-r from-blue-900/80 to-transparent flex items-center px-12">
+<div class="max-w-md">
+<h4 class="text-white font-h1-bold text-h1-bold mb-2">Облачная синхронизация</h4>
+<p class="text-blue-100 text-sm">Ваши данные автоматически резервируются в распределенном кластере каждые 15 минут.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- MODAL OVERLAY (DIMMED BACKGROUND) -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+<!-- CONFIRMATION MODAL -->
+<div class="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+<!-- Modal Header -->
+<div class="p-6 text-center border-b border-slate-100">
+<div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+<span class="material-symbols-outlined text-blue-700 text-4xl" data-icon="info" data-weight="fill" style="font-variation-settings: 'FILL' 1;">info</span>
+</div>
+<h2 class="font-h1-bold text-h1-bold text-on-surface">Перезапустить сервис?</h2>
+<p class="mt-2 font-body-md text-on-surface-variant px-4">
+                    Во время перезапуска часть функций InfoCollect может быть временно недоступна.
+                </p>
+</div>
+<!-- Modal Content -->
+<div class="p-6 space-y-6">
+<!-- Context Block -->
+<div class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+<div class="space-y-2">
+<div class="flex justify-between items-center font-data-compact text-data-compact">
+<span class="text-on-surface-variant">Сервер:</span>
+<span class="text-on-surface font-semibold">localhost:8080</span>
+</div>
+<div class="flex justify-between items-center font-data-compact text-data-compact">
+<span class="text-on-surface-variant">Текущий статус:</span>
+<span class="text-green-600 font-bold">работает</span>
+</div>
+<div class="flex justify-between items-center font-data-compact text-data-compact">
+<span class="text-on-surface-variant">Очередь задач:</span>
+<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">12</span>
+</div>
+</div>
+</div>
+<!-- What Will Change Block -->
+<div class="space-y-3">
+<h4 class="font-label-sm text-label-sm text-on-surface uppercase tracking-wider">Что изменится</h4>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-blue-600 text-lg mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant leading-tight">Сервис будет остановлен и запущен заново</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-blue-600 text-lg mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant leading-tight">Активные операции могут быть временно приостановлены</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-blue-600 text-lg mt-0.5" data-icon="check_circle">check_circle</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant leading-tight">Мобильные устройства продолжат работу офлайн</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="p-6 bg-slate-50 flex items-center justify-between gap-3 border-t border-slate-200">
+<button class="px-6 py-2.5 rounded-lg font-button-text text-secondary hover:bg-slate-200 transition-colors bg-white border border-slate-300 shadow-sm flex-1">
+                    Отмена
+                </button>
+<button class="px-6 py-2.5 rounded-lg font-button-text bg-primary text-white hover:bg-primary-container transition-all shadow-md flex-1">
+                    Перезапустить сервис
+                </button>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Успешные действия — InfoCollect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#380d00",
+                      "surface-variant": "#e3e1eb",
+                      "secondary": "#515f74",
+                      "on-secondary-fixed-variant": "#3a485b",
+                      "on-primary-container": "#a8b8ff",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#d5e3fc",
+                      "on-error": "#ffffff",
+                      "inverse-primary": "#b8c4ff",
+                      "on-tertiary-fixed-variant": "#802a00",
+                      "on-error-container": "#93000a",
+                      "on-secondary-container": "#57657a",
+                      "inverse-on-surface": "#f1f0fa",
+                      "tertiary": "#611e00",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed": "#0d1c2e",
+                      "on-surface": "#1a1b22",
+                      "error": "#ba1a1a",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#dde1ff",
+                      "on-primary-fixed": "#001453",
+                      "tertiary-container": "#872d00",
+                      "on-background": "#1a1b22",
+                      "outline": "#757684",
+                      "inverse-surface": "#2f3037",
+                      "background": "#fbf8ff",
+                      "surface-container": "#eeedf7",
+                      "on-tertiary-container": "#ffa583",
+                      "surface-tint": "#3755c3",
+                      "surface-container-low": "#f4f2fc",
+                      "surface-container-high": "#e8e7f1",
+                      "surface-container-highest": "#e3e1eb",
+                      "surface": "#fbf8ff",
+                      "secondary-fixed-dim": "#b9c7df",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#ffdbce",
+                      "surface-bright": "#fbf8ff",
+                      "on-primary-fixed-variant": "#173bab",
+                      "tertiary-fixed-dim": "#ffb59a",
+                      "primary-container": "#1e40af",
+                      "outline-variant": "#c4c5d5",
+                      "primary-fixed-dim": "#b8c4ff",
+                      "primary": "#00288e",
+                      "on-surface-variant": "#444653",
+                      "surface-dim": "#dad9e3",
+                      "secondary-fixed": "#d5e3fc"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "24px",
+                      "stack-md": "16px",
+                      "margin-mobile": "16px",
+                      "stack-sm": "8px",
+                      "touch-target-min": "48px",
+                      "gutter": "12px",
+                      "unit": "8px"
+              }
+            },
+          }
+        }
+      </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="docked h-full w-64 border-r fixed left-0 top-0 bg-slate-50 border-slate-200 flex flex-col py-4 overflow-y-auto">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-lg">fact_check</span>
+</div>
+<div>
+<h1 class="text-lg font-black text-blue-900 tracking-tight">InfoCollect</h1>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise Admin</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">dashboard</span>
+                Панель управления
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-blue-700 font-bold border-r-4 border-blue-700 bg-blue-50/50 transition-all duration-200 font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+                Администрирование
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">inventory_2</span>
+                Реестр
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">domain</span>
+                Объекты
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">fact_check</span>
+                Инспекции
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">warehouse</span>
+                Склад
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">move_to_inbox</span>
+                Приемка
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">difference</span>
+                Расхождения
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">sync</span>
+                Синхронизация
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">history</span>
+                История
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 transition-all duration-200 rounded-lg font-['Inter'] text-[13px] tracking-wide" href="#">
+<span class="material-symbols-outlined text-lg">analytics</span>
+                Отчеты
+            </a>
+</nav>
+<div class="mt-auto px-3 pt-4 border-t border-slate-200 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-['Inter'] text-[13px]" href="#">
+<span class="material-symbols-outlined text-lg">badge</span>
+                Сотрудники
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-['Inter'] text-[13px]" href="#">
+<span class="material-symbols-outlined text-lg">manage_accounts</span>
+                Роли
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg font-['Inter'] text-[13px]" href="#">
+<span class="material-symbols-outlined text-lg">settings</span>
+                Настройки
+            </a>
+</div>
+</aside>
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 right-0 left-64 z-40 h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-slate-50 border-none rounded-lg pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Поиск по системе..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-px bg-slate-200 mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<img alt="User profile avatar" class="w-8 h-8 rounded-full border border-slate-200" data-alt="A professional headshot of a middle-aged male software administrator with a friendly expression. He is wearing a clean, modern navy blue polo shirt. The background is a soft-focus office environment with natural lighting coming from a side window. The overall aesthetic is clean, high-contrast, and corporate-modern to match an enterprise software interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7_dqJ0c7NMcMxENLmnZbJdcFTiNBkDlX347xLeHKTPtbkCDwg_nsDhtsSbkZHdbTerxy3A4wMOiW1y7aLk3ssgbCaRslxn96KM7NOroFCm2syt3nZjICFwUGRwmskyu-1jz8jpM_7HkuXM9XzIGWyxY4q6eRqH19a_P1lxXHm_HjWUxW5hiXrTIF05csx6i1_6ZThg6OoBm463jsIYdD53om89kWqh9ma3Mi2Bbe05nsXBKH6axZp9K7Rw_lEvep3EkmzrFDsh6Lu"/>
+<span class="text-sm font-medium text-slate-700">Администратор</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-8 min-h-screen bg-surface">
+<header class="mb-10">
+<h2 class="font-h1-bold text-h1-bold text-on-surface mb-2">Журнал выполненных операций</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                Справочник состояний успеха для критических системных действий. Используется для подтверждения выполнения команд с высоким уровнем влияния на инфраструктуру.
+            </p>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Modal 1: Сервис перезапущен -->
+<div class="bg-white rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.05)] border border-slate-200 p-6 flex flex-col items-center text-center relative overflow-hidden group">
+<div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-green-600 font-bold" style="font-variation-settings: 'FILL' 0, 'wght' 600;">check_circle</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold text-on-surface mb-2">Сервис перезапущен</h3>
+<div class="flex flex-col gap-1 mb-6">
+<div class="flex items-center justify-center gap-2 text-label-sm font-label-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                        Context: localhost:8080
+                    </div>
+<div class="inline-flex items-center self-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                        Статус: работает
+                    </div>
+</div>
+<button class="w-full h-[48px] bg-primary text-white rounded-lg font-button-text text-button-text hover:opacity-90 transition-opacity active:opacity-80">
+                    Вернуться в панель
+                </button>
+</div>
+<!-- Modal 2: Данные восстановлены -->
+<div class="bg-white rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.05)] border border-slate-200 p-6 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-green-600 font-bold" style="font-variation-settings: 'FILL' 0, 'wght' 600;">database</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold text-on-surface mb-2">Данные восстановлены</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 px-4">
+                    Текущая база обновлена из резервной копии. Система готова к работе.
+                </p>
+<div class="w-full flex gap-3">
+<button class="flex-1 h-[48px] border border-outline rounded-lg font-button-text text-button-text text-on-surface-variant hover:bg-slate-50 transition-colors">
+                        Логи
+                    </button>
+<button class="flex-1 h-[48px] bg-primary text-white rounded-lg font-button-text text-button-text hover:opacity-90 transition-opacity">
+                        Ок
+                    </button>
+</div>
+</div>
+<!-- Modal 3: Очередь синхронизации сброшена -->
+<div class="bg-white rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.05)] border border-slate-200 p-6 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-green-600 font-bold" style="font-variation-settings: 'FILL' 0, 'wght' 600;">sync_disabled</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold text-on-surface mb-2">Очередь сброшена</h3>
+<div class="bg-slate-50 rounded-lg p-3 mb-6 w-full text-left">
+<p class="font-data-compact text-data-compact text-on-surface-variant">
+                        12 изменений удалены из очереди. Синхронизация приостановлена до следующего цикла.
+                    </p>
+</div>
+<button class="w-full h-[48px] bg-primary text-white rounded-lg font-button-text text-button-text hover:opacity-90 transition-opacity">
+                    Закрыть
+                </button>
+</div>
+<!-- Modal 4: Кэш очищен -->
+<div class="bg-white rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.05)] border border-slate-200 p-6 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-green-600 font-bold" style="font-variation-settings: 'FILL' 0, 'wght' 600;">cleaning_services</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold text-on-surface mb-2">Кэш очищен</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                    Временные файлы и кэш изображений успешно удалены с сервера.
+                </p>
+<button class="w-full h-[48px] bg-primary text-white rounded-lg font-button-text text-button-text hover:opacity-90 transition-opacity">
+                    Продолжить работу
+                </button>
+</div>
+<!-- Modal 5: Системные настройки сброшены -->
+<div class="bg-white rounded-xl shadow-[0px_2px_4px_rgba(0,0,0,0.05)] border border-slate-200 p-6 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-green-500"></div>
+<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-green-600 font-bold" style="font-variation-settings: 'FILL' 0, 'wght' 600;">settings_backup_restore</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold text-on-surface mb-2">Настройки сброшены</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">
+                    Все системные параметры возвращены к заводским значениям. Требуется повторная авторизация.
+                </p>
+<button class="w-full h-[48px] bg-primary text-white rounded-lg font-button-text text-button-text hover:opacity-90 transition-opacity">
+                    Завершить сеанс
+                </button>
+</div>
+<!-- Visual Asset / Reference Image Card -->
+<div class="relative rounded-xl overflow-hidden shadow-lg border border-slate-200 group h-full min-h-[300px]">
+<img alt="System Server Infrastructure" class="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" data-alt="A macro photograph of a high-performance server rack in a modern data center. Rows of glowing green LED status indicators illuminate the dark, technical environment, symbolizing system health and successful operations. The lighting is low-key with cool blue ambient tones and sharp emerald green highlights. The visual style is professional, rugged, and highly detailed, reflecting the reliability of enterprise-level software infrastructure." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEuXD3LqDpAcHgqGkl-sPEN4BQQZ2nB2UAoBqsNFz9Z0FZp7KwjE-qpgpm8ZBQ_ZpGv6zu2nKBXcWYPFwPGikqTnsWRIeLeQisiM6lhOZ9i2CbTydpti8eSeXhFL7wx-kVTAESDQH7wT9MFh4jQCqkzUxCm_i1myvHsjyxO3NYNr0VjmStZswYmjHTeD-v5zxi8XdWwH6tJ58M-K7FvQubRE8aw_Xb8bmHk20r5sLGs4VV0hTxI_NnSpSxV11ghCcOP_s8bCzTq0w_"/>
+<div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 to-transparent flex flex-col justify-end p-6">
+<span class="text-white font-bold text-lg">Инфраструктура</span>
+<p class="text-blue-100 text-sm">Мониторинг статуса выполнения критических задач в режиме реального времени.</p>
+</div>
+</div>
+</div>
+<section class="mt-16 bg-surface-container-low rounded-xl p-8 border border-slate-200">
+<div class="flex items-center gap-4 mb-6">
+<span class="material-symbols-outlined text-primary text-3xl">info</span>
+<h3 class="font-h2-bold text-h2-bold text-on-surface">Руководство по стилю: Состояния успеха</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="space-y-2">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Цветовая схема</h4>
+<p class="font-body-md text-body-md text-on-surface">Используйте Calm Blue для кнопок действий и Semantic Green (#10B981) для индикаторов успеха. Прозрачность фона чипа — 15%.</p>
+</div>
+<div class="space-y-2">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Иконографика</h4>
+<p class="font-body-md text-body-md text-on-surface">Только функциональные метафоры Material Symbols. Вес линии 400. Размер контейнера иконки 48px.</p>
+</div>
+<div class="space-y-2">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Текст</h4>
+<p class="font-body-md text-body-md text-on-surface">Заголовки H2-bold. Основной текст Body-MD с межстрочным интервалом 24px для улучшения читаемости в полевых условиях.</p>
+</div>
+</div>
+</section>
+</main>
+</body></html>

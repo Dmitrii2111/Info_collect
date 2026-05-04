@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>История — Система контроля InfoCollect</title>
+<!-- Tailwind CSS v3 CDN with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style data-purpose="custom-transitions">
+    .modal-overlay {
+      background-color: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-slate-900 overflow-hidden">
+<!-- BEGIN: MainLayout -->
+<div class="flex h-screen w-full overflow-hidden relative">
+<!-- BEGIN: Sidebar -->
+<aside class="w-64 bg-white border-r border-gray-200 flex flex-col shrink-0" data-purpose="sidebar">
+<div class="p-6 border-b border-gray-100">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+<svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<h1 class="font-bold text-lg leading-tight">InfoCollect</h1>
+<p class="text-[10px] text-gray-400 uppercase tracking-widest">MVP V0.1</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+<span class="text-sm font-medium">Панель управления</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+<span class="text-sm font-medium">Реестр оборудования</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg" data-purpose="active-link" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+<span class="text-sm font-medium">История</span>
+</a>
+<!-- ... other nav items truncated for focus ... -->
+</nav>
+<div class="p-4 border-t border-gray-100">
+<a class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg" href="#">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+<span class="text-sm font-medium">Выйти</span>
+</a>
+</div>
+</aside>
+<!-- END: Sidebar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 flex flex-col min-w-0 bg-gray-50 overflow-hidden">
+<!-- BEGIN: Header -->
+<header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shrink-0">
+<div class="flex items-center gap-4">
+<div>
+<h2 class="text-xl font-bold">История</h2>
+<p class="text-xs text-gray-500">Журнал событий системы InfoCollect</p>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative w-96">
+<input class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Поиск по событиям..." type="text"/>
+<svg class="w-4 h-4 text-gray-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-full border border-green-100">
+<div class="w-2 h-2 bg-green-500 rounded-full"></div>
+<span class="text-xs font-medium">Сервер подключен</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-sm font-semibold">Иван Иванов</p>
+<p class="text-[10px] text-gray-400 uppercase">Администратор</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
+<img alt="User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwHzRUhqUrqNQHUP-2NIYdCR0fTpza5mZ6TUpYCrDrD-zESKmLXGYGr-JWldhDx__YUfqW4ycXXaLV3wo3iWAm2vvIEs6luBfrLqzEq5Tnzjw0PKNB6bEB1GYBT6Jj5U6BWFPN1GWqzsAcpRMHCB8Mlck5pG-SLrCdlM04V6qv-3lPU7vTw1B0ZCMSGF-8n-ACOxLF9StK2hmuVUT9UCTcw-TpA29Ek1nJnYYJ3zvMwOZb90LHnk93EetyiBag0DGHpQzKQk-lMimJ"/>
+</div>
+</div>
+</div>
+</header>
+<!-- END: Header -->
+<!-- BEGIN: ContentArea (Dimmed Background Mockup) -->
+<div class="flex-1 overflow-y-auto p-8 opacity-40 select-none pointer-events-none" data-purpose="background-mockup">
+<!-- Action Buttons -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium flex items-center gap-2">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Экспорт журнала
+            </button>
+<button class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium flex items-center gap-2">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              Обновить
+            </button>
+</div>
+<button class="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium flex items-center gap-2">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            Настройки аудита
+          </button>
+</div>
+<!-- KPI Cards -->
+<div class="grid grid-cols-5 gap-4 mb-8">
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Всего событий</p>
+<h3 class="text-3xl font-bold text-blue-600">1 248</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Сегодня</p>
+<h3 class="text-3xl font-bold">86</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-red-100 shadow-sm">
+<p class="text-xs font-medium text-red-500 uppercase tracking-wider mb-2">Критичные</p>
+<h3 class="text-3xl font-bold text-red-600">12</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Пользователи</p>
+<h3 class="text-3xl font-bold">732</h3>
+</div>
+<div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+<p class="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Системные</p>
+<h3 class="text-3xl font-bold">516</h3>
+</div>
+</div>
+<!-- Table Placeholder -->
+<div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+<div class="p-6 border-b border-gray-100 bg-gray-50/50 flex items-center justify-between">
+<h4 class="font-bold">Журнал аудита</h4>
+<span class="text-xs text-gray-400">Найдено 86 записей</span>
+</div>
+<div class="h-96"></div>
+</div>
+</div>
+<!-- END: ContentArea -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: SuccessModal -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-4 modal-overlay" id="success-modal">
+<div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 text-center transform transition-all animate-in fade-in zoom-in duration-300">
+<!-- Success Icon Container -->
+<div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+<div class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-200">
+<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+</svg>
+</div>
+</div>
+<!-- Text Content -->
+<h3 class="text-2xl font-bold text-slate-900 mb-3">Настройки аудита сохранены</h3>
+<p class="text-slate-500 mb-8 leading-relaxed">
+          Параметры хранения и логирования действий обновлены. Все изменения вступили в силу для новых событий.
+        </p>
+<!-- Button -->
+<button class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-blue-200 active:scale-[0.98]" onclick="document.getElementById('success-modal').style.display='none'">
+          Закрыть
+        </button>
+</div>
+</div>
+<!-- END: SuccessModal -->
+<!-- BEGIN: ToastNotification -->
+<div class="fixed bottom-8 right-8 z-[110] animate-in slide-in-from-right-10 duration-500">
+<div class="bg-white border border-green-100 rounded-2xl shadow-xl p-4 w-96 flex gap-4 ring-1 ring-black/5">
+<!-- Mini Icon -->
+<div class="shrink-0 w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+<svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<!-- Toast Content -->
+<div class="flex-1">
+<div class="flex items-center justify-between mb-0.5">
+<p class="font-bold text-sm text-slate-900">Настройки аудита сохранены</p>
+<button class="text-slate-400 hover:text-slate-600">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<p class="text-xs text-slate-500">Изменения применены к журналу событий.</p>
+</div>
+<!-- Progress Bar Indicator (Optional Polish) -->
+<div class="absolute bottom-0 left-4 right-4 h-1 bg-green-100 rounded-full overflow-hidden">
+<div class="h-full bg-green-500 w-1/3"></div>
+</div>
+</div>
+</div>
+<!-- END: ToastNotification -->
+</div>
+<!-- END: MainLayout -->
+<script data-purpose="ui-interactivity">
+    // Simple script to toggle UI for presentation if needed
+    window.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') {
+        document.getElementById('success-modal').style.display = 'none';
+      }
+    });
+  </script>
+</body></html>

@@ -1,0 +1,799 @@
+<html lang="ru"><head></head><body class="font-body-md text-on-background">```html
+
+
+
+    <meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Системные настройки | InfoCollect MVP v0.1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1a1b22",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-surface-variant": "#444653",
+                        "secondary": "#515f74",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error": "#ffffff",
+                        "primary": "#00288e",
+                        "surface-tint": "#3755c3",
+                        "inverse-primary": "#b8c4ff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed": "#380d00",
+                        "inverse-on-surface": "#f1f0fa",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#dad9e3",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "surface-bright": "#fbf8ff",
+                        "tertiary": "#611e00",
+                        "secondary-container": "#d5e3fc",
+                        "inverse-surface": "#2f3037",
+                        "surface-variant": "#e3e1eb",
+                        "outline": "#757684",
+                        "on-tertiary": "#ffffff",
+                        "background": "#fbf8ff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface": "#fbf8ff",
+                        "on-primary-fixed": "#001453",
+                        "surface-container-low": "#f4f2fc",
+                        "surface-container-high": "#e8e7f1",
+                        "on-tertiary-container": "#ffa583",
+                        "surface-container-highest": "#e3e1eb",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "outline-variant": "#c4c5d5",
+                        "tertiary-container": "#872d00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-primary-container": "#a8b8ff",
+                        "on-background": "#1a1b22",
+                        "primary-fixed": "#dde1ff",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eeedf7",
+                        "primary-container": "#1e40af"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "unit": "8px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "button-text": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body { background-color: #fbf8ff; }
+        .sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .custom-toggle { transition: all 0.2s ease; }
+        .custom-toggle input:checked ~ .dot { transform: translateX(100%); background-color: white; }
+        .custom-toggle input:checked ~ .block { background-color: #00288e; }
+    </style>
+<!-- SideNavBar (Standard Light Style) -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-slate-200 flex flex-col z-50">
+<div class="px-6 py-6 border-b border-slate-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">precision_manufacturing</span>
+</div>
+<div>
+<h1 class="text-lg font-black tracking-tight text-slate-900 leading-tight">InfoCollect</h1>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">MVP v0.1</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 overflow-y-auto sidebar-scroll p-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Панель управления</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Реестр оборудования</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">domain</span>
+<span class="font-label-sm text-label-sm">Объекты</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-label-sm text-label-sm">Инспекции</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">warehouse</span>
+<span class="font-label-sm text-label-sm">Склад</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">input</span>
+<span class="font-label-sm text-label-sm">Поступления</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">difference</span>
+<span class="font-label-sm text-label-sm">Расхождения</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">sync</span>
+<span class="font-label-sm text-label-sm">Синхронизация</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-label-sm">История</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-label-sm text-label-sm">Отчёты</span>
+</a>
+<div class="h-px bg-slate-100 my-4"></div>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-label-sm text-label-sm">Сотрудники</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="font-label-sm text-label-sm">Роли и права</span>
+</a>
+<a class="bg-blue-50 text-primary border-l-4 border-primary flex items-center gap-3 px-4 py-3 rounded-r-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-sm text-label-sm font-bold">Системные настройки</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-slate-900 transition-all text-sm mb-1" href="#">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+<span>Помощь</span>
+</a>
+<button class="w-full flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-red-600 transition-all text-sm">
+<span class="material-symbols-outlined text-[20px]">logout</span>
+<span>Выйти</span>
+</button>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-64 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-40">
+<div class="flex items-center gap-8">
+<div>
+<h2 class="font-h1-bold text-h1-bold text-slate-900">Системные настройки</h2>
+<p class="text-[12px] text-slate-500">Конфигурация сервера, синхронизации, хранения данных и безопасности</p>
+</div>
+<div class="relative hidden xl:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="pl-10 pr-4 py-2 bg-slate-50 border-slate-200 rounded-full text-sm w-72 focus:ring-2 focus:ring-primary focus:bg-white transition-all" placeholder="Поиск по настройкам..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-green-50 text-green-700 px-4 py-1.5 rounded-full border border-green-100">
+<span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wide">Сервер подключён</span>
+</div>
+<div class="flex items-center gap-3 pl-6 border-l border-slate-200">
+<div class="text-right">
+<p class="text-sm font-bold text-slate-900 leading-none">Иван Иванов</p>
+<p class="text-[11px] text-slate-500 mt-1">Администратор</p>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-slate-200">
+<img alt="User" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4HwxA7Cm_IPWHxNEp_j7alYDIUwL06JuTZPGRjJuEbCdiU9m3_Fjuhq2fR1tg-KPc_jT_jnm3p0YKvdWQ8qSX3JWIs-oYEC9BCCh9anTcPwdzqmWP6O4gGgetcdwCaU3pKJ0xIrc54k0B0jz1g0I84qJ6OdUIbE3dS-p9SZ_vfZAzcz5gYqKtWktWf7yRwZML6da6NYgJSZvAWzH2quQRPITE-MVsXnUYJ6_21O7ux1m-YMYCy11cf0sMqHWSG1ajR92MqpUqovyh"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 pt-16 min-h-screen bg-slate-50/50">
+<div class="p-8">
+<!-- Action Bar -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-100 rounded-md text-amber-700 text-[11px] font-bold animate-pulse">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+    Есть несохранённые изменения
+</div><button class="bg-primary text-white font-button-text text-button-text px-6 py-2.5 rounded-lg hover:bg-blue-800 active:scale-95 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">save</span>
+                        Сохранить изменения
+                    </button>
+</div>
+<div class="flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-100 rounded-md text-amber-700 text-[11px] font-bold animate-pulse">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+    Есть несохранённые изменения
+</div><button class="text-slate-600 hover:text-primary px-3 py-2 text-sm font-semibold flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[20px]">lan</span>
+                        Проверить подключение
+                    </button>
+<button class="text-slate-600 hover:text-primary px-3 py-2 text-sm font-semibold flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[20px]">backup</span>
+                        Создать резервную копию
+                    </button>
+<button class="text-slate-600 hover:text-primary px-3 py-2 text-sm font-semibold flex items-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-[20px]">file_download</span>
+                        Экспорт настроек
+                    </button>
+</div>
+</div>
+<!-- Warning Banner -->
+<div class="mb-8 p-4 bg-blue-50 border border-blue-100 rounded-xl flex items-start gap-4">
+<span class="material-symbols-outlined text-blue-600">info</span>
+<p class="text-sm text-blue-900 font-medium">Изменения системных параметров могут повлиять на работу мобильных операторов. Проверьте настройки перед сохранением.</p>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Main Column -->
+<div class="col-span-12 xl:col-span-9 space-y-8">
+<!-- Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">Сервер</p>
+<p class="text-sm font-bold text-slate-900 mt-1">localhost:8080</p>
+<p class="text-[11px] text-green-600 font-semibold mt-1">Работает</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">Синхронизация</p>
+<p class="text-sm font-bold text-slate-900 mt-1">Каждые 5 минут</p>
+<p class="text-[11px] text-blue-600 font-semibold mt-1">Авторежим</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">Хранилище</p>
+<p class="text-sm font-bold text-slate-900 mt-1">68% занято</p>
+<div class="w-full bg-slate-100 h-1.5 rounded-full mt-2">
+<div class="bg-primary h-1.5 rounded-full" style="width: 68%"></div>
+</div>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">Резервные копии</p>
+<p class="text-sm font-bold text-slate-900 mt-1">Сегодня, 02:00</p>
+<p class="text-[11px] text-green-600 font-semibold mt-1">Успешно</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+<p class="text-[11px] font-bold text-slate-400 uppercase tracking-tighter">Версия</p>
+<p class="text-sm font-bold text-slate-900 mt-1">MVP v0.1</p>
+<p class="text-[11px] text-slate-500 font-semibold mt-1">Локальная</p>
+</div>
+</div>
+<!-- Config Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- 1. Server -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2"><span class="material-symbols-outlined text-primary">dns</span> Параметры узла и API</h3>
+<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">API OK</span>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Адрес сервера</label>
+<input class="w-full h-11 border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white transition-colors" type="text" value="http://localhost:8080"/>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Название сервера</label>
+<input class="w-full h-11 border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white transition-colors" type="text" value="InfoCollect Local Server"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Режим</label>
+<select class="w-full h-11 border-slate-200 rounded-lg text-sm bg-slate-50">
+<option>Production</option>
+<option>Development</option>
+</select>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Последняя проверка</label>
+<div class="h-11 flex items-center px-3 bg-slate-50 rounded-lg text-[13px] text-slate-600 border border-slate-200">14:45:12</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 2. Sync -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">sync_alt</span>
+                                    Параметры синхронизации
+                                </h3>
+<div class="flex items-center gap-1.5 text-blue-600 text-[11px] font-bold px-2 py-0.5 bg-blue-50 rounded">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                                    В ОЧЕРЕДИ: 12
+                                </div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between py-1">
+<span class="text-[13px] font-medium text-slate-700">Интервал синхронизации</span>
+<select class="border border-slate-200 bg-slate-50 text-[12px] font-bold rounded-lg px-2 py-1.5 w-32 focus:bg-white">
+<option selected="">5 минут</option>
+<option>15 минут</option>
+<option>1 час</option>
+</select>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-[13px] font-medium text-slate-700">Авто-повтор при ошибке</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-[13px] font-medium text-slate-700">Оффлайн работа (разрешено)</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-[13px] font-medium text-slate-700">Синхронизация только по Wi-Fi</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-[13px] font-medium text-slate-700">Уведомления об ошибках</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+</div>
+</div>
+<!-- 3. Equipment Registry -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2 mb-6"><span class="material-symbols-outlined text-primary">inventory</span> Управление мастер-данными</h3>
+<div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200 mb-5 space-y-2">
+<div class="flex justify-between items-center text-[11px]">
+<span class="text-slate-500">Файл:</span>
+<span class="font-bold text-slate-800">master_equipment_v3.xlsx</span>
+</div>
+<div class="flex justify-between items-center text-[11px]">
+<span class="text-slate-500">Импорт:</span>
+<span class="font-bold text-slate-800">12.10.2023, 14:20</span>
+</div>
+</div>
+<div class="space-y-3 mb-6">
+<div class="flex items-center gap-3">
+<input checked="" class="w-4 h-4 rounded text-primary border-slate-300 focus:ring-primary" type="checkbox"/>
+<span class="text-[13px] text-slate-700">Проверка структуры колонок</span>
+</div>
+<div class="flex items-center gap-3">
+<input checked="" class="w-4 h-4 rounded text-primary border-slate-300 focus:ring-primary" type="checkbox"/>
+<span class="text-[13px] text-slate-700">Сохранять предыдущую версию</span>
+</div>
+<div class="flex items-center gap-3">
+<input checked="" class="w-4 h-4 rounded text-primary border-slate-300 focus:ring-primary" type="checkbox"/>
+<span class="text-[13px] text-slate-700">Запрещать дубликаты ID</span>
+</div>
+<div class="flex items-center gap-3">
+<input checked="" class="w-4 h-4 rounded text-primary border-slate-300 focus:ring-primary" type="checkbox"/>
+<span class="text-[13px] text-slate-700">Блокировка при критических ошибках</span>
+</div>
+<div class="flex items-center gap-3">
+<input checked="" class="w-4 h-4 rounded text-primary border-slate-300 focus:ring-primary" type="checkbox"/>
+<span class="text-[13px] text-slate-700">Разрешать предупреждения</span>
+</div>
+</div>
+<div class="flex items-center justify-between gap-4">
+<div class="flex-1">
+<label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Хранение истории</label>
+<select class="w-full h-9 border-slate-200 rounded-lg text-xs bg-slate-50">
+<option>12 месяцев</option>
+<option>24 месяца</option>
+</select>
+</div>
+<button class="mt-5 px-4 py-2 bg-blue-50 text-primary text-[11px] font-bold rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors">ИМПОРТ НОВОГО</button>
+</div>
+</div>
+<!-- 4. Files & Photos -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">photo_camera</span>
+                                Файлы и фото
+                            </h3>
+<div class="grid grid-cols-3 gap-3 mb-6">
+<div class="p-2 bg-slate-50 rounded-lg text-center border border-slate-100">
+<p class="text-[9px] font-bold text-slate-400 uppercase">Фото</p>
+<p class="text-[13px] font-bold text-slate-900">18.4GB</p>
+</div>
+<div class="p-2 bg-slate-50 rounded-lg text-center border border-slate-100">
+<p class="text-[9px] font-bold text-slate-400 uppercase">Доки</p>
+<p class="text-[13px] font-bold text-slate-900">6.2GB</p>
+</div>
+<div class="p-2 bg-slate-50 rounded-lg text-center border border-slate-100">
+<p class="text-[9px] font-bold text-slate-400 uppercase">Отчёты</p>
+<p class="text-[13px] font-bold text-slate-900">2.1GB</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Сжатие изображений</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Качество</label>
+<select class="w-full h-10 border-slate-200 rounded-lg text-xs bg-slate-50">
+<option>Среднее</option>
+<option>Высокое</option>
+</select>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Лимит файла</label>
+<select class="w-full h-10 border-slate-200 rounded-lg text-xs bg-slate-50">
+<option>10 MB</option>
+<option>25 MB</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Форматы</label>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-blue-50 text-primary text-[10px] font-bold rounded border border-blue-100">JPG</span>
+<span class="px-2 py-1 bg-blue-50 text-primary text-[10px] font-bold rounded border border-blue-100">PNG</span>
+<span class="px-2 py-1 bg-blue-50 text-primary text-[10px] font-bold rounded border border-blue-100">PDF</span>
+<span class="px-2 py-1 bg-blue-50 text-primary text-[10px] font-bold rounded border border-blue-100">XLSX</span>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Путь к хранилищу</label>
+<div class="flex gap-2">
+<input class="flex-1 h-10 border-slate-200 rounded-lg text-xs bg-slate-100 px-3 truncate" readonly="" type="text" value="/data/infocollect/storage"/>
+<button class="w-10 h-10 flex items-center justify-center bg-slate-200 rounded-lg hover:bg-slate-300 transition-colors">
+<span class="material-symbols-outlined text-[20px]">folder_open</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. Backups -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">cloud_upload</span>
+                                Резервное копирование
+                            </h3>
+<div class="space-y-4 mb-6">
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Авто-бэкап активен</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Расписание</label>
+<input class="w-full h-10 border-slate-200 rounded-lg text-sm bg-slate-50 px-3" type="time" value="02:00"/>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Срок хранения</label>
+<select class="w-full h-10 border-slate-200 rounded-lg text-xs bg-slate-50">
+<option>30 дней</option>
+<option>90 дней</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Путь бэкапа</label>
+<input class="w-full h-10 border-slate-200 rounded-lg text-xs bg-slate-100 px-3 truncate" readonly="" type="text" value="/data/infocollect/backups"/>
+</div>
+<div class="p-3 bg-green-50 border border-green-100 rounded-lg flex items-center justify-between">
+<div class="text-[10px] font-bold text-green-700 uppercase">Последняя копия: 14:45</div>
+<div class="text-[10px] font-bold text-green-700 uppercase">Статус: OK</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-primary text-white py-2.5 text-xs font-bold rounded-lg shadow-sm hover:opacity-90 transition-opacity">СОЗДАТЬ КОПИЮ</button>
+<button class="flex-1 border border-slate-200 py-2.5 text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors">ВОССТАНОВИТЬ</button>
+</div>
+<p class="mt-3 text-[10px] text-slate-400 text-center italic">Внимание: восстановление перезапишет текущие данные!</p>
+</div>
+<!-- 6. Security -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">security</span>
+                                Безопасность и доступ
+                            </h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Вход по паролю (PIN)</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Смена пользователя на ТСД</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Логирование действий</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Тайм-аут (Админ)</label>
+<select class="w-full h-10 border-slate-200 rounded-lg text-sm bg-slate-50">
+<option>8 часов</option>
+<option>4 часа</option>
+<option>1 час</option>
+</select>
+</div>
+<div>
+<label class="block text-[11px] font-bold text-slate-500 uppercase mb-1.5">Тайм-аут (Оператор)</label>
+<select class="w-full h-10 border-slate-200 rounded-lg text-sm bg-slate-50">
+<option>24 часа</option>
+<option>12 часов</option>
+<option>Бессрочно</option>
+</select>
+</div>
+</div>
+</div>
+<!-- 7. Missing Card: Journal & History -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm md:col-span-2">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history_edu</span>
+                                    Журнал и история
+                                </h3>
+<div class="flex gap-4">
+<div class="text-center px-4 border-r border-slate-100">
+<p class="text-[9px] font-bold text-slate-400 uppercase">Событий сегодня</p>
+<p class="text-sm font-bold text-slate-900">86</p>
+</div>
+<div class="text-center px-4 border-r border-slate-100">
+<p class="text-[9px] font-bold text-red-400 uppercase">Критических</p>
+<p class="text-sm font-bold text-red-600">12</p>
+</div>
+<div class="text-center px-4">
+<p class="text-[9px] font-bold text-slate-400 uppercase">Системных</p>
+<p class="text-sm font-bold text-slate-900">516</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-4">
+<div class="flex items-center justify-between py-1">
+<span class="text-[13px] font-medium text-slate-700">Срок хранения активности</span>
+<select class="border border-slate-200 bg-slate-50 text-[12px] font-bold rounded-lg px-2 py-1.5 w-32">
+<option>24 месяца</option>
+<option>12 месяцев</option>
+</select>
+</div>
+<div class="flex items-center justify-between py-1">
+<span class="text-[13px] font-medium text-slate-700">Хранение системных логов</span>
+<select class="border border-slate-200 bg-slate-50 text-[12px] font-bold rounded-lg px-2 py-1.5 w-32">
+<option>90 дней</option>
+<option>30 дней</option>
+</select>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Логировать тех. ошибки</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Подробный лог синхронизации</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-[13px] font-medium text-slate-700">Аудит изменений настроек</span>
+<label class="relative inline-flex items-center cursor-pointer custom-toggle">
+<input checked="" class="sr-only" type="checkbox"/>
+<div class="block w-10 h-5 bg-slate-200 rounded-full"></div>
+<div class="dot absolute left-1 top-1 bg-slate-400 w-3 h-3 rounded-full transition shadow-sm"></div>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Maintenance Panel -->
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+<h3 class="font-h2-bold text-h2-bold flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-primary">build</span>
+                            Обслуживание системы
+                        </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+<div>
+<h4 class="text-[11px] font-bold text-slate-400 uppercase mb-4 tracking-widest">Инструменты</h4>
+<div class="space-y-2">
+<button class="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition-all text-left group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">database</span>
+<span class="text-[13px] font-semibold text-slate-700">Переиндексация базы данных</span>
+</div>
+<span class="material-symbols-outlined text-slate-300 text-sm">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition-all text-left group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">check_circle</span>
+<span class="text-[13px] font-semibold text-slate-700">Проверка целостности данных</span>
+</div>
+<span class="material-symbols-outlined text-slate-300 text-sm">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition-all text-left group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">cleaning_services</span>
+<span class="text-[13px] font-semibold text-slate-700">Очистка временных файлов</span>
+</div>
+<span class="material-symbols-outlined text-slate-300 text-sm">chevron_right</span>
+</button>
+<button class="w-full flex items-center justify-between p-3.5 rounded-xl hover:bg-slate-50 border border-slate-100 transition-all text-left group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary transition-colors">package_2</span>
+<span class="text-[13px] font-semibold text-slate-700">Скачать пакет диагностики</span>
+</div>
+<span class="material-symbols-outlined text-slate-300 text-sm">download</span>
+</button>
+<button class="w-full mt-4 flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white transition-all text-sm font-bold">
+<span class="material-symbols-outlined text-[20px]">power_settings_new</span>
+    ПЕРЕЗАПУСТИТЬ СЕРВИС
+</button>
+</div>
+</div>
+<div class="p-6 bg-red-50/30 rounded-2xl border border-red-100 flex flex-col h-full">
+<h4 class="text-[11px] font-bold text-red-600 uppercase mb-6 tracking-widest flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                                    Опасная зона
+                                </h4>
+<div class="space-y-3 flex-1">
+<button class="w-full bg-white text-red-600 border border-red-200 py-3 px-4 rounded-xl text-[11px] font-black hover:bg-red-600 hover:text-white transition-all shadow-sm">СБРОСИТЬ ОЧЕРЕДЬ СИНХРОНИЗАЦИИ</button>
+<button class="w-full bg-white text-red-600 border border-red-200 py-3 px-4 rounded-xl text-[11px] font-black hover:bg-red-600 hover:text-white transition-all shadow-sm">ОЧИСТИТЬ КЭШ СИСТЕМЫ</button>
+</div>
+<button class="w-full bg-red-600 text-white py-4 px-4 rounded-xl text-[12px] font-black hover:bg-red-700 transition-all mt-6 shadow-md uppercase tracking-wider">СБРОСИТЬ СИСТЕМНЫЕ НАСТРОЙКИ</button>
+<p class="mt-4 text-[10px] text-red-400 text-center font-medium">Это действие необратимо и приведет к потере конфигурации.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Panel -->
+<div class="col-span-12 xl:col-span-3 space-y-6">
+<div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm sticky top-24">
+<div class="flex items-center justify-between mb-8">
+<h3 class="font-h2-bold text-h2-bold">Системная диагностика</h3>
+<span class="material-symbols-outlined text-slate-400">monitoring</span>
+</div>
+<div class="space-y-6">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between text-[11px] font-black uppercase text-slate-400 tracking-wider">
+<span>Сервер</span>
+<span class="text-green-600 font-bold">СТАБИЛЬНО</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black text-slate-900 tracking-tighter">99.8%</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase">Uptime</span>
+</div>
+</div>
+<div class="pt-4 border-t border-slate-50 space-y-4">
+<div class="flex items-center justify-between text-[12px]">
+<span class="text-slate-600">Активная очередь задач</span>
+<span class="font-bold text-primary">12</span>
+</div>
+<div class="flex items-center justify-between text-[12px]">
+<span class="text-slate-600">Ошибки (24ч)</span>
+<span class="font-bold text-red-600">1</span>
+</div>
+<div class="flex items-center justify-between text-[12px]">
+<span class="text-slate-600">Конфликты</span>
+<span class="font-bold text-orange-500">2</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-4 border-t border-slate-50">
+<div class="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+<span>Загрузка процессора</span>
+<span class="text-slate-900">12%</span>
+</div>
+<div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+<div class="bg-slate-900 h-full w-[12%]"></div>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-2">
+<div class="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+<span>Занято в хранилище</span>
+<span class="text-slate-900">68%</span>
+</div>
+<div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[68%]"></div>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-100 space-y-3">
+<button class="w-full bg-slate-900 text-white py-3.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-sm">
+<span class="material-symbols-outlined text-[20px]">troubleshoot</span>
+                                    ПРОВЕРИТЬ СИСТЕМУ
+                                </button>
+</div>
+<div class="mt-8 bg-slate-50/80 p-5 rounded-2xl border border-slate-100">
+<h4 class="text-[11px] font-black text-slate-400 uppercase mb-4 tracking-widest">Журнал событий</h4>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<div class="w-2 h-2 rounded-full bg-green-500 mt-1.5 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+<div>
+<p class="text-[12px] font-bold leading-none text-slate-800">Бэкап завершен</p>
+<p class="text-[10px] text-slate-500 mt-1.5 font-medium">Сегодня, 02:00:15</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-2 h-2 rounded-full bg-blue-500 mt-1.5 shadow-[0_0_8px_rgba(59,130,246,0.4)]"></div>
+<div>
+<p class="text-[12px] font-bold leading-none text-slate-800">Синхронизация реестра</p>
+<p class="text-[10px] text-slate-500 mt-1.5 font-medium">Сегодня, 08:30:42</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-2 h-2 rounded-full bg-slate-400 mt-1.5 shadow-[0_0_8px_rgba(156,163,175,0.4)]"></div>
+<div>
+<p class="text-[12px] font-bold leading-none text-slate-800">Вход администратора</p>
+<p class="text-[10px] text-slate-500 mt-1.5 font-medium">Сегодня, 14:12:05</p>
+</div>
+</div>
+</div>
+<button class="w-full text-center text-primary text-[11px] font-black mt-6 hover:underline uppercase tracking-wider">ВСЕ СОБЫТИЯ (86)</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Section -->
+<footer class="mt-16 pb-12 text-center">
+<p class="text-[13px] font-semibold text-slate-400">InfoCollect MVP v0.1 • Локальная установка</p>
+<div class="flex justify-center items-center gap-6 mt-4">
+<a class="text-[11px] text-slate-400 hover:text-primary transition-colors font-medium border-b border-transparent hover:border-primary/30 pb-0.5" href="#">Политика конфи</a></div></footer></div></main></body></html>
