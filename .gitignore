@@ -48,3 +48,6 @@ design/Desktop/
 # Claude Code local artifacts
 .claude/worktrees/
 .claude/*.local.json
+
+# Claude Code generated agent memory
+.claude/agent-memory/
