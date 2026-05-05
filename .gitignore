@@ -44,3 +44,7 @@ Obsidian vault*/
 
 # Local design exports
 design/Desktop/
+
+# Claude Code local artifacts
+.claude/worktrees/
+.claude/*.local.json
