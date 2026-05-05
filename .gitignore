@@ -25,3 +25,22 @@ static/uploads/
 *.temp
 ~$*.docx
 ~$*.xlsx
+
+.claude/worktrees/
+.claude/*.local.json
+
+# Claude/Codex temporary files
+.claude/worktrees/
+.claude/*.local.json
+.frontend-stage*.log
+CODEX_TASK.md
+design.zip
+rescue-*.patch
+rescue-*.txt
+design.zip
+
+# Local vaults
+Obsidian vault*/
+
+# Local design exports
+design/Desktop/
