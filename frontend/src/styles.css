@@ -8,7 +8,7 @@
   --text: #1b1d28;
   --muted: #777b8c;
   --muted-strong: #5d6477;
-  --accent: #0037a8;
+  --accent: #00288e;
   --accent-soft: #edf2ff;
   --success: #18864b;
   --success-soft: #e8f7ef;
@@ -173,7 +173,7 @@ button {
 }
 
 .desktop-shell-header {
-  min-height: 72px;
+  min-height: 64px;
   padding: 0 30px;
   display: flex;
   align-items: center;
@@ -189,17 +189,17 @@ button {
 
 .desktop-shell-title-block h1 {
   margin: 0;
-  color: var(--text);
-  font-size: 17px;
+  color: #1e40af;
+  font-size: 24px;
   font-weight: 700;
-  line-height: 22px;
+  line-height: 32px;
   letter-spacing: 0;
 }
 
 .desktop-shell-title-block p {
   margin: 2px 0 0;
-  color: var(--muted);
-  font-size: 11px;
+  color: #515f74;
+  font-size: 12px;
   font-weight: 600;
   line-height: 15px;
 }
@@ -219,8 +219,8 @@ button {
   display: flex;
   align-items: center;
   gap: 10px;
-  border-radius: 8px;
-  background: var(--panel-muted);
+  border-radius: 9999px;
+  background: #f4f2fc;
   color: #8b8fa0;
 }
 
@@ -310,8 +310,8 @@ button {
 }
 
 .desktop-screen-action {
-  min-height: 40px;
-  padding: 0 15px;
+  min-height: 44px;
+  padding: 0 20px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -319,8 +319,8 @@ button {
   border-radius: 8px;
   background: var(--panel);
   color: #394154;
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -345,18 +345,18 @@ button {
 .desktop-stat-card,
 .desktop-data-card {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
   background: var(--panel);
   box-shadow: 0 10px 24px rgba(26, 27, 34, 0.04);
 }
 
 .desktop-stat-card {
   min-height: 118px;
-  padding: 18px;
+  padding: 20px;
   display: grid;
   align-content: space-between;
   gap: 7px;
-  border-left-width: 4px;
+  border-left-width: 1px;
 }
 
 .desktop-stat-card span {
