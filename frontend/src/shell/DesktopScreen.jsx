@@ -2,13 +2,19 @@ import { DESKTOP_SCREEN_DATA } from "./desktopScreenData.js";
 import { DesktopActions, DesktopDataTable, DesktopSidePanel } from "./components/DesktopPanel.jsx";
 import { DesktopStatsGrid } from "./components/DesktopStatCard.jsx";
 import { DesktopDashboardScreen } from "./screens/DesktopDashboardScreen.jsx";
+import { DesktopInspectionsScreen } from "./screens/DesktopInspectionsScreen.jsx";
 import { DesktopObjectsScreen } from "./screens/DesktopObjectsScreen.jsx";
+import { DesktopReceiptsScreen } from "./screens/DesktopReceiptsScreen.jsx";
 import { DesktopRegistryScreen } from "./screens/DesktopRegistryScreen.jsx";
+import { DesktopWarehouseScreen } from "./screens/DesktopWarehouseScreen.jsx";
 
 const SCREEN_COMPONENTS = {
   dashboard: DesktopDashboardScreen,
   registry: DesktopRegistryScreen,
   objects: DesktopObjectsScreen,
+  inspections: DesktopInspectionsScreen,
+  warehouse: DesktopWarehouseScreen,
+  receipts: DesktopReceiptsScreen,
 };
 
 function GenericDesktopScreen({ screen }) {
