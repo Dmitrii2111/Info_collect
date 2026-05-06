@@ -1,0 +1,121 @@
+.desktop-object-aside {
+  display: grid;
+  gap: 18px;
+}
+
+.desktop-objects-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: start;
+  gap: 18px;
+}
+
+.desktop-tree-table tr.is-active td {
+  background: color-mix(in srgb, var(--accent) 4%, #ffffff);
+}
+
+.desktop-tree-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.desktop-tree-marker {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(-45deg);
+}
+
+.desktop-tree-level-1 .desktop-tree-name {
+  padding-left: 24px;
+}
+
+.desktop-tree-level-2 .desktop-tree-name {
+  padding-left: 48px;
+}
+
+.desktop-tree-level-2 .desktop-tree-marker {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--muted);
+  transform: none;
+}
+
+.desktop-error-text {
+  color: var(--error);
+  font-weight: 900;
+}
+
+.desktop-detail-panel {
+  overflow: hidden;
+}
+
+.desktop-detail-hero {
+  padding: 18px;
+  background: var(--panel-muted);
+}
+
+.desktop-detail-hero > span,
+.desktop-detail-fields span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.desktop-detail-hero h2 {
+  margin: 4px 0 14px;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 26px;
+}
+
+.desktop-detail-metrics,
+.desktop-detail-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.desktop-detail-metrics div {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.desktop-detail-metrics strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--accent);
+  font-size: 20px;
+}
+
+.desktop-detail-metrics .tone-red strong {
+  color: var(--error);
+}
+
+.desktop-detail-fields {
+  padding: 18px;
+}
+
+.desktop-detail-fields strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.desktop-attention-panel .desktop-data-card-header {
+  border-bottom-color: color-mix(in srgb, var(--error) 16%, #ffffff);
+}
+
+@media (max-width: 1200px) {
+  .desktop-objects-grid {
+    grid-template-columns: 1fr;
+  }
+}

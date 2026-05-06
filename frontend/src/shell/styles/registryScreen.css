@@ -1,0 +1,72 @@
+.desktop-registry-status-card {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid #b8c4ff;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  box-shadow: 0 10px 24px rgba(26, 27, 34, 0.04);
+}
+
+.desktop-registry-status-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.desktop-registry-status-body h2 {
+  margin: 0;
+  color: var(--accent);
+  font-size: 16px;
+  line-height: 22px;
+}
+
+.desktop-registry-status-stats,
+.desktop-registry-status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.desktop-registry-status-stats {
+  margin-top: 8px;
+}
+
+.desktop-registry-status-stats span {
+  color: var(--muted-strong);
+  font-size: 12px;
+}
+
+.desktop-registry-status-actions button {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid #b8c4ff;
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.desktop-registry-status-actions .is-warning {
+  border-color: #c76a00;
+  background: #c76a00;
+  color: #ffffff;
+}
+
+.desktop-registry-screen .desktop-data-table {
+  min-width: 1120px;
+}
+
+@media (max-width: 920px) {
+  .desktop-registry-status-card {
+    grid-template-columns: 1fr;
+  }
+}
