@@ -11,6 +11,7 @@ Work with minimal changes. Do not rewrite working code without a clear reason.
 3. For frontend implementation, use frontend-developer.
 4. For backend/API/sync/data tasks, use backend-developer.
 5. After implementation, use qa-tester before commit.
+6. After frontend/backend implementation, use tech-lead-reviewer before qa-tester for non-trivial changes.
 
 ## Coding rules
 
