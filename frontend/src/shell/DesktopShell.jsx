@@ -12,6 +12,7 @@ import {
   DESKTOP_SECTION_META,
 } from "./desktopNavigation.js";
 import { DesktopScreen } from "./DesktopScreen.jsx";
+import { HistoryScreen } from "./HistoryScreen.jsx";
 
 const PREVIEW_USER = {
   name: "Иван Иванов",
@@ -129,7 +130,11 @@ export function DesktopShell() {
           </header>
 
           <main className="desktop-shell-content">
-            <DesktopScreen sectionKey={activeSection.key} />
+            {activeSectionKey === "history" ? (
+              <HistoryScreen />
+            ) : (
+              <DesktopScreen sectionKey={activeSection.key} />
+            )}
           </main>
         </div>
       </div>
