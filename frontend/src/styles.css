@@ -12,6 +12,8 @@
   --accent-soft: #edf2ff;
   --success: #18864b;
   --success-soft: #e8f7ef;
+  --error: #ba1a1a;
+  --primary-fixed: #dde1ff;
   font-family: Inter, "Segoe UI", Tahoma, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -57,8 +59,8 @@ button {
 }
 
 .desktop-shell-sidebar {
-  width: 268px;
-  flex: 0 0 268px;
+  width: 256px;
+  flex: 0 0 256px;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -107,7 +109,7 @@ button {
 .desktop-shell-sidebar-scroll {
   flex: 1;
   min-height: 0;
-  padding: 18px 0;
+  padding: 12px 0;
   overflow: auto;
   scrollbar-width: thin;
   scrollbar-color: #8d8d8d transparent;
@@ -120,13 +122,14 @@ button {
 
 .desktop-shell-nav-item {
   width: 100%;
-  min-height: 52px;
-  padding: 0 18px 0 20px;
+  min-height: 36px;
+  padding: 0 12px 0 12px;
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   border: 0;
   border-right: 3px solid transparent;
+  border-radius: 4px 0 0 4px;
   background: transparent;
   color: var(--muted-strong);
   font-size: 13px;
@@ -134,6 +137,7 @@ button {
   line-height: 18px;
   text-align: left;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
 }
 
 .desktop-shell-nav-item:hover {
@@ -147,19 +151,22 @@ button {
   color: var(--accent);
 }
 
-.desktop-shell-nav-item svg {
-  width: 15px;
-  height: 15px;
-  flex: 0 0 15px;
+.desktop-shell-nav-item svg,
+.desktop-shell-nav-item .anticon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
 }
 
 .desktop-shell-nav-group-label {
-  margin: 26px 20px 8px;
+  margin: 20px 12px 6px;
   color: #9da1b2;
   font-size: 10px;
   font-weight: 800;
   line-height: 14px;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .desktop-shell-main {
@@ -174,53 +181,65 @@ button {
 
 .desktop-shell-header {
   min-height: 64px;
-  padding: 0 30px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
+  gap: 16px;
   background: var(--panel);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 1px 3px rgba(26, 27, 34, 0.06);
 }
 
 .desktop-shell-title-block {
-  min-width: 240px;
+  flex: 0 0 auto;
+  min-width: 0;
 }
 
 .desktop-shell-title-block h1 {
   margin: 0;
   color: #1e40af;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
-  line-height: 32px;
-  letter-spacing: 0;
+  line-height: 28px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
 .desktop-shell-title-block p {
-  margin: 2px 0 0;
+  margin: 1px 0 0;
   color: #515f74;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 15px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  white-space: nowrap;
 }
 
 .desktop-shell-header-actions {
-  min-width: 0;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 14px;
+  gap: 12px;
+}
+
+.desktop-shell-header-sep {
+  width: 1px;
+  height: 28px;
+  background: var(--line);
+  flex-shrink: 0;
 }
 
 .desktop-shell-search {
-  width: 255px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 448px;
   height: 36px;
   padding: 0 13px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-radius: 9999px;
-  background: #f4f2fc;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8f7fc;
   color: #8b8fa0;
 }
 
@@ -231,11 +250,16 @@ button {
   outline: 0;
   background: transparent;
   color: var(--text);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .desktop-shell-search input::placeholder {
   color: #9094a5;
+}
+
+.desktop-shell-search:focus-within {
+  border-color: var(--accent);
+  background: var(--panel);
 }
 
 .desktop-shell-status {
@@ -260,33 +284,115 @@ button {
   background: var(--success);
 }
 
+/* Header profile icon button */
 .desktop-shell-profile {
   padding: 0;
   display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
+  border-radius: 50%;
+  transition: opacity 0.15s;
 }
 
-.desktop-shell-profile span {
+.desktop-shell-profile:hover {
+  opacity: 0.8;
+}
+
+/* Sidebar footer */
+.desktop-shell-sidebar-footer {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--line);
+  padding: 12px 0 0;
+}
+
+.desktop-shell-sidebar-links {
+  padding: 0 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.desktop-shell-sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted-strong);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+
+.desktop-shell-sidebar-link:hover {
+  background: #f7f6fb;
+  color: var(--text);
+}
+
+.desktop-shell-sidebar-link.is-danger {
+  color: var(--error);
+}
+
+.desktop-shell-sidebar-link.is-danger:hover {
+  background: #fff4f4;
+  color: var(--error);
+}
+
+.desktop-shell-sidebar-link .anticon {
+  font-size: 14px;
+}
+
+/* Sidebar profile block (bottom) */
+.desktop-shell-profile-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 14px;
+}
+
+.desktop-shell-profile-avatar {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-fixed);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  user-select: none;
+}
+
+.desktop-shell-profile-info {
+  min-width: 0;
   display: grid;
   gap: 1px;
-  text-align: right;
 }
 
-.desktop-shell-profile strong {
-  font-size: 13px;
-  line-height: 17px;
+.desktop-shell-profile-info strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.desktop-shell-profile small {
-  color: #8c91a1;
-  font-size: 9px;
-  font-weight: 800;
-  line-height: 12px;
-  text-transform: uppercase;
+.desktop-shell-profile-info small {
+  display: block;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 13px;
 }
 
 .desktop-shell-content {
@@ -392,7 +498,7 @@ button {
 }
 
 .desktop-stat-card.tone-red {
-  border-left-color: #ba1a1a;
+  border-left-color: var(--error);
 }
 
 .desktop-stat-card.tone-purple {
@@ -533,8 +639,8 @@ button {
 
 @media (max-width: 920px) {
   .desktop-shell-sidebar {
-    width: 220px;
-    flex-basis: 220px;
+    width: 200px;
+    flex-basis: 200px;
   }
 
   .desktop-shell-header {

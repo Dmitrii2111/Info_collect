@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Avatar, Dropdown } from "antd";
 import {
   LogoutOutlined,
+  QuestionCircleOutlined,
   SearchOutlined,
   ToolOutlined,
   UserOutlined,
@@ -17,6 +18,7 @@ import { HistoryScreen } from "./HistoryScreen.jsx";
 const PREVIEW_USER = {
   name: "Иван Иванов",
   role: "Супервайзер",
+  initials: "ИИ",
 };
 
 function SidebarItem({ item, active, onSelect }) {
@@ -60,11 +62,6 @@ export function DesktopShell() {
         icon: <UserOutlined />,
         label: "Профиль",
       },
-      {
-        key: "logout",
-        icon: <LogoutOutlined />,
-        label: "Выйти",
-      },
     ],
   };
 
@@ -97,6 +94,30 @@ export function DesktopShell() {
               onSelect={setActiveSectionKey}
             />
           </div>
+
+          <div className="desktop-shell-sidebar-footer">
+            <div className="desktop-shell-sidebar-links">
+              <button className="desktop-shell-sidebar-link" type="button">
+                <QuestionCircleOutlined aria-hidden="true" />
+                Помощь
+              </button>
+              <Dropdown menu={profileMenu} trigger={["click"]}>
+                <button className="desktop-shell-sidebar-link is-danger" type="button">
+                  <LogoutOutlined aria-hidden="true" />
+                  Выйти
+                </button>
+              </Dropdown>
+            </div>
+            <div className="desktop-shell-profile-block">
+              <div className="desktop-shell-profile-avatar" aria-hidden="true">
+                {PREVIEW_USER.initials}
+              </div>
+              <div className="desktop-shell-profile-info">
+                <strong>{PREVIEW_USER.name}</strong>
+                <small>{PREVIEW_USER.role}</small>
+              </div>
+            </div>
+          </div>
         </aside>
 
         <div className="desktop-shell-main">
@@ -106,24 +127,22 @@ export function DesktopShell() {
               <p>{activeSection.subtitle}</p>
             </div>
 
-            <div className="desktop-shell-header-actions">
-              <label className="desktop-shell-search">
-                <SearchOutlined aria-hidden="true" />
-                <input aria-label="Поиск по системе" placeholder="Поиск по системе..." type="search" />
-              </label>
+            <label className="desktop-shell-search">
+              <SearchOutlined aria-hidden="true" />
+              <input aria-label="Поиск по системе" placeholder="Поиск по системе..." type="search" />
+            </label>
 
+            <div className="desktop-shell-header-actions">
               <span className="desktop-shell-status">
                 <span aria-hidden="true" />
                 Сервер подключён
               </span>
 
+              <div className="desktop-shell-header-sep" aria-hidden="true" />
+
               <Dropdown menu={profileMenu} trigger={["click"]}>
                 <button className="desktop-shell-profile" type="button">
-                  <span>
-                    <strong>{PREVIEW_USER.name}</strong>
-                    <small>{PREVIEW_USER.role}</small>
-                  </span>
-                  <Avatar size={40} icon={<UserOutlined />} />
+                  <Avatar size={32} icon={<UserOutlined />} />
                 </button>
               </Dropdown>
             </div>
