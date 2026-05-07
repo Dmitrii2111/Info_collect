@@ -11,6 +11,9 @@ import { DesktopRegistryScreen } from "./screens/DesktopRegistryScreen.jsx";
 import { DesktopReportsScreen } from "./screens/DesktopReportsScreen.jsx";
 import { DesktopSyncScreen } from "./screens/DesktopSyncScreen.jsx";
 import { DesktopWarehouseScreen } from "./screens/DesktopWarehouseScreen.jsx";
+import { DesktopEmployeesScreen } from "./screens/DesktopEmployeesScreen.jsx";
+import { DesktopRolesScreen } from "./screens/DesktopRolesScreen.jsx";
+import { DesktopSettingsScreen } from "./screens/DesktopSettingsScreen.jsx";
 
 function GenericDesktopScreen({ screen }) {
   if (!screen) return null;
@@ -42,6 +45,9 @@ const SCREEN_COMPONENTS = {
   sync: DesktopSyncScreen,
   history: DesktopHistoryScreen,
   reports: DesktopReportsScreen,
+  staff: DesktopEmployeesScreen,
+  roles: DesktopRolesScreen,
+  settings: DesktopSettingsScreen,
 };
 
 export function DesktopScreen({ sectionKey }) {
