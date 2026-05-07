@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Avatar, Dropdown } from "antd";
 import {
+  BellOutlined,
   LogoutOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
@@ -17,7 +18,7 @@ import { HistoryScreen } from "./HistoryScreen.jsx";
 
 const PREVIEW_USER = {
   name: "Иван Иванов",
-  role: "Супервайзер",
+  role: "Администратор",
   initials: "ИИ",
 };
 
@@ -52,8 +53,8 @@ function SidebarSection({ items, activeKey, onSelect }) {
 }
 
 export function DesktopShell() {
-  const [activeSectionKey, setActiveSectionKey] = useState("registry");
-  const activeSection = DESKTOP_SECTION_META[activeSectionKey] ?? DESKTOP_SECTION_META.registry;
+  const [activeSectionKey, setActiveSectionKey] = useState("dashboard");
+  const activeSection = DESKTOP_SECTION_META[activeSectionKey] ?? DESKTOP_SECTION_META.dashboard;
 
   const profileMenu = {
     items: [
@@ -126,13 +127,17 @@ export function DesktopShell() {
               <h1>{activeSection.title}</h1>
               <p>{activeSection.subtitle}</p>
             </div>
-
             <label className="desktop-shell-search">
               <SearchOutlined aria-hidden="true" />
               <input aria-label="Поиск по системе" placeholder="Поиск по системе..." type="search" />
             </label>
 
             <div className="desktop-shell-header-actions">
+              <button className="desktop-shell-bell" type="button" aria-label="Уведомления">
+                <BellOutlined aria-hidden="true" />
+                <span className="desktop-shell-bell-dot" aria-hidden="true" />
+              </button>
+
               <span className="desktop-shell-status">
                 <span aria-hidden="true" />
                 Сервер подключён
@@ -142,6 +147,10 @@ export function DesktopShell() {
 
               <Dropdown menu={profileMenu} trigger={["click"]}>
                 <button className="desktop-shell-profile" type="button">
+                  <div className="desktop-shell-profile-text">
+                    <span className="desktop-shell-profile-name">{PREVIEW_USER.name}</span>
+                    <span className="desktop-shell-profile-role">{PREVIEW_USER.role}</span>
+                  </div>
                   <Avatar size={32} icon={<UserOutlined />} />
                 </button>
               </Dropdown>

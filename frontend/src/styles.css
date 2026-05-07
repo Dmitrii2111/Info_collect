@@ -181,13 +181,49 @@ button {
 
 .desktop-shell-header {
   min-height: 64px;
-  padding: 0 24px;
+  padding: 0 32px;
   display: flex;
   align-items: center;
   gap: 16px;
   background: var(--panel);
   border-bottom: 1px solid var(--line);
   box-shadow: 0 1px 3px rgba(26, 27, 34, 0.06);
+}
+
+/* Bell notification icon in header */
+.desktop-shell-bell {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--muted-strong);
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  transition: color 0.15s;
+}
+
+.desktop-shell-bell:hover {
+  color: var(--accent);
+}
+
+.desktop-shell-bell .anticon {
+  font-size: 20px;
+}
+
+.desktop-shell-bell-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  border: 1px solid var(--panel);
 }
 
 .desktop-shell-title-block {
@@ -228,17 +264,27 @@ button {
   flex-shrink: 0;
 }
 
+/* Objects screen: search in title-block (left side) */
+.desktop-shell-title-block--with-search {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
 .desktop-shell-search {
-  flex: 1 1 0;
+  flex: 0 1 auto;
   min-width: 0;
   max-width: 448px;
+  margin-left: auto;
   height: 36px;
   padding: 0 13px;
   display: flex;
   align-items: center;
   gap: 8px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 9999px;
   background: #f8f7fc;
   color: #8b8fa0;
 }
@@ -289,16 +335,41 @@ button {
   padding: 0;
   display: inline-flex;
   align-items: center;
-  gap: 0;
+  gap: 10px;
   border: 0;
   background: transparent;
   cursor: pointer;
-  border-radius: 50%;
+  border-radius: 8px;
   transition: opacity 0.15s;
 }
 
 .desktop-shell-profile:hover {
   opacity: 0.8;
+}
+
+.desktop-shell-profile-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.desktop-shell-profile-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b1d28;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.desktop-shell-profile-role {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  line-height: 13px;
+  white-space: nowrap;
 }
 
 /* Sidebar footer */
@@ -398,7 +469,7 @@ button {
 .desktop-shell-content {
   flex: 1;
   min-height: 0;
-  padding: 28px 30px 34px;
+  padding: 32px;
   overflow: auto;
   background: var(--panel-muted);
 }

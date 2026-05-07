@@ -1,72 +1,784 @@
-.desktop-registry-status-card {
-  padding: 18px;
-  display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 18px;
-  border: 1px solid #b8c4ff;
-  border-radius: 12px;
-  background: var(--accent-soft);
-  box-shadow: 0 10px 24px rgba(26, 27, 34, 0.04);
+/* ═══════════════════════════════════════════
+   Registry Screen — Design Parity CSS
+   Matches design/desktop/Реестр оборудования
+═══════════════════════════════════════════ */
+
+/* Registry-specific: wider search */
+.desktop-shell-header--compact .desktop-shell-search {
+  max-width: 480px;
 }
 
-.desktop-registry-status-icon {
+/* Screen wrapper */
+.reg-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ─────────────────────────────────────────
+   1. Action Bar
+───────────────────────────────────────── */
+.reg-action-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reg-action-bar-left,
+.reg-action-bar-right {
+  display: flex;
+  gap: 12px;
+}
+
+.reg-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.reg-btn-primary:hover {
+  background: #003580;
+}
+
+.reg-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #ffffff;
+  color: #515f74;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.reg-btn-secondary:hover {
+  background: #f8fafc;
+}
+
+.reg-btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.reg-btn-link:hover {
+  background: #eff6ff;
+}
+
+/* ─────────────────────────────────────────
+   2. Summary Cards
+───────────────────────────────────────── */
+.reg-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.reg-stat-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.15s;
+}
+
+.reg-stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reg-stat-label {
+  margin: 0 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #757684;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.reg-stat-value-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.reg-stat-value {
+  font-size: 24px;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.reg-stat-value-error {
+  color: var(--error);
+}
+
+.reg-stat-badge-green {
+  font-size: 10px;
+  font-weight: 700;
+  color: #16a34a;
+  background: #f0fdf4;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 2px;
+}
+
+.reg-stat-import-date {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ─────────────────────────────────────────
+   3. Registry Status Card
+───────────────────────────────────────── */
+.reg-status-card {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.reg-status-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.reg-status-icon {
   width: 48px;
   height: 48px;
+  background: #2563eb;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.reg-status-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reg-status-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e3a5f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reg-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1d4ed8;
+  background: #dbeafe;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.reg-status-meta {
+  display: flex;
+  gap: 24px;
+}
+
+.reg-status-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reg-meta-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.reg-meta-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.reg-meta-success {
+  color: #15803d;
+}
+
+.reg-meta-warn {
+  color: #d97706;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reg-status-actions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.reg-btn-warning {
+  padding: 8px 16px;
+  background: #d97706;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background 0.15s;
+}
+
+.reg-btn-warning:hover {
+  background: #b45309;
+}
+
+.reg-btn-outlined-blue {
+  padding: 8px 16px;
+  background: #ffffff;
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.reg-btn-outlined-blue:hover {
+  background: #dbeafe;
+}
+
+/* ─────────────────────────────────────────
+   4. Filters
+───────────────────────────────────────── */
+.reg-filters-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reg-filters-grid {
   display: grid;
-  place-items: center;
-  border-radius: 10px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.reg-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reg-filter-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.reg-filter-select {
+  width: 100%;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.reg-filter-row2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
+
+.reg-quick-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.reg-qf-pill {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.reg-qf-pill:hover {
+  background: #e2e8f0;
+}
+
+.reg-qf-active {
   background: var(--accent);
   color: #ffffff;
 }
 
-.desktop-registry-status-body h2 {
-  margin: 0;
-  color: var(--accent);
-  font-size: 16px;
-  line-height: 22px;
+.reg-qf-active:hover {
+  background: var(--accent);
+  opacity: 0.9;
 }
 
-.desktop-registry-status-stats,
-.desktop-registry-status-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+.reg-qf-error {
+  background: #fef2f2;
+  color: var(--error);
+  border: 1px solid #fee2e2;
 }
 
-.desktop-registry-status-stats {
-  margin-top: 8px;
+.reg-qf-error:hover {
+  background: #fee2e2;
 }
 
-.desktop-registry-status-stats span {
-  color: var(--muted-strong);
+.reg-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
   font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: color 0.15s;
 }
 
-.desktop-registry-status-actions button {
-  min-height: 36px;
-  padding: 0 13px;
-  border: 1px solid #b8c4ff;
-  border-radius: 8px;
-  background: var(--panel);
+.reg-reset-btn:hover {
+  color: #475569;
+}
+
+/* ─────────────────────────────────────────
+   5. Main Table
+───────────────────────────────────────── */
+.reg-table-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.reg-table-scroll {
+  overflow-x: auto;
+}
+
+.reg-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.reg-thead-row {
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.reg-th {
+  padding: 16px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+
+.reg-tbody tr + tr {
+  border-top: 1px solid #f1f5f9;
+}
+
+.reg-tr {
+  transition: background 0.1s;
+}
+
+.reg-tr:hover {
+  background: #f8fafc;
+}
+
+.reg-td {
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.reg-td-nowrap {
+  white-space: nowrap;
+}
+
+.reg-td-mono {
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.reg-td-name {
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.reg-td-dash {
+  color: #94a3b8;
+}
+
+/* Status badge pills */
+.reg-status-badge-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.reg-badge-green {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.reg-badge-amber {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.reg-badge-blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.reg-badge-slate {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Error text */
+.reg-error-text {
+  font-weight: 700;
+}
+
+.reg-error-amber {
+  color: #d97706;
+}
+
+.reg-error-error {
+  color: var(--error);
+}
+
+/* Table action links */
+.reg-table-action {
+  font-weight: 700;
+  text-decoration: none;
+  transition: text-decoration 0.1s;
+}
+
+.reg-table-action:hover {
+  text-decoration: underline;
+}
+
+.reg-table-action-primary {
   color: var(--accent);
-  font-size: 13px;
-  font-weight: 800;
+}
+
+.reg-table-action-blue {
+  color: #1d4ed8;
+}
+
+/* Pagination footer */
+.reg-table-footer {
+  padding: 16px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.reg-table-footer-text {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.reg-pagination {
+  display: flex;
+  gap: 8px;
+}
+
+.reg-page-btn {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reg-page-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.reg-page-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ─────────────────────────────────────────
+   6. Bottom Panels
+───────────────────────────────────────── */
+.reg-bottom-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.reg-bottom-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.reg-bottom-header {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.reg-bottom-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reg-bottom-summary {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.reg-icon-error {
+  color: var(--error);
+}
+
+.reg-icon-primary {
+  color: var(--accent);
+}
+
+/* Errors List */
+.reg-errors-list {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reg-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.reg-alert-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reg-alert-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.reg-alert-red {
+  background: #fef2f2;
+  border-color: #fee2e2;
+}
+
+.reg-alert-amber {
+  background: #fffbeb;
+  border-color: #fef3c7;
+}
+
+.reg-alert-blue {
+  background: #eff6ff;
+  border-color: #dbeafe;
+}
+
+.reg-dot-red { background: #ef4444; }
+.reg-dot-amber { background: #f59e0b; }
+.reg-dot-blue { background: #3b82f6; }
+
+.reg-alert-text {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.reg-alert-text-red { color: #991b1b; }
+.reg-alert-text-amber { color: #92400e; }
+.reg-alert-text-blue { color: #1e40af; }
+
+.reg-alert-action {
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
   cursor: pointer;
 }
 
-.desktop-registry-status-actions .is-warning {
-  border-color: #c76a00;
-  background: #c76a00;
-  color: #ffffff;
+.reg-alert-action-red { color: #b91c1c; }
+.reg-alert-action-amber { color: #b45309; }
+.reg-alert-action-blue { color: #1d4ed8; }
+
+/* History Table */
+.reg-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
 }
 
-.desktop-registry-screen .desktop-data-table {
-  min-width: 1120px;
+.reg-history-thead-row {
+  text-align: left;
+  background: #f8fafc;
+}
+
+.reg-history-th {
+  padding: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.reg-th-center { text-align: center; }
+.reg-th-right { text-align: right; }
+
+.reg-history-tbody tr + tr {
+  border-top: 1px solid #f1f5f9;
+}
+
+.reg-history-tr:hover {
+  background: #f8fafc;
+}
+
+.reg-history-td {
+  padding: 12px;
+}
+
+.reg-history-td-bold {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.reg-history-td-file {
+  color: #1d4ed8;
+}
+
+.reg-history-status {
+  font-weight: 700;
+}
+
+.reg-history-status-green { color: #16a34a; }
+.reg-history-status-amber { color: #d97706; }
+
+/* ─────────────────────────────────────────
+   Responsive
+───────────────────────────────────────── */
+@media (max-width: 1280px) {
+  .reg-stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .reg-filters-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 920px) {
-  .desktop-registry-status-card {
+  .reg-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .reg-filters-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .reg-bottom-panels {
     grid-template-columns: 1fr;
+  }
+  .reg-status-card {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

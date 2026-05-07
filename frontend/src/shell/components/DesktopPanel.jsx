@@ -36,6 +36,31 @@ function getActionIcon(label, index) {
   return index === 0 ? CheckCircleOutlined : MoreOutlined;
 }
 
+export function getDesktopStatusToneClass(value, fallback = "") {
+  const status = String(value ?? "").toLowerCase();
+
+  if (status.includes("ошиб") || status.includes("критич") || status.includes("расхожд")) {
+    return "is-error";
+  }
+  if (
+    status.includes("проверить") ||
+    status.includes("ожида") ||
+    status.includes("назнач") ||
+    status.includes("приемк") ||
+    status.includes("приёмк")
+  ) {
+    return "is-warning";
+  }
+  if (status.includes("готов") || status.includes("заверш") || status.includes("успеш") || status.includes("на месте")) {
+    return "is-success";
+  }
+  if (status.includes("не начато") || status.includes("нет ") || status === "—") {
+    return "is-muted";
+  }
+
+  return fallback;
+}
+
 export function DesktopActions({ actions = [], links = [] }) {
   if (actions.length === 0 && links.length === 0) {
     return null;
@@ -97,7 +122,7 @@ export function DesktopPanel({ title, action, actionIcon = false, headerExtra, c
   );
 }
 
-export function DesktopDataTable({ title, columns = [], rows = [], statusColumnIndex }) {
+export function DesktopDataTable({ title, columns = [], rows = [], statusColumnIndex, enableSemanticColors = false }) {
   if (!title || columns.length === 0) {
     return null;
   }
@@ -120,7 +145,9 @@ export function DesktopDataTable({ title, columns = [], rows = [], statusColumnI
               <tr key={row.join("-")}>
                 {row.map((cell, index) => (
                   <td key={`${cell}-${index}`}>
-                    {index === pillIndex ? <span className="desktop-status-pill">{cell}</span> : cell}
+                    {index === pillIndex ? (
+                      <span className={`desktop-status-pill ${enableSemanticColors ? getDesktopStatusToneClass(cell) : ""}`.trim()}>{cell}</span>
+                    ) : cell}
                   </td>
                 ))}
               </tr>

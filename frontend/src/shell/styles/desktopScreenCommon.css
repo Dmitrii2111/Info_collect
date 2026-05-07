@@ -8,12 +8,30 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+}
+
+.desktop-screen-action {
+  min-height: 36px;
+  padding: 0 14px;
+  gap: 8px;
+  border-radius: 7px;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.desktop-screen-action.is-primary {
+  box-shadow: 0 6px 14px rgba(0, 55, 168, 0.12);
+}
+
+.desktop-screen-action svg {
+  width: 14px;
+  height: 14px;
 }
 
 .desktop-screen-link-action {
-  min-height: 40px;
-  padding: 0 12px;
+  min-height: 34px;
+  padding: 0 10px;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -116,6 +134,26 @@
   background: var(--accent);
 }
 
+.desktop-progress-meter.is-success span,
+.desktop-progress-row.tone-green .desktop-progress-meter span {
+  background: var(--success);
+}
+
+.desktop-progress-meter.is-warning span,
+.desktop-progress-row.tone-orange .desktop-progress-meter span {
+  background: #c76a00;
+}
+
+.desktop-progress-meter.is-error span,
+.desktop-progress-row.tone-red .desktop-progress-meter span {
+  background: var(--error);
+}
+
+.desktop-progress-meter.is-muted span,
+.desktop-progress-row.tone-gray .desktop-progress-meter span {
+  background: var(--muted);
+}
+
 .desktop-progress-meter.is-compact {
   width: 104px;
   height: 5px;
@@ -189,7 +227,7 @@
 
 .desktop-panel-action {
   margin: 0 14px 14px;
-  min-height: 38px;
+  min-height: 34px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--accent-soft);
@@ -197,6 +235,51 @@
   font-size: 13px;
   font-weight: 800;
   cursor: pointer;
+}
+
+.desktop-data-card-header button {
+  min-height: 30px;
+  padding: 0 9px;
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+.desktop-row-action {
+  min-height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--panel);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.desktop-status-pill.is-blue {
+  background: #eef2ff;
+  color: var(--accent);
+}
+
+.desktop-status-pill.is-success {
+  background: var(--success-soft);
+  color: #14743e;
+}
+
+.desktop-status-pill.is-warning {
+  background: #fff4e5;
+  color: #9a5300;
+}
+
+.desktop-status-pill.is-error {
+  background: #fff0f0;
+  color: var(--error);
+}
+
+.desktop-status-pill.is-muted {
+  background: var(--panel-muted);
+  color: var(--muted-strong);
 }
 
 .desktop-filter-card {
@@ -222,7 +305,7 @@
 }
 
 .desktop-filter-grid-7 {
-  grid-template-columns: repeat(7, minmax(104px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
 }
 
 .desktop-filter-field {
