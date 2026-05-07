@@ -20,7 +20,7 @@ export const DESKTOP_PRIMARY_SECTIONS = [
     label: "Панель управления",
     icon: DashboardOutlined,
     title: "Панель управления",
-    subtitle: "Ключевые показатели и состояние системы",
+    subtitle: "Контроль объектов, инспекций, склада и синхронизации",
   },
   {
     key: "registry",
