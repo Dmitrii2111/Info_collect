@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import {
   ApartmentOutlined,
   PlusCircleOutlined,
@@ -16,7 +17,15 @@ import {
   CloseOutlined,
   WarningOutlined,
   HistoryOutlined,
+  CheckCircleOutlined,
+  LoadingOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
+import { DesktopModalShell } from "../components/DesktopModalShell";
+import { DesktopObjectDetailsPanel } from "../components/DesktopObjectDetailsPanel";
+import { DesktopStructureModal } from "../components/DesktopStructureModal";
+import { DesktopStructureTree, getNodeCounts } from "../components/DesktopStructureTree";
+import { objectStructureNodes } from "../data/objectsScreenData";
 import "../styles/objectsScreen.css";
 
 /* ─── Progress Bar ─── */
@@ -44,132 +53,168 @@ function StatusBadge({ status }) {
   return <span className={cls}>{status}</span>;
 }
 
+const EMPTY_OBJECT_FILTERS = {
+  object: "Объект (Все)",
+  floor: "Этаж (Все)",
+  status: "Статус (Любой)",
+};
+
+function createNodeMaps(nodes) {
+  const byId = new Map(nodes.map((node) => [node.id, node]));
+  const childrenByParent = nodes.reduce((map, node) => {
+    const key = node.parentId ?? "root";
+    map.set(key, [...(map.get(key) ?? []), node]);
+    return map;
+  }, new Map());
+
+  const getDescendants = (nodeId) => {
+    const children = childrenByParent.get(nodeId) ?? [];
+    return children.flatMap((child) => [child, ...getDescendants(child.id)]);
+  };
+
+  return { byId, childrenByParent, getDescendants };
+}
+
+function nodeMatchesFilters(node, descendants, filters, statusFilter) {
+  const ownAndDescendants = [node, ...descendants.filter((item) => item.type !== "equipment")];
+  const objectMatch = filters.object === "Объект (Все)" || ownAndDescendants.some((item) => item.object === filters.object);
+  const floorMatch = filters.floor === "Этаж (Все)" || ownAndDescendants.some((item) => item.floor === filters.floor);
+  const statusMatch = statusFilter === "Все"
+    || statusFilter === "Статус (Любой)"
+    || ownAndDescendants.some((item) => {
+      if (statusFilter === "С расхождениями") return item.discrepancies > 0 || item.status === "Требует внимания";
+      return item.status === statusFilter;
+    });
+
+  return objectMatch && floorMatch && statusMatch;
+}
+
+function getPageChildren(parentId, maps) {
+  return (maps.childrenByParent.get(parentId ?? "root") ?? []).filter((node) => node.type !== "equipment");
+}
+
+function nodeMatchesPageFilters(node, filters, statusFilter, maps) {
+  return node.type !== "equipment" && nodeMatchesFilters(node, maps.getDescendants(node.id), filters, statusFilter);
+}
+
+function buildPageVisibleRows(expandedIds, filters, statusFilter, maps) {
+  const rows = [];
+
+  const visit = (node) => {
+    if (!nodeMatchesPageFilters(node, filters, statusFilter, maps)) {
+      return;
+    }
+
+    rows.push(node);
+
+    if (!expandedIds.has(node.id)) {
+      return;
+    }
+
+    getPageChildren(node.id, maps).forEach(visit);
+  };
+
+  getPageChildren(null, maps).forEach(visit);
+  return rows;
+}
+
+function getPageExpandableIds(filters, statusFilter, maps) {
+  const ids = new Set();
+
+  maps.byId.forEach((node) => {
+    if (node.type === "equipment" || node.type === "room") {
+      return;
+    }
+
+    const hasMatchingChildren = getPageChildren(node.id, maps).some((child) => nodeMatchesPageFilters(child, filters, statusFilter, maps));
+    if (hasMatchingChildren) {
+      ids.add(node.id);
+    }
+  });
+
+  return ids;
+}
+
+function getScopedVisibleNodes(rootNode, expandedIds, maps) {
+  if (!rootNode) {
+    return [];
+  }
+
+  const scopeNodes = [rootNode, ...maps.getDescendants(rootNode.id)];
+  const scopeIds = new Set(scopeNodes.map((node) => node.id));
+
+  return scopeNodes.filter((node) => {
+    let parentId = node.parentId;
+    while (parentId && scopeIds.has(parentId)) {
+      if (!expandedIds.has(parentId)) {
+        return false;
+      }
+      parentId = maps.byId.get(parentId)?.parentId;
+    }
+    return true;
+  });
+}
+
+function savePendingInspectionContext(node) {
+  const payload = {
+    source: "objects",
+    nodeId: node.id,
+    nodeType: node.type,
+    title: node.title,
+    object: node.object,
+    floor: node.floor,
+    department: node.department,
+  };
+  window.localStorage.setItem("infocollect.pendingInspectionContext", JSON.stringify(payload));
+  window.dispatchEvent(new CustomEvent("infocollect:navigate", { detail: { sectionKey: "inspections", payload } }));
+}
+
 /* ─── Structure Table ─── */
-function StructureTable() {
+function StructureTable({
+  nodes,
+  allNodes,
+  expandedIds,
+  selectedId,
+  onToggle,
+  onSelect,
+  onOpenStructure,
+  onUpdateStructure,
+  showExpandControls = true,
+  expandableIds,
+}) {
   return (
     <div className="obj-card obj-table-card">
       {/* Header */}
       <div className="obj-table-header">
-        <h3 className="obj-table-title">Структура объектов</h3>
+        <h3 className="obj-table-title">Структура</h3>
         <div className="obj-table-header-actions">
-          <button className="obj-icon-btn" type="button">
+          <button className="obj-icon-btn" type="button" onClick={onOpenStructure} aria-label="Развернуть структуру">
             <ExpandAltOutlined />
           </button>
-          <button className="obj-icon-btn" type="button">
+          <button className="obj-icon-btn" type="button" onClick={onUpdateStructure} aria-label="Обновить структуру">
             <ReloadOutlined />
           </button>
         </div>
       </div>
 
-      {/* Table */}
       <div className="obj-table-scroll">
-        <table className="obj-table">
-          <thead>
-            <tr className="obj-thead-row">
-              <th className="obj-th obj-th-first">Структура</th>
-              <th className="obj-th">Тип</th>
-              <th className="obj-th">Помещения</th>
-              <th className="obj-th">Позиции</th>
-              <th className="obj-th">Прогресс</th>
-              <th className="obj-th">Расхождения</th>
-              <th className="obj-th">Статус</th>
-              <th className="obj-th">Синхронизация</th>
-              <th className="obj-th obj-th-last">Действие</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Row 1 — Корпус А (level 0, active) */}
-            <tr className="obj-tr obj-tr-active">
-              <td className="obj-td obj-td-first obj-cell-l0-primary">
-                <span className="obj-tree-cell">
-                  <DownOutlined className="obj-tree-arrow" />
-                  <BankOutlined className="obj-tree-icon obj-tree-icon-primary" />
-                  <span className="obj-tree-name obj-tree-name-primary">Корпус А</span>
-                </span>
-              </td>
-              <td className="obj-td obj-td-type">Объект</td>
-              <td className="obj-td">58</td>
-              <td className="obj-td">340</td>
-              <td className="obj-td"><ProgressBar pct={72} /></td>
-              <td className="obj-td obj-td-error-bold">10</td>
-              <td className="obj-td"><StatusBadge status="В работе" /></td>
-              <td className="obj-td obj-td-sync">Синхронизировано</td>
-              <td className="obj-td obj-td-action">
-                <button className="obj-more-btn" type="button"><MoreOutlined /></button>
-              </td>
-            </tr>
-
-            {/* Row 2 — 2 этаж (level 1) */}
-            <tr className="obj-tr obj-tr-default">
-              <td className="obj-td obj-td-first obj-cell-l1">
-                <span className="obj-tree-cell">
-                  <DownOutlined className="obj-tree-arrow" />
-                  <AppstoreOutlined className="obj-tree-icon obj-tree-icon-muted" />
-                  <span className="obj-tree-name">2 этаж</span>
-                </span>
-              </td>
-              <td className="obj-td obj-td-type">Этаж</td>
-              <td className="obj-td">24</td>
-              <td className="obj-td">128</td>
-              <td className="obj-td"><ProgressBar pct={75} /></td>
-              <td className="obj-td obj-td-error-bold">5</td>
-              <td className="obj-td"><StatusBadge status="В работе" /></td>
-              <td className="obj-td obj-td-sync obj-td-orange">12 в очереди</td>
-              <td className="obj-td obj-td-action">
-                <button className="obj-more-btn" type="button"><MoreOutlined /></button>
-              </td>
-            </tr>
-
-            {/* Row 3 — 2.01.29 Кабинет врача (level 2) */}
-            <tr className="obj-tr obj-tr-room">
-              <td className="obj-td obj-td-first obj-cell-l2">
-                <span className="obj-tree-cell">
-                  <MinusOutlined className="obj-tree-arrow obj-tree-arrow-dim" />
-                  <HomeOutlined className="obj-tree-icon obj-tree-icon-muted" />
-                  <span className="obj-tree-name">2.01.29 — Кабинет врача</span>
-                </span>
-              </td>
-              <td className="obj-td obj-td-type">Помещение</td>
-              <td className="obj-td obj-td-dim">—</td>
-              <td className="obj-td">8</td>
-              <td className="obj-td"><ProgressBar pct={38} /></td>
-              <td className="obj-td obj-td-error-bold">1</td>
-              <td className="obj-td"><StatusBadge status="Требует внимания" /></td>
-              <td className="obj-td obj-td-sync obj-td-sync-error">2 конфликта</td>
-              <td className="obj-td obj-td-action">
-                <button className="obj-more-btn" type="button"><MoreOutlined /></button>
-              </td>
-            </tr>
-
-            {/* Row 4 — Корпус Б (level 0, collapsed) */}
-            <tr className="obj-tr obj-tr-default">
-              <td className="obj-td obj-td-first obj-cell-l0">
-                <span className="obj-tree-cell">
-                  <RightOutlined className="obj-tree-arrow" />
-                  <BankOutlined className="obj-tree-icon obj-tree-icon-muted" />
-                  <span className="obj-tree-name">Корпус Б</span>
-                </span>
-              </td>
-              <td className="obj-td obj-td-type">Объект</td>
-              <td className="obj-td">24</td>
-              <td className="obj-td">96</td>
-              <td className="obj-td"><ProgressBar pct={0} /></td>
-              <td className="obj-td obj-td-zero">0</td>
-              <td className="obj-td"><StatusBadge status="Не начато" /></td>
-              <td className="obj-td obj-td-sync obj-td-dim">—</td>
-              <td className="obj-td obj-td-action">
-                <button className="obj-more-btn" type="button"><MoreOutlined /></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <DesktopStructureTree
+          nodes={nodes}
+          allNodes={allNodes}
+          expandedIds={expandedIds}
+          selectedId={selectedId}
+          onToggle={onToggle}
+          onSelect={onSelect}
+          showExpandControls={showExpandControls}
+          expandableIds={expandableIds}
+        />
       </div>
     </div>
   );
 }
 
 /* ─── Detail Panel ─── */
-function DetailPanel() {
+function DetailPanel({ onExportObject }) {
   return (
     <div className="obj-card obj-detail-card">
       {/* Header */}
@@ -253,7 +298,7 @@ function DetailPanel() {
           </button>
           <div className="obj-context-grid">
             <button className="obj-btn-secondary obj-btn-sm-upper" type="button">Создать инспекцию</button>
-            <button className="obj-btn-secondary obj-btn-sm-upper" type="button">Экспорт объекта</button>
+            <button className="obj-btn-secondary obj-btn-sm-upper" type="button" onClick={onExportObject}>Экспорт</button>
           </div>
         </div>
       </div>
@@ -317,8 +362,225 @@ function ActivityPanel() {
   );
 }
 
+function ObjectsStatusDialog({ config, onClose }) {
+  const [status, setStatus] = useState("loading");
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setStatus("success"), 3000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const isLoading = status === "loading";
+
+  return (
+    <DesktopModalShell
+      onClose={onClose}
+      size="narrow"
+      closeDisabled={isLoading}
+      title={isLoading ? config.loadingTitle : config.successTitle}
+      subtitle={isLoading ? config.loadingText : config.successText}
+      footer={(
+        <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={onClose} disabled={isLoading}>
+          Закрыть
+        </button>
+      )}
+    >
+      <div className={`${isLoading ? "reg-loading-card" : "reg-success-card"} reg-success-card-full`}>
+        {isLoading ? <LoadingOutlined aria-hidden="true" /> : <CheckCircleOutlined aria-hidden="true" />}
+        <div>
+          <strong>{isLoading ? config.loadingTitle : config.successTitle}</strong>
+          <span>{isLoading ? config.loadingText : config.successText}</span>
+        </div>
+      </div>
+    </DesktopModalShell>
+  );
+}
+
+function ObjectsExportDialog({ scope, scopeTitle, onClose }) {
+  const [isExporting, setIsExporting] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (!isExporting) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setIsExporting(false);
+      setIsReady(true);
+    }, 3000);
+
+    return () => window.clearTimeout(timer);
+  }, [isExporting]);
+
+  const handleExport = () => {
+    setIsReady(false);
+    setIsExporting(true);
+  };
+
+  return (
+    <DesktopModalShell
+      onClose={onClose}
+      size="narrow"
+      closeDisabled={isExporting}
+      title={isReady ? "Экспорт готов" : "Экспортировать структуру?"}
+      subtitle={isReady ? "Файл будет сформирован backend после подключения API" : "Будет сформирован файл со структурой объектов, этажей, зон и помещений."}
+      footer={(
+        <>
+          <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={onClose} disabled={isExporting}>
+            {isReady ? "Закрыть" : "Отмена"}
+          </button>
+          {!isReady ? (
+            <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={handleExport} disabled={isExporting}>
+              {isExporting ? <LoadingOutlined aria-hidden="true" /> : <DownloadOutlined aria-hidden="true" />}
+              Экспортировать
+            </button>
+          ) : null}
+        </>
+      )}
+    >
+      {isExporting ? (
+        <div className="reg-loading-card reg-success-card-full">
+          <LoadingOutlined aria-hidden="true" />
+          <div>
+            <strong>Готовим экспорт{scopeTitle ? `: ${scopeTitle}` : ""}</strong>
+            <span>Формируем структуру объектов</span>
+          </div>
+        </div>
+      ) : isReady ? (
+        <div className="reg-success-card reg-success-card-full">
+          <CheckCircleOutlined aria-hidden="true" />
+          <div>
+            <strong>Экспорт готов</strong>
+            <span>Файл будет сформирован backend после подключения API</span>
+          </div>
+        </div>
+      ) : (
+        <div className="obj-export-body">
+          <div className="reg-modal-note">
+            <InfoCircleOutlined aria-hidden="true" />
+            <span>Будет сформирован файл со структурой объектов, этажей, зон и помещений.</span>
+          </div>
+          <div className="obj-export-stats">
+            <div><span>Объектов:</span><strong>{scope === "object" ? "1" : "3"}</strong></div>
+            <div><span>Этажей:</span><strong>{scope === "object" ? "8" : "18"}</strong></div>
+            <div><span>Помещений:</span><strong>{scope === "object" ? "58" : "74"}</strong></div>
+            <div><span>Позиций оборудования:</span><strong>{scope === "object" ? "340" : "512"}</strong></div>
+          </div>
+          <div className="obj-export-section">
+            <span className="obj-export-label">Область экспорта</span>
+            <div className="obj-export-choice">
+              <label><input type="radio" name="objects-export-scope" defaultChecked={scope !== "object"} disabled={scope === "object"} /> Вся структура</label>
+              <label><input type="radio" name="objects-export-scope" defaultChecked={scope === "object"} /> Текущий объект</label>
+              <label><input type="radio" name="objects-export-scope" /> Текущие фильтры</label>
+            </div>
+          </div>
+          <div className="obj-export-section">
+            <span className="obj-export-label">Дополнительные данные</span>
+            <label className="obj-export-check"><input type="checkbox" defaultChecked /> Включить прогресс инспекций</label>
+            <label className="obj-export-check"><input type="checkbox" defaultChecked /> Включить расхождения</label>
+          </div>
+          <div className="obj-export-section">
+            <span className="obj-export-label">Формат файла</span>
+            <div className="obj-export-format">
+              <label><input type="radio" name="objects-export-format" defaultChecked /> XLSX</label>
+              <label><input type="radio" name="objects-export-format" /> PDF</label>
+            </div>
+          </div>
+        </div>
+      )}
+    </DesktopModalShell>
+  );
+}
+
 /* ─── Main Screen ─── */
-export function DesktopObjectsScreen() {
+export function DesktopObjectsScreen({ onNavigate }) {
+  const [activeModal, setActiveModal] = useState(null);
+  const [structureModalRootId, setStructureModalRootId] = useState(null);
+  const [filters, setFilters] = useState(EMPTY_OBJECT_FILTERS);
+  const [statusFilter, setStatusFilter] = useState("Все");
+  const [expandedIds, setExpandedIds] = useState(() => new Set(["building-1", "building-1-floor-1", "building-1-floor-1-dept-1"]));
+  const [selectedId, setSelectedId] = useState("building-1");
+
+  const closeModal = () => setActiveModal(null);
+  const maps = useMemo(() => createNodeMaps(objectStructureNodes), []);
+  const visibleNodes = useMemo(
+    () => buildPageVisibleRows(expandedIds, filters, statusFilter, maps),
+    [expandedIds, filters, statusFilter, maps],
+  );
+  const pageExpandableIds = useMemo(
+    () => getPageExpandableIds(filters, statusFilter, maps),
+    [filters, statusFilter, maps],
+  );
+  const selectedNode = maps.byId.get(selectedId) ?? visibleNodes[0] ?? objectStructureNodes[0];
+  const selectedDescendants = selectedNode
+    ? maps.getDescendants(selectedNode.id)
+    : [];
+  const structureRootNode = structureModalRootId ? maps.byId.get(structureModalRootId) : null;
+  const structureModalNodes = useMemo(
+    () => (structureRootNode ? getScopedVisibleNodes(structureRootNode, expandedIds, maps) : objectStructureNodes.filter((node) => {
+      if (node.parentId === null) return true;
+      let parentId = node.parentId;
+      while (parentId) {
+        if (!expandedIds.has(parentId)) return false;
+        parentId = maps.byId.get(parentId)?.parentId;
+      }
+      return true;
+    })),
+    [expandedIds, maps, structureRootNode],
+  );
+  const visibleBuildings = visibleNodes.filter((node) => node.type === "building").length;
+  const visibleFloors = visibleNodes.filter((node) => node.type === "floor").length;
+  const visibleRooms = visibleNodes.filter((node) => node.type === "room").length;
+  const visibleEquipment = visibleNodes.filter((node) => node.type === "equipment").reduce((sum, node) => sum + Number(node.qty ?? 1), 0);
+  const visibleDiscrepancies = visibleNodes.reduce((sum, node) => sum + (node.discrepancies ?? 0), 0);
+
+  useEffect(() => {
+    if (visibleNodes.length > 0 && !visibleNodes.some((node) => node.id === selectedId)) {
+      setSelectedId(visibleNodes[0].id);
+    }
+  }, [selectedId, visibleNodes]);
+
+  const handleToggleNode = (nodeId) => {
+    setExpandedIds((current) => {
+      const next = new Set(current);
+      if (next.has(nodeId)) {
+        next.delete(nodeId);
+      } else {
+        next.add(nodeId);
+      }
+      return next;
+    });
+  };
+
+  const handleFilterChange = (key, value) => {
+    setFilters((current) => ({ ...current, [key]: value }));
+  };
+
+  const resetFilters = () => {
+    setFilters(EMPTY_OBJECT_FILTERS);
+    setStatusFilter("Все");
+  };
+
+  const handleStatusFilterChange = (value) => {
+    setStatusFilter(value === "Статус (Любой)" ? "Все" : value);
+  };
+
+  const handleCreateInspection = (node = selectedNode) => {
+    savePendingInspectionContext(node);
+    onNavigate?.("inspections");
+  };
+
+  const openFullStructure = () => {
+    setStructureModalRootId(null);
+    setActiveModal("structure");
+  };
+
+  const openSelectedStructure = (node = selectedNode) => {
+    setStructureModalRootId(node?.id ?? null);
+    setActiveModal("structure");
+  };
+
   return (
     <div className="obj-screen">
       <div className="obj-main-grid">
@@ -327,13 +589,13 @@ export function DesktopObjectsScreen() {
           {/* Action Bar */}
           <div className="obj-action-bar">
             <div className="obj-action-group">
-              <button className="obj-btn-primary obj-btn-action" type="button">
+              <button className="obj-btn-primary obj-btn-action" type="button" onClick={openFullStructure}>
                 <ApartmentOutlined /> Открыть структуру
               </button>
-              <button className="obj-btn-secondary obj-btn-action" type="button">
+              <button className="obj-btn-secondary obj-btn-action" type="button" onClick={() => handleCreateInspection(selectedNode)}>
                 <PlusCircleOutlined /> Создать инспекцию
               </button>
-              <button className="obj-btn-secondary obj-btn-action" type="button">
+              <button className="obj-btn-secondary obj-btn-action" type="button" onClick={() => setActiveModal("exportStructure")}>
                 <DownloadOutlined /> Экспорт структуры
               </button>
             </div>
@@ -344,22 +606,26 @@ export function DesktopObjectsScreen() {
             <div className="obj-kpi-card">
               <p className="obj-kpi-label">Объектов</p>
               <div className="obj-kpi-row">
-                <span className="obj-kpi-value">3</span>
+                <span className="obj-kpi-value">{visibleBuildings}</span>
                 <span className="obj-kpi-badge-green">активные</span>
               </div>
             </div>
             <div className="obj-kpi-card">
               <p className="obj-kpi-label">Этажей</p>
-              <span className="obj-kpi-value">18</span>
+              <span className="obj-kpi-value">{visibleFloors}</span>
             </div>
             <div className="obj-kpi-card">
               <p className="obj-kpi-label">Помещений</p>
-              <span className="obj-kpi-value">74</span>
+              <span className="obj-kpi-value">{visibleRooms}</span>
+            </div>
+            <div className="obj-kpi-card">
+              <p className="obj-kpi-label">Оборудование</p>
+              <span className="obj-kpi-value">{visibleEquipment}</span>
             </div>
             <div className="obj-kpi-card obj-kpi-card-error">
               <p className="obj-kpi-label obj-kpi-label-error">Расхождения</p>
               <div className="obj-kpi-row">
-                <span className="obj-kpi-value obj-kpi-value-error">10</span>
+                <span className="obj-kpi-value obj-kpi-value-error">{visibleDiscrepancies}</span>
                 <span className="obj-kpi-error-badge">внимание</span>
               </div>
             </div>
@@ -368,42 +634,100 @@ export function DesktopObjectsScreen() {
           {/* Filters */}
           <div className="obj-filters-card">
             <div className="obj-filters-selects">
-              <select className="obj-select">
+              <select className="obj-select" value={filters.object} onChange={(event) => handleFilterChange("object", event.target.value)}>
                 <option>Объект (Все)</option>
                 <option>Корпус А</option>
                 <option>Корпус Б</option>
               </select>
-              <select className="obj-select">
+              <select className="obj-select" value={filters.floor} onChange={(event) => handleFilterChange("floor", event.target.value)}>
                 <option>Этаж (Все)</option>
                 <option>1 этаж</option>
                 <option>2 этаж</option>
+                <option>3 этаж</option>
               </select>
-              <select className="obj-select">
+              <select className="obj-select" value={statusFilter === "Все" ? "Статус (Любой)" : statusFilter} onChange={(event) => handleStatusFilterChange(event.target.value)}>
                 <option>Статус (Любой)</option>
                 <option>В работе</option>
-                <option>Завершено</option>
+                <option>Не начато</option>
+                <option>Требует внимания</option>
+                <option>Проверено</option>
+                <option>С расхождениями</option>
               </select>
             </div>
             <div className="obj-quick-filters">
-              <span className="obj-chip obj-chip-active">Все</span>
-              <span className="obj-chip obj-chip-default">В работе</span>
-              <span className="obj-chip obj-chip-default">Не начато</span>
-              <span className="obj-chip obj-chip-default">Завершено</span>
-              <span className="obj-chip obj-chip-error">С расхождениями</span>
+              {["Все", "В работе", "Не начато", "Проверено", "С расхождениями"].map((chip) => (
+                <button
+                  className={`obj-chip ${statusFilter === chip ? "obj-chip-active" : chip === "С расхождениями" ? "obj-chip-error" : "obj-chip-default"}`}
+                  type="button"
+                  key={chip}
+                  onClick={() => handleStatusFilterChange(chip)}
+                >
+                  {chip}
+                </button>
+              ))}
+              <button className="obj-reset-filter" type="button" onClick={resetFilters}>Сбросить</button>
             </div>
           </div>
 
-          {/* Structure Table */}
-          <StructureTable />
+          <StructureTable
+            nodes={visibleNodes}
+            allNodes={objectStructureNodes}
+            expandedIds={expandedIds}
+            selectedId={selectedNode?.id}
+            onToggle={handleToggleNode}
+            onSelect={setSelectedId}
+            showExpandControls
+            variant="page"
+            expandableIds={pageExpandableIds}
+            onOpenStructure={openFullStructure}
+            onUpdateStructure={() => setActiveModal("updateStructure")}
+          />
         </div>
 
         {/* Right column — 4/12 */}
         <div className="obj-right-col">
-          <DetailPanel />
+          <DesktopObjectDetailsPanel
+            selectedNode={selectedNode}
+            descendants={selectedDescendants}
+            onCreateInspection={handleCreateInspection}
+            onOpenStructure={openSelectedStructure}
+            onExportObject={() => setActiveModal("exportObject")}
+          />
           <AttentionPanel />
           <ActivityPanel />
         </div>
       </div>
+      {activeModal === "exportStructure" && <ObjectsExportDialog scope="all" onClose={closeModal} />}
+      {activeModal === "exportObject" && <ObjectsExportDialog scope="object" scopeTitle={selectedNode?.title} onClose={closeModal} />}
+      {activeModal === "updateStructure" && (
+        <ObjectsStatusDialog
+          onClose={closeModal}
+          config={{
+            loadingTitle: "Обновляем структуру",
+            loadingText: "Сверяем объекты и помещения с реестром",
+            successTitle: "Структура обновлена",
+            successText: "Добавлено помещений: 2, обновлено записей: 4, предупреждений: 1",
+          }}
+        />
+      )}
+      {activeModal === "structure" && (
+        <DesktopStructureModal
+          nodes={structureModalNodes}
+          allNodes={objectStructureNodes}
+          expandedIds={expandedIds}
+          selectedId={selectedNode?.id}
+          filters={filters}
+          quickFilter={statusFilter}
+          onFilterChange={handleFilterChange}
+          onQuickFilterChange={handleStatusFilterChange}
+          onResetFilters={resetFilters}
+          onToggle={handleToggleNode}
+          onSelect={setSelectedId}
+          onClose={closeModal}
+          title={structureRootNode ? `Структура: ${structureRootNode.title}` : "Структура объектов"}
+          subtitle={structureRootNode ? "Вложенная структура выбранного элемента" : "Полная иерархия корпусов, этажей, отделений, помещений и оборудования"}
+        />
+      )}
     </div>
   );
 }

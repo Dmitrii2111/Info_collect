@@ -157,7 +157,7 @@ export function DesktopShell() {
           </header>
 
           <main className="desktop-shell-content">
-            <DesktopScreen sectionKey={activeSection.key} />
+            <DesktopScreen sectionKey={activeSection.key} onNavigate={setActiveSectionKey} />
           </main>
         </div>
       </div>

@@ -50,10 +50,10 @@ const SCREEN_COMPONENTS = {
   settings: DesktopSettingsScreen,
 };
 
-export function DesktopScreen({ sectionKey }) {
+export function DesktopScreen({ sectionKey, onNavigate }) {
   const ScreenComponent = SCREEN_COMPONENTS[sectionKey];
   if (ScreenComponent) {
-    return <ScreenComponent screen={DESKTOP_SCREEN_DATA[sectionKey]} />;
+    return <ScreenComponent screen={DESKTOP_SCREEN_DATA[sectionKey]} onNavigate={onNavigate} />;
   }
   return <GenericDesktopScreen screen={DESKTOP_SCREEN_DATA[sectionKey]} />;
 }
