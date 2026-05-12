@@ -4,7 +4,7 @@
 .disc-page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: center;
   gap: 16px;
 }
 
@@ -804,6 +804,184 @@
   background: color-mix(in srgb, var(--error) 5%, #ffffff);
 }
 
+/* ── Resolve modal ── */
+.disc-resolve-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.disc-resolve-desc {
+  margin: 0;
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.disc-resolve-info {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.disc-resolve-info.is-destructive {
+  border-left: 4px solid var(--error);
+}
+
+.disc-resolve-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.disc-resolve-info-label { color: #64748b; }
+
+.disc-resolve-info-val {
+  font-weight: 700;
+  color: #0f172a;
+  text-align: right;
+}
+
+.disc-resolve-info-val.is-error { color: var(--error); }
+
+.disc-resolve-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.disc-resolve-table thead {
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.disc-resolve-table thead th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  text-align: left;
+}
+
+.disc-resolve-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+
+.disc-resolve-table tbody tr:last-child td { border-bottom: 0; }
+
+.disc-resolve-val-primary { font-weight: 700; color: var(--accent); }
+.disc-resolve-val-error { font-weight: 700; color: var(--error); }
+.disc-resolve-val-muted { color: #94a3b8; text-decoration: line-through; }
+
+.disc-resolve-comment { display: grid; gap: 6px; }
+
+.disc-resolve-comment-label {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.06em;
+}
+
+.disc-resolve-comment-label .req { color: var(--error); }
+
+.disc-resolve-comment textarea,
+.disc-resolve-comment-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.disc-resolve-comment textarea:focus,
+.disc-resolve-comment-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.disc-resolve-comment textarea.is-error,
+.disc-resolve-comment-textarea.is-error { border-color: var(--error); }
+
+.disc-resolve-comment-error {
+  font-size: 12px;
+  color: var(--error);
+  font-weight: 600;
+}
+
+.disc-resolve-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 32px 0;
+  text-align: center;
+}
+
+.disc-resolve-success-icon {
+  font-size: 44px;
+  color: var(--success);
+}
+
+.disc-resolve-success h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.disc-resolve-success p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.disc-resolve-loading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.disc-resolve-loading-icon {
+  font-size: 24px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.disc-resolve-loading strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.disc-resolve-loading span {
+  font-size: 12px;
+  color: #64748b;
+}
+
 /* Responsive */
 @media (max-width: 1300px) {
   .disc-kpi-grid {
@@ -834,4 +1012,77 @@
   .disc-filter-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* ── Equipment card modal ── */
+.disc-equip-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.disc-equip-header-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.disc-equip-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--accent-soft, #e8ecff);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.disc-equip-id {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.disc-equip-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+/* ── Export button states ── */
+.disc-btn-export.is-loading {
+  opacity: 0.75;
+  cursor: default;
+}
+
+.disc-btn-export.is-success {
+  background: var(--success, #16a34a);
+}
+
+/* ── Recheck modal operator select ── */
+.disc-resolve-comment select {
+  width: 100%;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.disc-resolve-comment select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.disc-resolve-comment select.is-error {
+  border-color: var(--error);
 }
