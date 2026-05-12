@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Осмотр помещения - InfoCollect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed": "#380d00",
+                        "error": "#ba1a1a",
+                        "background": "#fbf8ff",
+                        "tertiary-container": "#872d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "primary-container": "#1e40af",
+                        "on-surface-variant": "#444653",
+                        "on-primary-container": "#a8b8ff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b8c4ff",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-bright": "#fbf8ff",
+                        "surface": "#fbf8ff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-container": "#eeedf7",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-container-low": "#f4f2fc",
+                        "outline": "#757684",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-secondary-container": "#57657a",
+                        "inverse-surface": "#2f3037",
+                        "on-surface": "#1a1b22",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dad9e3",
+                        "secondary-fixed": "#d5e3fc",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "on-background": "#1a1b22",
+                        "secondary": "#515f74",
+                        "tertiary": "#611e00",
+                        "surface-variant": "#e3e1eb",
+                        "primary-fixed": "#dde1ff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary-container": "#d5e3fc",
+                        "primary": "#00288e",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#3755c3",
+                        "outline-variant": "#c4c5d5",
+                        "on-tertiary-container": "#ffa583",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-primary-fixed": "#001453",
+                        "amber-100": "#fef3c7",
+                        "amber-800": "#92400e",
+                        "green-100": "#dcfce7",
+                        "green-800": "#166534",
+                        "red-100": "#fee2e2",
+                        "red-800": "#991b1b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "h2-bold": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "h1-bold": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "data-compact": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "20px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        /* Hide scrollbar for horizontal scrolling */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased pb-24">
+<!-- TopAppBar -->
+<header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-4 h-14 max-w-full">
+<button class="flex items-center justify-center min-h-[48px] min-w-[48px] text-blue-800 hover:bg-slate-50 transition-colors rounded-full -ml-2" title="Вернуться в Отделение">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-['Inter'] antialiased text-base font-semibold tracking-tight text-blue-800">Осмотр</h1>
+<button class="flex items-center justify-center min-h-[48px] min-w-[48px] text-blue-800 hover:bg-slate-50 transition-colors rounded-full -mr-2">
+<span class="material-symbols-outlined">sync</span>
+</button>
+</div>
+<!-- Status Chip Below Bar -->
+<div class="px-margin-mobile pb-stack-sm flex items-center justify-center bg-white">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100">
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+        Онлайн • 12 изменений ожидают отправки
+    </div>
+</div>
+</header>
+<main class="px-margin-mobile pt-stack-md space-y-stack-md max-w-3xl mx-auto">
+<!-- Room Summary Card -->
+<section class="bg-white rounded-lg border border-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="space-y-stack-sm p-4">
+<div class="flex justify-between items-start gap-4">
+<div>
+<h2 class="font-h2-bold text-h2-bold text-on-surface leading-tight">2.01.29 — Кабинет врача</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Корпус А • 2 этаж • Приемное отделение</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap shrink-0">
+                    В работе
+                </span>
+</div>
+<div class="pt-stack-sm space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-label-sm text-label-sm text-on-surface">3 из 8 позиций проверено</span>
+<span class="font-data-compact text-data-compact font-medium text-primary">37.5%</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 37.5%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-gutter mt-4 font-data-compact text-data-compact"><div class="flex items-center gap-2 text-on-surface-variant"><span class="material-symbols-outlined text-[18px]">inventory_2</span> 8 позиций</div><div class="flex items-center gap-2 text-emerald-700"><span class="material-symbols-outlined text-[18px]">check_circle</span> 3 проверено</div><div class="flex items-center gap-2 text-red-700"><span class="material-symbols-outlined text-[18px]">warning</span> 1 расхождение</div><div class="flex items-center gap-2 text-amber-600"><span class="material-symbols-outlined text-[18px]">cloud_off</span> 1 не отправлено</div></div>
+<button class="mt-4 w-full flex items-center justify-center gap-2 text-primary font-button-text text-button-text h-touch-target-min border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined">info</span>
+                Информация о помещении
+            </button>
+</div>
+</section>
+<!-- Search & Filters -->
+<section class="space-y-stack-sm sticky top-[104px] bg-background z-30 py-2 -mx-margin-mobile px-margin-mobile">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-white border border-slate-200 text-on-surface font-body-md text-body-md rounded-lg h-12 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:border-primary placeholder-outline transition-shadow" placeholder="Поиск оборудования или ID" type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+<button class="whitespace-nowrap px-4 h-8 rounded-full bg-primary-container text-on-primary-container border border-primary-container font-label-sm text-label-sm flex items-center flex-shrink-0">Все</button>
+<button class="whitespace-nowrap px-4 h-8 rounded-full bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm flex items-center flex-shrink-0 transition-colors">Не проверено</button>
+<button class="whitespace-nowrap px-4 h-8 rounded-full bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm flex items-center flex-shrink-0 transition-colors">Подтверждено</button>
+<button class="whitespace-nowrap px-4 h-8 rounded-full bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm flex items-center flex-shrink-0 transition-colors">Расхождения</button>
+<button class="whitespace-nowrap px-4 h-8 rounded-full bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm flex items-center flex-shrink-0 transition-colors">Не отправлено</button>
+</div>
+</section>
+<!-- Equipment List -->
+<section class="space-y-stack-sm pb-24"><!-- Item 1 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:bg-blue-50/50 active:bg-blue-100/50 transition-all active:scale-[0.98] group" href="#">
+<div class="flex items-center gap-4">
+<div class="flex-1 min-w-0">
+<span class="font-data-compact text-[11px] uppercase tracking-wider text-outline block mb-0.5">EQ-201-01</span>
+<h3 class="font-semibold text-on-surface text-[17px] leading-tight mb-2 group-hover:text-primary transition-colors">Кондиционер LG</h3>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 whitespace-nowrap">Подтверждено</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant text-[13px]">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">done_all</span>
+<span class="truncate">Серийный номер добавлен</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</a>
+<!-- Item 2 -->
+<a class="block bg-white rounded-lg border border-red-200 shadow-sm p-4 hover:bg-red-50 active:bg-red-100/50 transition-all active:scale-[0.98] group" href="#">
+<div class="flex items-center gap-4">
+<div class="flex-1 min-w-0">
+<span class="font-data-compact text-[11px] uppercase tracking-wider text-outline block mb-0.5">EQ-201-02</span>
+<h3 class="font-semibold text-on-surface text-[17px] leading-tight mb-2 group-hover:text-red-800 transition-colors">Щит освещения ЩО-1</h3>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-red-100 text-red-800 border border-red-200 whitespace-nowrap">Есть расхождение</span>
+<div class="flex items-center gap-1.5 text-red-700 text-[13px]">
+<span class="material-symbols-outlined text-[16px] fill">warning</span>
+<span class="truncate">Отсутствует маркировка</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-red-700 transition-colors">chevron_right</span>
+</div>
+</a>
+<!-- Item 3 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:bg-blue-50/50 active:bg-blue-100/50 transition-all active:scale-[0.98] group" href="#">
+<div class="flex items-center gap-4">
+<div class="flex-1 min-w-0">
+<span class="font-data-compact text-[11px] uppercase tracking-wider text-outline block mb-0.5">EQ-201-03</span>
+<h3 class="font-semibold text-on-surface text-[17px] leading-tight mb-2 group-hover:text-primary transition-colors">Проектор Epson</h3>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap">Не проверено</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant text-[13px]">
+<span class="material-symbols-outlined text-[16px]">pending</span>
+<span class="truncate">Ожидает осмотра</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</a>
+<!-- Item 4 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:bg-blue-50/50 active:bg-blue-100/50 transition-all active:scale-[0.98] group" href="#">
+<div class="flex items-center gap-4">
+<div class="flex-1 min-w-0">
+<span class="font-data-compact text-[11px] uppercase tracking-wider text-outline block mb-0.5">EQ-201-04</span>
+<h3 class="font-semibold text-on-surface text-[17px] leading-tight mb-2 group-hover:text-primary transition-colors">Тележка медицинская</h3>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap">В работе</span>
+<div class="flex items-center gap-1.5 text-blue-700 font-medium text-[13px]">
+<span class="material-symbols-outlined text-[16px]">cloud_sync</span>
+<span class="truncate">2 изменения</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</a>
+<!-- Item 5 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-sm p-4 hover:bg-blue-50/50 active:bg-blue-100/50 transition-all active:scale-[0.98] group" href="#">
+<div class="flex items-center gap-4">
+<div class="flex-1 min-w-0">
+<span class="font-data-compact text-[11px] uppercase tracking-wider text-outline block mb-0.5">EQ-201-05</span>
+<h3 class="font-semibold text-on-surface text-[17px] leading-tight mb-2 group-hover:text-primary transition-colors">Монитор пациента</h3>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">Подтверждено</span>
+<div class="flex items-center gap-1.5 text-on-surface-variant text-[13px]">
+<span class="material-symbols-outlined text-[16px]">chat_bubble_outline</span>
+<span class="truncate">Без комментариев</span>
+</div>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</a></section>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-[72px] left-0 w-full px-margin-mobile pb-2 z-40 bg-gradient-to-t from-white via-white to-white/80 pt-4 md:hidden pointer-events-none pb-[calc(12px+env(safe-area-inset-bottom))]">
+<div class="pointer-events-auto max-w-3xl mx-auto flex flex-col items-center">
+<button class="w-full h-touch-target-min bg-primary text-on-primary rounded-lg font-button-text text-button-text flex items-center justify-center transition-opacity hover:opacity-90 active:opacity-80">
+                Завершить помещение
+            </button>
+<span class="font-data-compact text-data-compact text-on-surface-variant mt-2 px-2 rounded">Осталось проверить 5 позиций</span>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="bg-white fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe border-t border-slate-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] md:hidden">
+<div class="flex flex-col items-center justify-center bg-blue-50 text-blue-800 rounded-xl px-3 py-1 scale-95 active:scale-90 transition-transform duration-150 cursor-pointer">
+<span class="material-symbols-outlined fill">corporate_fare</span>
+<span class="font-inter text-[10px] font-medium mt-1">Объекты</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 px-3 py-1 scale-95 active:scale-90 transition-transform duration-150 cursor-pointer hover:text-blue-700">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-inter text-[10px] font-medium mt-1">Инспекции</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 px-3 py-1 scale-95 active:scale-90 transition-transform duration-150 cursor-pointer hover:text-blue-700">
+<span class="material-symbols-outlined">sync</span>
+<span class="font-inter text-[10px] font-medium mt-1">Синхро</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 px-3 py-1 scale-95 active:scale-90 transition-transform duration-150 cursor-pointer hover:text-blue-700">
+<span class="material-symbols-outlined">person</span>
+<span class="font-inter text-[10px] font-medium mt-1">Профиль</span>
+</div>
+</nav>
+</body></html>

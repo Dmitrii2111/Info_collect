@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#872d00",
+                        "primary-container": "#1e40af",
+                        "on-secondary-container": "#57657a",
+                        "surface-bright": "#fbf8ff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "tertiary-fixed": "#ffdbce",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "on-tertiary-container": "#ffa583",
+                        "tertiary": "#611e00",
+                        "surface": "#fbf8ff",
+                        "on-surface": "#1a1b22",
+                        "background": "#fbf8ff",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-tint": "#3755c3",
+                        "surface-container": "#eeedf7",
+                        "on-surface-variant": "#444653",
+                        "primary-fixed": "#dde1ff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#2f3037",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-container-low": "#f4f2fc",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-error": "#ffffff",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "primary": "#00288e",
+                        "on-primary-fixed": "#001453",
+                        "on-background": "#1a1b22",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#dad9e3",
+                        "secondary-container": "#d5e3fc",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "outline-variant": "#c4c5d5",
+                        "outline": "#757684",
+                        "on-primary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary": "#515f74",
+                        "inverse-primary": "#b8c4ff",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-primary-container": "#a8b8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "touch-target-min": "48px",
+                        "unit": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "margin-mobile": "16px",
+                        "gutter": "12px",
+                        "stack-sm": "8px"
+                    },
+                    "fontFamily": {
+                        "data-compact": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "button-text": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .modal-overlay {
+            background-color: rgba(26, 27, 34, 0.4);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col overflow-hidden">
+<!-- TopAppBar (Background UI) -->
+<header class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center w-full px-4 h-14 md:px-6 fixed top-0 z-10">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-500" data-icon="menu">menu</span>
+<h1 class="font-inter text-sm font-semibold tracking-tight text-blue-800 dark:text-blue-400">Перемещение</h1>
+</div>
+<span class="material-symbols-outlined text-slate-500" data-icon="notifications">notifications</span>
+</header>
+<!-- Background Content (Simulated Movement Screen) -->
+<main class="flex-1 mt-14 mb-16 overflow-y-auto px-margin-mobile py-stack-md opacity-50 pointer-events-none">
+<div class="space-y-4">
+<!-- Item Info Card -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-outline-variant">
+<div class="flex justify-between items-start mb-2">
+<div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Оборудование</p>
+<h2 class="font-h2-bold text-h2-bold text-on-surface">Монитор пациента</h2>
+<p class="font-data-compact text-data-compact text-primary font-medium">EQ-201-05</p>
+</div>
+<span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider">В процессе</span>
+</div>
+<div class="h-1 bg-surface-variant rounded-full overflow-hidden mt-4">
+<div class="h-full bg-primary w-2/3"></div>
+</div>
+</div>
+<!-- List of Destinations -->
+<div class="grid grid-cols-1 gap-3">
+<div class="bg-white border border-outline-variant rounded-lg p-4 flex justify-between items-center">
+<div>
+<p class="font-label-sm text-on-surface font-semibold">Хирургическое отделение</p>
+<p class="text-xs text-on-surface-variant">Корпус A, Этаж 3</p>
+</div>
+<div class="text-right">
+<p class="font-h2-bold text-primary">5 шт.</p>
+</div>
+</div>
+<div class="bg-white border border-outline-variant rounded-lg p-4 flex justify-between items-center">
+<div>
+<p class="font-label-sm text-on-surface font-semibold">Реанимация</p>
+<p class="text-xs text-on-surface-variant">Корпус B, Этаж 1</p>
+</div>
+<div class="text-right">
+<p class="font-h2-bold text-primary">10 шт.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Success Modal Overlay -->
+<div class="modal-overlay fixed inset-0 z-[100] flex items-center justify-center px-margin-mobile">
+<div class="bg-surface-container-lowest w-full max-w-sm rounded-xl shadow-2xl overflow-hidden flex flex-col p-6 animate-in fade-in zoom-in duration-300">
+<!-- Success Icon -->
+<div class="flex justify-center mb-4">
+<div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-emerald-600 !text-5xl" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+<!-- Modal Header -->
+<div class="text-center mb-6">
+<h3 class="font-h1-bold text-h1-bold text-on-surface mb-1">Успех</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Перемещение сохранено</p>
+</div>
+<!-- Item Context -->
+<div class="bg-surface-container-low rounded-lg p-4 mb-4 border border-outline-variant/30">
+<div class="flex items-center gap-3 mb-3 pb-3 border-b border-outline-variant/20">
+<div class="bg-primary/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="monitor_heart">monitor_heart</span>
+</div>
+<div>
+<p class="font-label-sm text-on-surface font-bold leading-tight">Монитор пациента</p>
+<p class="font-data-compact text-data-compact text-on-surface-variant">ID: EQ-201-05</p>
+</div>
+</div>
+<!-- Distribution Stats -->
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-600 text-sm" data-icon="done_all">done_all</span>
+<p class="font-data-compact text-data-compact text-on-surface">20 шт. распределено</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm" data-icon="warehouse">warehouse</span>
+<p class="font-data-compact text-data-compact text-on-surface">10 шт. осталось на складе</p>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="fork_right">fork_right</span>
+<p class="font-data-compact text-data-compact text-on-surface">11 направлений</p>
+</div>
+</div>
+</div>
+<!-- Sync Notice -->
+<div class="flex items-start gap-2 mb-6 px-1">
+<span class="material-symbols-outlined text-on-secondary-container text-base mt-0.5" data-icon="sync">sync</span>
+<p class="font-data-compact text-[12px] leading-relaxed text-on-secondary-container">Изменения будут отправлены при следующей синхронизации.</p>
+</div>
+<!-- Buttons -->
+<div class="flex flex-col gap-unit">
+<button class="bg-primary text-on-primary font-button-text text-button-text h-touch-target-min rounded-xl shadow-sm active:scale-95 transition-transform">
+                    К карточке позиции
+                </button>
+<button class="bg-surface-variant text-on-surface-variant font-button-text text-button-text h-touch-target-min rounded-xl active:scale-95 transition-transform">
+                    Остаться в перемещении
+                </button>
+<button class="text-primary font-label-sm text-label-sm py-2 active:opacity-70 transition-opacity">
+                    К складу
+                </button>
+</div>
+</div>
+</div>
+<!-- BottomNavBar (Background UI) -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-2 py-3 pb-safe bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] opacity-50 pointer-events-none">
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-inter text-[11px] font-medium mt-1">Объекты</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-inter text-[11px] font-medium mt-1">Проверки</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-inter text-[11px] font-medium mt-1">История</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-inter text-[11px] font-medium mt-1">Профиль</span>
+</div>
+</nav>
+</body></html>

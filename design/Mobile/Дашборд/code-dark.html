@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InfoCollect - Панель управления</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "bg-deep":    "#0b0b0b",
+                    "bg-panel":   "#111111",
+                    "bg-card":    "#171717",
+                    "bg-hover":   "#1e1e1e",
+                    "orange":     "#FF6A00",
+                    "orange-dim": "rgba(255,106,0,0.12)",
+                    "border-dark":"#222222",
+                    "border-mid": "#2c2c2c",
+                    "t1":         "#e8e8e8",
+                    "t2":         "#888888",
+                    "t3":         "#4a4a4a",
+                    "c-red":      "#f87171",
+                    "c-red-bg":   "rgba(248,113,113,0.12)",
+                    "c-blue":     "#60a5fa",
+                    "c-blue-bg":  "rgba(96,165,250,0.1)",
+                    "c-green":    "#4ade80",
+                    "c-amber":    "#fbbf24",
+                },
+                fontFamily: {
+                    sans: ["Outfit", "sans-serif"],
+                },
+            },
+        },
+    }
+</script>
+<style>
+    * { font-family: 'Outfit', sans-serif; }
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+    }
+    body { font-family: 'Outfit', sans-serif; font-weight: 300; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2c2c2c; border-radius: 10px; }
+    .or-border-left { border-left: 2px solid #FF6A00; }
+    .orange-top-bar { height: 2px; background: #FF6A00; }
+</style>
+</head>
+<body class="bg-[#0b0b0b] text-[#e8e8e8] min-h-screen">
+
+<!-- SideNavBar -->
+<aside class="h-screen w-64 border-r fixed left-0 top-0 border-[#222] bg-[#111] flex flex-col overflow-y-auto z-50">
+<div class="px-5 py-6">
+  <div class="flex items-center gap-3 mb-8">
+    <div class="w-10 h-10 bg-orange rounded-lg flex items-center justify-center text-black shadow-lg">
+      <span class="material-symbols-outlined font-medium" data-icon="precision_manufacturing">precision_manufacturing</span>
+    </div>
+    <div>
+      <h1 class="text-base font-semibold text-[#e8e8e8] uppercase tracking-wider">InfoCollect</h1>
+      <p class="text-[10px] font-light text-[#4a4a4a] tracking-widest uppercase">MVP v0.1</p>
+    </div>
+  </div>
+  <nav class="space-y-0.5">
+    <a class="bg-[rgba(255,106,0,0.12)] text-orange or-border-left flex items-center px-4 py-2.5 font-medium transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="dashboard">dashboard</span>
+      <span class="text-sm tracking-tight">Панель управления</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="inventory">inventory</span>
+      <span class="text-sm tracking-tight font-light">Реестр оборудования</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="precision_manufacturing">precision_manufacturing</span>
+      <span class="text-sm tracking-tight font-light">Объекты</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="fact_check">fact_check</span>
+      <span class="text-sm tracking-tight font-light">Инспекции</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="inventory_2">inventory_2</span>
+      <span class="text-sm tracking-tight font-light">Склад</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="input">input</span>
+      <span class="text-sm tracking-tight font-light">Поступления</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="report_problem">report_problem</span>
+      <span class="text-sm tracking-tight font-light">Расхождения</span>
+    </a>
+    <div class="py-2"><hr class="border-[#222]"/></div>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="sync">sync</span>
+      <span class="text-sm tracking-tight font-light">Синхронизация</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="history">history</span>
+      <span class="text-sm tracking-tight font-light">История</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="analytics">analytics</span>
+      <span class="text-sm tracking-tight font-light">Отчёты</span>
+    </a>
+    <!-- Admin-only section -->
+    <div class="pt-5 pb-2">
+      <p class="px-4 text-[10px] font-light text-[#4a4a4a] uppercase tracking-widest mb-2">Администрирование</p>
+    </div>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="group">group</span>
+      <span class="text-sm tracking-tight font-light">Сотрудники</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="admin_panel_settings">admin_panel_settings</span>
+      <span class="text-sm tracking-tight font-light">Роли и права</span>
+    </a>
+    <a class="flex items-center px-4 py-2.5 text-[#888] hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all duration-200" href="#">
+      <span class="material-symbols-outlined mr-3 text-[18px]" data-icon="settings">settings</span>
+      <span class="text-sm tracking-tight font-light">Системные настройки</span>
+    </a>
+  </nav>
+</div>
+<!-- Sidebar Profile Area -->
+<div class="mt-auto border-t border-[#222] p-4 bg-[#111]">
+  <div class="flex items-center gap-3">
+    <img alt="User Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-[#FF6A00]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoCnX4g0fUfPPH15i-64lr7YXewid7xLoBK2YGFykaOK4V-Ci6O_-dKLdQj4pWWUNIYWDQo_1W1lDNdsXBkiOLRd7FJwRbFcyZ_961lnFTye1MvKHfkA1mrYRJjAe6m96wQu901bawqWae9taK4RTSqSv88Vvkik2-xXxIfkAVSNqCeq6PDmG-Nh2kXrk_exetB6XpPODnn-nj0r-B2D9dxhJ0zrtET3LTJUqpkgtiZNjf4xtFLnseWwu9lw-e9n2rP-WIMFk_AUPM"/>
+    <div class="overflow-hidden">
+      <p class="text-xs font-medium text-[#e8e8e8] truncate">Иван Иванов</p>
+      <p class="text-[10px] text-orange font-light uppercase tracking-widest">Администратор</p>
+    </div>
+  </div>
+</div>
+</aside>
+
+<!-- TopAppBar & Content Wrapper -->
+<div class="ml-64 flex flex-col min-h-screen">
+<!-- Orange top accent bar -->
+<div class="orange-top-bar w-full sticky top-0 z-50"></div>
+<!-- TopAppBar -->
+<header class="sticky top-0.5 z-40 flex justify-between items-center px-8 h-16 w-full bg-[#111] border-b border-[#222]">
+  <div class="flex flex-col">
+    <h2 class="text-xl font-semibold text-[#e8e8e8] tracking-tight">Панель управления</h2>
+    <p class="text-xs text-[#4a4a4a] font-light">Контроль объектов, инспекций, склада и синхронизации</p>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="relative hidden lg:block">
+      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#4a4a4a] text-[18px]">search</span>
+      <input class="pl-10 pr-4 py-2 bg-[#171717] border border-[#2c2c2c] rounded-md text-sm w-60 text-[#888] placeholder-[#4a4a4a] focus:outline-none focus:border-orange focus:ring-0 font-light" placeholder="Поиск по системе..." type="text"/>
+    </div>
+    <div class="flex items-center gap-2 px-3 py-1.5 bg-[#0e1a0e] rounded border border-[#1a3a1a]">
+      <span class="w-1.5 h-1.5 bg-[#4ade80] rounded-full animate-pulse"></span>
+      <span class="text-xs font-light text-[#4ade80]">Сервер подключён</span>
+    </div>
+    <div class="flex items-center gap-4 border-l pl-5 border-[#222]">
+      <div class="text-right">
+        <p class="text-sm font-medium text-[#e8e8e8]">Иван Иванов</p>
+        <p class="text-[10px] text-[#4a4a4a] uppercase tracking-widest font-light">Администратор</p>
+      </div>
+      <img alt="User Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-orange" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBoCnX4g0fUfPPH15i-64lr7YXewid7xLoBK2YGFykaOK4V-Ci6O_-dKLdQj4pWWUNIYWDQo_1W1lDNdsXBkiOLRd7FJwRbFcyZ_961lnFTye1MvKHfkA1mrYRJjAe6m96wQu901bawqWae9taK4RTSqSv88Vvkik2-xXxIfkAVSNqCeq6PDmG-Nh2kXrk_exetB6XpPODnn-nj0r-B2D9dxhJ0zrtET3LTJUqpkgtiZNjf4xtFLnseWwu9lw-e9n2rP-WIMFk_AUPM"/>
+    </div>
+  </div>
+</header>
+
+<main class="p-8 space-y-6">
+<!-- Quick Actions -->
+<div class="flex flex-wrap gap-3">
+  <button class="flex items-center gap-2 px-5 py-2.5 bg-orange text-black rounded font-medium text-sm hover:bg-[#e05e00] transition-all">
+    <span class="material-symbols-outlined text-[18px]">add_box</span>
+    Создать поступление
+  </button>
+  <button class="flex items-center gap-2 px-5 py-2.5 bg-transparent text-[#888] border border-[#2c2c2c] rounded font-light text-sm hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all">
+    <span class="material-symbols-outlined text-[18px]">download</span>
+    Экспорт отчёта
+  </button>
+  <button class="flex items-center gap-2 px-5 py-2.5 bg-transparent text-[#888] border border-[#2c2c2c] rounded font-light text-sm hover:bg-[#1e1e1e] hover:text-[#e8e8e8] transition-all">
+    <span class="material-symbols-outlined text-[18px]">person_add</span>
+    Добавить сотрудника
+  </button>
+</div>
+
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+  <!-- Objects Card -->
+  <div class="bg-[#171717] p-4 rounded-lg border border-[#222] hover:border-[#2c2c2c] transition-all">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-[rgba(96,165,250,0.1)] text-[#60a5fa] rounded">
+        <span class="material-symbols-outlined text-[18px]">domain</span>
+      </div>
+    </div>
+    <p class="text-3xl font-semibold text-[#e8e8e8]">3</p>
+    <p class="text-sm font-light text-[#4a4a4a] mt-1">Объекты</p>
+  </div>
+  <!-- Inspections Card -->
+  <div class="bg-[#171717] p-4 rounded-lg border border-[#222] hover:border-[#2c2c2c] transition-all">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-[rgba(96,165,250,0.1)] text-[#60a5fa] rounded">
+        <span class="material-symbols-outlined text-[18px]">assignment</span>
+      </div>
+    </div>
+    <p class="text-3xl font-semibold text-[#e8e8e8]">12</p>
+    <p class="text-sm font-light text-[#4a4a4a] mt-1">Инспекции</p>
+  </div>
+  <!-- Rooms Card -->
+  <div class="bg-[#171717] p-4 rounded-lg border border-[#222] hover:border-[#2c2c2c] transition-all">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-[rgba(96,165,250,0.1)] text-[#60a5fa] rounded">
+        <span class="material-symbols-outlined text-[18px]">meeting_room</span>
+      </div>
+    </div>
+    <p class="text-3xl font-semibold text-[#e8e8e8]">74</p>
+    <p class="text-sm font-light text-[#4a4a4a] mt-1">Помещения</p>
+  </div>
+  <!-- Equipment Card -->
+  <div class="bg-[#171717] p-4 rounded-lg border border-[#222] hover:border-[#2c2c2c] transition-all">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-[rgba(96,165,250,0.1)] text-[#60a5fa] rounded">
+        <span class="material-symbols-outlined text-[18px]">construction</span>
+      </div>
+    </div>
+    <p class="text-3xl font-semibold text-[#e8e8e8]">512</p>
+    <p class="text-sm font-light text-[#4a4a4a] mt-1">Позиций оборудования</p>
+  </div>
+  <!-- Discrepancies Card -->
+  <div class="bg-[#171717] p-4 rounded-lg border border-[rgba(248,113,113,0.2)] hover:border-[rgba(248,113,113,0.35)] transition-all relative overflow-hidden">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-[rgba(248,113,113,0.12)] text-[#f87171] rounded">
+        <span class="material-symbols-outlined text-[18px]">warning</span>
+      </div>
+      <span class="text-[9px] font-medium text-[#f87171] bg-[rgba(248,113,113,0.12)] px-2 py-0.5 rounded uppercase tracking-wide">Внимание</span>
+    </div>
+    <p class="text-3xl font-semibold text-[#f87171]">18</p>
+    <p class="text-sm font-light text-[#4a4a4a] mt-1">Расхождения</p>
+  </div>
+  <!-- Sync Card -->
+  <div class="bg-[#171717] p-4 rounded-lg border border-[#222] hover:border-[#2c2c2c] transition-all relative overflow-hidden">
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-[rgba(96,165,250,0.1)] text-[#60a5fa] rounded">
+        <span class="material-symbols-outlined text-[18px]">sync</span>
+      </div>
+      <span class="text-[9px] font-medium text-[#60a5fa] bg-[rgba(96,165,250,0.1)] px-2 py-0.5 rounded uppercase tracking-wide">Инфо</span>
+    </div>
+    <p class="text-3xl font-semibold text-[#e8e8e8]">12</p>
+    <p class="text-sm font-light text-[#4a4a4a] mt-1">Очередь синхр.</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+<!-- Main Content Area (9/12) -->
+<div class="xl:col-span-9 space-y-6">
+<!-- Panel 1: Active Inspections -->
+<div class="bg-[#171717] rounded-lg border border-[#222] overflow-hidden">
+  <div class="px-6 py-3.5 border-b border-[#222] flex justify-between items-center">
+    <h3 class="text-base font-medium text-[#e8e8e8]">Активные инспекции</h3>
+    <button class="text-orange text-sm font-light hover:underline">Все инспекции</button>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead class="bg-[#111] text-[#4a4a4a] text-[10px] font-light uppercase tracking-widest border-b border-[#222]">
+        <tr>
+          <th class="px-6 py-3">№ Инспекции</th>
+          <th class="px-6 py-3">Объект</th>
+          <th class="px-6 py-3">Зона</th>
+          <th class="px-6 py-3">Прогресс</th>
+          <th class="px-6 py-3">Опер.</th>
+          <th class="px-6 py-3">Статус</th>
+          <th class="px-6 py-3 text-right">Действие</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#131313]">
+        <tr class="hover:bg-[#1e1e1e] transition-colors">
+          <td class="px-6 py-3.5 font-medium text-sm text-orange">#INS-2024-001</td>
+          <td class="px-6 py-3.5 text-sm text-[#e8e8e8] font-light">Складской терминал А</td>
+          <td class="px-6 py-3.5 text-sm text-[#4a4a4a] font-light">Сектор 4</td>
+          <td class="px-6 py-3.5">
+            <div class="flex items-center gap-3">
+              <div class="w-20 bg-[#2c2c2c] h-1 rounded-full overflow-hidden">
+                <div class="bg-orange h-full" style="width: 65%"></div>
+              </div>
+              <span class="text-[11px] font-light text-[#888]">65%</span>
+            </div>
+          </td>
+          <td class="px-6 py-3.5">
+            <div class="w-7 h-7 rounded bg-orange flex items-center justify-center text-[10px] font-semibold text-black">АП</div>
+          </td>
+          <td class="px-6 py-3.5">
+            <span class="px-2.5 py-1 bg-[rgba(255,106,0,0.12)] text-orange rounded text-[9px] font-medium uppercase whitespace-nowrap tracking-wide">В работе</span>
+          </td>
+          <td class="px-6 py-3.5 text-right">
+            <button class="p-1.5 text-[#4a4a4a] hover:text-orange transition-colors"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+          </td>
+        </tr>
+        <tr class="hover:bg-[#1e1e1e] transition-colors">
+          <td class="px-6 py-3.5 font-medium text-sm text-[#888]">#INS-2024-002</td>
+          <td class="px-6 py-3.5 text-sm text-[#e8e8e8] font-light">Цех сборки №3</td>
+          <td class="px-6 py-3.5 text-sm text-[#4a4a4a] font-light">Конвейер B</td>
+          <td class="px-6 py-3.5">
+            <div class="flex items-center gap-3">
+              <div class="w-20 bg-[#2c2c2c] h-1 rounded-full overflow-hidden">
+                <div class="bg-[#60a5fa] h-full" style="width: 5%"></div>
+              </div>
+              <span class="text-[11px] font-light text-[#888]">5%</span>
+            </div>
+          </td>
+          <td class="px-6 py-3.5">
+            <div class="w-7 h-7 rounded bg-[#1e1e1e] flex items-center justify-center text-[10px] font-medium text-[#4a4a4a] border border-[#2c2c2c]">?</div>
+          </td>
+          <td class="px-6 py-3.5">
+            <span class="px-2.5 py-1 bg-[#1e1e1e] text-[#4a4a4a] rounded text-[9px] font-medium uppercase whitespace-nowrap tracking-wide border border-[#2c2c2c]">Не начато</span>
+          </td>
+          <td class="px-6 py-3.5 text-right">
+            <button class="p-1.5 text-[#4a4a4a] hover:text-orange transition-colors"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+          </td>
+        </tr>
+        <tr class="hover:bg-[#1e1e1e] transition-colors">
+          <td class="px-6 py-3.5 font-medium text-sm text-[#f87171]">#INS-2024-005</td>
+          <td class="px-6 py-3.5 text-sm text-[#e8e8e8] font-light">Логистический узел</td>
+          <td class="px-6 py-3.5 text-sm text-[#4a4a4a] font-light">Приёмка</td>
+          <td class="px-6 py-3.5">
+            <div class="flex items-center gap-3">
+              <div class="w-20 bg-[#2c2c2c] h-1 rounded-full overflow-hidden">
+                <div class="bg-[#f87171] h-full" style="width: 88%"></div>
+              </div>
+              <span class="text-[11px] font-light text-[#888]">88%</span>
+            </div>
+          </td>
+          <td class="px-6 py-3.5">
+            <div class="w-7 h-7 rounded bg-[rgba(248,113,113,0.15)] flex items-center justify-center text-[10px] font-semibold text-[#f87171]">МК</div>
+          </td>
+          <td class="px-6 py-3.5">
+            <span class="px-2.5 py-1 bg-[rgba(248,113,113,0.12)] text-[#f87171] rounded text-[9px] font-medium uppercase whitespace-nowrap tracking-wide">Требует внимания</span>
+          </td>
+          <td class="px-6 py-3.5 text-right">
+            <button class="p-1.5 text-[#4a4a4a] hover:text-orange transition-colors"><span class="material-symbols-outlined text-[18px]">more_vert</span></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Panel 2: Warehouse and Incoming -->
+<div class="bg-[#171717] rounded-lg border border-[#222] overflow-hidden">
+  <div class="px-6 py-3.5 border-b border-[#222] flex justify-between items-center">
+    <h3 class="text-base font-medium text-[#e8e8e8]">Склад и поступления</h3>
+    <button class="text-orange text-sm font-light hover:underline">Управление запасами</button>
+  </div>
+  <div class="overflow-x-auto">
+    <table class="w-full text-left">
+      <thead class="bg-[#111] text-[#4a4a4a] text-[10px] font-light uppercase tracking-widest border-b border-[#222]">
+        <tr>
+          <th class="px-6 py-3">Товар / ТМЦ</th>
+          <th class="px-6 py-3">ID / артикул</th>
+          <th class="px-6 py-3 text-center">Кол-во</th>
+          <th class="px-6 py-3">Статус</th>
+          <th class="px-6 py-3">Ответственный</th>
+          <th class="px-6 py-3 text-right">Действие</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-[#131313]">
+        <tr class="hover:bg-[#1e1e1e] transition-colors">
+          <td class="px-6 py-3.5">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-[#1e1e1e] rounded border border-[#2c2c2c] flex items-center justify-center text-[#4a4a4a]">
+                <span class="material-symbols-outlined text-[18px]">box</span>
+              </div>
+              <span class="text-sm font-medium text-[#e8e8e8]">Кабель силовой 5х10</span>
+            </div>
+          </td>
+          <td class="px-6 py-3.5 text-sm font-mono text-[#4a4a4a]">EL-CB-10-5</td>
+          <td class="px-6 py-3.5 text-center font-medium text-[#e8e8e8]">150 м</td>
+          <td class="px-6 py-3.5">
+            <span class="px-2.5 py-1 bg-[rgba(255,106,0,0.12)] text-orange rounded text-[9px] font-medium uppercase whitespace-nowrap tracking-wide">Спорная позиция</span>
+          </td>
+          <td class="px-6 py-3.5 text-sm text-[#888] font-light">Петров С.</td>
+          <td class="px-6 py-3.5 text-right">
+            <button class="px-3 py-1.5 bg-orange text-black text-[10px] font-semibold rounded hover:bg-[#e05e00] transition-colors uppercase tracking-wide">ПРИНЯТЬ</button>
+          </td>
+        </tr>
+        <tr class="hover:bg-[#1e1e1e] transition-colors">
+          <td class="px-6 py-3.5">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-[#1e1e1e] rounded border border-[#2c2c2c] flex items-center justify-center text-[#4a4a4a]">
+                <span class="material-symbols-outlined text-[18px]">settings_input_component</span>
+              </div>
+              <span class="text-sm font-medium text-[#e8e8e8]">Датчик давления P-22</span>
+            </div>
+          </td>
+          <td class="px-6 py-3.5 text-sm font-mono text-[#4a4a4a]">SN-PR-2212</td>
+          <td class="px-6 py-3.5 text-center font-medium text-[#e8e8e8]">4 шт</td>
+          <td class="px-6 py-3.5">
+            <span class="px-2.5 py-1 bg-[rgba(96,165,250,0.1)] text-[#60a5fa] rounded text-[9px] font-medium uppercase whitespace-nowrap tracking-wide">Ожидает проверки</span>
+          </td>
+          <td class="px-6 py-3.5 text-sm text-[#888] font-light">Сидоров В.</td>
+          <td class="px-6 py-3.5 text-right">
+            <button class="px-3 py-1.5 bg-orange text-black text-[10px] font-semibold rounded hover:bg-[#e05e00] transition-colors uppercase tracking-wide">ПРИНЯТЬ</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Panel 3: High Priority Items -->
+<div class="bg-[#171717] rounded-lg border border-[#222]">
+  <div class="px-6 py-3.5 border-b border-[#222]">
+    <h3 class="text-base font-medium text-[#f87171] flex items-center gap-2">
+      <span class="material-symbols-outlined text-[18px]">priority_high</span>
+      Требуют внимания
+    </h3>
+  </div>
+  <div class="p-5 space-y-3">
+    <div class="flex items-start gap-4 p-4 bg-[rgba(248,113,113,0.06)] rounded border border-[rgba(248,113,113,0.15)]">
+      <div class="text-[#f87171]"><span class="material-symbols-outlined text-[18px]">report_problem</span></div>
+      <div class="flex-1">
+        <h4 class="text-sm font-medium text-[#f87171]">Критическое расхождение: Склад А</h4>
+        <p class="text-xs text-[#888] mt-1 font-light">Обнаружена недостача 5 единиц Оборудования тип-R в ходе инспекции #INS-2024-005.</p>
+      </div>
+      <button class="text-[9px] font-semibold text-black bg-[#f87171] px-3 py-1.5 rounded uppercase tracking-wide hover:bg-red-400 transition-colors">УСТРАНИТЬ</button>
+    </div>
+    <div class="flex items-start gap-4 p-4 bg-[rgba(96,165,250,0.06)] rounded border border-[rgba(96,165,250,0.15)]">
+      <div class="text-[#60a5fa]"><span class="material-symbols-outlined text-[18px]">sync_problem</span></div>
+      <div class="flex-1">
+        <h4 class="text-sm font-medium text-[#60a5fa]">Конфликт синхронизации</h4>
+        <p class="text-xs text-[#888] mt-1 font-light">Терминал #04 пытается отправить данные, конфликтующие с базой сервера (Объект "Цех сборки").</p>
+      </div>
+      <button class="text-[9px] font-semibold text-[#60a5fa] border border-[#60a5fa] px-3 py-1.5 rounded uppercase tracking-wide hover:bg-[rgba(96,165,250,0.1)] transition-colors">РЕШИТЬ</button>
+    </div>
+    <div class="flex items-start gap-4 p-4 bg-[#131313] rounded border border-[#222]">
+      <div class="text-[#4a4a4a]"><span class="material-symbols-outlined text-[18px]">error</span></div>
+      <div class="flex-1">
+        <h4 class="text-sm font-medium text-[#888]">Ошибка валидации импорта</h4>
+        <p class="text-xs text-[#4a4a4a] mt-1 font-light">Файл "Inventory_Jan.xlsx" содержит 3 строки с неверным форматом SKU.</p>
+      </div>
+      <button class="text-[9px] font-light text-[#888] border border-[#2c2c2c] px-3 py-1.5 rounded uppercase tracking-wide hover:border-[#4a4a4a] transition-colors">ЛОГИ</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Right Sidebar Activity Panel (3/12) -->
+<div class="xl:col-span-3 space-y-6">
+<div class="bg-[#171717] rounded-lg border border-[#222] p-5 sticky top-20">
+  <div class="flex items-center justify-between mb-5">
+    <h3 class="text-base font-medium text-[#e8e8e8]">Последние действия</h3>
+    <span class="material-symbols-outlined text-[#4a4a4a] text-[18px]">history</span>
+  </div>
+  <div class="space-y-5">
+    <div class="relative pl-5 pb-5 border-l border-[#222]">
+      <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-orange border-2 border-[#171717]"></div>
+      <p class="text-[9px] font-light text-[#4a4a4a] uppercase tracking-wider">10:45 • СЕГОДНЯ</p>
+      <p class="text-sm font-medium text-[#e8e8e8] mt-1">Иван Иванов</p>
+      <p class="text-xs text-[#888] font-light">Утвердил отчет по инспекции #INS-2024-001</p>
+    </div>
+    <div class="relative pl-5 pb-5 border-l border-[#222]">
+      <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-[#4ade80] border-2 border-[#171717]"></div>
+      <p class="text-[9px] font-light text-[#4a4a4a] uppercase tracking-wider">09:12 • СЕГОДНЯ</p>
+      <p class="text-sm font-medium text-[#e8e8e8] mt-1">Система</p>
+      <p class="text-xs text-[#888] font-light">Автоматическая синхронизация со складской базой завершена успешно</p>
+    </div>
+    <div class="relative pl-5 pb-5 border-l border-[#222]">
+      <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-[#fbbf24] border-2 border-[#171717]"></div>
+      <p class="text-[9px] font-light text-[#4a4a4a] uppercase tracking-wider">ВЧЕРА • 18:30</p>
+      <p class="text-sm font-medium text-[#e8e8e8] mt-1">Алексей Петров</p>
+      <p class="text-xs text-[#888] font-light">Создал новое расхождение (тип: Недостача) в Объекте "Склад А"</p>
+    </div>
+    <div class="relative pl-5 pb-5 border-l border-[#222]">
+      <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-[#4a4a4a] border-2 border-[#171717]"></div>
+      <p class="text-[9px] font-light text-[#4a4a4a] uppercase tracking-wider">ВЧЕРА • 16:15</p>
+      <p class="text-sm font-medium text-[#e8e8e8] mt-1">Мария Кузнецова</p>
+      <p class="text-xs text-[#888] font-light">Запросила экспорт отчета за квартал в PDF</p>
+    </div>
+    <div class="relative pl-5 border-l border-[#222]">
+      <div class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-[#60a5fa] border-2 border-[#171717]"></div>
+      <p class="text-[9px] font-light text-[#4a4a4a] uppercase tracking-wider">ВЧЕРА • 14:00</p>
+      <p class="text-sm font-medium text-[#e8e8e8] mt-1">Иван Иванов</p>
+      <p class="text-xs text-[#888] font-light">Назначил новую инспекцию на Цех сборки №3</p>
+    </div>
+  </div>
+  <button class="w-full mt-6 py-2.5 text-[10px] font-light text-[#4a4a4a] bg-[#111] rounded border border-[#222] hover:border-[#2c2c2c] hover:text-[#888] transition-colors uppercase tracking-widest">Открыть историю</button>
+</div>
+</div>
+
+</div>
+</main>
+</div>
+</body>
+</html>

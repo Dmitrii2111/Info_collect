@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Детали расхождения</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#eeedf7",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e8e7f1",
+                        "surface-container-low": "#f4f2fc",
+                        "outline": "#757684",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-fixed": "#380d00",
+                        "error": "#ba1a1a",
+                        "background": "#fbf8ff",
+                        "tertiary-container": "#872d00",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "primary-container": "#1e40af",
+                        "on-surface-variant": "#444653",
+                        "on-primary-container": "#a8b8ff",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#b8c4ff",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-bright": "#fbf8ff",
+                        "surface": "#fbf8ff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-variant": "#e3e1eb",
+                        "primary-fixed": "#dde1ff",
+                        "on-primary-fixed-variant": "#173bab",
+                        "secondary-container": "#d5e3fc",
+                        "primary": "#00288e",
+                        "on-primary": "#ffffff",
+                        "surface-tint": "#3755c3",
+                        "outline-variant": "#c4c5d5",
+                        "on-tertiary-container": "#ffa583",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-primary-fixed": "#001453",
+                        "inverse-surface": "#2f3037",
+                        "on-surface": "#1a1b22",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dad9e3",
+                        "secondary-fixed": "#d5e3fc",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "on-background": "#1a1b22",
+                        "secondary": "#515f74",
+                        "tertiary": "#611e00"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "touch-target-min": "48px",
+                        "margin-mobile": "16px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "stack-md": "16px"
+                    },
+                    fontFamily: {
+                        "body-md": ["Inter"],
+                        "button-text": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "button-text": ["16px", { "lineHeight": "20px", "fontWeight": "600" }],
+                        "label-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "h2-bold": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "h1-bold": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "data-compact": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface-container-low min-h-screen text-on-surface pb-[220px]">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest text-primary shadow-sm docked full-width top-0 z-50 border-b border-surface-variant flex justify-between items-center h-14 w-full px-4 max-w-screen-xl mx-auto">
+<button class="flex items-center justify-center w-touch-target-min h-touch-target-min text-on-surface hover:bg-surface-container-highest active:opacity-70 transition-all duration-200 rounded-full">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-h2-bold text-h2-bold text-on-surface">Детали расхождения</h1>
+<button class="flex items-center justify-center w-touch-target-min h-touch-target-min text-primary hover:bg-surface-container-highest active:opacity-70 transition-all duration-200 rounded-full">
+<span class="material-symbols-outlined">sync</span>
+</button>
+</header>
+<main class="max-w-md mx-auto px-margin-mobile pt-stack-md space-y-stack-md pb-8">
+<!-- Context Block -->
+<div class="px-gutter text-on-surface-variant">
+<p class="font-label-sm text-label-sm font-semibold">2.01.29 — Кабинет врача</p>
+<p class="font-data-compact text-data-compact opacity-80">Корпус А • 2 этаж • Приемное отделение</p>
+</div>
+<!-- Step 1: Review Issue (Discrepancy Summary Card) -->
+<div class="bg-surface-container-lowest rounded-lg p-gutter shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-surface-variant">
+<div class="flex justify-between items-start mb-stack-sm">
+<div>
+<h2 class="font-h2-bold text-h2-bold text-on-surface">Щит освещения ЩО-1</h2>
+<p class="font-data-compact text-data-compact text-on-surface-variant mt-1">ID: EQ-201-02 • Тип: Встроенный</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-stack-md">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-error text-on-error uppercase tracking-wider">Критично</span>
+<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-[#FFF3CD] text-[#856404]">
+                    Требует проверки
+                </span>
+<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-secondary-container text-on-secondary-container">
+                    Не синхронизировано
+                </span>
+</div>
+<div class="bg-error-container/20 rounded-md p-stack-sm border border-error-container mb-3">
+<p class="font-body-md text-body-md font-semibold text-error text-lg font-bold">Отсутствует маркировка автоматов</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Требуется уточнение схемы и подтверждение на месте</p>
+</div>
+<!-- Compact Details -->
+<div class="pt-3 border-t border-surface-variant">
+<div class="flex items-center justify-between text-sm">
+<span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Тип проблемы:</span>
+<span class="font-medium text-on-surface">Несоответствие маркировки</span>
+</div>
+<div class="flex items-center justify-between text-sm mt-1">
+<span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Обнаружено:</span>
+<span class="font-medium text-on-surface">Сегодня, 09:18</span>
+</div>
+<div class="flex items-center justify-between text-sm mt-1">
+<span class="text-[11px] uppercase tracking-wider text-on-surface-variant font-semibold">Приоритет:</span>
+<span class="font-bold text-error">Высокий</span>
+</div>
+</div>
+<!-- History Section -->
+<div class="pt-3 mt-3 border-t border-surface-variant">
+<h3 class="font-label-sm text-label-sm font-semibold text-on-surface mb-2">История</h3>
+<ul class="space-y-1">
+<li class="flex text-xs text-on-surface-variant">
+<span class="w-10 flex-shrink-0 font-medium">09:18</span>
+<span>— создано расхождение</span>
+</li>
+<li class="flex text-xs text-on-surface-variant">
+<span class="w-10 flex-shrink-0 font-medium">09:24</span>
+<span>— добавлен комментарий</span>
+</li>
+<li class="flex text-xs text-on-surface-variant">
+<span class="w-10 flex-shrink-0 font-medium">09:31</span>
+<span>— сохранено локально</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Step 2: Evidence (Photo section) -->
+<div class="bg-surface-container-lowest rounded-lg p-gutter shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-surface-variant">
+<h3 class="font-label-sm text-label-sm font-semibold text-on-surface mb-3">Фотофиксация</h3>
+<button class="w-full py-4 border-2 border-dashed border-primary/30 rounded-lg flex flex-col items-center justify-center text-primary bg-primary/5 hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined mb-1">add_a_photo</span>
+<span class="font-label-sm font-medium">Добавить фото</span>
+</button>
+</div>
+<!-- Step 3: Resolution -->
+<div class="bg-surface-container-lowest rounded-lg p-gutter shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-surface-variant">
+<h3 class="font-label-sm text-label-sm font-semibold text-on-surface mb-3">Решение</h3>
+<div class="flex flex-col gap-2"><label class="flex items-center p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-container/10 has-[:checked]:border-primary">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="resolution" type="radio"/>
+<span class="ml-3 font-medium text-on-surface text-sm">Оставить открытым</span>
+</label>
+<label class="flex items-center p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-container/10 has-[:checked]:border-primary">
+<input checked="" class="w-5 h-5 text-primary border-outline focus:ring-primary" name="resolution" type="radio"/>
+<span class="ml-3 font-medium text-on-surface text-sm">Требует проверки</span>
+</label>
+<label class="flex items-center p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-container/10 has-[:checked]:border-primary">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="resolution" type="radio"/>
+<span class="ml-3 font-medium text-on-surface text-sm">Передать ответственному</span>
+</label>
+<label class="flex items-center p-3 border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-container/10 has-[:checked]:border-primary">
+<input class="w-5 h-5 text-primary border-outline focus:ring-primary" name="resolution" type="radio"/>
+<span class="ml-3 font-medium text-on-surface text-sm">Отметить как решено</span>
+</label></div>
+<textarea class="mt-3 w-full rounded-md border-outline-variant focus:border-primary focus:ring-primary text-sm p-3 placeholder-on-surface-variant/50" placeholder="Комментарий к решению..." rows="2"></textarea>
+</div>
+</main>
+<!-- Step 4: Save (Sticky Bottom Action Area) -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-surface-variant p-margin-mobile shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-40">
+<div class="max-w-md mx-auto flex flex-col gap-3">
+<div class="flex items-center justify-center gap-2 text-primary/70 mb-1">
+<span class="material-symbols-outlined text-[16px]">sync_saved_locally</span>
+<span class="text-[12px] font-medium">1 изменение ожидает отправки</span>
+</div>
+<button class="w-full h-14 bg-primary text-on-primary font-bold rounded-lg flex items-center justify-center shadow-md active:scale-95 transition-transform">
+        Сохранить решение
+    </button>
+<button class="w-full h-12 border border-outline text-on-surface font-semibold rounded-lg flex items-center justify-center text-sm hover:bg-surface-container-lowest">
+        Открыть оборудование
+    </button>
+</div>
+</div>
+</body></html>

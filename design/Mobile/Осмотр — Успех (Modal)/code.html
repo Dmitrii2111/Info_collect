@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#fbf8ff",
+                        "surface-container-low": "#f4f2fc",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed": "#001453",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-background": "#1a1b22",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error-container": "#93000a",
+                        "surface-container-high": "#e8e7f1",
+                        "on-secondary-container": "#57657a",
+                        "on-tertiary-fixed": "#380d00",
+                        "primary": "#00288e",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#611e00",
+                        "outline-variant": "#c4c5d5",
+                        "surface-dim": "#dad9e3",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary": "#515f74",
+                        "primary-container": "#1e40af",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#a8b8ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-bright": "#fbf8ff",
+                        "on-tertiary-container": "#ffa583",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "outline": "#757684",
+                        "surface-container": "#eeedf7",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#444653",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#872d00",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "primary-fixed": "#dde1ff",
+                        "surface-tint": "#3755c3",
+                        "inverse-primary": "#b8c4ff",
+                        "background": "#fbf8ff",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-container": "#d5e3fc",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2f3037",
+                        "on-primary-fixed-variant": "#173bab"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "margin-mobile": "16px",
+                        "stack-sm": "8px",
+                        "unit": "8px",
+                        "stack-lg": "24px",
+                        "gutter": "12px",
+                        "touch-target-min": "48px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "button-text": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "data-compact": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface min-h-screen overflow-hidden flex flex-col">
+<!-- Top Navigation -->
+<header class="flex justify-between items-center w-full px-4 h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-inter font-semibold tracking-tight fixed top-0 z-10">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-slate-600">menu</span>
+<span class="text-lg font-bold text-blue-900 dark:text-blue-100">InfoCollect</span>
+</div>
+<span class="material-symbols-outlined text-slate-600">account_circle</span>
+</header>
+<!-- Background Content (Simulated Room Inspection Screen) -->
+<main class="flex-1 mt-14 mb-16 p-margin-mobile flex flex-col gap-stack-md overflow-y-auto filter blur-[2px] pointer-events-none">
+<div class="flex items-center gap-stack-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+<span class="font-h2-bold text-h2-bold">Кабинет врача 2.01.29</span>
+</div>
+<!-- Inspection Progress -->
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/30">
+<div class="flex justify-between items-center mb-2">
+<span class="font-label-sm text-label-sm">Прогресс проверки</span>
+<span class="font-data-compact text-data-compact font-bold text-primary">100%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-full"></div>
+</div>
+</div>
+<!-- Section List (Bento-ish) -->
+<div class="grid grid-cols-1 gap-gutter">
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-blue-50 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">electrical_services</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm">Оборудование</p>
+<p class="text-[12px] text-on-surface-variant">8 из 8 проверено</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-blue-50 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">ac_unit</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm">Вентиляция</p>
+<p class="text-[12px] text-on-surface-variant">3 из 3 проверено</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="bg-white p-4 rounded-xl shadow-sm border border-outline-variant/30 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<div class="bg-blue-50 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">fire_extinguisher</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm">Пожарная безопасность</p>
+<p class="text-[12px] text-on-surface-variant">5 из 5 проверено</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-emerald-600" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</main>
+<!-- Success Modal Overlay -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-margin-mobile bg-black/60 backdrop-blur-[2px]">
+<div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col items-center text-center p-8 border border-white/20">
+<!-- Icon -->
+<div class="mb-6 flex items-center justify-center w-20 h-20 bg-emerald-50 rounded-full">
+<span class="material-symbols-outlined text-[48px] text-emerald-600" data-weight="fill" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<!-- Content -->
+<h2 class="font-h1-bold text-h1-bold text-on-background mb-2">Успех</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1">Осмотр помещения завершён</p>
+<p class="font-body-md text-body-md font-medium mb-4">2.01.29 — Кабинет врача</p>
+<div class="bg-slate-50 p-3 rounded-lg border border-slate-100 mb-8">
+<p class="text-[12px] text-on-surface-variant leading-relaxed">
+                    Изменение будет отправлено при следующей синхронизации.
+                </p>
+</div>
+<!-- Actions -->
+<div class="flex flex-col w-full gap-3">
+<button class="w-full h-[48px] bg-primary text-white rounded-xl font-button-text text-button-text active:scale-[0.98] transition-transform">
+                    К списку помещений
+                </button>
+<button class="w-full h-[48px] bg-white border border-outline text-on-surface-variant rounded-xl font-button-text text-button-text active:scale-[0.98] transition-transform">
+                    Остаться в помещении
+                </button>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 py-2 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-medium font-inter">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200 rounded-xl px-3 py-1">
+<span class="material-symbols-outlined">assignment</span>
+<span class="text-[10px] font-medium font-inter">Inspections</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-medium font-inter">Reports</span>
+</div>
+<div class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium font-inter">Settings</span>
+</div>
+</nav>
+</body></html>

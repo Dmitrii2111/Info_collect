@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-bright": "#fbf8ff",
+                    "primary-fixed": "#dde1ff",
+                    "secondary-fixed-dim": "#b9c7df",
+                    "on-primary-container": "#a8b8ff",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-fixed": "#ffdbce",
+                    "secondary": "#515f74",
+                    "on-tertiary-fixed-variant": "#802a00",
+                    "error-container": "#ffdad6",
+                    "on-primary": "#ffffff",
+                    "surface-container": "#eeedf7",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#c4c5d5",
+                    "on-secondary-fixed-variant": "#3a485b",
+                    "on-primary-fixed-variant": "#173bab",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#00288e",
+                    "on-secondary-container": "#57657a",
+                    "on-surface-variant": "#444653",
+                    "surface-variant": "#e3e1eb",
+                    "on-tertiary-fixed": "#380d00",
+                    "inverse-primary": "#b8c4ff",
+                    "surface-container-highest": "#e3e1eb",
+                    "secondary-fixed": "#d5e3fc",
+                    "outline": "#757684",
+                    "on-tertiary-container": "#ffa583",
+                    "on-secondary": "#ffffff",
+                    "inverse-on-surface": "#f1f0fa",
+                    "surface": "#fbf8ff",
+                    "secondary-container": "#d5e3fc",
+                    "error": "#ba1a1a",
+                    "tertiary": "#611e00",
+                    "on-surface": "#1a1b22",
+                    "on-background": "#1a1b22",
+                    "background": "#fbf8ff",
+                    "on-secondary-fixed": "#0d1c2e",
+                    "tertiary-container": "#872d00",
+                    "surface-tint": "#3755c3",
+                    "surface-container-low": "#f4f2fc",
+                    "on-primary-fixed": "#001453",
+                    "surface-dim": "#dad9e3",
+                    "inverse-surface": "#2f3037",
+                    "primary-container": "#1e40af",
+                    "tertiary-fixed-dim": "#ffb59a",
+                    "surface-container-high": "#e8e7f1",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#b8c4ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "unit": "8px",
+                    "stack-lg": "24px",
+                    "stack-md": "16px",
+                    "margin-mobile": "16px",
+                    "gutter": "12px",
+                    "touch-target-min": "48px",
+                    "stack-sm": "8px"
+            },
+            "fontFamily": {
+                    "button-text": ["Inter"],
+                    "data-compact": ["Inter"],
+                    "body-md": ["Inter"],
+                    "h2-bold": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "h1-bold": ["Inter"]
+            },
+            "fontSize": {
+                    "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}],
+                    "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                    "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen relative overflow-hidden">
+<!-- BACKGROUND CANVAS (Склад - Warehouse Screen) -->
+<div class="fixed inset-0 flex flex-col pointer-events-none opacity-40">
+<!-- TopAppBar Placeholder -->
+<header class="bg-slate-50 border-b border-slate-200 h-14 px-4 flex justify-between items-center w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-blue-800" data-icon="menu">menu</span>
+<span class="font-['Inter'] text-lg font-bold text-blue-900">Field Utility</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-slate-300"></div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 p-4 overflow-y-auto">
+<h1 class="font-h1-bold text-h1-bold mb-4">Склад</h1>
+<div class="grid grid-cols-1 gap-4">
+<!-- Warehouse Cards -->
+<div class="p-4 bg-white rounded-lg border border-slate-200 shadow-sm flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-slate-500">ID: WH-40293</span>
+<span class="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-bold uppercase">В наличии</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold text-on-surface">Кабель силовой ВВГнг</h3>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-600">Остаток: 120 м.</span>
+<span class="text-primary font-semibold">Секция A12</span>
+</div>
+</div>
+<div class="p-4 bg-white rounded-lg border border-slate-200 shadow-sm flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-slate-500">ID: WH-11054</span>
+<span class="px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 text-xs font-bold uppercase">Мало</span>
+</div>
+<h3 class="font-h2-bold text-h2-bold text-on-surface">Автоматический выключатель</h3>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-600">Остаток: 5 шт.</span>
+<span class="text-primary font-semibold">Секция B04</span>
+</div>
+</div>
+<!-- Bento Style Secondary Stats -->
+<div class="grid grid-cols-2 gap-3 mt-4">
+<div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+<span class="text-xs text-blue-600 font-bold uppercase block">Заказов</span>
+<span class="text-2xl font-black text-blue-900">12</span>
+</div>
+<div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+<span class="text-xs text-slate-500 font-bold uppercase block">К отгрузке</span>
+<span class="text-2xl font-black text-slate-800">08</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Dimmed -->
+<nav class="bg-white border-t border-slate-200 h-16 flex items-center justify-around px-2">
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-slate-400" data-icon="location_city">location_city</span>
+<span class="text-[10px] text-slate-400">Объекты</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-slate-400" data-icon="fact_check">fact_check</span>
+<span class="text-[10px] text-slate-400">Инспекции</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-slate-400" data-icon="history">history</span>
+<span class="text-[10px] text-slate-400">История</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-slate-400" data-icon="person">person</span>
+<span class="text-[10px] text-slate-400">Профиль</span>
+</div>
+</nav>
+</div>
+<!-- OVERLAY SCRIM -->
+<div class="fixed inset-0 bg-slate-900/60 z-40 backdrop-blur-[1px]"></div>
+<!-- NAVIGATION DRAWER -->
+<aside class="fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-slate-900 h-full w-80 rounded-r-lg border-r shadow-2xl dark:shadow-none font-['Inter'] text-sm leading-relaxed">
+<!-- Header: Profile Section -->
+<div class="p-6 pb-4">
+<div class="flex items-center gap-3 mb-4">
+<div class="w-12 h-12 rounded-full flex items-center justify-center bg-primary-container text-on-primary-container font-bold text-lg border-2 border-primary-fixed">ИИ</div>
+<div class="flex flex-col">
+<span class="text-xl font-black text-blue-800 dark:text-blue-200">InfoCollect</span>
+<span class="font-bold text-on-surface">Иван Иванов</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="flex h-2 w-2 rounded-full bg-green-500"></span>
+<span class="text-xs text-slate-500 font-medium uppercase tracking-wider">В сети • Оператор</span>
+</div>
+<span class="text-xs text-slate-400">Синхронизация: 10:45</span>
+</div>
+</div>
+<div class="h-[1px] w-full bg-slate-100 dark:bg-slate-800 mx-auto"></div>
+<!-- Main Items -->
+<nav class="flex-1 overflow-y-auto py-4 space-y-1">
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<span class="material-symbols-outlined" data-icon="location_city">location_city</span>
+<span>Объекты</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span>Инспекции</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>История</span>
+</a>
+<!-- Active State for Склад -->
+<a class="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-semibold rounded-lg mx-2 px-4 py-3 flex items-center justify-between transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="warehouse" style="font-variation-settings: 'FILL' 1;">warehouse</span>
+<span>Склад</span>
+</div>
+<span class="bg-blue-700 text-white text-[11px] px-2 py-0.5 rounded-full">5</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="difference">difference</span>
+<span>Расхождения</span>
+</div>
+<span class="bg-slate-200 text-slate-700 text-[11px] px-2 py-0.5 rounded-full">8</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+<span>Синхронизация</span>
+</div>
+<span class="bg-orange-100 text-orange-800 text-[11px] px-2 py-0.5 rounded-full">12</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Профиль</span>
+</a>
+</nav>
+<div class="h-[1px] w-full bg-slate-100 dark:bg-slate-800"></div>
+<!-- Secondary Items -->
+<div class="py-4 space-y-1">
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Настройки</span>
+</a>
+<a class="text-slate-600 dark:text-slate-400 px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors active:bg-slate-100 dark:active:bg-slate-700" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Помощь</span>
+</a>
+<a class="text-red-600 dark:text-red-400 px-4 py-3 flex items-center gap-3 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors active:bg-red-100 dark:active:bg-red-900/20" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-semibold">Выйти</span>
+</a>
+</div>
+<!-- Footer / Version -->
+<div class="px-6 py-4 bg-slate-50 dark:bg-slate-900/50">
+<p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">InfoCollect MVP • v0.1</p>
+</div>
+</aside>
+</body></html>

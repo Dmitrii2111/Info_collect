@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: contain;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f1f0fa",
+                        "surface-bright": "#fbf8ff",
+                        "on-primary-container": "#a8b8ff",
+                        "outline": "#757684",
+                        "on-tertiary-container": "#ffa583",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "error": "#ba1a1a",
+                        "surface-container": "#eeedf7",
+                        "on-surface-variant": "#444653",
+                        "on-surface": "#1a1b22",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#872d00",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "primary-fixed": "#dde1ff",
+                        "surface-tint": "#3755c3",
+                        "inverse-primary": "#b8c4ff",
+                        "background": "#fbf8ff",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "secondary-container": "#d5e3fc",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2f3037",
+                        "on-primary-fixed-variant": "#173bab",
+                        "surface-container-low": "#f4f2fc",
+                        "on-secondary": "#ffffff",
+                        "surface": "#fbf8ff",
+                        "on-primary-fixed": "#001453",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-background": "#1a1b22",
+                        "surface-container-high": "#e8e7f1",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-secondary-container": "#57657a",
+                        "primary": "#00288e",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#1e40af",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#611e00",
+                        "outline-variant": "#c4c5d5",
+                        "surface-dim": "#dad9e3",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary": "#515f74"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "12px",
+                        "touch-target-min": "48px",
+                        "unit": "8px",
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "h1-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background font-body-md text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shadow-sm">
+<button class="flex items-center justify-center w-10 h-10 active:opacity-70 transition-opacity hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined text-blue-800 dark:text-blue-400">arrow_back</span>
+</button>
+<h1 class="font-['Inter'] text-base font-semibold tracking-tight text-blue-800 dark:text-blue-400">Отделение</h1>
+<button class="flex items-center justify-center w-10 h-10 active:opacity-70 transition-opacity hover:bg-slate-50 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined text-blue-800 dark:text-blue-400">sync</span>
+</button>
+</header>
+<main class="pt-14 pb-24 px-4 blur-[2px] pointer-events-none">
+<!-- Context Summary Card -->
+<section class="mt-4">
+<div class="bg-white rounded-xl shadow-[0_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant p-4">
+<div class="flex justify-between items-start mb-2">
+<div><p class="text-[11px] font-medium text-secondary uppercase tracking-wider mb-0.5">Корпус А • 2 этаж</p>
+<h2 class="font-h1-bold text-h1-bold text-primary text-[26px]">Приемное отделение</h2></div>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">Текущая активная зона</span>
+</div>
+<div class="grid grid-cols-2 gap-3 my-4"><div class="bg-surface-container-low p-2 rounded-lg"><p class="text-[10px] uppercase text-secondary font-bold">Объекты</p><div class="flex flex-wrap gap-x-2"><p class="font-h2-bold text-on-surface text-base">16 <span class="text-[11px] font-normal text-secondary">Помещений</span></p><p class="font-h2-bold text-on-surface text-base">128 <span class="text-[11px] font-normal text-secondary">Позиции</span></p></div></div><div class="bg-surface-container-low p-2 rounded-lg"><p class="text-[10px] uppercase text-secondary font-bold">Статус</p><div class="flex flex-col"><span class="font-data-compact text-error font-semibold text-[13px]">3 Проблемы</span><span class="font-data-compact text-amber-600 font-semibold text-[13px]">2 не отправлено</span></div></div></div>
+<div class="space-y-1 mb-4">
+<div class="flex justify-between items-end">
+<p class="font-label-sm text-secondary">Прогресс обхода</p>
+<p class="font-data-compact text-primary font-bold">75% <span class="font-normal text-secondary">(12 из 16)</span></p>
+</div>
+<div class="w-full bg-surface-variant rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<button class="w-full bg-primary text-white font-button-text text-button-text h-12 rounded-lg active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+                        Продолжить обход
+                    </button>
+<button class="w-full text-primary font-label-sm h-10 flex items-center justify-center underline decoration-primary/30">
+                        Открыть структуру
+                    </button>
+</div>
+</div>
+</section>
+<!-- Search and Filters -->
+<section class="mt-6 space-y-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-12 pl-10 pr-4 bg-white border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none font-body-md" placeholder="Поиск помещения или оборудования" type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide no-scrollbar">
+<button class="whitespace-nowrap px-4 py-2 bg-primary text-white rounded-full font-label-sm text-sm">Все</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white border border-outline-variant text-secondary rounded-full font-label-sm text-sm">В работе</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white border border-outline-variant text-secondary rounded-full font-label-sm text-sm flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-error"></span> С расхождениями
+                </button>
+<button class="whitespace-nowrap px-4 py-2 bg-white border border-outline-variant text-secondary rounded-full font-label-sm text-sm">Не начато</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white border border-outline-variant text-secondary rounded-full font-label-sm text-sm">Завершено</button>
+<button class="whitespace-nowrap px-4 py-2 bg-white border border-outline-variant text-secondary rounded-full font-label-sm text-sm">Не отправлено</button>
+</div>
+</section>
+<!-- Main Section: Помещения зоны -->
+<section class="mt-6">
+<h3 class="font-h2-bold text-h2-bold mb-4 mt-2">Помещения зоны</h3>
+<div class="space-y-3">
+<!-- Room 1: Featured -->
+<div class="bg-white border-l-4 border-l-primary rounded-xl shadow-sm border border-outline-variant p-5 mb-4"><div class="flex justify-between items-start mb-3">
+<div>
+<h4 class="font-button-text text-on-surface">2.01.29 — Кабинет врача</h4>
+</div>
+<span class="bg-blue-50 text-primary text-[11px] font-bold px-2 py-1 rounded border border-primary/20">В РАБОТЕ</span>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div class="space-y-1">
+<p class="text-[10px] text-secondary uppercase font-bold">Прогресс</p>
+<p class="font-label-sm">3 из 8 позиций проверено</p>
+<div class="w-full bg-surface-variant h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 37.5%"></div>
+</div>
+</div>
+<div class="space-y-1">
+<p class="text-[10px] text-secondary uppercase font-bold">Инфо</p>
+<div class="flex flex-col gap-0.5">
+<span class="font-data-compact text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span> 1 расхождение
+                                </span>
+<span class="font-data-compact text-amber-600 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">cloud_off</span> 1 не отправлено
+                                </span>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary text-white font-button-text h-10 rounded-lg active:opacity-90 transition-opacity">
+                        Продолжить осмотр
+                    </button></div>
+<!-- Room 2 -->
+<div class="bg-white rounded-xl border border-outline-variant p-4 flex items-center justify-between active:bg-slate-50 transition-colors shadow-sm"><div class="flex gap-3 items-center">
+<div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600">check_circle</span>
+</div>
+<div>
+<h4 class="font-label-sm text-on-surface">2.01.30 — Процедурная</h4>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-bold text-green-600 uppercase">Завершено</span>
+<span class="text-secondary text-[11px]">•</span>
+<p class="text-[11px] text-secondary">12 из 12 позиций проверено</p>
+</div>
+<span class="text-[10px] text-green-600 font-medium">Синхронизировано</span>
+</div>
+</div>
+<button class="text-primary font-bold text-xs uppercase">Открыть</button></div>
+<!-- Room 3 -->
+<div class="bg-white rounded-xl border border-outline-variant p-4 shadow-sm"><div class="flex items-center justify-between mb-3">
+<div class="flex gap-3 items-center">
+<div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-400">meeting_room</span>
+</div>
+<div>
+<h4 class="font-label-sm text-on-surface">2.01.31 — Палата наблюдения</h4>
+<p class="text-[11px] text-secondary">0 из 6 позиций проверено • Не начато</p>
+</div>
+</div>
+<button class="bg-primary text-white text-xs font-bold px-4 py-2 rounded-lg">Начать осмотр</button>
+</div></div>
+<!-- Room 4 -->
+<div class="bg-white rounded-xl border border-outline-variant p-4 flex items-center justify-between active:bg-slate-50 transition-colors shadow-sm"><div class="flex gap-3 items-center">
+<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">pending</span>
+</div>
+<div>
+<h4 class="font-label-sm text-on-surface">2.01.32 — Пост медсестры</h4>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-bold text-primary uppercase">В работе</span>
+<span class="text-secondary text-[11px]">•</span>
+<p class="text-[11px] text-secondary">5 из 9 позиций проверено</p>
+</div>
+<span class="text-[10px] text-amber-600 font-medium">2 изменения не отправлены</span>
+</div>
+</div>
+<button class="text-primary font-bold text-xs uppercase">Открыть</button></div>
+<!-- Room 5 -->
+<div class="bg-white rounded-xl border border-outline-variant p-4 border-l-4 border-l-error shadow-sm flex items-center justify-between"><div class="flex gap-3 items-center">
+<div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+<span class="material-symbols-outlined text-error">report_problem</span>
+</div>
+<div>
+<h4 class="font-label-sm text-on-surface">2.01.33 — Склад расходных материалов</h4>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-bold text-error uppercase">С расхождениями</span>
+<span class="text-secondary text-[11px]">•</span>
+<p class="text-[11px] text-secondary">7 из 10 позиций проверено</p>
+</div>
+<span class="text-[10px] text-error font-medium">2 расхождения</span>
+</div>
+</div>
+<button class="text-primary font-bold text-xs uppercase">Открыть</button></div>
+</div>
+</section>
+<!-- Быстрый доступ Section -->
+<section class="mt-8 mb-8">
+<h3 class="font-h2-bold text-h2-bold mb-4 mt-2 text-on-surface">Быстрый доступ</h3>
+<div class="grid grid-cols-2 gap-2">
+<button class="bg-surface-container-low p-3 rounded-lg flex items-center gap-2 active:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary text-xl">skip_next</span>
+<span class="text-[13px] font-medium text-on-surface">След. помещение</span>
+</button>
+<button class="bg-surface-container-low p-3 rounded-lg flex items-center gap-2 active:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-error text-xl">filter_alt</span>
+<span class="text-[13px] font-medium text-on-surface">С расхождениями</span>
+</button>
+<button class="bg-surface-container-low p-3 rounded-lg flex items-center gap-2 active:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-amber-600 text-xl">cloud_upload</span>
+<span class="text-[13px] font-medium text-on-surface">Не отправлено</span>
+</button>
+<button class="bg-surface-container-low p-3 rounded-lg flex items-center gap-2 active:bg-surface-container transition-colors border border-outline-variant"><span class="material-symbols-outlined text-green-600 text-xl">check_box</span><span class="text-[13px] font-medium text-on-surface">Завершить зону</span></button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 pb-safe bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]"><button class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-xl px-3 py-1 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">corporate_fare</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Объекты</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-700 dark:hover:text-blue-300 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Инспекции</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-700 dark:hover:text-blue-300 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">history</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">История</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-700 dark:hover:text-blue-300 active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">person</span>
+<span class="font-['Inter'] text-[10px] font-medium mt-1">Профиль</span>
+</button></nav>
+<!-- FAB Suppression: Not rendered on details/list screens per protocol -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center p-margin-mobile bg-black/60 backdrop-blur-[2px]">
+<div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl flex flex-col items-center p-6 border border-white/20">
+<h2 class="font-h1-bold text-h1-bold text-on-surface text-center mb-1">Завершить зону?</h2>
+<p class="font-body-md text-body-md text-on-surface-variant text-center mb-4">Вы уверены, что хотите завершить осмотр зоны?</p>
+<div class="w-full bg-surface-container-low rounded-xl p-4 mb-4">
+<div class="mb-3">
+<p class="text-xs font-bold text-secondary uppercase tracking-wider mb-0.5">Корпус А • 2 этаж</p>
+<h3 class="font-button-text text-on-surface">Приемное отделение</h3>
+</div>
+<div class="space-y-1 mb-4">
+<div class="flex justify-between items-end text-[12px]">
+<span class="text-secondary font-medium">Прогресс обхода</span>
+<span class="text-primary font-bold">75%</span>
+</div>
+<div class="w-full bg-surface-variant h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full" style="width: 75%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-y-2 gap-x-4 border-t border-outline-variant/30 pt-3">
+<div class="flex items-center gap-2 text-[13px]">
+<span class="material-symbols-outlined text-[18px] text-primary">meeting_room</span>
+<span class="text-on-surface">12 из 16</span>
+</div>
+<div class="flex items-center gap-2 text-[13px]">
+<span class="material-symbols-outlined text-[18px] text-outline">pending_actions</span>
+<span class="text-on-surface">4 осталось</span>
+</div>
+<div class="flex items-center gap-2 text-[13px]">
+<span class="material-symbols-outlined text-[18px] text-error">report</span>
+<span class="text-error font-medium">3 расхождения</span>
+</div>
+<div class="flex items-center gap-2 text-[13px]">
+<span class="material-symbols-outlined text-[18px] text-amber-600">cloud_off</span>
+<span class="text-amber-700">2 не отправлено</span>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-3 p-3 bg-blue-50/50 rounded-lg border border-blue-100 mb-6 w-full">
+<span class="material-symbols-outlined text-primary text-[20px]">info</span>
+<p class="text-sm text-blue-900 leading-snug">После завершения зона будет отмечена как завершённая. Вы сможете вернуться к ней позже.</p>
+</div>
+<div class="flex flex-col w-full gap-3">
+<button class="w-full h-12 bg-primary text-white rounded-xl font-button-text text-button-text active:scale-[0.98] transition-transform">
+                Да, завершить
+            </button>
+<button class="w-full h-12 bg-white border border-outline text-on-surface-variant rounded-xl font-button-text text-button-text active:scale-[0.98] transition-transform">
+                Нет, вернуться к зоне
+            </button>
+</div>
+</div>
+</div></body></html>

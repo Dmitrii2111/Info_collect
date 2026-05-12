@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>InfoCollect - Структура объекта</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container": "#eeedf7",
+                        "surface-bright": "#fbf8ff",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffa583",
+                        "secondary-fixed": "#d5e3fc",
+                        "secondary": "#515f74",
+                        "on-primary-fixed-variant": "#173bab",
+                        "tertiary-container": "#872d00",
+                        "surface-variant": "#e3e1eb",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-surface": "#1a1b22",
+                        "on-background": "#1a1b22",
+                        "surface-container-low": "#f4f2fc",
+                        "primary": "#00288e",
+                        "inverse-primary": "#b8c4ff",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#3755c3",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#611e00",
+                        "secondary-container": "#d5e3fc",
+                        "outline-variant": "#c4c5d5",
+                        "outline": "#757684",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-primary-fixed": "#001453",
+                        "surface-container-high": "#e8e7f1",
+                        "surface": "#fbf8ff",
+                        "on-surface-variant": "#444653",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "error": "#ba1a1a",
+                        "primary-container": "#1e40af",
+                        "inverse-surface": "#2f3037",
+                        "background": "#fbf8ff",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-error": "#ffffff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "on-secondary-container": "#57657a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#dad9e3",
+                        "on-primary-container": "#a8b8ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "touch-target-min": "48px",
+                        "unit": "8px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "stack-sm": "8px",
+                        "stack-lg": "24px"
+                    },
+                    "fontFamily": {
+                        "h1-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "h2-bold": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h1-bold": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "h2-bold": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "data-compact": ["13px", {"lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400"}],
+                        "button-text": ["16px", {"lineHeight": "20px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8ff; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .thumb-zone { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none docked full-width top-0 sticky z-50 flex justify-between items-center h-16 px-4 w-full">
+<div class="flex items-center gap-4">
+<button class="active:opacity-70 transition-all duration-200 p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Inter'] text-base font-semibold tracking-tight text-slate-900 dark:text-white">Структура объекта</h1>
+</div>
+<button class="active:opacity-70 transition-all duration-200 p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 text-blue-800 dark:text-blue-400">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+</button>
+</header>
+<main class="px-margin-mobile pt-stack-md thumb-zone">
+<!-- Context Summary Card -->
+<section class="bg-surface-container-lowest rounded-xl p-4 shadow-[0px_2px_4px_rgba(0,0,0,0.05)] border border-outline-variant mb-stack-md">
+<div class="flex justify-between items-start mb-2">
+<div>
+<h2 class="font-h2-bold text-h2-bold text-on-surface">Корпус А</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Основной лечебный корпус</p>
+</div>
+<div class="bg-blue-50 text-primary px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[18px]" data-icon="pending_actions">pending_actions</span>
+<span class="font-data-compact text-data-compact font-semibold">12 не отправлено</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-y-3 gap-x-gutter my-4">
+<div class="flex flex-col">
+<span class="font-data-compact text-data-compact text-on-surface-variant">6 этажей</span>
+<span class="font-label-sm text-label-sm font-bold text-on-surface">58 помещений</span>
+</div>
+<div class="flex flex-col">
+<span class="font-data-compact text-data-compact text-on-surface-variant">340 позиций</span>
+<span class="font-label-sm text-label-sm font-bold text-error">8 расхождений</span>
+</div>
+</div>
+<div class="space-y-2 mb-stack-md">
+<div class="flex justify-between items-center">
+<span class="font-data-compact text-data-compact text-on-surface-variant">42 из 58 помещений проверено</span>
+<span class="font-data-compact text-data-compact font-bold text-primary">72%</span>
+</div>
+<div class="w-full bg-surface-container-high h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full w-[72%]"></div>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary font-button-text text-button-text h-12 rounded-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-transform">
+                Продолжить обход
+                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</section>
+<!-- Search & Filters -->
+<section class="mb-stack-md space-y-3">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full h-12 pl-10 pr-4 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent font-body-md text-body-md" placeholder="Поиск этажа, зоны или помещения" type="text"/>
+</div>
+<div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide no-scrollbar">
+<span class="bg-primary text-on-primary px-4 py-1.5 rounded-full font-label-sm text-label-sm whitespace-nowrap">Все</span>
+<span class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full font-label-sm text-label-sm whitespace-nowrap">В работе</span>
+<span class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full font-label-sm text-label-sm whitespace-nowrap">С расхождениями</span>
+<span class="bg-surface-container-high text-on-surface-variant px-4 py-1.5 rounded-full font-label-sm text-label-sm whitespace-nowrap">Не начато</span>
+</div>
+</section>
+<!-- Floors and Zones -->
+<section class="space-y-stack-sm">
+<h3 class="font-h2-bold text-h2-bold text-on-surface mb-2">Этажи и зоны</h3>
+<!-- Floor 1 (Closed) -->
+<div class="bg-white border border-outline-variant rounded-xl p-4 flex items-center justify-between opacity-80">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-700">
+<span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-on-surface">1 этаж</p>
+<p class="font-data-compact text-data-compact text-on-surface-variant">12 из 12 помещений • Завершено</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="sync_done">sync</span>
+</div>
+<!-- Floor 2 (Expanded) -->
+<div class="bg-white border-2 border-primary rounded-xl overflow-hidden shadow-md">
+<div class="p-4 flex items-center justify-between bg-primary-container/10">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined font-bold" data-icon="change_history">change_history</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-on-surface">2 этаж</p>
+<p class="font-data-compact text-data-compact text-primary font-medium">18 из 24 помещений • В работе</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="expand_less">expand_less</span>
+</div>
+<div class="px-4 pb-4 bg-white space-y-3 pt-2">
+<!-- Metrics for expanded floor -->
+<div class="flex gap-4 border-b border-outline-variant pb-3 mb-2">
+<div class="flex items-center gap-1 text-error">
+<span class="material-symbols-outlined text-[16px]" data-icon="error">error</span>
+<span class="font-data-compact text-data-compact font-bold">5 расхождений</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="cloud_upload">cloud_upload</span>
+<span class="font-data-compact text-data-compact">8 не отправлено</span>
+</div>
+</div>
+<!-- Sub-zone 1 -->
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center justify-between border border-outline-variant active:bg-surface-container-high transition-colors">
+<div class="space-y-1">
+<p class="font-label-sm text-label-sm font-bold text-on-surface">Приемное отделение</p>
+<div class="flex items-center gap-2">
+<span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-bold uppercase">В работе</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant">12 из 16</span>
+<span class="font-data-compact text-data-compact text-error font-medium">3 расх.</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Sub-zone 2 -->
+<div class="bg-surface-container-low rounded-lg p-3 flex items-center justify-between border border-outline-variant">
+<div class="space-y-1">
+<p class="font-label-sm text-label-sm font-bold text-on-surface">Кабинеты врачей</p>
+<div class="flex items-center gap-2">
+<span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded font-bold uppercase">В работе</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant">6 из 8</span>
+</div>
+<p class="font-data-compact text-[11px] text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="sync_problem">sync_problem</span>
+                                2 изменения не отправлены
+                            </p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Floor 3 (Closed) -->
+<div class="bg-white border border-outline-variant rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="radio_button_unchecked">radio_button_unchecked</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-on-surface">3 этаж</p>
+<p class="font-data-compact text-data-compact text-on-surface-variant">0 из 10 помещений • Не начато</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Floor 4 (Closed/Warning) -->
+<div class="bg-white border border-error-container rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="report_problem" style="font-variation-settings: 'FILL' 1;">report_problem</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm font-bold text-on-surface">4 этаж</p>
+<p class="font-data-compact text-data-compact text-error font-medium">7 из 9 • С расхождениями</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<!-- Floor 5 & 6 Compact -->
+<div class="flex gap-stack-sm">
+<div class="flex-1 bg-white border border-outline-variant rounded-xl p-3 flex justify-between items-center opacity-60">
+<span class="font-label-sm text-label-sm font-bold">5 этаж • технический</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="flex-1 bg-white border border-outline-variant rounded-xl p-3 flex justify-between items-center opacity-60">
+<span class="font-label-sm text-label-sm font-bold">6 этаж • технический</span>
+<span class="material-symbols-outlined text-[18px]" data-icon="more_horiz">more_horiz</span>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-2 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-1px_3px_rgba(0,0,0,0.05)] z-50">
+<!-- Объекты Active -->
+<a class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-xl px-3 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="home_work" style="font-variation-settings: 'FILL' 1;">home_work</span>
+<span class="font-['Inter'] text-[10px] font-medium">Объекты</span>
+</a>
+<!-- Инспекции -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-700 dark:hover:text-blue-300 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="assignment">assignment</span>
+<span class="font-['Inter'] text-[10px] font-medium">Инспекции</span>
+</a>
+<!-- Синхро -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-700 dark:hover:text-blue-300 active:scale-95 transition-transform duration-150" href="#">
+<div class="relative">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+</div>
+<span class="font-['Inter'] text-[10px] font-medium">Синхро</span>
+</a>
+<!-- Профиль -->
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-700 dark:hover:text-blue-300 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[10px] font-medium">Профиль</span>
+</a>
+</nav>
+<!-- Map Context Decorator -->
+<div class="fixed top-0 left-0 w-full h-full -z-10 opacity-[0.03] pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="A highly detailed architectural site plan and blueprint overlay on a neutral background. The visual style is professional, technical, and minimalist, utilizing clean lines and geometric shapes that represent a large hospital complex layout. The lighting is flat and even, characteristic of an engineering document or a high-end corporate digital interface, maintaining a sophisticated light-mode aesthetic with soft grey tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB10dzj8znfvkHHjs3vhkKsMBWhf-8ozk8d_OBF-Sfc4ImdD4_6j9fy2lmj4DQ_dBHKiLPHzQdiBqo77ghA1UYbzFW5yja-1LMY9s3d3Ou4d8U-E_ihVXvdAeS4xa0DXyz5YRiMpBlVjhf20oB4I2ySNG1Nm0pS0-14V33VHDvpp6WfHyPyHtBBNtfuQPX3KRaEpUQietLhmQMITONUBp5miwn0JOu-Vg9nuAZFbWm5xURCrX8MQGW37GEHAKGYZlonppbH7pjinH_y"/>
+</div>
+</body></html>

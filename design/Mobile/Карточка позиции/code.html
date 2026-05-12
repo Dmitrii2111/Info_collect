@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f4f2fc",
+                        "primary-fixed": "#dde1ff",
+                        "primary": "#00288e",
+                        "secondary-fixed": "#d5e3fc",
+                        "primary-container": "#1e40af",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#ffa583",
+                        "inverse-on-surface": "#f1f0fa",
+                        "inverse-primary": "#b8c4ff",
+                        "secondary": "#515f74",
+                        "on-primary-fixed-variant": "#173bab",
+                        "tertiary": "#611e00",
+                        "background": "#fbf8ff",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2f3037",
+                        "on-surface-variant": "#444653",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "tertiary-fixed": "#ffdbce",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1a1b22",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "outline-variant": "#c4c5d5",
+                        "tertiary-container": "#872d00",
+                        "outline": "#757684",
+                        "secondary-container": "#d5e3fc",
+                        "surface-variant": "#e3e1eb",
+                        "on-secondary-container": "#57657a",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "surface-container-highest": "#e3e1eb",
+                        "error-container": "#ffdad6",
+                        "on-primary-container": "#a8b8ff",
+                        "surface-container-high": "#e8e7f1",
+                        "on-surface": "#1a1b22",
+                        "on-primary-fixed": "#001453",
+                        "surface-container": "#eeedf7",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "surface-tint": "#3755c3",
+                        "surface": "#fbf8ff",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-dim": "#dad9e3",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "touch-target-min": "48px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "margin-mobile": "16px",
+                        "unit": "8px",
+                        "stack-sm": "8px"
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #fbf8ff; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .touch-target { min-height: 48px; min-width: 48px; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface select-none pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-4 h-14 bg-white border-b border-slate-200 shadow-sm">
+<div class="flex items-center gap-4">
+<button class="touch-target flex items-center justify-center active:opacity-70 transition-all duration-200 text-blue-800">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-['Inter'] text-sm font-medium tracking-tight text-blue-900 font-bold text-lg">Карточка позиции</h1>
+</div>
+<div class="flex items-center">
+<button class="touch-target flex items-center justify-center active:opacity-70 transition-all duration-200 text-blue-800">
+<span class="material-symbols-outlined text-blue-800" data-icon="sync">sync</span>
+</button>
+</div>
+</header>
+<main class="mt-20 px-4 space-y-4">
+<!-- Main Item Summary Card -->
+<section class="bg-white rounded-lg border border-slate-200 shadow-[0px_2px_4px_rgba(0,0,0,0.05)] p-4">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="font-data-compact text-data-compact text-outline uppercase tracking-wider text-[10px]">EQ-201-05</p>
+<h2 class="font-h2-bold text-h2-bold text-on-surface mt-1">Монитор пациента</h2>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="px-2 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-full border border-amber-200">Спорная позиция</span>
+<span class="px-2 py-1 bg-error-container text-error text-[11px] font-bold rounded-full">Требует решения</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-secondary mb-4">
+<span class="material-symbols-outlined text-[18px]" data-icon="location_on">location_on</span>
+<span class="font-label-sm text-label-sm">Склад временного хранения</span>
+</div><div class="flex items-center gap-2 text-error mb-4">
+<span class="material-symbols-outlined text-[18px]" data-icon="help_outline">help_outline</span>
+<span class="font-label-sm text-label-sm">Плановое место: требуется назначение</span>
+</div>
+<!-- Quantity Block (High Visibility) -->
+<div class="bg-primary-container/10 border border-primary-container/20 rounded-xl p-4 flex flex-col items-center justify-center text-center">
+<span class="text-primary font-h1-bold text-h1-bold">Количество: 300 шт.</span>
+<span class="font-label-sm text-label-sm text-primary/70 mt-1">Одна карточка позиции</span>
+</div>
+</section>
+<!-- Problem Section (Warning Card) -->
+<section class="bg-error-container/30 border-l-4 border-error p-4 rounded-lg flex items-start gap-3">
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+<div>
+<p class="font-button-text text-button-text text-error text-sm">Обнаружено несоответствие</p>
+<p class="font-body-md text-body-md text-on-surface mt-1 text-sm">5 единиц требуют сверки. Данные позиции отличаются от данных сервера.
+<p class="mt-2 text-xs opacity-80">Проверьте количество, серийные номера или назначение перед перемещением.</p></p>
+</div>
+</section>
+<!-- Bento Layout Details & Sync -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Details Section -->
+<section class="bg-white rounded-lg border border-slate-200 p-4">
+<h3 class="font-label-sm text-label-sm text-outline mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="info">info</span>
+                    Информация о позиции
+                </h3>
+<div class="space-y-3">
+<div class="flex justify-between border-b border-slate-50 pb-2">
+<span class="text-secondary text-sm">Тип</span>
+<span class="text-on-surface font-medium text-sm">Медоборудование</span>
+</div>
+<div class="flex justify-between border-b border-slate-50 pb-2">
+<span class="text-secondary text-sm">Статус</span>
+<span class="text-on-surface font-medium text-sm">На складе</span>
+</div>
+<div class="flex justify-between border-b border-slate-50 pb-2">
+<span class="text-secondary text-sm">Партия</span>
+<span class="text-on-surface font-medium text-sm">B-2024-05</span>
+</div>
+<div class="flex justify-between">
+<span class="text-secondary text-sm">Ответственный</span>
+<span class="text-on-surface font-medium text-sm">Иван Иванов</span>
+</div>
+<div class="flex justify-between pt-2">
+<span class="text-secondary text-sm">Последнее обновление</span>
+<span class="text-on-surface font-medium text-sm">Сегодня, 09:42</span>
+</div></div>
+</section>
+<!-- Quantity Breakdown -->
+<section class="bg-white rounded-lg border border-slate-200 p-4">
+<h3 class="font-label-sm text-label-sm text-outline mb-4">Количество</h3>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-on-surface text-sm">Всего</span>
+<div class="flex items-center gap-2 flex-grow mx-4">
+<div class="h-1 bg-slate-100 flex-grow rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full"></div>
+</div>
+</div>
+<span class="font-data-compact text-data-compact font-bold">300</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface text-sm">Доступно</span>
+<div class="flex items-center gap-2 flex-grow mx-4">
+<div class="h-1 bg-slate-100 flex-grow rounded-full overflow-hidden">
+<div class="h-full bg-blue-500 w-[93%]"></div>
+</div>
+</div>
+<span class="font-data-compact text-data-compact font-bold">280</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface text-sm">Резерв</span>
+<div class="flex items-center gap-2 flex-grow mx-4">
+<div class="h-1 bg-slate-100 flex-grow rounded-full overflow-hidden">
+<div class="h-full bg-slate-400 w-[5%]"></div>
+</div>
+</div>
+<span class="font-data-compact text-data-compact font-bold">15</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-on-surface text-sm">Спорные</span>
+<div class="flex items-center gap-2 flex-grow mx-4">
+<div class="h-1 bg-slate-100 flex-grow rounded-full overflow-hidden">
+<div class="h-full bg-error w-[2%]"></div>
+</div>
+</div>
+<span class="font-data-compact text-data-compact font-bold text-error">5</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Sync Status Section -->
+<section class="bg-surface-container-low rounded-lg p-4 border border-slate-200">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="px-2 py-1 bg-slate-200 text-slate-700 text-[10px] font-bold rounded uppercase">Не синхронизировано</span>
+</div>
+<span class="text-error flex items-center gap-1 text-[12px] font-semibold">
+<span class="material-symbols-outlined text-[16px]" data-icon="sync_problem">sync_problem</span>
+                    Нужна синхронизация
+                </span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-white p-3 rounded-lg border border-slate-100">
+<p class="text-outline text-[11px]">Ожидают отправки</p>
+<p class="text-xl font-bold text-primary">2</p>
+</div>
+<div class="bg-white p-3 rounded-lg border border-slate-100">
+<p class="text-outline text-[11px]">Конфликты данных</p>
+<p class="text-xl font-bold text-error">1</p>
+</div>
+</div>
+</section>
+<!-- Activity Section -->
+<section class="bg-white rounded-lg border border-slate-200 p-4 opacity-70">
+<h3 class="font-label-sm text-label-sm text-outline mb-4">Последние действия</h3>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-primary mt-1.5"></div>
+<div class="w-0.5 h-full bg-slate-100 mt-1"></div>
+</div>
+<div>
+<p class="text-sm font-medium text-on-surface">Создано расхождение</p>
+<p class="text-xs text-outline">Иван Иванов • Сегодня, 10:45</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-slate-300 mt-1.5"></div>
+</div>
+<div>
+<p class="text-sm font-medium text-on-surface">Инвентаризация завершена</p>
+<p class="text-xs text-outline">Система • Вчера, 18:20</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Actions Section -->
+<section class="flex flex-col gap-3 pt-4">
+<button class="bg-primary text-on-primary font-button-text py-4 rounded-lg flex items-center justify-center gap-2 active:opacity-90 transition-opacity">
+<span class="material-symbols-outlined" data-icon="open_in_new">open_in_new</span>
+                Открыть расхождение
+            </button>
+<div class="grid grid-cols-2 gap-3">
+<button class="bg-white border border-slate-200 text-primary font-button-text py-3 rounded-lg flex items-center justify-center gap-2 active:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="move_up">move_up</span>
+                    Переместить
+                </button>
+<button class="bg-white border border-slate-200 text-primary font-button-text py-3 rounded-lg flex items-center justify-center gap-2 active:bg-slate-50 transition-colors"><span class="material-symbols-outlined text-[20px]" data-icon="assignment_ind">assignment_ind</span>
+                    Назначить</button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-2 pb-safe bg-white border-t border-slate-200 shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center bg-blue-50 text-blue-800 rounded-lg px-3 py-1 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="domain" style="font-variation-settings: 'FILL' 1;">domain</span>
+<span class="font-['Inter'] text-[10px] font-semibold">Объекты</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-3 py-1 hover:bg-slate-100 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-['Inter'] text-[10px] font-semibold">Инспекции</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-3 py-1 hover:bg-slate-100 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-['Inter'] text-[10px] font-semibold">История</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 px-3 py-1 hover:bg-slate-100 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[10px] font-semibold">Профиль</span>
+</a>
+</nav>
+</body></html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html><html lang="ru"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Обход — список помещений</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e3e1eb",
+                      "on-secondary-container": "#57657a",
+                      "on-secondary-fixed-variant": "#3a485b",
+                      "surface-container-low": "#f4f2fc",
+                      "outline": "#757684",
+                      "surface-container": "#eeedf7",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#e8e7f1",
+                      "on-secondary-fixed": "#0d1c2e",
+                      "primary-fixed-dim": "#b8c4ff",
+                      "on-error-container": "#93000a",
+                      "inverse-primary": "#b8c4ff",
+                      "tertiary-fixed": "#ffdbce",
+                      "surface-bright": "#fbf8ff",
+                      "surface": "#fbf8ff",
+                      "error-container": "#ffdad6",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#f1f0fa",
+                      "primary-container": "#1e40af",
+                      "on-surface-variant": "#444653",
+                      "on-primary-container": "#a8b8ff",
+                      "on-tertiary-fixed": "#380d00",
+                      "error": "#ba1a1a",
+                      "background": "#fbf8ff",
+                      "tertiary-container": "#872d00",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-tint": "#3755c3",
+                      "outline-variant": "#c4c5d5",
+                      "on-tertiary-container": "#ffa583",
+                      "secondary-fixed-dim": "#b9c7df",
+                      "on-primary-fixed": "#001453",
+                      "on-primary-fixed-variant": "#173bab",
+                      "secondary-container": "#d5e3fc",
+                      "primary": "#00288e",
+                      "primary-fixed": "#dde1ff",
+                      "surface-variant": "#e3e1eb",
+                      "tertiary": "#611e00",
+                      "secondary": "#515f74",
+                      "tertiary-fixed-dim": "#ffb59a",
+                      "on-tertiary-fixed-variant": "#802a00",
+                      "on-background": "#1a1b22",
+                      "inverse-surface": "#2f3037",
+                      "on-surface": "#1a1b22",
+                      "on-secondary": "#ffffff",
+                      "surface-dim": "#dad9e3",
+                      "secondary-fixed": "#d5e3fc"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "24px",
+                      "stack-sm": "8px",
+                      "unit": "8px",
+                      "stack-md": "16px",
+                      "touch-target-min": "48px",
+                      "margin-mobile": "16px",
+                      "gutter": "12px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "button-text": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "h2-bold": [
+                              "Inter"
+                      ],
+                      "h1-bold": [
+                              "Inter"
+                      ],
+                      "data-compact": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "button-text": [
+                              "16px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "h2-bold": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "h1-bold": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "data-compact": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Hide scrollbar for horizontal scroll areas but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="pb-24"> <!-- Padding for Bottom Nav -->
+<!-- TopAppBar -->
+<header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-4 h-16 max-w-full">
+<button class="flex items-center justify-center min-h-[48px] min-w-[48px] text-blue-800 hover:bg-slate-50 transition-colors rounded-full -ml-2" style="">
+<span class="material-symbols-outlined" style="">arrow_back</span>
+</button>
+<h1 class="font-['Inter'] antialiased text-sm font-semibold tracking-tight text-blue-800" style="">Обход</h1>
+<button class="flex items-center justify-center min-h-[48px] px-2 text-blue-800 hover:bg-slate-50 transition-colors rounded" style="">
+<span class="material-symbols-outlined mr-1 text-sm" style="">sync</span>
+<span class="font-label-sm text-label-sm" style=""><br></span>
+</button>
+</div>
+<!-- Status Chip Below Bar -->
+<div class="px-margin-mobile pb-stack-sm flex items-center justify-center">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-100" style="">
+<div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                Онлайн • 12 изменений ожидают отправки
+            </div>
+</div>
+</header>
+<main class="px-margin-mobile pt-stack-md space-y-stack-lg max-w-3xl mx-auto">
+<!-- Zone Summary Card -->
+<section class="bg-white rounded-lg border border-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.05)] overflow-hidden">
+<div class="space-y-stack-sm p-3">
+<div>
+<h2 class="font-h2-bold text-h2-bold text-on-surface" style="">Корпус А • 2 этаж</h2>
+<p class="font-body-md text-body-md text-on-surface-variant" style="">Приемное отделение</p>
+</div>
+<!-- Progress Section -->
+<div class="pt-stack-sm space-y-2">
+<div class="flex justify-between items-end">
+<span class="font-label-sm text-label-sm text-on-surface" style="">Прогресс обхода</span>
+<span class="font-data-compact text-data-compact font-medium text-primary" style="">38%</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 38%"></div>
+</div>
+<p class="font-data-compact text-data-compact text-on-surface-variant" style="">16 из 42 помещений проверено</p>
+</div>
+<!-- Metrics Grid -->
+<div class="grid grid-cols-2 gap-gutter pt-stack-sm pb-stack-sm">
+<div class="bg-surface-container-low p-3 rounded flex flex-col justify-between h-full">
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">Всего</span>
+<span class="font-h2-bold text-h2-bold text-on-surface" style="">42 <span class="font-body-md text-body-md font-normal text-on-surface-variant" style="">пом.</span></span>
+</div>
+<div class="bg-surface-container-low p-3 rounded flex flex-col justify-between h-full">
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">Проверено</span>
+<span class="font-h2-bold text-h2-bold text-emerald-600" style="">16</span>
+</div>
+<div class="bg-red-50 p-3 rounded flex flex-col justify-between h-full border border-red-100">
+<span class="font-data-compact text-data-compact text-red-800" style="">С расхождениями</span>
+<span class="font-h2-bold text-h2-bold text-red-700" style="">8</span>
+</div>
+<div class="bg-surface-container-low p-3 rounded flex flex-col justify-between h-full">
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">Не начато</span>
+<span class="font-h2-bold text-h2-bold text-on-surface" style="">18</span>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary font-button-text text-button-text h-touch-target-min rounded-lg flex items-center justify-center transition-opacity hover:opacity-90 active:opacity-80" style="">
+                    Продолжить с 2.01.29
+                </button>
+</div>
+</section>
+<!-- Search and Filters -->
+<section class="space-y-stack-sm">
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined" style="">search</span>
+</div>
+<input class="w-full bg-white border border-slate-200 text-on-surface font-body-md text-body-md rounded-lg h-12 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:border-primary placeholder-outline transition-shadow" placeholder="Поиск помещения или оборудования" type="text">
+</div>
+<!-- Filter Chips (Horizontal Scroll) -->
+<div class="flex overflow-x-auto hide-scrollbar gap-2 pb-2 -mx-margin-mobile px-margin-mobile">
+<button class="whitespace-nowrap bg-primary-container text-on-primary-container border border-primary-container font-label-sm text-label-sm px-4 h-8 rounded-full transition-colors flex-shrink-0" style="">
+                    Все
+                </button>
+<button class="whitespace-nowrap bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm px-4 h-8 rounded-full transition-colors flex-shrink-0" style="">
+                    Не начато
+                </button>
+<button class="whitespace-nowrap bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm px-4 h-8 rounded-full transition-colors flex-shrink-0" style="">
+                    В работе
+                </button>
+<button class="whitespace-nowrap bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm px-4 h-8 rounded-full transition-colors flex-shrink-0" style="">Расхождения</button>
+<button class="whitespace-nowrap bg-white text-on-surface-variant border border-slate-200 hover:bg-slate-50 font-label-sm text-label-sm px-4 h-8 rounded-full transition-colors flex-shrink-0" style="">
+                    Завершено
+                </button>
+</div>
+</section>
+<!-- Room List -->
+<section class="space-y-stack-sm">
+<!-- Card 1 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.05)] p-4 hover:bg-slate-50 transition-colors active:scale-[0.99]" href="#" style="">
+<div class="flex justify-between items-start mb-2 gap-4"><div class="flex flex-col gap-1"><h3 class="font-h2-bold text-body-md text-on-surface leading-tight" style="">2.01.29 - Кабинет врача</h3><span class="text-[10px] font-bold text-primary uppercase tracking-wide" style="">Продолжить</span></div><div class="flex items-center gap-2"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap shrink-0" style="">В работе</span><span class="material-symbols-outlined text-outline" style="">chevron_right</span></div></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]" style="">checklist</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">3 из 8 позиций проверено</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 rounded-full" style="width: 37.5%"></div>
+</div>
+<div class="flex items-center gap-1.5 mt-2">
+<span class="material-symbols-outlined text-red-600 text-[16px] fill" style="">warning</span>
+<span class="font-data-compact text-[12px] font-medium text-red-700" style="">Есть 1 расхождение</span>
+</div>
+</div>
+</a>
+<!-- Card 2 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.05)] p-4 hover:bg-slate-50 transition-colors active:scale-[0.99]" href="#" style="">
+<div class="flex justify-between items-start mb-2 gap-4"><h3 class="font-h2-bold text-body-md text-on-surface leading-tight" style="">2.01.30 - Процедурная</h3><div class="flex items-center gap-2"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap shrink-0" style="">Завершено</span><span class="material-symbols-outlined text-outline" style="">chevron_right</span></div></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-emerald-600 text-[18px]" style="">check_circle</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">12 из 12 позиций проверено</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 rounded-full" style="width: 100%"></div>
+</div>
+</div>
+</a>
+<!-- Card 3 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.05)] p-4 hover:bg-slate-50 transition-colors active:scale-[0.99]" href="#" style="">
+<div class="flex justify-between items-start mb-2 gap-4"><h3 class="font-h2-bold text-body-md text-on-surface leading-tight" style="">2.01.31 - Палата наблюдения</h3><div class="flex items-center gap-2"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap shrink-0" style="">Не начато</span><span class="material-symbols-outlined text-outline" style="">chevron_right</span></div></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]" style="">radio_button_unchecked</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">0 из 6 позиций проверено</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-slate-300 rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</a>
+<!-- Card 4 -->
+<a class="block bg-white rounded-lg border border-slate-200 shadow-[0_2px_4px_rgba(0,0,0,0.05)] p-4 hover:bg-slate-50 transition-colors active:scale-[0.99]" href="#" style="">
+<div class="flex justify-between items-start mb-2 gap-4"><h3 class="font-h2-bold text-body-md text-on-surface leading-tight" style="">2.01.32 - Пост медсестры</h3><div class="flex items-center gap-2"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 whitespace-nowrap shrink-0" style="">В работе</span><span class="material-symbols-outlined text-outline" style="">chevron_right</span></div></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]" style="">checklist</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">5 из 9 позиций проверено</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-amber-500 rounded-full" style="width: 55.5%"></div>
+</div>
+<div class="flex items-center gap-1.5 mt-2">
+<span class="material-symbols-outlined text-blue-600 text-[16px]" style="">cloud_sync</span>
+<span class="font-data-compact text-[12px] font-medium text-blue-700" style="">2 изменения не отправлены</span>
+</div>
+</div>
+</a>
+<!-- Card 5 -->
+<a class="block bg-white rounded-lg border border-red-200 shadow-[0_2px_4px_rgba(0,0,0,0.05)] p-4 hover:bg-red-50/50 transition-colors active:scale-[0.99] bg-red-50/30" href="#" style="">
+<div class="flex justify-between items-start mb-2 gap-4"><h3 class="font-h2-bold text-body-md text-on-surface leading-tight" style="">2.01.33 - Склад расходных материалов</h3><div class="flex items-center gap-2"><span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-100 text-red-800 border border-red-200 whitespace-nowrap shrink-0" style="">Есть расхождения</span><span class="material-symbols-outlined text-outline" style="">chevron_right</span></div></div>
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]" style="">checklist</span>
+<span class="font-data-compact text-data-compact text-on-surface-variant" style="">7 из 10 позиций проверено</span>
+</div>
+<div class="w-full h-1 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-red-500 rounded-full" style="width: 70%"></div>
+</div>
+</div>
+</a>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-3 bg-white border-t border-slate-200 shadow-[0_-1px_3px_0_rgba(0,0,0,0.05)] z-50 md:hidden pb-[calc(12px+env(safe-area-inset-bottom))]">
+<button class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 px-2 py-1 active:scale-95 transition-transform duration-150" style="">
+<span class="material-symbols-outlined mb-1" style="">home</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-wider" style="">Главная</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-lg px-2 py-1 active:scale-95 transition-transform duration-150" style="">
+<span class="material-symbols-outlined mb-1 fill" style="">fact_check</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-wider" style="">Обход</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 px-2 py-1 active:scale-95 transition-transform duration-150" style="">
+<span class="material-symbols-outlined mb-1" style="">inventory_2</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-wider" style="">Склад</span>
+</button>
+<button class="flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 px-2 py-1 active:scale-95 transition-transform duration-150" style="">
+<span class="material-symbols-outlined mb-1" style="">person</span>
+<span class="font-['Inter'] text-[10px] font-medium uppercase tracking-wider" style="">Профиль</span>
+</button>
+</nav>
+</body></html>

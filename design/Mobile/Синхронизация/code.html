@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="ru"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Синхронизация - InfoCollect</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#515f74",
+                        "on-surface-variant": "#444653",
+                        "background": "#fbf8ff",
+                        "tertiary-fixed-dim": "#ffb59a",
+                        "inverse-surface": "#2f3037",
+                        "surface-dim": "#dad9e3",
+                        "outline-variant": "#c4c5d5",
+                        "secondary-fixed-dim": "#b9c7df",
+                        "on-secondary-fixed-variant": "#3a485b",
+                        "on-primary-fixed-variant": "#173bab",
+                        "tertiary-container": "#872d00",
+                        "surface-container-high": "#e8e7f1",
+                        "on-secondary-container": "#57657a",
+                        "surface-container-highest": "#e3e1eb",
+                        "on-tertiary-fixed": "#380d00",
+                        "surface-container-low": "#f4f2fc",
+                        "on-surface": "#1a1b22",
+                        "on-error": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#d5e3fc",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#0d1c2e",
+                        "surface": "#fbf8ff",
+                        "outline": "#757684",
+                        "on-tertiary-fixed-variant": "#802a00",
+                        "surface-variant": "#e3e1eb",
+                        "inverse-primary": "#b8c4ff",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "surface-bright": "#fbf8ff",
+                        "inverse-on-surface": "#f1f0fa",
+                        "on-tertiary-container": "#ffa583",
+                        "tertiary-fixed": "#ffdbce",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary": "#611e00",
+                        "on-primary-container": "#a8b8ff",
+                        "error-container": "#ffdad6",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1a1b22",
+                        "on-primary-fixed": "#001453",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#3755c3",
+                        "surface-container": "#eeedf7",
+                        "primary-container": "#1e40af",
+                        "primary-fixed": "#dde1ff",
+                        "primary": "#00288e",
+                        "secondary-container": "#d5e3fc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "touch-target-min": "48px",
+                        "stack-md": "16px",
+                        "gutter": "12px",
+                        "unit": "8px",
+                        "stack-sm": "8px",
+                        "stack-lg": "24px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "h2-bold": ["Inter"],
+                        "h1-bold": ["Inter"],
+                        "body-md": ["Inter"],
+                        "data-compact": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "button-text": ["Inter"]
+                    },
+                    "fontSize": {
+                        "h2-bold": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "h1-bold": ["24px", { "lineHeight": "32px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "data-compact": ["13px", { "lineHeight": "18px", "letterSpacing": "0.02em", "fontWeight": "400" }],
+                        "label-sm": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "button-text": ["16px", { "lineHeight": "20px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background antialiased pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-4 h-14 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors duration-200 active:opacity-70">
+<button aria-label="Menu" class="w-12 h-12 flex items-center justify-center text-blue-700 dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-inter text-lg font-semibold tracking-tight text-blue-700 dark:text-blue-400 font-bold text-xl font-bold text-slate-900 dark:text-white">Синхронизация</h1>
+<button aria-label="Sync" class="w-12 h-12 flex items-center justify-center text-blue-700 dark:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
+<span class="material-symbols-outlined" data-icon="cloud_sync">cloud_sync</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="pt-16 px-margin-mobile">
+<!-- Status Summary Card -->
+<section class="bg-white rounded-xl border border-outline-variant p-stack-sm mt-stack-sm shadow-[0_2px_4px_rgba(0,0,0,0.05)]">
+<div class="flex justify-between items-start mb-unit"><div>
+<h2 class="font-h2-bold text-h2-bold text-on-surface">Состояние</h2>
+<p class="font-data-compact text-data-compact text-on-surface-variant">Обновлено: Сегодня, 09:42</p>
+</div>
+<div class="bg-[#e6f4ea] text-[#137333] px-3 py-1.5 rounded-full flex items-center gap-2 font-label-sm text-label-sm border border-[#137333]/20">
+<span class="w-2 h-2 rounded-full bg-[#137333] animate-pulse"></span>
+                    В сети
+                </div></div>
+<div class="grid grid-cols-4 gap-unit mt-unit"><div class="bg-surface-container-low p-1.5 rounded-lg text-center border border-outline-variant/30 flex flex-col justify-center">
+<span class="block font-label-sm text-label-sm font-bold text-primary">12</span>
+<span class="block text-[10px] leading-tight text-on-surface-variant">ожидают (локально)</span>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded-lg text-center border border-outline-variant/30 flex flex-col justify-center">
+<span class="block font-label-sm text-label-sm font-bold text-[#137333]">3</span>
+<span class="block text-[10px] leading-tight text-on-surface-variant">отправлено</span>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded-lg text-center border border-outline-variant/30 flex flex-col justify-center">
+<span class="block font-label-sm text-label-sm font-bold text-[#b06000]">2</span>
+<span class="block text-[10px] leading-tight text-on-surface-variant">конфликта</span>
+</div>
+<div class="bg-surface-container-low p-1.5 rounded-lg text-center border border-outline-variant/30 flex flex-col justify-center">
+<span class="block font-label-sm text-label-sm font-bold text-error">1</span>
+<span class="block text-[10px] leading-tight text-on-surface-variant">ошибка</span>
+</div></div>
+<p class="text-[11px] leading-tight text-outline mt-unit mb-unit text-center">Данные сохраняются локально на устройстве и будут отправлены при подключении к сети</p>
+<div class="flex flex-col gap-2"><button class="w-full h-10 bg-primary text-on-primary rounded-lg font-button-text text-sm flex items-center justify-center gap-2 shadow-sm shadow-primary/20 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="sync">sync</span>
+                    Синхронизировать сейчас
+                </button>
+<button class="w-full h-10 bg-white border border-outline-variant text-on-surface rounded-lg font-button-text text-sm flex items-center justify-center gap-2 active:bg-slate-50 transition-all"><span class="material-symbols-outlined text-error text-[18px]" data-icon="replay">replay</span>
+                    Повторить отправку</button></div>
+</section>
+<!-- Action Priority Note -->
+<p class="font-data-compact text-data-compact text-error mt-stack-md font-medium px-1">Требуют внимания: 1 ошибка, 2 конфликта</p>
+<!-- Queue Section -->
+<section class="mt-stack-sm">
+<h2 class="font-h2-bold text-h2-bold text-on-surface mb-stack-sm">Очередь изменений</h2>
+<!-- Filter Chips -->
+<div class="flex overflow-x-auto gap-unit pb-2 scrollbar-hide -mx-margin-mobile px-margin-mobile">
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full bg-primary-container text-on-primary-container font-label-sm text-sm">Все</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant font-label-sm text-sm">Ожидают отправки</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant font-label-sm text-sm">Ошибки</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant font-label-sm text-sm">Конфликты</button>
+<button class="whitespace-nowrap px-4 py-1.5 rounded-full border border-outline-variant text-on-surface-variant font-label-sm text-sm">Синхронизировано</button>
+</div>
+<!-- List Items -->
+<div class="mt-stack-sm flex flex-col gap-unit">
+<!-- Item 1 (Pending) -->
+<div class="bg-white rounded-lg border border-outline-variant p-stack-sm flex flex-col gap-1 shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#f29900]">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-base font-bold text-on-surface">2.01.29 • Щит освещения ЩО-1</h3>
+<span class="font-data-compact text-xs text-on-surface-variant">ID: EQ-201-02</span>
+</div>
+<span class="font-data-compact text-xs text-on-surface-variant">09:31</span>
+</div>
+<p class="font-body-md text-sm text-on-surface mt-1">Добавлен комментарий и фото</p>
+<div class="flex flex-col gap-0.5 mt-1">
+<div class="flex items-center gap-2">
+<span class="bg-[#fef7e0] text-[#b06000] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Ожидает отправки (локально)</span>
+</div>
+<span class="font-data-compact text-[11px] text-on-surface-variant italic">Уйдёт при появлении связи</span>
+</div>
+</div>
+<!-- Item 2 (Synced) -->
+<div class="bg-white rounded-lg border border-outline-variant p-stack-sm flex flex-col gap-1 shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#137333]">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-base font-bold text-on-surface">2.01.30 • Кондиционер LG</h3>
+<span class="font-data-compact text-xs text-on-surface-variant">ID: EQ-201-01</span>
+</div>
+<span class="font-data-compact text-xs text-on-surface-variant">09:42</span>
+</div>
+<p class="font-body-md text-sm text-on-surface mt-1">Обновлён серийный номер</p>
+<div class="flex flex-col gap-0.5 mt-1">
+<div class="flex items-center gap-2">
+<span class="bg-[#e6f4ea] text-[#137333] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">Синхронизировано</span>
+</div>
+<span class="font-data-compact text-[11px] text-on-surface-variant italic">Отправлено в 09:42</span>
+</div>
+</div>
+<!-- Item 3 (Conflict) -->
+<div class="bg-white rounded-lg border border-outline-variant p-stack-sm flex flex-col gap-1 shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-[#f29900]">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-base font-bold text-on-surface">2.01.33 • Монитор пациента</h3>
+<span class="font-data-compact text-xs text-on-surface-variant">ID: EQ-201-05</span>
+</div>
+<span class="font-data-compact text-xs text-on-surface-variant">09:44</span>
+</div>
+<p class="font-body-md text-sm text-on-surface mt-1">Обновление данных прибора</p>
+<p class="font-body-md text-sm text-[#b06000] font-semibold">Конфликт данных: Данные на сервере новее</p>
+<div class="flex flex-col gap-0.5 mt-1">
+<div class="flex items-center gap-2">
+<span class="bg-[#fef7e0] text-[#b06000] px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-[#b06000]/20">Конфликт</span>
+</div>
+<span class="font-data-compact text-[11px] text-[#b06000] italic">Требует выбора версии</span>
+</div>
+</div>
+<!-- Item 4 (Error) -->
+<div class="bg-white rounded-lg border border-outline-variant p-stack-sm flex flex-col gap-1 shadow-[0_1px_2px_rgba(0,0,0,0.05)] border-l-4 border-l-error"><div class="flex justify-between items-start">
+<div>
+<h3 class="font-label-sm text-base font-bold text-on-surface">2.01.32 • Тележка медицинская</h3>
+<span class="font-data-compact text-xs text-on-surface-variant">ID: EQ-201-04</span>
+</div>
+<span class="font-data-compact text-xs text-on-surface-variant">09:45</span>
+</div>
+<p class="font-body-md text-sm text-on-surface mt-1">Перемещение в другой блок</p>
+<p class="font-body-md text-sm text-error font-semibold">Сбой соединения</p>
+<div class="flex flex-col gap-0.5 mt-1">
+<div class="flex items-center gap-2">
+<span class="bg-error-container text-on-error-container px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-error/20">Ошибка</span>
+</div>
+<span class="font-data-compact text-[11px] text-error italic">Требуется повторная отправка</span>
+</div></div>
+</div>
+</section>
+<!-- Guide Card -->
+<section class="mt-stack-lg bg-primary-container/10 rounded-xl p-stack-sm border border-primary/20 mb-8 shadow-sm">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary" data-icon="wifi_off">wifi_off</span>
+<h3 class="font-label-sm text-sm font-bold text-primary">Работа без сети (офлайн)</h3>
+</div>
+<p class="font-data-compact text-xs text-on-surface-variant mb-2">Приложение поддерживает работу без подключения к интернету. Все изменения надежно сохраняются на вашем устройстве.</p>
+<ul class="list-disc pl-5 font-data-compact text-xs text-on-surface-variant space-y-1.5"><li><strong class="text-[#f29900]">Ожидает отправки:</strong> сохранено локально, уйдёт при появлении связи</li><li><strong class="text-[#b06000]">Конфликт:</strong> данные на сервере отличаются, нужно выбрать версию</li><li><strong class="text-error">Ошибка:</strong> сбой соединения или системы, требуется повторная отправка</li></ul>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-3 pb-safe bg-white/95 backdrop-blur-sm border-t border-slate-200 dark:border-slate-800 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] md:hidden">
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-600 dark:hover:text-blue-300 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="inventory_2">inventory_2</span>
+<span class="font-inter text-[10px] font-medium">Объекты</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-600 dark:hover:text-blue-300 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="fact_check">fact_check</span>
+<span class="font-inter text-[10px] font-medium">Инспекции</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-xl px-3 py-1 hover:text-blue-600 dark:hover:text-blue-300 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="sync" style="font-variation-settings: 'FILL' 1;">sync</span>
+<span class="font-inter text-[10px] font-medium">Синхро</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 px-3 py-1 hover:text-blue-600 dark:hover:text-blue-300 active:scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-inter text-[10px] font-medium">Профиль</span>
+</a>
+</nav>
+<!-- SideNav (Hidden on Mobile, Visible on Web) -->
+<nav class="hidden md:flex fixed inset-y-0 left-0 z-[60] flex-col w-80 bg-white dark:bg-slate-900 shadow-2xl rounded-r-2xl divide-y divide-slate-100 dark:divide-slate-800">
+<div class="p-4 flex items-center gap-4">
+<img alt="Аватар пользователя" class="w-12 h-12 rounded-full" data-alt="Avatar placeholder for Иван Иванов" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxmjGByViRxiP3dqpA58VzXp1qZRAyzTsjFextQB5lRxhZqSnTdCnL08tKeDbRuRNIee9M35WRuKOBNPE7FK3ZDlVyy8Z5PhtyXzRlIqEXPuFh-V_fhj1ccpiqC8K1hBdIWgSrLSD-IAjhBXvQwJeLH1WE_JUvUSKC5N9vzypgjK4e_lSiFr6LiMVBEN0HnHJuX4lsWQAUuza4hNqcPnTsOIJBcawjbrrP9W5_dhEePn76FiXCH3B81HUamKBzbjiO2zqYlqZ5t5fC"/>
+<div>
+<h2 class="text-blue-700 font-bold font-inter text-sm font-medium">Иван Иванов</h2>
+<p class="text-xs text-slate-500">Инспектор 4-го разряда</p>
+</div>
+</div>
+<div class="flex-1 py-4 space-y-2 px-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg hover:pl-6 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-inter text-sm font-medium">Главная</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg hover:pl-6 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+<span class="font-inter text-sm font-medium">Архив</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 font-semibold rounded-lg hover:pl-6 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="sync" style="font-variation-settings: 'FILL' 1;">sync</span>
+<span class="font-inter text-sm font-medium">Синхро</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg hover:pl-6 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-inter text-sm font-medium">Настройки</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg hover:pl-6 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span class="font-inter text-sm font-medium">Техподдержка</span>
+</a>
+</div>
+<div class="p-4 mt-auto">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg hover:pl-6 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-inter text-sm font-medium">Выход</span>
+</a>
+<p class="text-xs text-center mt-4 text-slate-400">Версия 2.4.1</p>
+</div>
+</nav>
+</body></html>

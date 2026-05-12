@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DownloadOutlined,
   ReloadOutlined,
@@ -7,20 +7,23 @@ import {
   CloseOutlined,
   CheckCircleOutlined,
   WarningOutlined,
-  SwapOutlined,
   UserSwitchOutlined,
   PlusCircleOutlined,
   CloudSyncOutlined,
   DiffOutlined,
   LeftOutlined,
   RightOutlined,
-  ScheduleOutlined,
   CopyOutlined,
   HistoryOutlined,
   CloudOutlined,
   DownOutlined,
   ClockCircleOutlined,
+  LoadingOutlined,
+  InfoCircleOutlined,
+  ScheduleOutlined,
 } from "@ant-design/icons";
+import { DesktopModalShell } from "../components/DesktopModalShell";
+import { HIST_MOCK_INSPECTIONS } from "../data/historyScreenData";
 import "../styles/historyScreen.css";
 
 /* ──────────────── helpers ──────────────── */
@@ -89,7 +92,7 @@ function eventMeta(event) {
   return { icon: <HistoryOutlined />, iconColor: "var(--muted)", pillClass: "pill-default", pillLabel: "Событие" };
 }
 
-/* ──────────────── static demo rows (shown when API has no data) ──────────────── */
+/* ──────────────── demo rows ──────────────── */
 
 const DEMO_ROWS = [
   {
@@ -156,11 +159,464 @@ const DEMO_ROWS = [
     pillLabel: "Инвентарь",
     iconEl: <PlusCircleOutlined style={{ fontSize: 16, color: "#16a34a" }} />,
   },
+  {
+    event_id: "INSP-8812",
+    event_type: "Инспекция завершена",
+    time: "09:05",
+    description: "Завершена плановая инспекция 'Котлоагрегат Цех №3'",
+    executor: "А. Кузнецов",
+    pillClass: "pill-inspection",
+    pillLabel: "Инспекция",
+    iconEl: <AuditOutlined style={{ fontSize: 16, color: "var(--accent)" }} />,
+  },
+  {
+    event_id: "EMP-00451",
+    event_type: "Добавлен сотрудник",
+    time: "08:55",
+    description: "В систему добавлен новый оператор Петров И.С.",
+    executor: "Администратор",
+    pillClass: "pill-inventory",
+    pillLabel: "Сотрудники",
+    iconEl: <PlusCircleOutlined style={{ fontSize: 16, color: "#16a34a" }} />,
+  },
+  {
+    event_id: "ERR-0044",
+    event_type: "Ошибка авторизации",
+    time: "08:48",
+    description: "Попытка входа с неверными учётными данными (3 раза подряд)",
+    executor: "unknown",
+    pillClass: "pill-critical",
+    pillLabel: "Критично",
+    iconEl: <CloudSyncOutlined style={{ fontSize: 16, color: "#dc2626" }} />,
+  },
+  {
+    event_id: "DISC-00913",
+    event_type: "Расхождение устранено",
+    time: "08:40",
+    description: "Расхождение по позиции 'Задвижка 12' принято и закрыто",
+    executor: "П. Смирнов",
+    pillClass: "pill-warning",
+    pillLabel: "Внимание",
+    iconEl: <DiffOutlined style={{ fontSize: 16, color: "#d97706" }} />,
+  },
+  {
+    event_id: "SYNC-2024-002",
+    event_type: "Синхронизация завершена",
+    time: "08:30",
+    description: "Успешная синхронизация данных с планшетом TAB-02",
+    executor: "SYSTEM",
+    pillClass: "pill-critical",
+    pillLabel: "Критично",
+    iconEl: <CloudSyncOutlined style={{ fontSize: 16, color: "#dc2626" }} />,
+  },
 ];
+
+/* ──────────────── chip filter map ──────────────── */
+
+const CHIP_FILTER_FN = {
+  "Все": () => true,
+  "Инспекции": (r) => r.pillClass === "pill-inspection",
+  "Назначения": (r) => r.pillClass === "pill-tasks",
+  "Синхронизация": (r) => r.event_type?.toLowerCase().includes("синхрон"),
+  "Расхождения": (r) => r.pillClass === "pill-warning",
+  "Сотрудники": (r) => r.event_type?.toLowerCase().includes("сотрудн"),
+  "Ошибки": (r) => r.event_type?.toLowerCase().includes("ошибк") || r.pillClass === "pill-critical",
+};
+
+/* ──────────────── HistExportModal ──────────────── */
+
+function HistExportModal({ filteredCount, onClose }) {
+  const timerRef = useRef(null);
+  const [phase, setPhase] = useState("form"); // form | loading | success | error
+  const [exportScope, setExportScope] = useState("filtered");
+
+  useEffect(() => () => window.clearTimeout(timerRef.current), []);
+
+  const handleExport = () => {
+    if (phase !== "form") return;
+    setPhase("loading");
+    timerRef.current = window.setTimeout(() => setPhase("success"), 3000);
+  };
+
+  const title =
+    phase === "success" ? "Журнал экспортирован" :
+    phase === "loading" ? "Готовим экспорт" :
+    phase === "error"   ? "Не удалось экспортировать журнал" :
+    "Экспортировать журнал?";
+
+  const subtitle =
+    phase === "success" ? "Файл будет сформирован backend после подключения API." :
+    phase === "loading" ? "Формируем журнал аудита..." :
+    phase === "error"   ? "Система не смогла сформировать файл. Повторите попытку." :
+    "Будет сформирован файл журнала с событиями в соответствии с выбранными параметрами.";
+
+  return (
+    <DesktopModalShell
+      onClose={onClose}
+      size="narrow"
+      closeDisabled={phase === "loading"}
+      headerContent={(
+        <div className="reg-confirm-title-row">
+          <div className={`reg-confirm-icon${phase === "error" ? " hist-icon-error" : ""}`}>
+            {phase === "loading" ? <LoadingOutlined aria-hidden="true" /> :
+             phase === "success" ? <CheckCircleOutlined aria-hidden="true" /> :
+             phase === "error"   ? <WarningOutlined aria-hidden="true" /> :
+             <DownloadOutlined aria-hidden="true" />}
+          </div>
+          <div>
+            <h2 className="reg-modal-title" id="desktop-modal-title">{title}</h2>
+            <p className="reg-modal-subtitle">{subtitle}</p>
+          </div>
+        </div>
+      )}
+      footer={(
+        <>
+          <button
+            className="reg-modal-btn reg-modal-btn-secondary"
+            type="button"
+            onClick={onClose}
+            disabled={phase === "loading"}
+          >
+            {phase === "success" ? "Закрыть" : "Отмена"}
+          </button>
+          {phase === "form" ? (
+            <button
+              className="reg-modal-btn reg-modal-btn-primary"
+              type="button"
+              onClick={handleExport}
+            >
+              <DownloadOutlined aria-hidden="true" />
+              Экспортировать
+            </button>
+          ) : null}
+          {phase === "error" ? (
+            <button
+              className="reg-modal-btn reg-modal-btn-primary"
+              type="button"
+              onClick={() => setPhase("form")}
+            >
+              <ReloadOutlined aria-hidden="true" />
+              Повторить
+            </button>
+          ) : null}
+        </>
+      )}
+    >
+      {phase === "success" ? (
+        <div className="reg-success-card reg-success-card-full">
+          <CheckCircleOutlined aria-hidden="true" />
+          <div>
+            <strong>Журнал экспортирован</strong>
+            <span>Файл будет сформирован backend после подключения API.</span>
+          </div>
+        </div>
+      ) : phase === "loading" ? (
+        <div className="reg-loading-card reg-loading-card-full">
+          <LoadingOutlined aria-hidden="true" />
+          <div>
+            <strong>Готовим экспорт</strong>
+            <span>Формируем журнал аудита...</span>
+          </div>
+        </div>
+      ) : phase === "error" ? (
+        <div className="hist-modal-error-body">
+          <div className="hist-modal-error-reason">
+            <span className="hist-modal-error-reason-label">Причина</span>
+            <span>Хранилище временно недоступно.</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="hist-modal-export-bento">
+            <div className="hist-modal-export-bento-item">
+              <span className="hist-modal-export-bento-label">Период</span>
+              <span className="hist-modal-export-bento-val">за сегодня</span>
+            </div>
+            <div className="hist-modal-export-bento-item">
+              <span className="hist-modal-export-bento-label">Записей</span>
+              <span className="hist-modal-export-bento-val">{filteredCount}</span>
+            </div>
+            <div className="hist-modal-export-bento-item">
+              <span className="hist-modal-export-bento-label">Формат</span>
+              <span className="hist-modal-export-bento-val">XLSX</span>
+            </div>
+          </div>
+          <div className="hist-modal-scope-group">
+            <p className="hist-modal-scope-title">Область экспорта</p>
+            <label className="hist-modal-scope-row">
+              <input
+                type="radio"
+                name="export_scope"
+                value="filtered"
+                checked={exportScope === "filtered"}
+                onChange={() => setExportScope("filtered")}
+              />
+              <span>Текущие фильтры ({filteredCount} записей)</span>
+            </label>
+            <label className="hist-modal-scope-row">
+              <input
+                type="radio"
+                name="export_scope"
+                value="all"
+                checked={exportScope === "all"}
+                onChange={() => setExportScope("all")}
+              />
+              <span>Все записи за период</span>
+            </label>
+          </div>
+          <button
+            className="hist-modal-error-trigger"
+            type="button"
+            onClick={() => setPhase("error")}
+          >
+            Симулировать ошибку
+          </button>
+        </>
+      )}
+    </DesktopModalShell>
+  );
+}
+
+/* ──────────────── HistAuditSettingsModal ──────────────── */
+
+function HistAuditSettingsModal({ onClose }) {
+  const timerRef = useRef(null);
+  const [phase, setPhase] = useState("form"); // form | loading | success | error
+  const [retention, setRetention] = useState("24 месяца");
+  const [logRetention, setLogRetention] = useState("90 дней");
+  const [logErrors, setLogErrors] = useState(true);
+  const [logSync, setLogSync] = useState(true);
+  const [logSettings, setLogSettings] = useState(true);
+
+  useEffect(() => () => window.clearTimeout(timerRef.current), []);
+
+  const handleSave = () => {
+    if (phase !== "form") return;
+    setPhase("loading");
+    timerRef.current = window.setTimeout(() => setPhase("success"), 3000);
+  };
+
+  const title =
+    phase === "success" ? "Настройки сохранены" :
+    phase === "loading" ? "Сохраняем настройки" :
+    phase === "error"   ? "Не удалось сохранить настройки" :
+    "Настройки аудита";
+
+  const subtitle =
+    phase === "success" ? "Параметры аудита обновлены." :
+    phase === "loading" ? "Обновляем параметры аудита..." :
+    phase === "error"   ? "Система не смогла применить изменения. Повторите попытку." :
+    "Параметры хранения и логирования действий";
+
+  return (
+    <DesktopModalShell
+      onClose={onClose}
+      size="narrow"
+      closeDisabled={phase === "loading"}
+      headerContent={(
+        <div className="reg-confirm-title-row">
+          <div className={`reg-confirm-icon${phase === "error" ? " hist-icon-error" : ""}`}>
+            {phase === "loading" ? <LoadingOutlined aria-hidden="true" /> :
+             phase === "success" ? <CheckCircleOutlined aria-hidden="true" /> :
+             phase === "error"   ? <WarningOutlined aria-hidden="true" /> :
+             <SettingOutlined aria-hidden="true" />}
+          </div>
+          <div>
+            <h2 className="reg-modal-title" id="desktop-modal-title">{title}</h2>
+            <p className="reg-modal-subtitle">{subtitle}</p>
+          </div>
+        </div>
+      )}
+      footer={(
+        <>
+          <button
+            className="reg-modal-btn reg-modal-btn-secondary"
+            type="button"
+            onClick={onClose}
+            disabled={phase === "loading"}
+          >
+            {phase === "success" ? "Закрыть" : "Отмена"}
+          </button>
+          {phase === "form" ? (
+            <button
+              className="reg-modal-btn reg-modal-btn-primary"
+              type="button"
+              onClick={handleSave}
+            >
+              <CheckCircleOutlined aria-hidden="true" />
+              Сохранить настройки
+            </button>
+          ) : null}
+          {phase === "error" ? (
+            <button
+              className="reg-modal-btn reg-modal-btn-primary"
+              type="button"
+              onClick={() => setPhase("form")}
+            >
+              <ReloadOutlined aria-hidden="true" />
+              Повторить
+            </button>
+          ) : null}
+        </>
+      )}
+    >
+      {phase === "success" ? (
+        <div className="reg-success-card reg-success-card-full">
+          <CheckCircleOutlined aria-hidden="true" />
+          <div>
+            <strong>Настройки сохранены</strong>
+            <span>Параметры аудита обновлены.</span>
+          </div>
+        </div>
+      ) : phase === "loading" ? (
+        <div className="reg-loading-card reg-loading-card-full">
+          <LoadingOutlined aria-hidden="true" />
+          <div>
+            <strong>Сохраняем настройки</strong>
+            <span>Обновляем параметры аудита...</span>
+          </div>
+        </div>
+      ) : phase === "error" ? (
+        <div className="hist-modal-error-body">
+          <div className="hist-modal-error-reason">
+            <span className="hist-modal-error-reason-label">Причина</span>
+            <span>Сервер временно недоступен.</span>
+          </div>
+        </div>
+      ) : (
+        <div className="hist-settings-form">
+          <div className="hist-modal-info-banner">
+            <InfoCircleOutlined aria-hidden="true" />
+            <span>Настройки влияют на объём хранимых данных и детализацию системных журналов.</span>
+          </div>
+          <div className="hist-settings-field">
+            <label className="hist-settings-field-label" htmlFor="hist-retention">Срок хранения активности</label>
+            <select
+              id="hist-retention"
+              className="hist-settings-select"
+              value={retention}
+              onChange={(e) => setRetention(e.target.value)}
+            >
+              <option>12 месяцев</option>
+              <option>24 месяца</option>
+              <option>36 месяцев</option>
+              <option>Бессрочно</option>
+            </select>
+          </div>
+          <div className="hist-settings-field">
+            <label className="hist-settings-field-label" htmlFor="hist-log-retention">Хранение системных логов</label>
+            <select
+              id="hist-log-retention"
+              className="hist-settings-select"
+              value={logRetention}
+              onChange={(e) => setLogRetention(e.target.value)}
+            >
+              <option>30 дней</option>
+              <option>60 дней</option>
+              <option>90 дней</option>
+              <option>180 дней</option>
+            </select>
+          </div>
+          <hr className="hist-settings-divider" />
+          <div className="hist-settings-toggles">
+            <label className="hist-settings-toggle-row">
+              <div className="hist-settings-toggle-info">
+                <span className="hist-settings-toggle-label">Логировать технические ошибки</span>
+                <span className="hist-settings-toggle-sub">Запись стека вызовов и системных сбоев</span>
+              </div>
+              <input
+                type="checkbox"
+                className="hist-settings-checkbox"
+                checked={logErrors}
+                onChange={(e) => setLogErrors(e.target.checked)}
+              />
+            </label>
+            <label className="hist-settings-toggle-row">
+              <div className="hist-settings-toggle-info">
+                <span className="hist-settings-toggle-label">Подробный лог синхронизации</span>
+                <span className="hist-settings-toggle-sub">Детальная информация об обмене данными</span>
+              </div>
+              <input
+                type="checkbox"
+                className="hist-settings-checkbox"
+                checked={logSync}
+                onChange={(e) => setLogSync(e.target.checked)}
+              />
+            </label>
+            <label className="hist-settings-toggle-row">
+              <div className="hist-settings-toggle-info">
+                <span className="hist-settings-toggle-label">Аудит изменений настроек</span>
+                <span className="hist-settings-toggle-sub">Отслеживание правок конфигурации системы</span>
+              </div>
+              <input
+                type="checkbox"
+                className="hist-settings-checkbox"
+                checked={logSettings}
+                onChange={(e) => setLogSettings(e.target.checked)}
+              />
+            </label>
+          </div>
+          <button
+            className="hist-modal-error-trigger"
+            type="button"
+            onClick={() => setPhase("error")}
+          >
+            Симулировать ошибку
+          </button>
+        </div>
+      )}
+    </DesktopModalShell>
+  );
+}
+
+/* ──────────────── HistInspectionHistoryModal ──────────────── */
+
+function HistInspectionHistoryModal({ onClose }) {
+  return (
+    <DesktopModalShell
+      onClose={onClose}
+      size="default"
+      title="История инспекций"
+      subtitle="Обзор завершённых проверок оборудования и систем"
+    >
+      <div className="hist-insp-modal-wrap">
+        <table className="hist-insp-table">
+          <thead>
+            <tr>
+              <th>ID события</th>
+              <th>Объект / Тип</th>
+              <th>Дата</th>
+              <th>Инспектор</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {HIST_MOCK_INSPECTIONS.map((row) => (
+              <tr key={row.id}>
+                <td className="hist-insp-id">{row.id}</td>
+                <td>
+                  <div className="hist-insp-object">{row.object}</div>
+                  <div className="hist-insp-type">{row.type}</div>
+                </td>
+                <td>{row.date}</td>
+                <td>{row.inspector}</td>
+                <td>
+                  <span className={`hist-status-pill ${row.status === "В процессе" ? "pill-warning" : "pill-inspection"}`}>
+                    {row.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </DesktopModalShell>
+  );
+}
 
 /* ──────────────── EventDetailPanel ──────────────── */
 
-function EventDetailPanel({ event, onClose }) {
+function EventDetailPanel({ event, onClose, onCopyId }) {
   if (!event) {
     return (
       <div className="hist-detail-panel">
@@ -309,7 +765,11 @@ function EventDetailPanel({ event, onClose }) {
           <DiffOutlined />
           Открыть расхождение
         </button>
-        <button className="hist-detail-btn is-ghost" type="button">
+        <button
+          className="hist-detail-btn is-ghost"
+          type="button"
+          onClick={() => onCopyId(event.event_id)}
+        >
           <CopyOutlined />
           Скопировать ID события
         </button>
@@ -329,6 +789,23 @@ export function DesktopHistoryScreen() {
   const [eventTypeFilter, setEventTypeFilter] = useState("Все");
   const [selectedEvent, setSelectedEvent] = useState(DEMO_ROWS[0]);
   const [activePage, setActivePage] = useState(1);
+  const [modal, setModal] = useState(null); // "export" | "audit-settings" | "inspections"
+  const [copyToast, setCopyToast] = useState(null); // event_id string
+  const toastTimerRef = useRef(null);
+
+  const openModal = (type) => setModal(type);
+  const closeModal = () => setModal(null);
+
+  useEffect(() => () => window.clearTimeout(toastTimerRef.current), []);
+
+  const handleCopyId = (eventId) => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(eventId).catch(() => {});
+    }
+    setCopyToast(eventId);
+    window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => setCopyToast(null), 3000);
+  };
 
   const loadEvents = useCallback(async () => {
     setLoading(true);
@@ -348,7 +825,7 @@ export function DesktopHistoryScreen() {
   useEffect(() => { loadEvents(); }, [loadEvents]);
 
   /* Use real events if loaded, otherwise demo */
-  const displayRows = events.length > 0
+  const allDisplayRows = events.length > 0
     ? events.map((e) => {
         const meta = eventMeta(e);
         return {
@@ -365,12 +842,16 @@ export function DesktopHistoryScreen() {
       })
     : DEMO_ROWS;
 
+  /* Apply chip filter */
+  const chipFn = CHIP_FILTER_FN[eventTypeFilter] ?? (() => true);
+  const displayRows = allDisplayRows.filter(chipFn);
+
   return (
     <div className="hist-screen">
       {/* ── Action bar ── */}
       <div className="hist-actions">
         <div className="hist-actions-left">
-          <button className="hist-btn" type="button">
+          <button className="hist-btn" type="button" onClick={() => openModal("export")}>
             <DownloadOutlined />
             Экспорт журнала
           </button>
@@ -378,8 +859,12 @@ export function DesktopHistoryScreen() {
             <ReloadOutlined />
             Обновить
           </button>
+          <button className="hist-btn" type="button" onClick={() => openModal("inspections")}>
+            <ScheduleOutlined />
+            История инспекций
+          </button>
         </div>
-        <button className="hist-btn" type="button">
+        <button className="hist-btn" type="button" onClick={() => openModal("audit-settings")}>
           <SettingOutlined />
           Настройки аудита
         </button>
@@ -570,7 +1055,7 @@ export function DesktopHistoryScreen() {
           {/* Pagination */}
           <div className="hist-pagination">
             <span className="hist-pagination-info">
-              Показано <strong>11</strong> из <strong>1 248</strong> событий
+              Показано <strong>{displayRows.length}</strong> из <strong>1 248</strong> событий
             </span>
             <div className="hist-pager">
               <button className="hist-pager-btn" type="button">
@@ -599,6 +1084,7 @@ export function DesktopHistoryScreen() {
         <EventDetailPanel
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
+          onCopyId={handleCopyId}
         />
       </div>
 
@@ -626,6 +1112,40 @@ export function DesktopHistoryScreen() {
           </div>
         </div>
       </div>
+
+      {/* ── Modals ── */}
+      {modal === "export" ? (
+        <HistExportModal filteredCount={displayRows.length} onClose={closeModal} />
+      ) : null}
+      {modal === "audit-settings" ? (
+        <HistAuditSettingsModal onClose={closeModal} />
+      ) : null}
+      {modal === "inspections" ? (
+        <HistInspectionHistoryModal onClose={closeModal} />
+      ) : null}
+
+      {/* ── Copy ID toast ── */}
+      {copyToast ? (
+        <div className="hist-toast-layer" role="status" aria-live="polite">
+          <div className="hist-toast">
+            <div className="hist-toast-icon">
+              <CheckCircleOutlined aria-hidden="true" />
+            </div>
+            <div className="hist-toast-body">
+              <span className="hist-toast-title">ID события скопирован</span>
+              <span className="hist-toast-id">{copyToast}</span>
+            </div>
+            <button
+              className="hist-toast-close"
+              type="button"
+              aria-label="Закрыть"
+              onClick={() => setCopyToast(null)}
+            >
+              <CloseOutlined aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
