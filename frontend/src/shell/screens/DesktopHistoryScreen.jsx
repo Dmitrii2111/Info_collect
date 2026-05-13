@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   DownloadOutlined,
   ReloadOutlined,
@@ -856,9 +856,7 @@ const CASCADE_FILTER_KEYS = ["period", "type", "user", "role", "inspection", "ob
 const PAGE_SIZE = 10;
 
 export function DesktopHistoryScreen({ onNavigate }) {
-  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [eventTypeFilter, setEventTypeFilter] = useState("Все");
   const [selectedEvent, setSelectedEvent] = useState(DEMO_ROWS[0]);
   const [activePage, setActivePage] = useState(1);
@@ -873,11 +871,15 @@ export function DesktopHistoryScreen({ onNavigate }) {
     object: "Все",
   });
   const toastTimerRef = useRef(null);
+  const refreshTimerRef = useRef(null);
 
   const openModal = (type) => setModal(type);
   const closeModal = () => setModal(null);
 
-  useEffect(() => () => window.clearTimeout(toastTimerRef.current), []);
+  useEffect(() => () => {
+    window.clearTimeout(toastTimerRef.current);
+    window.clearTimeout(refreshTimerRef.current);
+  }, []);
 
   const handleCopyId = (eventId) => {
     if (navigator.clipboard) {
@@ -927,47 +929,15 @@ export function DesktopHistoryScreen({ onNavigate }) {
     );
   };
 
-  const loadEvents = useCallback(async () => {
+  const refreshEvents = () => {
+    window.clearTimeout(refreshTimerRef.current);
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/audit/events?limit=100");
-      if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
-      const data = await response.json();
-      setEvents(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setError(err.message ?? "Не удалось загрузить данные");
-    } finally {
+    refreshTimerRef.current = window.setTimeout(() => {
       setLoading(false);
-    }
-  }, []);
+    }, 3000);
+  };
 
-  useEffect(() => { loadEvents(); }, [loadEvents]);
-
-  /* Use real events if loaded, otherwise demo */
-  const allDisplayRows = events.length > 0
-    ? events.map((e) => {
-        const meta = eventMeta(e);
-        return {
-          event_id: e.event_id,
-          event_type: e.event_type ?? "Событие",
-          time: formatTime(e.recorded_at_server),
-          description: e.description ?? `${mapAggregateType(e.aggregate_type)} · ${e.aggregate_id ?? ""}`,
-          executor: e.user_name ?? "SYSTEM",
-          pillClass: meta.pillClass,
-          pillLabel: meta.pillLabel,
-          iconEl: <span style={{ color: meta.iconColor, fontSize: 16, display: "flex" }}>{meta.icon}</span>,
-          recorded_at_server: e.recorded_at_server,
-          aggregate_type: e.aggregate_type,
-          aggregate_id: e.aggregate_id,
-          user_role: e.user_role,
-          payload_json: e.payload_json,
-          metadata_json: e.metadata_json,
-          dateLabel: getEventDateLabel(e),
-          _raw: e,
-        };
-      })
-    : DEMO_ROWS;
+  const allDisplayRows = DEMO_ROWS;
 
   const rowsAfterPeriod = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, ["period"]));
   const rowsAfterType = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, ["period", "type"]));
@@ -1032,7 +1002,7 @@ export function DesktopHistoryScreen({ onNavigate }) {
             <DownloadOutlined />
             Экспорт журнала
           </button>
-          <button className="hist-btn" type="button" onClick={loadEvents}>
+          <button className="hist-btn" type="button" onClick={refreshEvents}>
             <ReloadOutlined />
             Обновить
           </button>
@@ -1182,19 +1152,8 @@ export function DesktopHistoryScreen({ onNavigate }) {
               </div>
             )}
 
-            {/* Error state */}
-            {!loading && error && (
-              <div style={{ padding: "40px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
-                <div className="hist-state-icon-wrap is-error">
-                  <CloudOutlined />
-                </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#b91c1c" }}>Ошибка связи с сервером</span>
-                <button className="hist-state-retry-btn" type="button" onClick={loadEvents}>Повторить попытку</button>
-              </div>
-            )}
-
             {/* Empty state */}
-            {!loading && !error && displayRows.length === 0 && (
+            {!loading && displayRows.length === 0 && (
               <div style={{ padding: "40px 0", display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
                 <div className="hist-state-icon-wrap">
                   <HistoryOutlined style={{ fontSize: 24 }} />

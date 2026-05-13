@@ -381,7 +381,7 @@ const TIMELINE_ITEMS = [
 
 function ActivityTimeline() {
   return (
-    <div className="db-panel db-panel--sticky">
+    <div className="db-panel">
       <div className="db-panel__header">
         <h3 className="db-panel__title">Последние действия</h3>
         <MaterialIcon name="history" className="db-panel__icon-muted" />

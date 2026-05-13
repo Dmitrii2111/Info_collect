@@ -25,10 +25,6 @@
   white-space: nowrap;
 }
 
-.db-quick-btn .material-symbols-outlined {
-  font-size: 20px;
-}
-
 .db-quick-btn--primary {
   background: #00288e;
   color: #ffffff;
@@ -88,10 +84,6 @@
   border-radius: 8px;
   display: grid;
   place-items: center;
-}
-
-.db-kpi-icon .material-symbols-outlined {
-  font-size: 20px;
 }
 
 .db-kpi-icon--bg-blue   { background: #eff6ff; color: #1d4ed8; }
@@ -166,11 +158,6 @@
   overflow: hidden;
 }
 
-.db-panel--sticky {
-  position: sticky;
-  top: 112px;
-}
-
 .db-panel__header {
   padding: 16px 24px;
   border-bottom: 1px solid #f1f0fa;
@@ -197,10 +184,6 @@
 
 .db-panel__title--red {
   color: #b91c1c;
-}
-
-.db-panel__title--red .material-symbols-outlined {
-  font-size: 20px;
 }
 
 .db-panel__link {
@@ -383,10 +366,6 @@
   color: #00288e;
 }
 
-.db-table__icon-btn .material-symbols-outlined {
-  font-size: 18px;
-}
-
 .db-action-btn {
   padding: 4px 12px;
   background: #dde1ff;
@@ -422,10 +401,6 @@
   flex-shrink: 0;
 }
 
-.db-item-icon .material-symbols-outlined {
-  font-size: 18px;
-}
-
 .db-item-name {
   font-size: 13px;
   font-weight: 600;
@@ -450,10 +425,6 @@
 .db-alert--red   { background: #fff1f2; border: 1px solid #fecdd3; }
 .db-alert--blue  { background: #eff6ff; border: 1px solid #bfdbfe; }
 .db-alert--slate { background: #f8fafc; border: 1px solid #e2e8f0; }
-
-.db-alert__icon .material-symbols-outlined {
-  font-size: 22px;
-}
 
 .db-alert__icon--red   { color: #b91c1c; }
 .db-alert__icon--blue  { color: #1d4ed8; }
@@ -590,9 +561,6 @@
     grid-template-columns: 1fr;
   }
 
-  .db-panel--sticky {
-    position: static;
-  }
 }
 
 @media (max-width: 720px) {
