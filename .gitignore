@@ -51,3 +51,5 @@ design/Desktop/
 
 # Claude Code generated agent memory
 .claude/agent-memory/
+.DS_Store
+**/.DS_Store
