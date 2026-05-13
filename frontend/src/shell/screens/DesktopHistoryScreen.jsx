@@ -70,6 +70,77 @@ function parseJsonSafe(str) {
   try { return JSON.parse(str); } catch { return str; }
 }
 
+function uniqueSortedValues(rows, getter) {
+  return [...new Set(rows.map(getter).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ru"));
+}
+
+function getEventDateLabel(row) {
+  if (row.dateLabel) return row.dateLabel;
+  const source = row.recorded_at_server ?? row._raw?.recorded_at_server;
+  if (!source) return "Сегодня";
+  return new Date(source).toLocaleDateString("ru-RU");
+}
+
+function getFilterValue(row, key) {
+  const raw = row._raw ?? row;
+  if (key === "period") return getEventDateLabel(row);
+  if (key === "type") return row.pillLabel ?? row.event_type ?? raw.event_type;
+  if (key === "user") return row.executor ?? raw.user_name ?? "SYSTEM";
+  if (key === "role") return row.detail?.role ?? raw.user_role ?? raw.role ?? "—";
+  if (key === "inspection") {
+    if (raw.aggregate_type === "inspection" && raw.aggregate_id) return raw.aggregate_id;
+    return row.inspectionId ?? raw.inspection_id ?? raw.inspection ?? row.detail?.inspectionId ?? null;
+  }
+  if (key === "object") return row.detail?.object ?? raw.object ?? raw.object_name ?? raw.aggregate_id ?? null;
+  return null;
+}
+
+function matchesPeriod(row, period) {
+  if (!period || period === "Все") return true;
+  if (period === "Неделя" || period === "Месяц") {
+    const source = row.recorded_at_server ?? row._raw?.recorded_at_server;
+    if (!source) return true;
+    const eventDate = new Date(source);
+    const maxAgeMs = period === "Неделя" ? 7 * 24 * 60 * 60 * 1000 : 31 * 24 * 60 * 60 * 1000;
+    return Date.now() - eventDate.getTime() <= maxAgeMs;
+  }
+  return getEventDateLabel(row) === period;
+}
+
+function rowMatchesFilters(row, filters, keys) {
+  return keys.every((key) => {
+    const value = filters[key];
+    if (!value || value === "Все") return true;
+    if (key === "period") return matchesPeriod(row, value);
+    return getFilterValue(row, key) === value;
+  });
+}
+
+function buildHistoryContext(event, target) {
+  const raw = event?._raw ?? event ?? {};
+  const payload = parseJsonSafe(raw.payload_json) ?? {};
+  const inspectionId =
+    getFilterValue(event, "inspection") ??
+    payload.inspection_id ??
+    payload.inspection ??
+    (raw.aggregate_type === "inspection" ? raw.aggregate_id : null);
+  const discrepancyId =
+    raw.discrepancy_id ??
+    payload.discrepancy_id ??
+    payload.discrepancy ??
+    (raw.aggregate_type === "discrepancy" ? raw.aggregate_id : null);
+
+  return {
+    source: "history",
+    eventId: event?.event_id ?? raw.event_id,
+    eventType: event?.event_type ?? raw.event_type,
+    inspectionId,
+    discrepancyId,
+    object: getFilterValue(event, "object"),
+    target,
+  };
+}
+
 /* ──────────────── event icon / pill ──────────────── */
 
 function eventMeta(event) {
@@ -616,7 +687,7 @@ function HistInspectionHistoryModal({ onClose }) {
 
 /* ──────────────── EventDetailPanel ──────────────── */
 
-function EventDetailPanel({ event, onClose, onCopyId }) {
+function EventDetailPanel({ event, onClose, onCopyId, onOpenInspection, onOpenDiscrepancies }) {
   if (!event) {
     return (
       <div className="hist-detail-panel">
@@ -757,11 +828,11 @@ function EventDetailPanel({ event, onClose, onCopyId }) {
       </div>
 
       <div className="hist-detail-footer">
-        <button className="hist-detail-btn is-primary" type="button">
+        <button className="hist-detail-btn is-primary" type="button" onClick={() => onOpenInspection(event)}>
           <AuditOutlined />
           Открыть инспекцию
         </button>
-        <button className="hist-detail-btn is-secondary" type="button">
+        <button className="hist-detail-btn is-secondary" type="button" onClick={() => onOpenDiscrepancies(event)}>
           <DiffOutlined />
           Открыть расхождение
         </button>
@@ -781,8 +852,10 @@ function EventDetailPanel({ event, onClose, onCopyId }) {
 /* ──────────────── Main component ──────────────── */
 
 const QUICK_FILTERS = ["Все", "Инспекции", "Назначения", "Синхронизация", "Расхождения", "Сотрудники", "Ошибки"];
+const CASCADE_FILTER_KEYS = ["period", "type", "user", "role", "inspection", "object"];
+const PAGE_SIZE = 10;
 
-export function DesktopHistoryScreen() {
+export function DesktopHistoryScreen({ onNavigate }) {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -791,6 +864,14 @@ export function DesktopHistoryScreen() {
   const [activePage, setActivePage] = useState(1);
   const [modal, setModal] = useState(null); // "export" | "audit-settings" | "inspections"
   const [copyToast, setCopyToast] = useState(null); // event_id string
+  const [filters, setFilters] = useState({
+    period: "Все",
+    type: "Все",
+    user: "Все",
+    role: "Все",
+    inspection: "Все",
+    object: "Все",
+  });
   const toastTimerRef = useRef(null);
 
   const openModal = (type) => setModal(type);
@@ -805,6 +886,45 @@ export function DesktopHistoryScreen() {
     setCopyToast(eventId);
     window.clearTimeout(toastTimerRef.current);
     toastTimerRef.current = window.setTimeout(() => setCopyToast(null), 3000);
+  };
+
+  const updateFilter = (key, value) => {
+    const keyIndex = CASCADE_FILTER_KEYS.indexOf(key);
+    setFilters((prev) => {
+      const next = { ...prev, [key]: value };
+      CASCADE_FILTER_KEYS.slice(keyIndex + 1).forEach((lowerKey) => {
+        next[lowerKey] = "Все";
+      });
+      return next;
+    });
+    setActivePage(1);
+  };
+
+  const handleQuickFilter = (value) => {
+    setEventTypeFilter(value);
+    setActivePage(1);
+  };
+
+  const navigateToSection = (sectionKey, storageKey, payload) => {
+    window.localStorage.setItem(storageKey, JSON.stringify(payload));
+    window.dispatchEvent(new CustomEvent("infocollect:navigate", { detail: { sectionKey, payload } }));
+    onNavigate?.(sectionKey, payload);
+  };
+
+  const handleOpenInspection = (event) => {
+    navigateToSection(
+      "inspections",
+      "infocollect.pendingInspectionContext",
+      buildHistoryContext(event, "inspection"),
+    );
+  };
+
+  const handleOpenDiscrepancies = (event) => {
+    navigateToSection(
+      "discrepancies",
+      "infocollect.pendingDiscrepancyContext",
+      buildHistoryContext(event, "discrepancy"),
+    );
   };
 
   const loadEvents = useCallback(async () => {
@@ -837,14 +957,71 @@ export function DesktopHistoryScreen() {
           pillClass: meta.pillClass,
           pillLabel: meta.pillLabel,
           iconEl: <span style={{ color: meta.iconColor, fontSize: 16, display: "flex" }}>{meta.icon}</span>,
+          recorded_at_server: e.recorded_at_server,
+          aggregate_type: e.aggregate_type,
+          aggregate_id: e.aggregate_id,
+          user_role: e.user_role,
+          payload_json: e.payload_json,
+          metadata_json: e.metadata_json,
+          dateLabel: getEventDateLabel(e),
           _raw: e,
         };
       })
     : DEMO_ROWS;
 
+  const rowsAfterPeriod = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, ["period"]));
+  const rowsAfterType = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, ["period", "type"]));
+  const rowsAfterUser = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, ["period", "type", "user"]));
+  const rowsAfterRole = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, ["period", "type", "user", "role"]));
+  const rowsAfterInspection = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, ["period", "type", "user", "role", "inspection"]));
+
+  const filterOptions = {
+    period: ["Все", "Неделя", "Месяц", ...uniqueSortedValues(allDisplayRows, getEventDateLabel)],
+    type: ["Все", ...uniqueSortedValues(rowsAfterPeriod, (row) => getFilterValue(row, "type"))],
+    user: ["Все", ...uniqueSortedValues(rowsAfterType, (row) => getFilterValue(row, "user"))],
+    role: ["Все", ...uniqueSortedValues(rowsAfterUser, (row) => getFilterValue(row, "role"))],
+    inspection: ["Все", ...uniqueSortedValues(rowsAfterRole, (row) => getFilterValue(row, "inspection"))],
+    object: ["Все", ...uniqueSortedValues(rowsAfterInspection, (row) => getFilterValue(row, "object"))],
+  };
+
+  useEffect(() => {
+    setFilters((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      Object.entries(filterOptions).forEach(([key, options]) => {
+        if (next[key] !== "Все" && !options.includes(next[key])) {
+          next[key] = "Все";
+          changed = true;
+        }
+      });
+      if (changed) setActivePage(1);
+      return changed ? next : prev;
+    });
+  }, [
+    filterOptions.period.join("|"),
+    filterOptions.type.join("|"),
+    filterOptions.user.join("|"),
+    filterOptions.object.join("|"),
+    filterOptions.inspection.join("|"),
+    filterOptions.role.join("|"),
+  ]);
+
+  const rowsAfterSelects = allDisplayRows.filter((row) => rowMatchesFilters(row, filters, CASCADE_FILTER_KEYS));
+
   /* Apply chip filter */
   const chipFn = CHIP_FILTER_FN[eventTypeFilter] ?? (() => true);
-  const displayRows = allDisplayRows.filter(chipFn);
+  const displayRows = rowsAfterSelects.filter(chipFn);
+  const totalPages = Math.max(1, Math.ceil(displayRows.length / PAGE_SIZE));
+
+  useEffect(() => {
+    if (activePage > totalPages) setActivePage(1);
+  }, [activePage, totalPages]);
+
+  useEffect(() => {
+    if (!displayRows.some((row) => row.event_id === selectedEvent?.event_id)) {
+      setSelectedEvent(displayRows[0] ?? null);
+    }
+  }, [displayRows, selectedEvent?.event_id]);
 
   return (
     <div className="hist-screen">
@@ -913,47 +1090,50 @@ export function DesktopHistoryScreen() {
         <div className="hist-filters-grid">
           <div className="hist-filter-field">
             <span className="hist-filter-label">Тип события</span>
-            <select className="hist-filter-select">
-              <option>Все типы</option>
-              <option>Инспекция</option>
-              <option>Синхронизация</option>
-              <option>Поступление</option>
+            <select className="hist-filter-select" value={filters.type} onChange={(e) => updateFilter("type", e.target.value)}>
+              {filterOptions.type.map((value) => (
+                <option key={value} value={value}>{value}</option>
+              ))}
             </select>
           </div>
           <div className="hist-filter-field">
             <span className="hist-filter-label">Пользователь</span>
-            <select className="hist-filter-select">
-              <option>Любой</option>
-              <option>Иван Иванов</option>
-              <option>Павел Смирнов</option>
+            <select className="hist-filter-select" value={filters.user} onChange={(e) => updateFilter("user", e.target.value)}>
+              {filterOptions.user.map((value) => (
+                <option key={value} value={value}>{value}</option>
+              ))}
             </select>
           </div>
           <div className="hist-filter-field">
             <span className="hist-filter-label">Роль</span>
-            <select className="hist-filter-select">
-              <option>Все роли</option>
-              <option>Администратор</option>
-              <option>Инспектор</option>
+            <select className="hist-filter-select" value={filters.role} onChange={(e) => updateFilter("role", e.target.value)}>
+              {filterOptions.role.map((value) => (
+                <option key={value} value={value}>{value}</option>
+              ))}
             </select>
           </div>
           <div className="hist-filter-field">
             <span className="hist-filter-label">Инспекция</span>
-            <select className="hist-filter-select">
-              <option>Все инспекции</option>
+            <select className="hist-filter-select" value={filters.inspection} onChange={(e) => updateFilter("inspection", e.target.value)}>
+              {filterOptions.inspection.map((value) => (
+                <option key={value} value={value}>{value}</option>
+              ))}
             </select>
           </div>
           <div className="hist-filter-field">
             <span className="hist-filter-label">Объект</span>
-            <select className="hist-filter-select">
-              <option>Все объекты</option>
+            <select className="hist-filter-select" value={filters.object} onChange={(e) => updateFilter("object", e.target.value)}>
+              {filterOptions.object.map((value) => (
+                <option key={value} value={value}>{value}</option>
+              ))}
             </select>
           </div>
           <div className="hist-filter-field">
             <span className="hist-filter-label">Период</span>
-            <select className="hist-filter-select">
-              <option>За сегодня</option>
-              <option>Вчера</option>
-              <option>Последние 7 дней</option>
+            <select className="hist-filter-select" value={filters.period} onChange={(e) => updateFilter("period", e.target.value)}>
+              {filterOptions.period.map((value) => (
+                <option key={value} value={value}>{value}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -965,7 +1145,7 @@ export function DesktopHistoryScreen() {
               key={f}
               type="button"
               className={`hist-pill${f === eventTypeFilter ? " is-active" : ""}${f === "Ошибки" && f !== eventTypeFilter ? " is-error" : ""}`}
-              onClick={() => setEventTypeFilter(f)}
+              onClick={() => handleQuickFilter(f)}
             >
               {f}
             </button>
@@ -1085,6 +1265,8 @@ export function DesktopHistoryScreen() {
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
           onCopyId={handleCopyId}
+          onOpenInspection={handleOpenInspection}
+          onOpenDiscrepancies={handleOpenDiscrepancies}
         />
       </div>
 
