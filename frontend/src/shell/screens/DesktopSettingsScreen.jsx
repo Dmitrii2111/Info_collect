@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   SaveOutlined,
   InfoCircleOutlined,
@@ -16,7 +17,10 @@ import {
   PoweroffOutlined,
   WifiOutlined,
   CheckOutlined,
+  CheckCircleOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
+import { DesktopModalShell } from "../components/DesktopModalShell";
 import "../styles/settingsScreen.css";
 import {
   SETTINGS_STATUS_CARDS,
@@ -31,6 +35,7 @@ import {
   DIAG_METRICS,
   DIAG_BARS,
   EVENT_LOG,
+  BACKUP_RESTORE_OPTIONS,
 } from "../data/settingsScreenData.js";
 
 /* ── Toggle component ── */
@@ -45,10 +50,10 @@ function Toggle({ checked }) {
 }
 
 /* ── Status cards row ── */
-function StatusCards() {
+function StatusCards({ cards }) {
   return (
     <div className="st-status-row">
-      {SETTINGS_STATUS_CARDS.map((card) => (
+      {cards.map((card) => (
         <div key={card.label} className="st-status-card">
           <p className="st-status-card-label">{card.label}</p>
           <p className="st-status-card-value">{card.value}</p>
@@ -138,7 +143,7 @@ function SyncCard() {
 }
 
 /* ── Registry card ── */
-function RegistryCard() {
+function RegistryCard({ masterFileName, masterImportedAt, onImportNew }) {
   return (
     <div className="st-card">
       <h3 className="st-card-title" style={{ marginBottom: 16 }}>
@@ -148,11 +153,11 @@ function RegistryCard() {
       <div className="st-registry-meta">
         <div className="st-registry-meta-row">
           <span>Файл:</span>
-          <span className="st-registry-meta-val">master_equipment_v3.xlsx</span>
+          <span className="st-registry-meta-val">{masterFileName}</span>
         </div>
         <div className="st-registry-meta-row">
           <span>Импорт:</span>
-          <span className="st-registry-meta-val">12.10.2023, 14:20</span>
+          <span className="st-registry-meta-val">{masterImportedAt}</span>
         </div>
       </div>
       <div className="st-field-group" style={{ marginBottom: 16 }}>
@@ -171,14 +176,14 @@ function RegistryCard() {
             <option>24 месяца</option>
           </select>
         </div>
-        <button className="st-btn-import" type="button">Импорт нового</button>
+        <button className="st-btn-import" type="button" onClick={onImportNew}>Импорт нового</button>
       </div>
     </div>
   );
 }
 
 /* ── Files & Photos card ── */
-function FilesCard() {
+function FilesCard({ storagePath, onEditStoragePath }) {
   return (
     <div className="st-card">
       <h3 className="st-card-title" style={{ marginBottom: 16 }}>
@@ -228,9 +233,9 @@ function FilesCard() {
             <input
               className="st-path-input"
               readOnly
-              defaultValue="/data/infocollect/storage"
+              value={storagePath}
             />
-            <button className="st-path-btn" type="button" aria-label="Выбрать папку">
+            <button className="st-path-btn" type="button" aria-label="Изменить путь к хранилищу" onClick={onEditStoragePath}>
               <FolderOpenOutlined />
             </button>
           </div>
@@ -241,7 +246,7 @@ function FilesCard() {
 }
 
 /* ── Backup card ── */
-function BackupCard() {
+function BackupCard({ lastBackup, onCreateBackup, onRestoreBackup }) {
   return (
     <div className="st-card">
       <h3 className="st-card-title" style={{ marginBottom: 16 }}>
@@ -277,12 +282,12 @@ function BackupCard() {
         </div>
       </div>
       <div className="st-backup-ok">
-        <span className="st-backup-ok-text">Последняя копия: 14:45</span>
+        <span className="st-backup-ok-text">Последняя копия: {lastBackup}</span>
         <span className="st-backup-ok-text">Статус: OK</span>
       </div>
       <div className="st-backup-actions">
-        <button className="st-btn-backup-primary" type="button">Создать копию</button>
-        <button className="st-btn-backup-secondary" type="button">Восстановить</button>
+        <button className="st-btn-backup-primary" type="button" onClick={onCreateBackup}>Создать копию</button>
+        <button className="st-btn-backup-secondary" type="button" onClick={onRestoreBackup}>Восстановить</button>
       </div>
       <p className="st-backup-warn">Внимание: восстановление перезапишет текущие данные!</p>
     </div>
@@ -370,7 +375,13 @@ function JournalCard() {
 }
 
 /* ── Maintenance card ── */
-function MaintenanceCard() {
+function MaintenanceCard({
+  onToolAction,
+  onRestartService,
+  onResetSyncQueue,
+  onClearCache,
+  onResetSettings,
+}) {
   const ICON_MAP = {
     database: DatabaseOutlined,
     check:    CheckOutlined,
@@ -390,7 +401,7 @@ function MaintenanceCard() {
             const Icon = ICON_MAP[t.icon] || ToolOutlined;
             const Chevron = t.chevron === "download" ? DownloadOutlined : null;
             return (
-              <button key={t.label} className="st-maint-tool-btn" type="button">
+              <button key={t.label} className="st-maint-tool-btn" type="button" onClick={() => onToolAction(t)}>
                 <span className="st-maint-tool-left">
                   <Icon className="st-maint-tool-icon" aria-hidden="true" />
                   <span className="st-maint-tool-label">{t.label}</span>
@@ -402,7 +413,7 @@ function MaintenanceCard() {
               </button>
             );
           })}
-          <button className="st-btn-restart" type="button">
+          <button className="st-btn-restart" type="button" onClick={onRestartService}>
             <PoweroffOutlined aria-hidden="true" />
             Перезапустить сервис
           </button>
@@ -413,10 +424,10 @@ function MaintenanceCard() {
             Опасная зона
           </p>
           <div className="st-danger-btns">
-            <button className="st-btn-danger-outline" type="button">Сбросить очередь синхронизации</button>
-            <button className="st-btn-danger-outline" type="button">Очистить кэш системы</button>
+            <button className="st-btn-danger-outline" type="button" onClick={onResetSyncQueue}>Сбросить очередь синхронизации</button>
+            <button className="st-btn-danger-outline" type="button" onClick={onClearCache}>Очистить кэш системы</button>
           </div>
-          <button className="st-btn-danger-solid" type="button">Сбросить системные настройки</button>
+          <button className="st-btn-danger-solid" type="button" onClick={onResetSettings}>Сбросить системные настройки</button>
           <p className="st-danger-note">Это действие необратимо и приведёт к потере конфигурации.</p>
         </div>
       </div>
@@ -425,7 +436,7 @@ function MaintenanceCard() {
 }
 
 /* ── Right: Diagnostics ── */
-function DiagCard() {
+function DiagCard({ syncQueueCount, serviceStatus, onCheckSystem }) {
   const metricValClass = {
     primary: "st-diag-metric-val-primary",
     red:     "st-diag-metric-val-red",
@@ -441,7 +452,7 @@ function DiagCard() {
       <div className="st-diag-uptime-block">
         <div className="st-diag-uptime-top">
           <span>Сервер</span>
-          <span className="st-diag-status-ok">СТАБИЛЬНО</span>
+          <span className="st-diag-status-ok">{serviceStatus}</span>
         </div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
           <span className="st-diag-uptime-value">99.8%</span>
@@ -450,12 +461,15 @@ function DiagCard() {
       </div>
 
       <div className="st-diag-metrics">
-        {DIAG_METRICS.map((m) => (
-          <div key={m.label} className="st-diag-metric-row">
-            <span className="st-diag-metric-label">{m.label}</span>
-            <span className={metricValClass[m.tone]}>{m.value}</span>
-          </div>
-        ))}
+        {DIAG_METRICS.map((m) => {
+          const value = m.label === "Активная очередь задач" ? String(syncQueueCount) : m.value;
+          return (
+            <div key={m.label} className="st-diag-metric-row">
+              <span className="st-diag-metric-label">{m.label}</span>
+              <span className={metricValClass[m.tone]}>{value}</span>
+            </div>
+          );
+        })}
       </div>
 
       <div className="st-diag-bar-group">
@@ -475,7 +489,7 @@ function DiagCard() {
         ))}
       </div>
 
-      <button className="st-btn-check-system" type="button">
+      <button className="st-btn-check-system" type="button" onClick={onCheckSystem}>
         <WifiOutlined aria-hidden="true" />
         Проверить систему
       </button>
@@ -499,8 +513,358 @@ function DiagCard() {
   );
 }
 
+function SettingsStatusModal({ workflow, onClose }) {
+  const isLoading = workflow.phase === "loading";
+
+  return (
+    <DesktopModalShell
+      title={isLoading ? workflow.loadingTitle : workflow.successTitle}
+      subtitle={isLoading ? workflow.loadingSubtitle : workflow.successSubtitle}
+      onClose={onClose}
+      closeDisabled={isLoading}
+      size="narrow"
+      footer={(
+        <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={onClose} disabled={isLoading}>
+          {isLoading ? <LoadingOutlined aria-hidden="true" /> : <CheckCircleOutlined aria-hidden="true" />}
+          {isLoading ? "Выполняется" : "Закрыть"}
+        </button>
+      )}
+    >
+      <div className={`st-status-state-card ${isLoading ? "loading" : "success"}`}>
+        {isLoading ? <LoadingOutlined aria-hidden="true" /> : <CheckCircleOutlined aria-hidden="true" />}
+        <div>
+          <strong>{isLoading ? workflow.loadingTitle : workflow.successTitle}</strong>
+          <span>{isLoading ? workflow.loadingSubtitle : workflow.successSubtitle}</span>
+        </div>
+      </div>
+    </DesktopModalShell>
+  );
+}
+
+function RestoreBackupModal({ selectedBackupId, onSelectBackup, onClose, onConfirm }) {
+  return (
+    <DesktopModalShell
+      title="Восстановить из резервной копии"
+      subtitle="Выберите локальную mock-копию для восстановления настроек"
+      onClose={onClose}
+      size="wide"
+      footer={(
+        <>
+          <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={onClose}>Отмена</button>
+          <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={onConfirm}>
+            <CloudUploadOutlined aria-hidden="true" />
+            Восстановить
+          </button>
+        </>
+      )}
+    >
+      <div className="st-modal-warning">
+        <WarningOutlined aria-hidden="true" />
+        <span>Восстановление перезапишет текущую конфигурацию в mock-state.</span>
+      </div>
+      <div className="st-backup-choice-list">
+        {BACKUP_RESTORE_OPTIONS.map((backup) => (
+          <button
+            key={backup.id}
+            className={`st-backup-choice${backup.id === selectedBackupId ? " selected" : ""}`}
+            type="button"
+            onClick={() => onSelectBackup(backup.id)}
+          >
+            <span className="st-backup-choice-name">{backup.name}</span>
+            <span className="st-backup-choice-meta">{backup.meta}</span>
+          </button>
+        ))}
+      </div>
+    </DesktopModalShell>
+  );
+}
+
+function SettingsConfirmModal({
+  config,
+  confirmText,
+  onConfirmTextChange,
+  onClose,
+  onConfirm,
+}) {
+  const isConfirmDisabled = config.requiredText && confirmText !== config.requiredText;
+
+  return (
+    <DesktopModalShell
+      title={config.title}
+      subtitle={config.subtitle}
+      onClose={onClose}
+      size="narrow"
+      footer={(
+        <>
+          <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={onClose}>Отмена</button>
+          <button
+            className={`reg-modal-btn ${config.danger ? "reg-modal-btn-danger" : "reg-modal-btn-primary"}`}
+            type="button"
+            onClick={onConfirm}
+            disabled={Boolean(isConfirmDisabled)}
+          >
+            <WarningOutlined aria-hidden="true" />
+            {config.confirmLabel}
+          </button>
+        </>
+      )}
+    >
+      <div className={`st-modal-warning${config.danger ? " danger" : ""}`}>
+        <WarningOutlined aria-hidden="true" />
+        <span>{config.warning}</span>
+      </div>
+      {config.requiredText ? (
+        <label className="st-confirm-input-wrap">
+          <span>Введите “{config.requiredText}” для подтверждения</span>
+          <input
+            className="st-field-input"
+            type="text"
+            value={confirmText}
+            onChange={(event) => onConfirmTextChange(event.target.value)}
+          />
+        </label>
+      ) : null}
+    </DesktopModalShell>
+  );
+}
+
+function formatUploadSize(size) {
+  if (size >= 1024 * 1024) {
+    return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+  }
+  return `${Math.max(1, Math.round(size / 1024))} KB`;
+}
+
+function MasterDataImportModal({
+  selectedFile,
+  error,
+  onFileChange,
+  onClose,
+  onConfirm,
+}) {
+  return (
+    <DesktopModalShell
+      title="Импорт нового мастер-файла"
+      subtitle="Загрузите Excel-файл с мастер-данными. Backend/API не вызывается."
+      onClose={onClose}
+      size="narrow"
+      footer={(
+        <>
+          <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={onClose}>Отмена</button>
+          <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={onConfirm} disabled={!selectedFile}>
+            <CloudUploadOutlined aria-hidden="true" />
+            Импортировать
+          </button>
+        </>
+      )}
+    >
+      <div className="st-upload-box">
+        <label className="st-upload-drop">
+          <CloudUploadOutlined aria-hidden="true" />
+          <span>Выберите файл .xlsx или .xls до 10 MB</span>
+          <input
+            className="st-upload-input"
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={onFileChange}
+          />
+        </label>
+        {error ? <p className="st-upload-error">{error}</p> : null}
+        {selectedFile ? (
+          <div className="st-upload-selected">
+            <div>
+              <strong>{selectedFile.name}</strong>
+              <span>{formatUploadSize(selectedFile.size)}</span>
+            </div>
+            <span className="st-upload-badge">Выбран</span>
+          </div>
+        ) : null}
+      </div>
+    </DesktopModalShell>
+  );
+}
+
+function StoragePathModal({
+  value,
+  onChange,
+  onClose,
+  onConfirm,
+}) {
+  const isDisabled = !value.trim();
+
+  return (
+    <DesktopModalShell
+      title="Изменить путь к хранилищу"
+      subtitle="Введите локальный путь вручную. Выбор системной папки недоступен в обычном web-приложении."
+      onClose={onClose}
+      size="narrow"
+      footer={(
+        <>
+          <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={onClose}>Отмена</button>
+          <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={onConfirm} disabled={isDisabled}>
+            <SaveOutlined aria-hidden="true" />
+            Сохранить
+          </button>
+        </>
+      )}
+    >
+      <label className="st-storage-path-field">
+        <span>Путь к хранилищу</span>
+        <input
+          className="st-field-input"
+          type="text"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      </label>
+    </DesktopModalShell>
+  );
+}
+
 /* ── Main screen ── */
 export function DesktopSettingsScreen() {
+  const timerRef = useRef(null);
+  const [workflow, setWorkflow] = useState(null);
+  const [confirmConfig, setConfirmConfig] = useState(null);
+  const [confirmText, setConfirmText] = useState("");
+  const [selectedBackupId, setSelectedBackupId] = useState(BACKUP_RESTORE_OPTIONS[0]?.id ?? "");
+  const [lastBackup, setLastBackup] = useState("14:45");
+  const [syncQueueCount, setSyncQueueCount] = useState(12);
+  const [serviceStatus, setServiceStatus] = useState("СТАБИЛЬНО");
+  const [masterFileName, setMasterFileName] = useState("master_equipment_v3.xlsx");
+  const [masterImportedAt, setMasterImportedAt] = useState("12.10.2023, 14:20");
+  const [selectedMasterFile, setSelectedMasterFile] = useState(null);
+  const [masterImportError, setMasterImportError] = useState("");
+  const [storagePath, setStoragePath] = useState("/data/infocollect/storage");
+  const [storagePathDraft, setStoragePathDraft] = useState("/data/infocollect/storage");
+
+  useEffect(() => () => window.clearTimeout(timerRef.current), []);
+
+  const statusCards = useMemo(() => (
+    SETTINGS_STATUS_CARDS.map((card) => {
+      if (card.label === "Резервные копии") {
+        return { ...card, value: `Сегодня, ${lastBackup}` };
+      }
+      if (card.label === "Синхронизация") {
+        return {
+          ...card,
+          sub: syncQueueCount > 0 ? `В очереди: ${syncQueueCount}` : "Очередь пуста",
+          subTone: syncQueueCount > 0 ? "blue" : "green",
+        };
+      }
+      return card;
+    })
+  ), [lastBackup, syncQueueCount]);
+
+  const startWorkflow = (config, onSuccess) => {
+    window.clearTimeout(timerRef.current);
+    setConfirmConfig(null);
+    setWorkflow({ ...config, phase: "loading" });
+    timerRef.current = window.setTimeout(() => {
+      onSuccess?.();
+      setWorkflow({ ...config, phase: "success" });
+    }, 3000);
+  };
+
+  const openConfirm = (config) => {
+    setConfirmText("");
+    setConfirmConfig(config);
+  };
+
+  const handleRestoreBackup = () => {
+    startWorkflow({
+      loadingTitle: "Восстанавливаем резервную копию",
+      loadingSubtitle: "Проверяем архив и применяем настройки",
+      successTitle: "Резервная копия восстановлена",
+      successSubtitle: "Параметры обновлены в локальном mock-state.",
+    }, () => {
+      const selectedBackup = BACKUP_RESTORE_OPTIONS.find((backup) => backup.id === selectedBackupId);
+      setLastBackup(selectedBackup?.meta.split(" · ")[0].replace("Сегодня, ", "") ?? "02:00");
+    });
+  };
+
+  const handleSimpleAction = (config) => {
+    startWorkflow(config, config.onSuccess);
+  };
+
+  const handleConfirmAction = () => {
+    if (confirmConfig) {
+      startWorkflow(confirmConfig.workflow, confirmConfig.onSuccess);
+    }
+  };
+
+  const closeMasterImport = () => {
+    setSelectedMasterFile(null);
+    setMasterImportError("");
+    setWorkflow(null);
+  };
+
+  const handleMasterFileChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) {
+      return;
+    }
+
+    const isExcel = /\.(xlsx|xls)$/i.test(file.name);
+    const isAllowedSize = file.size <= 10 * 1024 * 1024;
+
+    if (!isExcel) {
+      setSelectedMasterFile(null);
+      setMasterImportError("Разрешены только Excel-файлы .xlsx и .xls.");
+      return;
+    }
+
+    if (!isAllowedSize) {
+      setSelectedMasterFile(null);
+      setMasterImportError("Размер файла не должен превышать 10 MB.");
+      return;
+    }
+
+    setMasterImportError("");
+    setSelectedMasterFile(file);
+  };
+
+  const handleImportMasterData = () => {
+    if (!selectedMasterFile) {
+      setMasterImportError("Выберите Excel-файл для импорта.");
+      return;
+    }
+
+    const fileName = selectedMasterFile.name;
+    startWorkflow({
+      loadingTitle: "Импортируем мастер-данные",
+      loadingSubtitle: "Проверяем структуру файла",
+      successTitle: "Мастер-данные обновлены",
+      successSubtitle: "Файл принят в локальный mock-state.",
+    }, () => {
+      setMasterFileName(fileName);
+      setMasterImportedAt(`Сегодня, ${new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}`);
+      setSelectedMasterFile(null);
+      setMasterImportError("");
+    });
+  };
+
+  const openStoragePathModal = () => {
+    setStoragePathDraft(storagePath);
+    setWorkflow({ phase: "storage-path" });
+  };
+
+  const handleSaveStoragePath = () => {
+    const nextPath = storagePathDraft.trim();
+    if (!nextPath) {
+      return;
+    }
+
+    startWorkflow({
+      loadingTitle: "Проверяем путь",
+      loadingSubtitle: "Обновляем настройки хранилища",
+      successTitle: "Путь к хранилищу обновлен",
+      successSubtitle: "Новый путь сохранен в локальном mock-state.",
+    }, () => setStoragePath(nextPath));
+  };
+
   return (
     <div className="desktop-screen st-screen">
 
@@ -517,21 +881,58 @@ export function DesktopSettingsScreen() {
             <WarningOutlined style={{ fontSize: 13 }} aria-hidden="true" />
             Есть несохранённые изменения
           </div>
-          <button className="st-btn-save" type="button">
+          <button
+            className="st-btn-save"
+            type="button"
+            onClick={() => handleSimpleAction({
+              loadingTitle: "Сохраняем настройки",
+              loadingSubtitle: "Применяем локальные параметры",
+              successTitle: "Настройки сохранены",
+              successSubtitle: "Изменения сохранены в mock-state.",
+            })}
+          >
             <SaveOutlined aria-hidden="true" />
             Сохранить изменения
           </button>
         </div>
         <div className="st-action-bar-right">
-          <button className="st-btn-text" type="button">
+          <button
+            className="st-btn-text"
+            type="button"
+            onClick={() => handleSimpleAction({
+              loadingTitle: "Проверяем подключение",
+              loadingSubtitle: "Опрашиваем локальные компоненты",
+              successTitle: "Подключение проверено",
+              successSubtitle: "Сервер и локальные модули доступны.",
+            })}
+          >
             <WifiOutlined aria-hidden="true" />
             Проверить подключение
           </button>
-          <button className="st-btn-text" type="button">
+          <button
+            className="st-btn-text"
+            type="button"
+            onClick={() => handleSimpleAction({
+              loadingTitle: "Создаем резервную копию",
+              loadingSubtitle: "Сохраняем текущие параметры",
+              successTitle: "Резервная копия создана",
+              successSubtitle: "Новая копия добавлена в локальный mock-state.",
+              onSuccess: () => setLastBackup(new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })),
+            })}
+          >
             <CloudUploadOutlined aria-hidden="true" />
             Создать резервную копию
           </button>
-          <button className="st-btn-text" type="button">
+          <button
+            className="st-btn-text"
+            type="button"
+            onClick={() => handleSimpleAction({
+              loadingTitle: "Экспортируем настройки",
+              loadingSubtitle: "Формируем локальный пакет конфигурации",
+              successTitle: "Экспорт настроек готов",
+              successSubtitle: "Файл будет сформирован backend после подключения API.",
+            })}
+          >
             <DownloadOutlined aria-hidden="true" />
             Экспорт настроек
           </button>
@@ -548,7 +949,7 @@ export function DesktopSettingsScreen() {
       </div>
 
       {/* Status row */}
-      <StatusCards />
+      <StatusCards cards={statusCards} />
 
       {/* Main layout */}
       <div className="st-body">
@@ -556,16 +957,98 @@ export function DesktopSettingsScreen() {
           <div className="st-config-grid">
             <ServerCard />
             <SyncCard />
-            <RegistryCard />
-            <FilesCard />
-            <BackupCard />
+            <RegistryCard
+              masterFileName={masterFileName}
+              masterImportedAt={masterImportedAt}
+              onImportNew={() => setWorkflow({ phase: "master-import" })}
+            />
+            <FilesCard storagePath={storagePath} onEditStoragePath={openStoragePathModal} />
+            <BackupCard
+              lastBackup={lastBackup}
+              onCreateBackup={() => handleSimpleAction({
+                loadingTitle: "Создаем резервную копию",
+                loadingSubtitle: "Сохраняем текущие параметры",
+                successTitle: "Резервная копия создана",
+                successSubtitle: "Новая копия добавлена в локальный mock-state.",
+                onSuccess: () => setLastBackup(new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })),
+              })}
+              onRestoreBackup={() => setWorkflow({ phase: "restore" })}
+            />
             <SecurityCard />
             <JournalCard />
           </div>
-          <MaintenanceCard />
+          <MaintenanceCard
+            onToolAction={(tool) => handleSimpleAction({
+              loadingTitle: tool.chevron === "download" ? "Готовим пакет диагностики" : "Выполняем обслуживание",
+              loadingSubtitle: tool.label,
+              successTitle: tool.chevron === "download" ? "Пакет диагностики готов" : "Обслуживание завершено",
+              successSubtitle: "Действие выполнено в локальном mock-state.",
+            })}
+            onRestartService={() => openConfirm({
+              title: "Перезапустить сервис",
+              subtitle: "На время перезапуска локальные операции будут недоступны.",
+              warning: "Активные пользователи могут увидеть короткую паузу в работе сервиса.",
+              confirmLabel: "Перезапустить",
+              workflow: {
+                loadingTitle: "Перезапускаем сервис",
+                loadingSubtitle: "Проверяем состояние компонентов",
+                successTitle: "Сервис перезапущен",
+                successSubtitle: "Компоненты снова доступны в локальном mock-state.",
+              },
+              onSuccess: () => setServiceStatus("СТАБИЛЬНО"),
+            })}
+            onResetSyncQueue={() => openConfirm({
+              title: "Сбросить очередь синхронизации",
+              subtitle: "Локальные задачи очереди будут удалены из mock-state.",
+              warning: "После подтверждения очередь синхронизации станет пустой.",
+              confirmLabel: "Сбросить очередь",
+              danger: true,
+              workflow: {
+                loadingTitle: "Сбрасываем очередь синхронизации",
+                loadingSubtitle: "Удаляем локальные задачи из очереди",
+                successTitle: "Очередь синхронизации сброшена",
+                successSubtitle: "Активных задач синхронизации больше нет.",
+              },
+              onSuccess: () => setSyncQueueCount(0),
+            })}
+            onClearCache={() => handleSimpleAction({
+              loadingTitle: "Очищаем кэш системы",
+              loadingSubtitle: "Удаляем временные локальные файлы",
+              successTitle: "Кэш системы очищен",
+              successSubtitle: "Временные данные очищены в mock-state.",
+            })}
+            onResetSettings={() => openConfirm({
+              title: "Сбросить системные настройки",
+              subtitle: "Подтвердите возврат параметров по умолчанию.",
+              warning: "Это действие необратимо для текущего локального состояния экрана.",
+              confirmLabel: "Сбросить настройки",
+              danger: true,
+              requiredText: "СБРОСИТЬ",
+              workflow: {
+                loadingTitle: "Сбрасываем настройки",
+                loadingSubtitle: "Возвращаем параметры по умолчанию",
+                successTitle: "Настройки сброшены",
+                successSubtitle: "Параметры возвращены к значениям по умолчанию.",
+              },
+              onSuccess: () => {
+                setSyncQueueCount(12);
+                setLastBackup("02:00");
+                setServiceStatus("СТАБИЛЬНО");
+              },
+            })}
+          />
         </div>
         <div className="st-side-col">
-          <DiagCard />
+          <DiagCard
+            syncQueueCount={syncQueueCount}
+            serviceStatus={serviceStatus}
+            onCheckSystem={() => handleSimpleAction({
+              loadingTitle: "Проверяем систему",
+              loadingSubtitle: "Проверяем состояние компонентов",
+              successTitle: "Система проверена",
+              successSubtitle: "Критических проблем не найдено.",
+            })}
+          />
         </div>
       </div>
 
@@ -573,6 +1056,48 @@ export function DesktopSettingsScreen() {
       <footer className="st-footer">
         <p className="st-footer-text">InfoCollect MVP v0.1 • Локальная установка</p>
       </footer>
+
+      {workflow?.phase === "restore" ? (
+        <RestoreBackupModal
+          selectedBackupId={selectedBackupId}
+          onSelectBackup={setSelectedBackupId}
+          onClose={() => setWorkflow(null)}
+          onConfirm={handleRestoreBackup}
+        />
+      ) : null}
+
+      {workflow?.phase === "master-import" ? (
+        <MasterDataImportModal
+          selectedFile={selectedMasterFile}
+          error={masterImportError}
+          onFileChange={handleMasterFileChange}
+          onClose={closeMasterImport}
+          onConfirm={handleImportMasterData}
+        />
+      ) : null}
+
+      {workflow?.phase === "storage-path" ? (
+        <StoragePathModal
+          value={storagePathDraft}
+          onChange={setStoragePathDraft}
+          onClose={() => setWorkflow(null)}
+          onConfirm={handleSaveStoragePath}
+        />
+      ) : null}
+
+      {workflow && ["loading", "success"].includes(workflow.phase) ? (
+        <SettingsStatusModal workflow={workflow} onClose={() => setWorkflow(null)} />
+      ) : null}
+
+      {confirmConfig ? (
+        <SettingsConfirmModal
+          config={confirmConfig}
+          confirmText={confirmText}
+          onConfirmTextChange={setConfirmText}
+          onClose={() => setConfirmConfig(null)}
+          onConfirm={handleConfirmAction}
+        />
+      ) : null}
 
     </div>
   );

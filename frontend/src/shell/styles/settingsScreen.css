@@ -501,10 +501,14 @@
   cursor: pointer;
   color: #444653;
   font-size: 16px;
-  transition: background .15s;
+  transition: background .15s, border-color .15s, box-shadow .15s;
   flex-shrink: 0;
 }
 .st-path-btn:hover { background: #c4c5d5; }
+.st-path-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 40, 142, .12);
+}
 
 /* ── Backup card extras ── */
 .st-backup-ok {
@@ -968,4 +972,204 @@
   font-size: 12px;
   font-weight: 600;
   color: #9ca3af;
+}
+
+/* ── Settings modals ── */
+.st-status-state-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #dbe4ff;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.st-status-state-card.success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
+}
+.st-status-state-card > span {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.st-status-state-card strong,
+.st-status-state-card span {
+  display: block;
+}
+.st-status-state-card strong {
+  color: #1a1b22;
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 4px;
+}
+.st-status-state-card div > span {
+  color: #5d6070;
+  font-size: 12px;
+  line-height: 18px;
+}
+.st-modal-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  background: #fffbeb;
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  margin-bottom: 16px;
+}
+.st-modal-warning.danger {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.st-backup-choice-list {
+  display: grid;
+  gap: 10px;
+}
+.st-backup-choice {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid #e3e1eb;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.st-backup-choice:hover,
+.st-backup-choice.selected {
+  border-color: #00288e;
+  box-shadow: 0 0 0 3px rgba(0, 40, 142, .08);
+}
+.st-backup-choice-name {
+  color: #1a1b22;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 18px;
+}
+.st-backup-choice-meta {
+  color: #757684;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.st-confirm-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #444653;
+  font-size: 12px;
+  font-weight: 700;
+}
+.st-upload-box {
+  display: grid;
+  gap: 12px;
+}
+.st-upload-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 132px;
+  padding: 18px;
+  border: 1px dashed #bfdbfe;
+  border-radius: 12px;
+  background: #f8fbff;
+  color: #00288e;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+.st-upload-drop:hover {
+  border-color: #00288e;
+  background: #eff6ff;
+  box-shadow: 0 0 0 3px rgba(0, 40, 142, .06);
+}
+.st-upload-drop > span:first-child {
+  font-size: 24px;
+}
+.st-upload-drop > span:last-of-type {
+  color: #444653;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+.st-upload-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.st-upload-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+}
+.st-upload-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  background: #f0fdf4;
+}
+.st-upload-selected strong,
+.st-upload-selected span {
+  display: block;
+}
+.st-upload-selected strong {
+  color: #1a1b22;
+  font-size: 13px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+.st-upload-selected div > span {
+  color: #5d6070;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+}
+.st-upload-badge {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.st-storage-path-field {
+  display: grid;
+  gap: 8px;
+  color: #444653;
+  font-size: 12px;
+  font-weight: 700;
+}
+.reg-modal-btn-danger {
+  background: #b91c1c;
+  color: #fff;
+}
+.reg-modal-btn-danger:hover:not(:disabled) {
+  background: #991b1b;
+}
+.reg-modal-btn-danger:disabled {
+  cursor: not-allowed;
+  opacity: .55;
 }

@@ -50,6 +50,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .ro-action-bar-right {
@@ -141,6 +142,19 @@
 .ro-search-wrap {
   position: relative;
   min-width: 260px;
+  max-width: 360px;
+  flex: 1 1 260px;
+}
+
+.ro-filter-select {
+  min-width: 150px;
+  padding: 7px 28px 7px 10px;
+  background: var(--bg, #f8fafc);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
 }
 
 .ro-search-icon {
@@ -287,6 +301,9 @@
 }
 
 .ro-role-card {
+  display: block;
+  width: 100%;
+  text-align: left;
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -374,6 +391,42 @@
   font-size: 9px;
   padding: 2px 6px;
   border-radius: 4px;
+}
+
+.ro-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.ro-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ro-card-action:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.ro-empty-list,
+.ro-empty-detail {
+  padding: 18px;
+  background: var(--panel);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
 }
 
 /* ── Permission matrix table ── */
@@ -757,6 +810,19 @@
   font-style: italic;
 }
 
+.ro-pending-save {
+  width: 100%;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #1e3a8a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 /* ── History timeline mini ── */
 
 .ro-history-panel {
@@ -771,7 +837,24 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--text);
-  margin: 0 0 14px;
+  margin: 0;
+}
+
+.ro-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.ro-history-link {
+  border: none;
+  background: transparent;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .ro-history-timeline {
@@ -834,4 +917,209 @@
   font-size: 9px;
   color: #94a3b8;
   margin-top: 2px;
+}
+
+/* ── Roles modals ── */
+
+.ro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ro-form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+.ro-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ro-field span,
+.ro-permission-box > p {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.ro-field input,
+.ro-field select,
+.ro-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  color: var(--text);
+  font-size: 13px;
+  padding: 9px 10px;
+  outline: none;
+}
+
+.ro-field textarea {
+  resize: vertical;
+}
+
+.ro-field input:focus,
+.ro-field select:focus,
+.ro-field textarea:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.3);
+}
+
+.ro-permission-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.ro-permission-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ro-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ro-check-row input {
+  width: 15px;
+  height: 15px;
+  accent-color: #1e3a8a;
+}
+
+.ro-unsaved-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  color: #9a3412;
+}
+
+.ro-unsaved-card strong,
+.ro-unsaved-card span {
+  display: block;
+  font-size: 12px;
+}
+
+.ro-unsaved-card button {
+  border: 1px solid #fdba74;
+  border-radius: 8px;
+  background: #fff;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 9px;
+  cursor: pointer;
+}
+
+.ro-history-modal-list,
+.ro-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ro-history-modal-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.9fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.ro-history-modal-item strong,
+.ro-history-modal-item span,
+.ro-history-modal-item p,
+.ro-history-modal-item em {
+  min-width: 0;
+}
+
+.ro-history-modal-item strong {
+  display: block;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.ro-history-modal-item span,
+.ro-history-modal-item p,
+.ro-history-modal-item em {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.ro-history-status {
+  justify-self: end;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d !important;
+  font-weight: 700;
+}
+
+.ro-user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--text);
+  font-size: 13px;
+}
+
+@media (max-width: 1180px) {
+  .ro-body {
+    grid-template-columns: 1fr;
+  }
+
+  .ro-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .ro-kpi-grid,
+  .ro-cards-grid,
+  .ro-form-grid,
+  .ro-permission-grid,
+  .ro-history-modal-item {
+    grid-template-columns: 1fr;
+  }
+
+  .ro-unsaved-card {
+    grid-template-columns: 1fr;
+  }
 }

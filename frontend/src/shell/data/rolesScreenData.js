@@ -14,6 +14,17 @@ export const ROLE_CARDS = [
     label: "Администратор",
     desc: "Полный доступ ко всем разделам, сотрудникам, ролям и настройкам",
     count: "3 чел.",
+    level: "Полный доступ",
+    status: "Активна",
+    users: ["Иван Иванов", "Мария Орлова", "Система"],
+    permissions: {
+      registry: true,
+      inspections: true,
+      warehouse: true,
+      employees: true,
+      settings: true,
+      reports: true,
+    },
     tags: ["Система", "Настройки"],
     selected: false,
   },
@@ -23,6 +34,17 @@ export const ROLE_CARDS = [
     label: "Диспетчер",
     desc: "Контроль инспекций, поступлений, склада и расхождений",
     count: "12 чел.",
+    level: "Расширенный доступ",
+    status: "Активна",
+    users: ["Анна Смирнова", "Пётр Кузнецов", "Дмитрий Волков"],
+    permissions: {
+      registry: true,
+      inspections: true,
+      warehouse: true,
+      employees: false,
+      settings: false,
+      reports: true,
+    },
     tags: ["Инспекции", "Склад"],
     selected: true,
   },
@@ -32,8 +54,62 @@ export const ROLE_CARDS = [
     label: "Оператор",
     desc: "Выполнение назначенных инспекций и проверок на мобильном устройстве",
     count: "27 чел.",
+    level: "Мобильный доступ",
+    status: "Активна",
+    users: ["Анна Смирнова", "Мария Котова", "Смена А"],
+    permissions: {
+      registry: true,
+      inspections: true,
+      warehouse: false,
+      employees: false,
+      settings: false,
+      reports: false,
+    },
     tags: ["Мобильный клиент", "Инспекции"],
     selected: false,
+  },
+];
+
+export const ROLE_LEVEL_OPTIONS = ["Все уровни", "Полный доступ", "Расширенный доступ", "Мобильный доступ"];
+
+export const ROLE_STATUS_OPTIONS = ["Все статусы", "Активна", "Черновик", "Отключена"];
+
+export const ROLE_PERMISSION_GROUPS = [
+  { key: "registry", label: "Реестр оборудования" },
+  { key: "inspections", label: "Инспекции" },
+  { key: "warehouse", label: "Склад и поступления" },
+  { key: "employees", label: "Сотрудники" },
+  { key: "settings", label: "Настройки" },
+  { key: "reports", label: "Отчёты" },
+];
+
+export const ROLE_HISTORY_ITEMS = [
+  {
+    time: "13.05.2026 10:42",
+    user: "Иван Иванов",
+    change: "Изменены права роли",
+    before: "Склад: просмотр",
+    after: "Склад: полный доступ",
+    comment: "Расширение прав диспетчера",
+    status: "Применено",
+  },
+  {
+    time: "12.05.2026 17:15",
+    user: "Анна Смирнова",
+    change: "Добавлен пользователь роли",
+    before: "11 сотрудников",
+    after: "12 сотрудников",
+    comment: "Новая смена инспекций",
+    status: "Синхронизировано",
+  },
+  {
+    time: "11.05.2026 09:30",
+    user: "Система",
+    change: "Обновлена матрица прав",
+    before: "Версия 3.1",
+    after: "Версия 3.2",
+    comment: "Плановое обновление mock state",
+    status: "Готово",
   },
 ];
 

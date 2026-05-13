@@ -75,3 +75,9 @@ export const EVENT_LOG = [
   { tone: "blue",   title: "Синхронизация реестра",    time: "Сегодня, 08:30:42" },
   { tone: "gray",   title: "Вход администратора",      time: "Сегодня, 14:12:05" },
 ];
+
+export const BACKUP_RESTORE_OPTIONS = [
+  { id: "backup-2026-05-13-0200", name: "backup_2026-05-13_02-00.zip", meta: "Сегодня, 02:00 · 428 MB · Автоматическая копия" },
+  { id: "backup-2026-05-12-0200", name: "backup_2026-05-12_02-00.zip", meta: "12.05.2026, 02:00 · 421 MB · Автоматическая копия" },
+  { id: "backup-2026-05-10-1840", name: "manual_backup_2026-05-10_18-40.zip", meta: "10.05.2026, 18:40 · 416 MB · Ручная копия" },
+];
