@@ -100,12 +100,34 @@ export function MobileObjectStructureScreen({
   activeNavKey,
   initialExpandedFloorId,
   onBack,
+  onContinueWalkthrough,
   onOpenDepartment,
   onNavSelect,
   structure,
 }) {
   const data = structure;
   const [expandedFloorId, setExpandedFloorId] = useState(initialExpandedFloorId ?? null);
+  const [activeFilter, setActiveFilter] = useState(data.filters[0]);
+  const isComplete = data.progress.value >= 100;
+  const primaryActionLabel = data.progress.value > 0 ? "Продолжить обход" : "Начать обход";
+  const visibleFloors =
+    activeFilter === "Все"
+      ? data.floors
+      : data.floors.filter((floor) => {
+        if (activeFilter === "В работе") {
+          return floor.statusType === "inProgress";
+        }
+
+        if (activeFilter === "С расхождениями") {
+          return floor.summary?.some((item) => item.includes("расх") && !item.startsWith("0"));
+        }
+
+        if (activeFilter === "Не начато") {
+          return floor.statusType === "notStarted";
+        }
+
+        return floor.statusLine?.includes(activeFilter);
+      });
 
   const toggleFloor = (floorId) => {
     setExpandedFloorId((currentFloorId) => (currentFloorId === floorId ? null : floorId));
@@ -149,10 +171,12 @@ export function MobileObjectStructureScreen({
               <span style={{ width: `${data.progress.value}%` }} />
             </div>
           </div>
-          <button className="mobile-primary-button" type="button">
-            Продолжить обход
-            <RightOutlined aria-hidden="true" />
-          </button>
+          {!isComplete ? (
+            <button className="mobile-primary-button" type="button" onClick={onContinueWalkthrough}>
+              {primaryActionLabel}
+              <RightOutlined aria-hidden="true" />
+            </button>
+          ) : null}
         </section>
 
         <section className="mobile-structure-tools">
@@ -161,8 +185,13 @@ export function MobileObjectStructureScreen({
             <input type="search" placeholder="Поиск этажа, зоны или помещения" />
           </label>
           <div className="mobile-filter-row">
-            {data.filters.map((filter, index) => (
-              <button className={index === 0 ? "is-active" : ""} type="button" key={filter}>
+            {data.filters.map((filter) => (
+              <button
+                className={filter === activeFilter ? "is-active" : ""}
+                type="button"
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+              >
                 {filter}
               </button>
             ))}
@@ -172,7 +201,7 @@ export function MobileObjectStructureScreen({
         <section className="mobile-structure-list-section">
           <h3>Этажи и зоны</h3>
           <div className="mobile-structure-floor-list">
-            {data.floors.map((floor) => (
+            {visibleFloors.map((floor) => (
               <MobileStructureFloor
                 floor={floor}
                 key={floor.id}

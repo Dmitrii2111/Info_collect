@@ -23,6 +23,8 @@ const statusOptions = [
   { key: "notFound", label: "Не найдено", tone: "warning" },
   { key: "issue", label: "Расхождение", tone: "danger" },
 ];
+const commissioningOptions = ["Выполнены", "Не выполнены", "Не требуется"];
+const trainingOptions = ["Проведено", "Не проведено", "Не требуется"];
 
 function getStatusByKey(statusKey) {
   return statusOptions.find((status) => status.key === statusKey) ?? statusOptions[1];
@@ -44,12 +46,17 @@ export function MobileEquipmentDataScreen({
     note: "Данные отсутствуют",
   };
   const [statusKey, setStatusKey] = useState("notFound");
+  const [preferredStatusKey, setPreferredStatusKey] = useState("notFound");
   const [serialNumber, setSerialNumber] = useState(currentEquipment.serial ?? "");
   const [actualCount, setActualCount] = useState(currentEquipment.actualCount ?? 1);
   const [selectedReasons, setSelectedReasons] = useState(() =>
     currentEquipment.tone === "error" ? [reasonOptions[0]] : [],
   );
   const [comment, setComment] = useState(currentEquipment.note ?? "");
+  const [commissioningStatus, setCommissioningStatus] = useState("Не выполнены");
+  const [commissioningDate, setCommissioningDate] = useState("");
+  const [trainingStatus, setTrainingStatus] = useState("Не проведено");
+  const [trainingDate, setTrainingDate] = useState("");
   const [photo, setPhoto] = useState(null);
   const [photoMenuOpen, setPhotoMenuOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -59,10 +66,15 @@ export function MobileEquipmentDataScreen({
 
   useEffect(() => {
     setStatusKey("notFound");
+    setPreferredStatusKey("notFound");
     setSerialNumber(currentEquipment.serial ?? "");
     setActualCount(currentEquipment.actualCount ?? 1);
     setSelectedReasons(currentEquipment.tone === "error" ? [reasonOptions[0]] : []);
     setComment(currentEquipment.note ?? "");
+    setCommissioningStatus("Не выполнены");
+    setCommissioningDate("");
+    setTrainingStatus("Не проведено");
+    setTrainingDate("");
     setFeedback("");
   }, [currentEquipment.id, currentEquipment.note, currentEquipment.serial, currentEquipment.actualCount, currentEquipment.tone]);
 
@@ -76,15 +88,22 @@ export function MobileEquipmentDataScreen({
 
   const handleStatusSelect = (nextStatusKey) => {
     setStatusKey(nextStatusKey);
+    if (nextStatusKey !== "issue") {
+      setPreferredStatusKey(nextStatusKey);
+    }
     setFeedback("");
   };
 
   const handleReasonToggle = (reason) => {
-    setSelectedReasons((currentReasons) =>
-      currentReasons.includes(reason)
+    setSelectedReasons((currentReasons) => {
+      const nextReasons = currentReasons.includes(reason)
         ? currentReasons.filter((item) => item !== reason)
-        : [...currentReasons, reason],
-    );
+        : [...currentReasons, reason];
+
+      setStatusKey(nextReasons.length > 0 ? "issue" : preferredStatusKey || "found");
+
+      return nextReasons;
+    });
     setFeedback("");
   };
 
@@ -117,8 +136,11 @@ export function MobileEquipmentDataScreen({
     setFeedback("Фото удалено");
   };
 
-  const handleSave = (message) => {
+  const handleSave = (message, options = {}) => {
     setFeedback(message);
+    if (options.goBack) {
+      onBack();
+    }
   };
 
   return (
@@ -206,6 +228,66 @@ export function MobileEquipmentDataScreen({
               </button>
             </div>
           </label>
+          <div className="mobile-equipment-select-group">
+            <span>ПНР</span>
+            <div>
+              {commissioningOptions.map((option) => (
+                <button
+                  className={commissioningStatus === option ? "is-active" : ""}
+                  type="button"
+                  key={option}
+                  onClick={() => {
+                    setCommissioningStatus(option);
+                    if (option !== "Выполнены") {
+                      setCommissioningDate("");
+                    }
+                  }}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+          {commissioningStatus === "Выполнены" ? (
+            <label className="mobile-equipment-field">
+              <span>Дата выполнения ПНР</span>
+              <input
+                type="date"
+                value={commissioningDate}
+                onChange={(event) => setCommissioningDate(event.target.value)}
+              />
+            </label>
+          ) : null}
+          <div className="mobile-equipment-select-group">
+            <span>Обучение</span>
+            <div>
+              {trainingOptions.map((option) => (
+                <button
+                  className={trainingStatus === option ? "is-active" : ""}
+                  type="button"
+                  key={option}
+                  onClick={() => {
+                    setTrainingStatus(option);
+                    if (option !== "Проведено") {
+                      setTrainingDate("");
+                    }
+                  }}
+                >
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+          {trainingStatus === "Проведено" ? (
+            <label className="mobile-equipment-field">
+              <span>Дата проведения обучения</span>
+              <input
+                type="date"
+                value={trainingDate}
+                onChange={(event) => setTrainingDate(event.target.value)}
+              />
+            </label>
+          ) : null}
           <div className="mobile-equipment-reasons">
             <p>
               <WarningOutlined aria-hidden="true" />
@@ -295,20 +377,13 @@ export function MobileEquipmentDataScreen({
           <button type="button" onClick={() => handleSave("Изменения сохранены локально")}>
             Сохранить
           </button>
-          <button type="button" onClick={() => handleSave("Сохранено локально, следующий шаг не открыт")}>
+          <button type="button" onClick={() => handleSave("Сохранено локально", { goBack: true })}>
             Сохранить и к следующему
           </button>
         </div>
         <button
           type="button"
-          onClick={() => {
-            setStatusKey("notFound");
-            setComment(currentEquipment.note ?? "");
-            setSerialNumber(currentEquipment.serial ?? "");
-            setActualCount(currentEquipment.actualCount ?? 1);
-            setSelectedReasons(currentEquipment.tone === "error" ? [reasonOptions[0]] : []);
-            handleSave("Изменения отменены локально");
-          }}
+          onClick={onBack}
         >
           Отменить
         </button>

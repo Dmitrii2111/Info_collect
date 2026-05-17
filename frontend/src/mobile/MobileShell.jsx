@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { MobileSideDrawer } from "./components/MobileSideDrawer.jsx";
 import { MobileDashboardScreen } from "./screens/MobileDashboardScreen.jsx";
 import { MobileDepartmentRoomsScreen } from "./screens/MobileDepartmentRoomsScreen.jsx";
 import { MobileDiscrepancyDetailsScreen } from "./screens/MobileDiscrepancyDetailsScreen.jsx";
 import { MobileDiscrepanciesScreen } from "./screens/MobileDiscrepanciesScreen.jsx";
 import { MobileEquipmentDataScreen } from "./screens/MobileEquipmentDataScreen.jsx";
 import { MobileHistoryScreen } from "./screens/MobileHistoryScreen.jsx";
+import { MobileHelpScreen } from "./screens/MobileHelpScreen.jsx";
 import { MobileInspectionsScreen } from "./screens/MobileInspectionsScreen.jsx";
 import { MobileItemCardScreen } from "./screens/MobileItemCardScreen.jsx";
 import { MobileLoginScreen } from "./screens/MobileLoginScreen.jsx";
@@ -25,6 +27,28 @@ import {
   mobileWarehouseData,
 } from "./data/mobileMockData.js";
 import "./styles/mobile.css";
+
+const MOBILE_SESSION_KEY = "infocollect.mobile.session";
+
+function readMobileSession() {
+  if (typeof window === "undefined") {
+    return {};
+  }
+
+  try {
+    return JSON.parse(window.localStorage.getItem(MOBILE_SESSION_KEY) ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+function clearMobileSession() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.removeItem(MOBILE_SESSION_KEY);
+}
 
 function getObjectStructure(objectId) {
   return mobileObjectStructuresById[objectId] ?? mobileObjectStructuresById["building-a"];
@@ -61,9 +85,50 @@ function findDiscrepancy(discrepancyId) {
   return mobileDiscrepanciesData.discrepancies.find((item) => item.id === discrepancyId) ?? null;
 }
 
+function getDrawerActiveKey(activeScreen) {
+  if (["objects", "objectStructure", "departmentRooms", "roomInspection", "equipmentData"].includes(activeScreen)) {
+    return "objects";
+  }
+
+  if (["inspections", "walkthroughRooms"].includes(activeScreen)) {
+    return "inspections";
+  }
+
+  if (["warehouse", "itemCard", "moveItem", "receiptBatchConfirm"].includes(activeScreen)) {
+    return "warehouse";
+  }
+
+  if (activeScreen === "discrepancies" || activeScreen === "discrepancyDetails") {
+    return "discrepancies";
+  }
+
+  if (activeScreen === "sync") {
+    return "sync";
+  }
+
+  if (activeScreen === "settings") {
+    return "settings";
+  }
+
+  if (activeScreen === "help") {
+    return "help";
+  }
+
+  if (activeScreen === "history") {
+    return "history";
+  }
+
+  if (activeScreen === "profile") {
+    return "profile";
+  }
+
+  return "dashboard";
+}
+
 export function MobileShell() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeScreen, setActiveScreen] = useState("dashboard");
+  const savedSession = readMobileSession();
+  const [isAuthenticated, setIsAuthenticated] = useState(Boolean(savedSession.authenticated));
+  const [activeScreen, setActiveScreen] = useState(savedSession.activeScreen ?? "dashboard");
   const [selectedObjectId, setSelectedObjectId] = useState(null);
   const [selectedFloorId, setSelectedFloorId] = useState(null);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
@@ -74,9 +139,32 @@ export function MobileShell() {
   const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(null);
   const [discrepancySource, setDiscrepancySource] = useState("dashboard");
   const [syncSource, setSyncSource] = useState("dashboard");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleLogin = () => {
     setIsAuthenticated(true);
+    setActiveScreen("dashboard");
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(
+      MOBILE_SESSION_KEY,
+      JSON.stringify({ authenticated: true, activeScreen }),
+    );
+  }, [activeScreen, isAuthenticated]);
+
+  const handleLogout = () => {
+    clearMobileSession();
+    setIsDrawerOpen(false);
+    setIsAuthenticated(false);
     setActiveScreen("dashboard");
   };
 
@@ -90,6 +178,52 @@ export function MobileShell() {
     ) {
       setActiveScreen(screenKey);
     }
+  };
+
+  const handleDrawerSelect = (item) => {
+    setIsDrawerOpen(false);
+
+    if (item.key === "logout") {
+      handleLogout();
+      return;
+    }
+
+    if (item.key === "help") {
+      setActiveScreen("help");
+      return;
+    }
+
+    if (!item.screen) {
+      return;
+    }
+
+    if (item.screen === "sync") {
+      handleOpenSync("profile");
+      return;
+    }
+
+    if (item.screen === "discrepancies") {
+      handleOpenDiscrepancies();
+      return;
+    }
+
+    setActiveScreen(item.screen);
+  };
+
+  const handleContinueWalkthrough = () => {
+    setSelectedObjectId("building-a");
+    setSelectedFloorId("floor-2");
+    setSelectedDepartmentId("emergency");
+    setSelectedRoomId(null);
+    setActiveScreen("departmentRooms");
+  };
+
+  const handleContinueRoomInspection = () => {
+    setSelectedObjectId("building-a");
+    setSelectedFloorId("floor-2");
+    setSelectedDepartmentId("emergency");
+    setSelectedRoomId("room-201-29");
+    setActiveScreen("roomInspection");
   };
 
   const handleOpenDepartment = (floorId, departmentId) => {
@@ -210,19 +344,39 @@ export function MobileShell() {
         structure={selectedStructure}
         onBack={() => setActiveScreen("objects")}
         initialExpandedFloorId={selectedFloorId}
+        onContinueWalkthrough={handleContinueWalkthrough}
         onOpenDepartment={handleOpenDepartment}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "objects" ? (
       <MobileObjectsScreen
         activeNavKey="objects"
+        onOpenMenu={() => setIsDrawerOpen(true)}
+        onContinueWalkthrough={handleContinueWalkthrough}
         onOpenObjectStructure={handleOpenObjectStructure}
+        onOpenRecentZone={(zoneIndex) => {
+          if (zoneIndex === 1) {
+            setSelectedObjectId("building-a");
+            setSelectedFloorId("floor-3");
+            setSelectedDepartmentId("diagnostics");
+            setActiveScreen("departmentRooms");
+            return;
+          }
+
+          if (zoneIndex === 2) {
+            setActiveScreen("warehouse");
+            return;
+          }
+
+          handleContinueWalkthrough();
+        }}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "inspections" ? (
       <MobileInspectionsScreen
         activeNavKey="inspections"
         selectedInspectionId={selectedInspectionId}
+        onOpenMenu={() => setIsDrawerOpen(true)}
         onOpenInspection={handleOpenInspection}
         onNavSelect={handleNavSelect}
       />
@@ -237,6 +391,7 @@ export function MobileShell() {
     ) : activeScreen === "warehouse" ? (
       <MobileWarehouseScreen
         activeNavKey="warehouse"
+        onOpenMenu={() => setIsDrawerOpen(true)}
         onOpenItem={handleOpenWarehouseItem}
         onOpenReceiptBatch={handleOpenReceiptBatchConfirm}
         onNavSelect={handleNavSelect}
@@ -297,9 +452,16 @@ export function MobileShell() {
         onOpenSync={() => handleOpenSync("profile")}
         onNavSelect={handleNavSelect}
       />
+    ) : activeScreen === "help" ? (
+      <MobileHelpScreen
+        activeNavKey="profile"
+        onBack={() => setActiveScreen("profile")}
+        onNavSelect={handleNavSelect}
+      />
     ) : activeScreen === "profile" ? (
       <MobileProfileScreen
         activeNavKey="profile"
+        onOpenMenu={() => setIsDrawerOpen(true)}
         onOpenHistory={() => setActiveScreen("history")}
         onOpenSettings={() => setActiveScreen("settings")}
         onOpenSync={() => handleOpenSync("profile")}
@@ -308,6 +470,10 @@ export function MobileShell() {
     ) : (
       <MobileDashboardScreen
         activeNavKey="dashboard"
+        onOpenMenu={() => setIsDrawerOpen(true)}
+        onContinueWalkthrough={handleContinueWalkthrough}
+        onOpenRooms={handleContinueWalkthrough}
+        onOpenScan={handleContinueRoomInspection}
         onOpenDiscrepancies={handleOpenDiscrepancies}
         onOpenSync={() => handleOpenSync("dashboard")}
         onNavSelect={handleNavSelect}
@@ -317,6 +483,13 @@ export function MobileShell() {
   return (
     <div className="mobile-app">
       {isAuthenticated ? activeContent : <MobileLoginScreen onLogin={handleLogin} />}
+      {isAuthenticated && isDrawerOpen ? (
+        <MobileSideDrawer
+          activeKey={getDrawerActiveKey(activeScreen)}
+          onClose={() => setIsDrawerOpen(false)}
+          onSelect={handleDrawerSelect}
+        />
+      ) : null}
     </div>
   );
 }

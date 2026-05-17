@@ -50,7 +50,7 @@ function ProfileMenuRow({ item, iconMap, onSelect }) {
   );
 }
 
-export function MobileProfileScreen({ activeNavKey, onOpenHistory, onOpenSettings, onOpenSync, onNavSelect }) {
+export function MobileProfileScreen({ activeNavKey, onOpenMenu, onOpenHistory, onOpenSettings, onOpenSync, onNavSelect }) {
   const data = mobileProfileData;
   const [feedback, setFeedback] = useState("");
 
@@ -67,7 +67,7 @@ export function MobileProfileScreen({ activeNavKey, onOpenHistory, onOpenSetting
     <div className="mobile-profile-screen">
       <MobileHeader
         title="Профиль"
-        onMenu={() => setFeedback("Меню будет доступно на Stage 7")}
+        onMenu={onOpenMenu}
         onSync={onOpenSync}
       />
 

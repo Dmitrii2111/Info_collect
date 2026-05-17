@@ -9,7 +9,9 @@ import {
   SyncOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
+import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 
 const equipmentIcons = {
   success: CheckCircleOutlined,
@@ -79,6 +81,13 @@ export function MobileRoomInspectionScreen({
   const discrepancyCount = equipment.filter((item) => item.tone === "error").length;
   const pendingCount = equipment.filter((item) => item.tone === "active").length;
   const remainingCount = Math.max(progress.total - progress.checked, 0);
+  const [activeOverlay, setActiveOverlay] = useState(null);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const handleCompleteRoom = () => {
+    setIsCompleted(true);
+    setActiveOverlay("success");
+  };
 
   return (
     <div className="mobile-room-inspection-screen">
@@ -102,7 +111,7 @@ export function MobileRoomInspectionScreen({
               <h2>{currentRoom.title}</h2>
               <p>{department?.context}</p>
             </div>
-            <span>{currentRoom.status}</span>
+            <span>{isCompleted ? "Завершено" : currentRoom.status}</span>
           </div>
           <div className="mobile-room-summary-progress">
             <div>
@@ -131,7 +140,7 @@ export function MobileRoomInspectionScreen({
               {pendingCount} не отправлено
             </span>
           </div>
-          <button type="button">
+          <button type="button" onClick={() => setActiveOverlay("info")}>
             <InfoCircleOutlined aria-hidden="true" />
             Информация о помещении
           </button>
@@ -163,11 +172,104 @@ export function MobileRoomInspectionScreen({
       </main>
 
       <div className="mobile-room-action-bar">
-        <button type="button">Завершить помещение</button>
-        <span>Осталось проверить {remainingCount} позиций</span>
+        <button type="button" onClick={() => setActiveOverlay("confirm")}>Завершить помещение</button>
+        <span>{isCompleted ? "Помещение отмечено как завершенное" : `Осталось проверить ${remainingCount} позиций`}</span>
       </div>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {activeOverlay === "info" ? (
+        <MobileBottomSheet
+          title="Информация о помещении"
+          subtitle={currentRoom.title}
+          onClose={() => setActiveOverlay(null)}
+        >
+          <div className="mobile-room-info-sheet">
+            <p>{department?.context ?? "Контекст помещения не указан"}</p>
+            <div>
+              <h3>Ожидаемые позиции</h3>
+              {equipment.length > 0 ? (
+                equipment.map((item) => (
+                  <article key={item.id}>
+                    <strong>{item.title}</strong>
+                    <span>{item.id}</span>
+                    <small>{item.status} • {item.note}</small>
+                  </article>
+                ))
+              ) : (
+                <article>
+                  <strong>Позиции не указаны</strong>
+                  <small>Для помещения нет mock-данных оборудования.</small>
+                </article>
+              )}
+            </div>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      {activeOverlay === "confirm" ? (
+        <MobileBottomSheet
+          title="Завершить помещение?"
+          subtitle="Вы уверены, что хотите завершить осмотр помещения?"
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          footer={({ close }) => (
+            <div className="mobile-overlay-actions is-vertical">
+              <button type="button" onClick={() => close(handleCompleteRoom)}>Да, завершить</button>
+              <button type="button" onClick={() => close()}>Нет, вернуться к помещению</button>
+            </div>
+          )}
+        >
+          <div className="mobile-completion-context">
+            <h3>{currentRoom.title}</h3>
+            <p>{department?.context ?? "Контекст не указан"}</p>
+            <div className="mobile-completion-grid">
+              <span>
+                <CheckCircleOutlined aria-hidden="true" />
+                {currentRoom.progress}
+              </span>
+              <span>
+                <ClockCircleOutlined aria-hidden="true" />
+                {remainingCount} осталось
+              </span>
+              <span className="is-error">
+                <WarningOutlined aria-hidden="true" />
+                {discrepancyCount} расхождение
+              </span>
+              <span className="is-warning">
+                <SyncOutlined aria-hidden="true" />
+                {pendingCount} не отправлено
+              </span>
+            </div>
+          </div>
+          <div className="mobile-confirm-note is-boxed">
+            <InfoCircleOutlined aria-hidden="true" />
+            <p>После завершения помещение будет отмечено как завершенное. Вы сможете вернуться к нему позже.</p>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      {activeOverlay === "success" ? (
+        <MobileBottomSheet
+          title="Успех"
+          subtitle="Осмотр помещения завершен"
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          className="mobile-success-sheet"
+        >
+          <div className="mobile-success-icon">
+            <CheckCircleOutlined aria-hidden="true" />
+          </div>
+          <div className="mobile-completion-success-copy">
+            <h3>{currentRoom.title}</h3>
+            <p>Изменение будет отправлено при следующей синхронизации.</p>
+          </div>
+          <div className="mobile-success-actions">
+            <button type="button" onClick={onBack}>К списку помещений</button>
+            <button type="button" onClick={() => setActiveOverlay(null)}>Остаться в помещении</button>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
     </div>
   );
 }

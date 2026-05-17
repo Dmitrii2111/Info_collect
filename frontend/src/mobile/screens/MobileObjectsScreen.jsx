@@ -8,6 +8,7 @@ import {
   SearchOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
+import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
 import { mobileObjectsData } from "../data/mobileMockData.js";
@@ -86,12 +87,38 @@ function MobileObjectCard({ object, onOpenObjectStructure }) {
   );
 }
 
-export function MobileObjectsScreen({ activeNavKey, onOpenObjectStructure, onNavSelect }) {
+export function MobileObjectsScreen({
+  activeNavKey,
+  onOpenMenu,
+  onContinueWalkthrough,
+  onOpenObjectStructure,
+  onOpenRecentZone,
+  onNavSelect,
+}) {
   const data = mobileObjectsData;
+  const [activeFilter, setActiveFilter] = useState(data.filters[0]);
+  const [syncStatus, setSyncStatus] = useState(data.summary.updatedAt);
+  const visibleObjects =
+    activeFilter === "Все"
+      ? data.objects
+      : data.objects.filter((object) => {
+        if (activeFilter === "С расхождениями") {
+          return object.tone === "error" || object.status === "Внимание";
+        }
+
+        return object.status === activeFilter;
+      });
 
   return (
     <div className="mobile-objects-screen">
-      <MobileHeader title="Объекты" />
+      <MobileHeader
+        title="Объекты"
+        onMenu={onOpenMenu}
+        onSync={() => setSyncStatus(`Обновлено локально: ${new Date().toLocaleTimeString("ru-RU", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`)}
+      />
 
       <main className="mobile-objects-content">
         <section className="mobile-card mobile-objects-summary">
@@ -108,8 +135,8 @@ export function MobileObjectsScreen({ activeNavKey, onOpenObjectStructure, onNav
             ))}
           </div>
           <div className="mobile-objects-summary-actions">
-            <span>{data.summary.updatedAt}</span>
-            <button type="button">Продолжить обход</button>
+            <span>{syncStatus}</span>
+            <button type="button" onClick={onContinueWalkthrough}>Продолжить обход</button>
           </div>
         </section>
 
@@ -119,8 +146,13 @@ export function MobileObjectsScreen({ activeNavKey, onOpenObjectStructure, onNav
             <input type="search" placeholder="Поиск объекта, корпуса или зоны" />
           </label>
           <div className="mobile-filter-row">
-            {data.filters.map((filter, index) => (
-              <button className={index === 0 ? "is-active" : ""} type="button" key={filter}>
+            {data.filters.map((filter) => (
+              <button
+                className={filter === activeFilter ? "is-active" : ""}
+                type="button"
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+              >
                 {filter}
               </button>
             ))}
@@ -130,7 +162,7 @@ export function MobileObjectsScreen({ activeNavKey, onOpenObjectStructure, onNav
         <section className="mobile-objects-list-section">
           <h3>Объекты</h3>
           <div className="mobile-objects-list">
-            {data.objects.map((object) => (
+            {visibleObjects.map((object) => (
               <MobileObjectCard
                 object={object}
                 key={object.id}
@@ -143,8 +175,8 @@ export function MobileObjectsScreen({ activeNavKey, onOpenObjectStructure, onNav
         <section className="mobile-objects-list-section mobile-recent-zones-section">
           <h3>Недавние зоны</h3>
           <div className="mobile-recent-zones">
-            {data.recentZones.map((zone) => (
-              <button type="button" key={zone}>
+            {data.recentZones.map((zone, index) => (
+              <button type="button" key={zone} onClick={() => onOpenRecentZone?.(index)}>
                 <span>
                   <HistoryOutlined aria-hidden="true" />
                   {zone}

@@ -60,7 +60,7 @@ function WarehouseItemCard({ item, isSelected, onSelect }) {
   );
 }
 
-export function MobileWarehouseScreen({ activeNavKey, onOpenItem, onOpenReceiptBatch, onNavSelect }) {
+export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, onOpenReceiptBatch, onNavSelect }) {
   const data = mobileWarehouseData;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
@@ -101,7 +101,7 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenItem, onOpenReceiptB
     <div className="mobile-warehouse-screen">
       <MobileHeader
         title="Склад"
-        onMenu={() => setFeedback("Меню будет доступно на Stage 7")}
+        onMenu={onOpenMenu}
         onSync={() => setFeedback("Склад обновлен локально")}
       />
 

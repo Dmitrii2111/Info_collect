@@ -2,14 +2,17 @@ import { useMemo, useState } from "react";
 import {
   ApartmentOutlined,
   ArrowLeftOutlined,
+  CheckCircleOutlined,
   InboxOutlined,
   MinusOutlined,
   PlusOutlined,
   RightOutlined,
   SearchOutlined,
   SyncOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 import { mobileMoveItemData } from "../data/mobileMockData.js";
 
 function getAvailableQuantity(item) {
@@ -31,14 +34,18 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
   };
   const availableQuantity = Math.max(getAvailableQuantity(currentItem), 1);
   const defaultWarehouseQuantity = Math.min(data.targetWarehouse.quantity, availableQuantity);
+  const [selectedWarehouse, setSelectedWarehouse] = useState(data.targetWarehouse);
   const [warehouseQuantity, setWarehouseQuantity] = useState(defaultWarehouseQuantity);
   const [roomQuantities, setRoomQuantities] = useState(() =>
     Object.fromEntries(data.rooms.map((room) => [room.id, room.quantity])),
   );
   const [searchQuery, setSearchQuery] = useState("");
+  const [roomPickerQuery, setRoomPickerQuery] = useState("");
+  const [warehousePickerQuery, setWarehousePickerQuery] = useState("");
   const [selectedReason, setSelectedReason] = useState(data.reasonOptions[0]);
   const [comment, setComment] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [activeOverlay, setActiveOverlay] = useState(null);
 
   const visibleRooms = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -50,10 +57,37 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
     return data.rooms.filter((room) => room.title.toLowerCase().includes(normalizedQuery));
   }, [data.rooms, searchQuery]);
 
+  const pickerRooms = useMemo(() => {
+    const normalizedQuery = roomPickerQuery.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      return data.rooms;
+    }
+
+    return data.rooms.filter((room) => room.title.toLowerCase().includes(normalizedQuery));
+  }, [data.rooms, roomPickerQuery]);
+
+  const pickerWarehouses = useMemo(() => {
+    const normalizedQuery = warehousePickerQuery.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      return data.warehouses;
+    }
+
+    return data.warehouses.filter((warehouse) =>
+      `${warehouse.title} ${warehouse.subtitle}`.toLowerCase().includes(normalizedQuery),
+    );
+  }, [data.warehouses, warehousePickerQuery]);
+
   const roomTotal = Object.values(roomQuantities).reduce((sum, value) => sum + Number(value || 0), 0);
   const distributedTotal = warehouseQuantity + roomTotal;
   const remainingTotal = Math.max(availableQuantity - distributedTotal, 0);
   const distributedPercent = Math.min(100, Math.round((distributedTotal / availableQuantity) * 100));
+  const selectedRoomCount = Object.values(roomQuantities).filter((value) => Number(value) > 0).length;
+  const selectedDirectionsCount = selectedRoomCount + (warehouseQuantity > 0 ? 1 : 0);
+  const selectedRoomTitles = data.rooms
+    .filter((room) => Number(roomQuantities[room.id] ?? 0) > 0)
+    .map((room) => room.title.split(" — ")[0]);
 
   const updateRoomQuantity = (roomId, delta) => {
     setRoomQuantities((current) => ({
@@ -63,8 +97,33 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
     setFeedback("");
   };
 
+  const handleSelectRoom = (roomId) => {
+    setRoomQuantities((current) => ({
+      ...current,
+      [roomId]: Math.max(1, Number(current[roomId] ?? 0)),
+    }));
+    setFeedback("");
+    setActiveOverlay(null);
+  };
+
+  const handleSelectWarehouse = (warehouse) => {
+    if (warehouse.disabled) {
+      return;
+    }
+
+    setSelectedWarehouse(warehouse);
+    setWarehouseQuantity(Math.max(1, Math.min(warehouse.quantity || defaultWarehouseQuantity, availableQuantity)));
+    setFeedback("");
+    setActiveOverlay(null);
+  };
+
   const handleSave = () => {
-    setFeedback("Перемещение подготовлено локально");
+    setFeedback("");
+    setActiveOverlay("confirm");
+  };
+
+  const handleConfirmSave = () => {
+    setActiveOverlay("success");
   };
 
   return (
@@ -141,7 +200,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
               <h3>Куда переместить</h3>
               <p>Распределить по 1 шт. в несколько помещений</p>
             </div>
-            <button type="button" onClick={() => setFeedback("Выбор помещений будет доступен на Stage 7")}>
+            <button type="button" onClick={() => setActiveOverlay("rooms")}>
               Выбрать помещения
             </button>
           </div>
@@ -152,8 +211,8 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
                 <InboxOutlined aria-hidden="true" />
               </span>
               <div>
-                <h4>{data.targetWarehouse.title}</h4>
-                <p>{data.targetWarehouse.subtitle}</p>
+                <h4>{selectedWarehouse.title}</h4>
+                <p>{selectedWarehouse.subtitle}</p>
               </div>
             </div>
             <label>
@@ -166,7 +225,9 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
               />
               <small>шт.</small>
             </label>
-            <RightOutlined aria-hidden="true" />
+            <button type="button" aria-label="Выбрать склад" onClick={() => setActiveOverlay("warehouse")}>
+              <RightOutlined aria-hidden="true" />
+            </button>
           </div>
 
           <div className="mobile-move-room-group">
@@ -175,7 +236,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
                 <h4>Помещения</h4>
                 <p>Всего в помещения: {roomTotal} шт.</p>
               </div>
-              <span>{visibleRooms.length} ед. выбрано</span>
+              <span>{selectedRoomCount} ед. выбрано</span>
             </div>
             {visibleRooms.map((room) => (
               <div className="mobile-move-room-row" key={room.id}>
@@ -203,11 +264,11 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
         </section>
 
         <section className="mobile-move-add-actions">
-          <button type="button" onClick={() => setFeedback("Добавление помещения будет доступно на Stage 7")}>
+          <button type="button" onClick={() => setActiveOverlay("rooms")}>
             <ApartmentOutlined aria-hidden="true" />
             Добавить помещение
           </button>
-          <button type="button" onClick={() => setFeedback("Добавление склада будет доступно на Stage 7")}>
+          <button type="button" onClick={() => setActiveOverlay("warehouse")}>
             <InboxOutlined aria-hidden="true" />
             Добавить склад
           </button>
@@ -245,6 +306,287 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
       </div>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {activeOverlay === "rooms" ? (
+        <MobileBottomSheet
+          title="Выбрать помещения"
+          subtitle="Укажите помещения и количество для перемещения"
+          onClose={() => setActiveOverlay(null)}
+          footer={({ close }) => (
+            <>
+              <div className="mobile-overlay-summary">
+                <span>
+                  Помещений выбрано:
+                  <strong>{selectedRoomCount}</strong>
+                </span>
+                <span>
+                  В помещения:
+                  <strong>{roomTotal} шт.</strong>
+                </span>
+                <span>
+                  Осталось:
+                  <strong>{remainingTotal} шт.</strong>
+                </span>
+              </div>
+              <p className="mobile-overlay-note">Количество можно распределять между помещениями вручную.</p>
+              <div className="mobile-overlay-actions">
+                <button type="button" onClick={() => close()}>Отмена</button>
+                <button type="button" onClick={() => close()}>Добавить в распределение</button>
+              </div>
+            </>
+          )}
+        >
+          <label className="mobile-overlay-search">
+            <SearchOutlined aria-hidden="true" />
+            <input
+              type="search"
+              placeholder="Поиск помещения"
+              value={roomPickerQuery}
+              onChange={(event) => setRoomPickerQuery(event.target.value)}
+            />
+          </label>
+          <div className="mobile-overlay-list">
+            {pickerRooms.map((room) => {
+              const roomQuantity = Number(roomQuantities[room.id] ?? 0);
+
+              return (
+                <article className={`mobile-overlay-room ${roomQuantity > 0 ? "is-selected" : ""}`} key={room.id}>
+                  <div className="mobile-overlay-row-head">
+                    <div>
+                      <h3>{room.title}</h3>
+                      <span className={room.warning ? "is-warning" : ""}>{room.status}</span>
+                      {room.warning ? <p>{room.warning}</p> : null}
+                    </div>
+                    <button type="button" onClick={() => handleSelectRoom(room.id)}>
+                      {roomQuantity > 0 ? "Выбрано" : "Добавить"}
+                    </button>
+                  </div>
+                  {roomQuantity > 0 ? (
+                    <div className="mobile-overlay-quantity">
+                      <span>Количество:</span>
+                      <div>
+                        <button type="button" onClick={() => updateRoomQuantity(room.id, -1)}>
+                          <MinusOutlined aria-hidden="true" />
+                        </button>
+                        <strong>{roomQuantity}</strong>
+                        <button type="button" onClick={() => updateRoomQuantity(room.id, 1)}>
+                          <PlusOutlined aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      {activeOverlay === "warehouse" ? (
+        <MobileBottomSheet
+          title="Выбрать склад"
+          subtitle="Укажите склад и количество для перемещения"
+          onClose={() => setActiveOverlay(null)}
+          footer={({ close }) => (
+            <>
+              <div className="mobile-overlay-summary is-three">
+                <span>
+                  Выбрано:
+                  <strong>{warehouseQuantity > 0 ? "1 склад" : "0 складов"}</strong>
+                </span>
+                <span>
+                  В склады:
+                  <strong>{warehouseQuantity} шт.</strong>
+                </span>
+                <span>
+                  Осталось:
+                  <strong>{remainingTotal} шт.</strong>
+                </span>
+              </div>
+              <p className="mobile-overlay-note">Количество можно распределять между складами вручную.</p>
+              <div className="mobile-overlay-actions is-vertical">
+                <button type="button" onClick={() => close()}>Добавить в распределение</button>
+                <button type="button" onClick={() => close()}>Отмена</button>
+              </div>
+            </>
+          )}
+        >
+          <div className="mobile-overlay-metrics">
+            <span>
+              Доступно
+              <strong>{availableQuantity} шт.</strong>
+            </span>
+            <span>
+              Распределено
+              <strong>{distributedTotal}</strong>
+            </span>
+            <span>
+              Осталось
+              <strong>{remainingTotal}</strong>
+            </span>
+          </div>
+          <label className="mobile-overlay-search">
+            <SearchOutlined aria-hidden="true" />
+            <input
+              type="search"
+              placeholder="Поиск склада или зоны"
+              value={warehousePickerQuery}
+              onChange={(event) => setWarehousePickerQuery(event.target.value)}
+            />
+          </label>
+          <div className="mobile-overlay-chips" aria-label="Фильтры складов">
+            {["Все", "Склады", "Зоны", "Выбрано", "Доступно"].map((filter) => (
+              <span className={filter === "Все" ? "is-active" : ""} key={filter}>{filter}</span>
+            ))}
+          </div>
+          <div className="mobile-overlay-list is-divided">
+            {pickerWarehouses.map((warehouse) => {
+              const isSelected = selectedWarehouse.id === warehouse.id;
+
+              return (
+                <article className={`mobile-overlay-warehouse ${isSelected ? "is-selected" : ""}`} key={warehouse.id}>
+                  <div>
+                    <h3>{warehouse.title}</h3>
+                    <p>{warehouse.subtitle}</p>
+                    <span className={warehouse.status === "Ограничено" ? "is-warning" : ""}>{warehouse.status}</span>
+                    <small>{warehouse.capacity}</small>
+                  </div>
+                  {isSelected ? (
+                    <div className="mobile-overlay-stepper">
+                      <button type="button" onClick={() => setWarehouseQuantity((value) => Math.max(0, value - 1))}>
+                        <MinusOutlined aria-hidden="true" />
+                      </button>
+                      <strong>{warehouseQuantity}</strong>
+                      <button
+                        type="button"
+                        onClick={() => setWarehouseQuantity((value) => Math.min(availableQuantity, value + 1))}
+                      >
+                        <PlusOutlined aria-hidden="true" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={warehouse.disabled}
+                      onClick={() => handleSelectWarehouse(warehouse)}
+                    >
+                      {warehouse.disabled ? "Текущий" : "Добавить"}
+                    </button>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      {activeOverlay === "confirm" ? (
+        <MobileBottomSheet
+          title="Сохранить перемещение?"
+          subtitle="Проверьте распределение перед сохранением."
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          footer={({ close }) => (
+            <div className="mobile-overlay-actions is-vertical">
+              <button type="button" onClick={() => close(handleConfirmSave)}>Да, сохранить</button>
+              <button type="button" onClick={() => close()}>Вернуться к редактированию</button>
+            </div>
+          )}
+        >
+          <div className="mobile-confirm-context">
+            <h3>{currentItem.title}</h3>
+            <p>ID: {currentItem.code}</p>
+            <span>
+              <InboxOutlined aria-hidden="true" />
+              Источник: {currentItem.location}
+            </span>
+          </div>
+          <div className="mobile-confirm-metrics">
+            <span>
+              Доступно
+              <strong>{availableQuantity} шт.</strong>
+            </span>
+            <span>
+              Распределено
+              <strong>{distributedTotal} шт.</strong>
+            </span>
+            <span>
+              Останется
+              <strong>{remainingTotal} шт.</strong>
+            </span>
+            <span>
+              Направлений
+              <strong>{selectedDirectionsCount}</strong>
+            </span>
+          </div>
+          <div className="mobile-confirm-destinations">
+            <h3>Направления</h3>
+            <p>
+              <span>{selectedWarehouse.title}</span>
+              <strong>{warehouseQuantity} шт.</strong>
+            </p>
+            <p>
+              <span>Помещения ({selectedRoomCount})</span>
+              <strong>{roomTotal} шт.</strong>
+            </p>
+            <small>{selectedRoomTitles.slice(0, 3).join(", ")}{selectedRoomCount > 3 ? " и еще" : ""}</small>
+          </div>
+          <div className="mobile-confirm-note">
+            <SyncOutlined aria-hidden="true" />
+            <p>Перемещение будет сохранено локально и отправлено при следующей синхронизации.</p>
+          </div>
+          <div className="mobile-confirm-warning">
+            <WarningOutlined aria-hidden="true" />
+            <p>Есть несинхронизированные изменения</p>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      {activeOverlay === "success" ? (
+        <MobileBottomSheet
+          title="Успех"
+          subtitle="Перемещение сохранено"
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          className="mobile-success-sheet"
+        >
+          <div className="mobile-success-icon">
+            <CheckCircleOutlined aria-hidden="true" />
+          </div>
+          <div className="mobile-success-context">
+            <div>
+              <InboxOutlined aria-hidden="true" />
+            </div>
+            <div>
+              <h3>{currentItem.title}</h3>
+              <p>ID: {currentItem.code}</p>
+            </div>
+          </div>
+          <div className="mobile-success-stats">
+            <p>
+              <CheckCircleOutlined aria-hidden="true" />
+              {distributedTotal} шт. распределено
+            </p>
+            <p>
+              <InboxOutlined aria-hidden="true" />
+              {remainingTotal} шт. осталось на складе
+            </p>
+            <p>
+              <ApartmentOutlined aria-hidden="true" />
+              {selectedDirectionsCount} направлений
+            </p>
+          </div>
+          <div className="mobile-confirm-note">
+            <SyncOutlined aria-hidden="true" />
+            <p>Изменения будут отправлены при следующей синхронизации.</p>
+          </div>
+          <div className="mobile-success-actions">
+            <button type="button" onClick={onBack}>К карточке позиции</button>
+            <button type="button" onClick={() => setActiveOverlay(null)}>Остаться в перемещении</button>
+            <button type="button" onClick={() => onNavSelect("warehouse")}>К складу</button>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
     </div>
   );
 }

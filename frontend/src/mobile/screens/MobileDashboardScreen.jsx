@@ -27,6 +27,10 @@ const recentActionIcons = {
 
 export function MobileDashboardScreen({
   activeNavKey,
+  onOpenMenu,
+  onContinueWalkthrough,
+  onOpenRooms,
+  onOpenScan,
   onOpenDiscrepancies,
   onOpenSync,
   onNavSelect,
@@ -36,7 +40,7 @@ export function MobileDashboardScreen({
 
   return (
     <div className="mobile-dashboard-screen">
-      <MobileHeader title="InfoCollect" />
+      <MobileHeader title="InfoCollect" onMenu={onOpenMenu} onSync={onOpenSync} />
 
       <main className="mobile-dashboard-content">
         <section className="mobile-dashboard-intro">
@@ -96,7 +100,7 @@ export function MobileDashboardScreen({
               <span>изменений</span>
             </div>
           </div>
-          <button className="mobile-primary-button" type="button">
+          <button className="mobile-primary-button" type="button" onClick={onContinueWalkthrough}>
             Продолжить обход
             <RightOutlined aria-hidden="true" />
           </button>
@@ -132,15 +136,18 @@ export function MobileDashboardScreen({
                   type="button"
                   key={action.key}
                   onClick={
-                    action.key === "discrepancies"
-                      ? onOpenDiscrepancies
-                      : action.key === "sync"
-                        ? onOpenSync
-                        : undefined
+                    action.key === "rooms"
+                      ? onOpenRooms
+                      : action.key === "scan"
+                        ? onOpenScan
+                        : action.key === "discrepancies"
+                          ? onOpenDiscrepancies
+                          : action.key === "sync"
+                            ? onOpenSync
+                            : undefined
                   }
                 >
                   <Icon aria-hidden="true" />
-                  <span>{action.label}</span>
                 </button>
               );
             })}

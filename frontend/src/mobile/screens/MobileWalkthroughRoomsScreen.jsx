@@ -4,12 +4,14 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   DatabaseOutlined,
+  InfoCircleOutlined,
   RightOutlined,
   SearchOutlined,
   SyncOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 
 function WalkthroughRoomCard({ room, onOpenRoom }) {
   const isError = room.state === "error";
@@ -66,6 +68,14 @@ export function MobileWalkthroughRoomsScreen({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(filters[0]);
   const [feedback, setFeedback] = useState("");
+  const [activeOverlay, setActiveOverlay] = useState(null);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  const totalRooms = rooms.length;
+  const checkedRooms = rooms.filter((room) => room.state === "complete").length;
+  const remainingRooms = Math.max(totalRooms - checkedRooms, 0);
+  const discrepancyCount = rooms.filter((room) => room.state === "error").length;
+  const pendingCount = rooms.filter((room) => room.notes?.some((note) => note.includes("не отправ"))).length;
 
   const visibleRooms = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -117,7 +127,7 @@ export function MobileWalkthroughRoomsScreen({
             <div aria-hidden="true">
               <span style={{ width: `${walkthrough?.progressValue ?? 0}%` }} />
             </div>
-            <p>{walkthrough?.progressLabel ?? "0 из 0 помещений проверено"}</p>
+            <p>{isCompleted ? "Инспекция завершена локально" : walkthrough?.progressLabel ?? "0 из 0 помещений проверено"}</p>
           </div>
 
           <div className="mobile-walkthrough-metrics">
@@ -176,14 +186,71 @@ export function MobileWalkthroughRoomsScreen({
         <button
           className="mobile-walkthrough-finish"
           type="button"
-          onClick={() => setFeedback("Завершение обхода будет доступно на Stage 7")}
+          onClick={() => setActiveOverlay("finish")}
         >
           <DatabaseOutlined aria-hidden="true" />
-          Завершить обход
+          {isCompleted ? "Инспекция завершена" : "Завершить обход"}
         </button>
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {activeOverlay === "finish" ? (
+        <MobileBottomSheet
+          title="Завершить инспекцию?"
+          subtitle="Вы уверены, что хотите завершить текущую инспекцию?"
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          footer={({ close }) => (
+            <div className="mobile-overlay-actions is-vertical">
+              <button
+                type="button"
+                onClick={() => close(() => {
+                  setIsCompleted(true);
+                  setFeedback("Инспекция отмечена как завершенная локально");
+                  setActiveOverlay(null);
+                })}
+              >
+                Да, завершить
+              </button>
+              <button type="button" onClick={() => close()}>Нет, вернуться к инспекции</button>
+            </div>
+          )}
+        >
+          <div className="mobile-completion-context">
+            <h3>{inspection?.number ?? "Инспекция"}</h3>
+            <p>{walkthrough?.title} • {walkthrough?.context}</p>
+            <div className="mobile-completion-grid">
+              <span>{totalRooms} помещений всего</span>
+              <span>{checkedRooms} проверено</span>
+              <span>{remainingRooms} осталось</span>
+              <span className="is-error">{discrepancyCount} расхождений</span>
+              <span className="is-warning">{pendingCount} изменений не отправлено</span>
+            </div>
+            <div className="mobile-completion-progress">
+              <span>Прогресс</span>
+              <strong>{walkthrough?.progressValue ?? 0}%</strong>
+              <div aria-hidden="true">
+                <i style={{ width: `${walkthrough?.progressValue ?? 0}%` }} />
+              </div>
+            </div>
+          </div>
+          <div className="mobile-confirm-note is-boxed">
+            <InfoCircleOutlined aria-hidden="true" />
+            <p>После завершения инспекция будет отмечена как завершенная. Вы сможете открыть ее позже из списка инспекций.</p>
+          </div>
+          <div className="mobile-completion-warning-list">
+            <p>
+              <WarningOutlined aria-hidden="true" />
+              Есть {discrepancyCount} расхождений
+            </p>
+            <p>
+              <SyncOutlined aria-hidden="true" />
+              Есть {pendingCount} изменений, ожидающих отправки
+            </p>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
     </div>
   );
 }

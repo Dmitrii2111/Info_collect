@@ -6,6 +6,33 @@ export const mobileLoginState = {
   appVersion: "InfoCollect MVP • v0.1",
 };
 
+export const mobileDrawerData = {
+  appName: "InfoCollect",
+  user: {
+    name: "Иван Иванов",
+    role: "Оператор",
+    initials: "ИИ",
+    status: "В сети",
+    sync: "Синхронизация: 10:45",
+  },
+  mainItems: [
+    { key: "dashboard", label: "Главная", icon: "dashboard", screen: "dashboard" },
+    { key: "objects", label: "Объекты", icon: "objects", screen: "objects" },
+    { key: "inspections", label: "Инспекции", icon: "inspections", screen: "inspections" },
+    { key: "history", label: "История", icon: "history", screen: "history" },
+    { key: "warehouse", label: "Склад", icon: "warehouse", screen: "warehouse", badge: "5" },
+    { key: "discrepancies", label: "Расхождения", icon: "discrepancies", screen: "discrepancies", badge: "8" },
+    { key: "sync", label: "Синхронизация", icon: "sync", screen: "sync", badge: "12", tone: "warning" },
+    { key: "profile", label: "Профиль", icon: "profile", screen: "profile" },
+  ],
+  secondaryItems: [
+    { key: "settings", label: "Настройки", icon: "settings", screen: "settings" },
+    { key: "help", label: "Помощь", icon: "help" },
+    { key: "logout", label: "Выйти", icon: "logout", tone: "danger" },
+  ],
+  version: "InfoCollect MVP • v0.1",
+};
+
 export const mobileDashboardData = {
   syncSummary: {
     status: "Онлайн • синхронизировано 09:42",
@@ -689,17 +716,69 @@ export const mobileMoveItemData = {
   targetWarehouse: {
     id: "warehouse-b",
     title: "Склад Б",
-    subtitle: "Другой склад",
+    subtitle: "Резервный склад • Корпус Б",
     quantity: 10,
+    status: "Доступен",
+    capacity: "Свободно: 120 мест",
   },
   rooms: [
-    { id: "move-room-201-29", title: "2.01.29 — Кабинет врача", quantity: 1 },
-    { id: "move-room-201-30", title: "2.01.30 — Процедурная", quantity: 1 },
-    { id: "move-room-201-31", title: "2.01.31 — Палата наблюдения", quantity: 1 },
-    { id: "move-room-201-32", title: "2.01.32 — Пост медсестры", quantity: 1 },
-    { id: "move-room-201-33", title: "2.01.33 — Склад расходных материалов", quantity: 1 },
+    { id: "move-room-201-29", title: "2.01.29 — Кабинет врача", status: "Проверено", quantity: 1 },
+    { id: "move-room-201-30", title: "2.01.30 — Процедурная", status: "Проверено", quantity: 1 },
+    { id: "move-room-201-31", title: "2.01.31 — Палата наблюдения", status: "В работе", quantity: 1 },
+    { id: "move-room-201-32", title: "2.01.32 — Пост медсестры", status: "В работе", quantity: 1 },
+    {
+      id: "move-room-201-33",
+      title: "2.01.33 — Склад материалов",
+      status: "С расхождениями",
+      warning: "2 расхождения",
+      quantity: 1,
+    },
+    { id: "move-room-201-34", title: "2.01.34 — Кабинет заведующего", status: "Не начато", quantity: 0 },
   ],
   hiddenRoomsCount: 5,
+  warehouses: [
+    {
+      id: "warehouse-b",
+      title: "Склад Б",
+      subtitle: "Резервный склад • Корпус Б",
+      status: "Доступен",
+      capacity: "Свободно: 120 мест",
+      quantity: 10,
+    },
+    {
+      id: "warehouse-current",
+      title: "Склад временного хранения",
+      subtitle: "Текущий склад",
+      status: "Текущий",
+      capacity: "Остаток остается здесь",
+      quantity: 0,
+      disabled: true,
+    },
+    {
+      id: "warehouse-receipt",
+      title: "Зона приемки",
+      subtitle: "Временная зона для новых поступлений",
+      status: "Доступна",
+      capacity: "Свободно: 45 мест",
+      quantity: 0,
+    },
+    {
+      id: "warehouse-install",
+      title: "Склад монтажников",
+      subtitle: "Зона выдачи подрядчикам",
+      status: "Доступен",
+      capacity: "Свободно: 30 мест",
+      quantity: 0,
+    },
+    {
+      id: "warehouse-quarantine",
+      title: "Карантинная зона",
+      subtitle: "Для спорных и поврежденных позиций",
+      status: "Ограничено",
+      capacity: "Требуется причина перемещения",
+      quantity: 0,
+    },
+  ],
   reasonOptions: ["Плановое распределение", "Исправление расхождения", "Временное хранение"],
 };
 

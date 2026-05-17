@@ -131,6 +131,7 @@ function InspectionCard({ inspection, isSelected, onOpenInspection }) {
 export function MobileInspectionsScreen({
   activeNavKey,
   selectedInspectionId,
+  onOpenMenu,
   onOpenInspection,
   onNavSelect,
 }) {
@@ -169,10 +170,6 @@ export function MobileInspectionsScreen({
     })}`);
   };
 
-  const handleMenu = () => {
-    setFeedback("Меню будет доступно на Stage 7.");
-  };
-
   const handleFilterToggle = () => {
     setShowFilters((current) => !current);
     setFeedback("");
@@ -180,7 +177,7 @@ export function MobileInspectionsScreen({
 
   return (
     <div className="mobile-inspections-screen">
-      <MobileHeader title="InfoCollect" onMenu={handleMenu} onSync={handleSync} />
+      <MobileHeader title="InfoCollect" onMenu={onOpenMenu} onSync={handleSync} />
 
       <main className="mobile-inspections-content">
         <section className="mobile-inspections-tools">

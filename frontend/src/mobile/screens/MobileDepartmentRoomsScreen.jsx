@@ -1,14 +1,19 @@
 import {
   ArrowLeftOutlined,
   CheckCircleFilled,
+  CheckCircleOutlined,
   ClockCircleOutlined,
   ExclamationCircleFilled,
   FilterOutlined,
+  InfoCircleOutlined,
   PlayCircleOutlined,
   SearchOutlined,
   SyncOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
+import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 import { mobileDepartmentRoomsData } from "../data/mobileMockData.js";
 
 const roomIcons = {
@@ -102,6 +107,42 @@ export function MobileDepartmentRoomsScreen({
   const filters = mobileDepartmentRoomsData.filters;
   const quickActions = mobileDepartmentRoomsData.quickActions;
   const progress = data.progressSummary ?? data.progress;
+  const [activeOverlay, setActiveOverlay] = useState(null);
+  const [activeFilter, setActiveFilter] = useState(filters[0]);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const isZoneComplete = isCompleted || progress.value >= 100 || data.status === "Завершено";
+  const checkedRooms = data.rooms.filter((room) => room.state === "complete").length;
+  const totalRooms = data.rooms.length;
+  const remainingRooms = Math.max(totalRooms - checkedRooms, 0);
+  const discrepancyCount = data.rooms.filter((room) => room.state === "error").length;
+  const pendingCount = data.rooms.filter((room) => room.notes?.some((note) => note.includes("не отправ"))).length;
+  const nextRoom = data.rooms.find((room) => room.state === "active" || room.state === "empty") ?? data.rooms[0];
+  const visibleRooms =
+    activeFilter === "Все"
+      ? data.rooms
+      : data.rooms.filter((room) => {
+        if (activeFilter === "В работе") {
+          return room.state === "active";
+        }
+
+        if (activeFilter === "С расхождениями") {
+          return room.state === "error" || room.notes?.some((note) => note.includes("расх"));
+        }
+
+        if (activeFilter === "Не отправлено") {
+          return room.notes?.some((note) => note.includes("не отправ"));
+        }
+
+        if (activeFilter === "Не начато") {
+          return room.state === "empty";
+        }
+
+        if (activeFilter === "Завершено") {
+          return room.state === "complete";
+        }
+
+        return room.status === activeFilter;
+      });
 
   return (
     <div className="mobile-department-rooms-screen">
@@ -122,7 +163,7 @@ export function MobileDepartmentRoomsScreen({
               <p>{data.context}</p>
               <h2>{data.title}</h2>
             </div>
-            <span>{department ? data.status : mobileDepartmentRoomsData.status}</span>
+            <span>{isZoneComplete ? "Зона завершена" : department ? data.status : mobileDepartmentRoomsData.status}</span>
           </div>
           <div className="mobile-department-stat-grid">
             {data.stats.map((stat) => (
@@ -145,15 +186,21 @@ export function MobileDepartmentRoomsScreen({
               <span style={{ width: `${progress.value}%` }} />
             </div>
           </div>
-          <div className="mobile-department-actions">
-            <button className="mobile-primary-button" type="button">
-              <PlayCircleOutlined aria-hidden="true" />
-              Продолжить обход
-            </button>
-            <button type="button" onClick={onBack}>
-              Открыть структуру
-            </button>
-          </div>
+          {!isZoneComplete ? (
+            <div className="mobile-department-actions">
+              <button
+                className="mobile-primary-button"
+                type="button"
+                onClick={() => nextRoom && onOpenRoom?.(nextRoom.id ?? nextRoom.title)}
+              >
+                <PlayCircleOutlined aria-hidden="true" />
+                Продолжить обход
+              </button>
+              <button type="button" onClick={onBack}>
+                Открыть структуру
+              </button>
+            </div>
+          ) : null}
         </section>
 
         <section className="mobile-department-tools">
@@ -162,8 +209,13 @@ export function MobileDepartmentRoomsScreen({
             <input type="search" placeholder="Поиск помещения или оборудования" />
           </label>
           <div className="mobile-filter-row">
-            {filters.map((filter, index) => (
-              <button className={index === 0 ? "is-active" : ""} type="button" key={filter}>
+            {filters.map((filter) => (
+              <button
+                className={filter === activeFilter ? "is-active" : ""}
+                type="button"
+                key={filter}
+                onClick={() => setActiveFilter(filter)}
+              >
                 {filter === "С расхождениями" ? <FilterOutlined aria-hidden="true" /> : null}
                 {filter}
               </button>
@@ -174,7 +226,7 @@ export function MobileDepartmentRoomsScreen({
         <section className="mobile-rooms-section">
           <h3>Помещения зоны</h3>
           <div className="mobile-rooms-list">
-            {data.rooms.map((room) => (
+            {visibleRooms.map((room) => (
               <MobileRoomCard room={room} key={room.id ?? room.title} onOpenRoom={onOpenRoom} />
             ))}
           </div>
@@ -184,8 +236,27 @@ export function MobileDepartmentRoomsScreen({
           <h3>Быстрый доступ</h3>
           <div>
             {quickActions.map((action) => (
-              <button className={`is-${action.tone}`} type="button" key={action.label}>
-                {action.label}
+              <button
+                className={`is-${action.tone}${isZoneComplete ? " is-disabled" : ""}`}
+                type="button"
+                key={action.label}
+                disabled={isZoneComplete}
+                onClick={() => {
+                  if (isZoneComplete) {
+                    return;
+                  }
+
+                  if (action.label === "Завершить зону") {
+                    setActiveOverlay("finish");
+                    return;
+                  }
+
+                  if (action.label === "След. помещение" && nextRoom) {
+                    onOpenRoom?.(nextRoom.id ?? nextRoom.title);
+                  }
+                }}
+              >
+                {action.label === "След. помещение" ? "Следующая зона" : action.label}
               </button>
             ))}
           </div>
@@ -193,6 +264,63 @@ export function MobileDepartmentRoomsScreen({
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {activeOverlay === "finish" ? (
+        <MobileBottomSheet
+          title="Завершить зону?"
+          subtitle="Вы уверены, что хотите завершить осмотр зоны?"
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          footer={({ close }) => (
+            <div className="mobile-overlay-actions is-vertical">
+              <button
+                type="button"
+                onClick={() => close(() => {
+                  setIsCompleted(true);
+                  setActiveOverlay(null);
+                })}
+              >
+                Да, завершить
+              </button>
+              <button type="button" onClick={() => close()}>Нет, вернуться к зоне</button>
+            </div>
+          )}
+        >
+          <div className="mobile-completion-context">
+            <h3>{data.title}</h3>
+            <p>{data.context}</p>
+            <div className="mobile-completion-progress">
+              <span>{data.progress?.label ?? "Прогресс обхода"}</span>
+              <strong>{progress.value}%</strong>
+              <div aria-hidden="true">
+                <i style={{ width: `${progress.value}%` }} />
+              </div>
+            </div>
+            <div className="mobile-completion-grid">
+              <span>
+                <CheckCircleOutlined aria-hidden="true" />
+                {checkedRooms} из {totalRooms}
+              </span>
+              <span>
+                <ClockCircleOutlined aria-hidden="true" />
+                {remainingRooms} осталось
+              </span>
+              <span className="is-error">
+                <WarningOutlined aria-hidden="true" />
+                {discrepancyCount} расхождения
+              </span>
+              <span className="is-warning">
+                <SyncOutlined aria-hidden="true" />
+                {pendingCount} не отправлено
+              </span>
+            </div>
+          </div>
+          <div className="mobile-confirm-note is-boxed">
+            <InfoCircleOutlined aria-hidden="true" />
+            <p>После завершения зона будет отмечена как завершенная. Вы сможете вернуться к ней позже.</p>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
     </div>
   );
 }
