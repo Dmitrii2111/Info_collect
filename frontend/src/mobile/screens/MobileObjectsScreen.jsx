@@ -5,12 +5,12 @@ import {
   DatabaseOutlined,
   HistoryOutlined,
   RightOutlined,
-  SearchOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileObjectsData } from "../data/mobileMockData.js";
 
 const detailIcons = {
@@ -97,16 +97,25 @@ export function MobileObjectsScreen({
 }) {
   const data = mobileObjectsData;
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [syncStatus, setSyncStatus] = useState(data.summary.updatedAt);
-  const visibleObjects =
-    activeFilter === "Все"
-      ? data.objects
-      : data.objects.filter((object) => {
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleObjects = (activeFilter === "Все"
+    ? data.objects
+    : data.objects.filter((object) => {
         if (activeFilter === "С расхождениями") {
           return object.tone === "error" || object.status === "Внимание";
         }
 
         return object.status === activeFilter;
+      })).filter((object) => {
+        if (!normalizedQuery) {
+          return true;
+        }
+
+        return [object.title, object.subtitle, object.description, object.status, ...object.details.map((detail) => detail.label)]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(normalizedQuery));
       });
 
   return (
@@ -140,35 +149,30 @@ export function MobileObjectsScreen({
           </div>
         </section>
 
-        <section className="mobile-objects-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input type="search" placeholder="Поиск объекта, корпуса или зоны" />
-          </label>
-          <div className="mobile-filter-row">
-            {data.filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </section>
+        <MobileSearchFilterBar
+          placeholder="Поиск объекта, корпуса или зоны"
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          filters={data.filters}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          filterLabel="Фильтр объектов"
+        />
 
         <section className="mobile-objects-list-section">
           <h3>Объекты</h3>
           <div className="mobile-objects-list">
-            {visibleObjects.map((object) => (
-              <MobileObjectCard
-                object={object}
-                key={object.id}
-                onOpenObjectStructure={onOpenObjectStructure}
-              />
-            ))}
+            {visibleObjects.length > 0 ? (
+              visibleObjects.map((object) => (
+                <MobileObjectCard
+                  object={object}
+                  key={object.id}
+                  onOpenObjectStructure={onOpenObjectStructure}
+                />
+              ))
+            ) : (
+              <div className="mobile-objects-empty">Ничего не найдено</div>
+            )}
           </div>
         </section>
 

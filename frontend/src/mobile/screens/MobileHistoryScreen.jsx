@@ -6,11 +6,12 @@ import {
   ExportOutlined,
   FileTextOutlined,
   PictureOutlined,
-  SearchOutlined,
   SyncOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileHistoryData } from "../data/mobileMockData.js";
 
 const eventIcons = {
@@ -69,6 +70,7 @@ export function MobileHistoryScreen({ activeNavKey, onBack, onOpenSync, onNavSel
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
   const [selectedEventId, setSelectedEventId] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const selectedEvent = data.events.find((event) => event.id === selectedEventId) ?? null;
 
   const visibleEvents = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -126,27 +128,15 @@ export function MobileHistoryScreen({ activeNavKey, onBack, onOpenSync, onNavSel
         </section>
 
         <section className="mobile-history-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input
-              type="search"
-              placeholder="Поиск по действию, помещению или ID"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </label>
-          <div className="mobile-filter-row">
-            {data.filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
+          <MobileSearchFilterBar
+            placeholder="Поиск по действию, помещению или ID"
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+            filters={data.filters}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+            filterLabel="Фильтр истории"
+          />
           <button type="button" onClick={() => setFeedback("Экспорт подготовлен локально")}>
             <ExportOutlined aria-hidden="true" />
             Экспорт
@@ -178,6 +168,38 @@ export function MobileHistoryScreen({ activeNavKey, onBack, onOpenSync, onNavSel
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {selectedEvent ? (
+        <MobileBottomSheet
+          title={selectedEvent.title}
+          subtitle={selectedEvent.type}
+          mode="sheet"
+          onClose={() => setSelectedEventId(null)}
+          footer={({ close }) => (
+            <button className="mobile-primary-button" type="button" onClick={() => close(() => setSelectedEventId(null))}>
+              Закрыть
+            </button>
+          )}
+        >
+          <div className="mobile-history-detail-sheet">
+            {(selectedEvent.details ?? [
+              { label: "Позиция", value: selectedEvent.item },
+              { label: "Контекст", value: selectedEvent.context },
+              { label: "Исполнитель", value: selectedEvent.user },
+              { label: "Время", value: `${selectedEvent.date}, ${selectedEvent.time}` },
+              { label: "Статус", value: selectedEvent.status },
+              { label: "Комментарий", value: selectedEvent.description },
+            ])
+              .filter((item) => item.value)
+              .map((item) => (
+                <div key={item.label}>
+                  <span>{item.label}</span>
+                  <strong>{item.value}</strong>
+                </div>
+              ))}
+          </div>
+        </MobileBottomSheet>
+      ) : null}
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
   WifiOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
 import { mobileSyncData } from "../data/mobileMockData.js";
 
 const toneIcons = {
@@ -59,6 +60,8 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
   const [isAutoSyncEnabled, setIsAutoSyncEnabled] = useState(true);
   const [localPendingCount, setLocalPendingCount] = useState(data.counts[0].value);
   const [feedback, setFeedback] = useState("");
+  const [result, setResult] = useState(null);
+  const [nextResults, setNextResults] = useState({ sync: true, retry: true });
 
   const visibleQueue = useMemo(() => {
     if (activeFilter === "Все") {
@@ -69,13 +72,31 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
   }, [activeFilter, data.queue]);
 
   const handleSyncNow = () => {
-    setLocalPendingCount(0);
-    setFeedback("Синхронизация выполнена локально");
+    const isSuccess = nextResults.sync;
+    setNextResults((current) => ({ ...current, sync: !current.sync }));
+    if (isSuccess) {
+      setLocalPendingCount(0);
+    }
+    setResult({
+      status: isSuccess ? "success" : "error",
+      title: isSuccess ? "Синхронизация выполнена" : "Ошибка синхронизации",
+      text: isSuccess ? "Очередь изменений отправлена." : "Не удалось связаться с сервером.",
+    });
   };
 
   const handleQueueSelect = (queueId) => {
     setSelectedQueueId(queueId);
     setFeedback("Строка очереди выбрана локально");
+  };
+
+  const handleRetry = () => {
+    const isSuccess = nextResults.retry;
+    setNextResults((current) => ({ ...current, retry: !current.retry }));
+    setResult({
+      status: isSuccess ? "success" : "error",
+      title: isSuccess ? "Отправка выполнена" : "Ошибка отправки",
+      text: isSuccess ? "Ошибочные изменения повторно отправлены." : "Часть изменений осталась в очереди.",
+    });
   };
 
   return (
@@ -116,7 +137,7 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
               <SyncOutlined aria-hidden="true" />
               Синхронизировать сейчас
             </button>
-            <button type="button" onClick={() => setFeedback("Повторная отправка отмечена локально")}>
+            <button type="button" onClick={handleRetry}>
               <ReloadOutlined aria-hidden="true" />
               Повторить отправку
             </button>
@@ -176,6 +197,14 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      <MobileResultModal
+        isOpen={Boolean(result)}
+        status={result?.status}
+        title={result?.title}
+        text={result?.text}
+        onClose={() => setResult(null)}
+      />
     </div>
   );
 }

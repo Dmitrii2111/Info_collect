@@ -5,12 +5,12 @@ import {
   ExclamationCircleFilled,
   MinusOutlined,
   RightOutlined,
-  SearchOutlined,
   SyncOutlined,
   UpOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 
 const floorIcons = {
   completed: CheckCircleFilled,
@@ -108,12 +108,13 @@ export function MobileObjectStructureScreen({
   const data = structure;
   const [expandedFloorId, setExpandedFloorId] = useState(initialExpandedFloorId ?? null);
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
+  const [searchQuery, setSearchQuery] = useState("");
   const isComplete = data.progress.value >= 100;
   const primaryActionLabel = data.progress.value > 0 ? "Продолжить обход" : "Начать обход";
-  const visibleFloors =
-    activeFilter === "Все"
-      ? data.floors
-      : data.floors.filter((floor) => {
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleFloors = (activeFilter === "Все"
+    ? data.floors
+    : data.floors.filter((floor) => {
         if (activeFilter === "В работе") {
           return floor.statusType === "inProgress";
         }
@@ -127,6 +128,25 @@ export function MobileObjectStructureScreen({
         }
 
         return floor.statusLine?.includes(activeFilter);
+      })).filter((floor) => {
+        if (!normalizedQuery) {
+          return true;
+        }
+
+        return [
+          floor.title,
+          floor.statusLine,
+          ...(floor.summary ?? []),
+          ...(floor.departments ?? []).flatMap((zone) => [
+            zone.title,
+            zone.status,
+            zone.progress,
+            zone.note,
+            ...(zone.rooms ?? []).map((room) => room.title),
+          ]),
+        ]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(normalizedQuery));
       });
 
   const toggleFloor = (floorId) => {
@@ -179,37 +199,32 @@ export function MobileObjectStructureScreen({
           ) : null}
         </section>
 
-        <section className="mobile-structure-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input type="search" placeholder="Поиск этажа, зоны или помещения" />
-          </label>
-          <div className="mobile-filter-row">
-            {data.filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </section>
+        <MobileSearchFilterBar
+          placeholder="Поиск этажа, зоны или помещения"
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          filters={data.filters}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          filterLabel="Фильтр структуры"
+        />
 
         <section className="mobile-structure-list-section">
           <h3>Этажи и зоны</h3>
           <div className="mobile-structure-floor-list">
-            {visibleFloors.map((floor) => (
-              <MobileStructureFloor
-                floor={floor}
-                key={floor.id}
-                expanded={expandedFloorId === floor.id}
-                onToggle={() => toggleFloor(floor.id)}
-                onOpenDepartment={onOpenDepartment}
-              />
-            ))}
+            {visibleFloors.length > 0 ? (
+              visibleFloors.map((floor) => (
+                <MobileStructureFloor
+                  floor={floor}
+                  key={floor.id}
+                  expanded={expandedFloorId === floor.id}
+                  onToggle={() => toggleFloor(floor.id)}
+                  onOpenDepartment={onOpenDepartment}
+                />
+              ))
+            ) : (
+              <div className="mobile-structure-empty">Ничего не найдено</div>
+            )}
           </div>
         </section>
       </main>

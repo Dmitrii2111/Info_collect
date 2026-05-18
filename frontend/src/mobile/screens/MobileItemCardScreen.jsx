@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
 
 function normalizeQuantity(quantity) {
   if (typeof quantity === "object" && quantity) {
@@ -42,6 +43,7 @@ export function MobileItemCardScreen({
   onNavSelect,
 }) {
   const [feedback, setFeedback] = useState("");
+  const [result, setResult] = useState(null);
   const currentItem = item ?? {
     title: "Позиция не выбрана",
     code: "Нет ID",
@@ -60,7 +62,14 @@ export function MobileItemCardScreen({
     : [{ title: "История отсутствует", meta: "Данных пока нет" }];
 
   const handleAction = (label) => {
-    setFeedback(`${label}: действие сохранено локально`);
+    setFeedback("");
+    setResult({
+      status: "success",
+      title: label === "Назначить" ? "Назначение подготовлено" : "Синхронизация",
+      text: label === "Назначить"
+        ? "Позиция добавлена в очередь назначения ответственному."
+        : "Данные позиции будут отправлены при следующей синхронизации.",
+    });
   };
 
   return (
@@ -185,6 +194,13 @@ export function MobileItemCardScreen({
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+      <MobileResultModal
+        isOpen={Boolean(result)}
+        status={result?.status}
+        title={result?.title}
+        text={result?.text}
+        onClose={() => setResult(null)}
+      />
     </div>
   );
 }

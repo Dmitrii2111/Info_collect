@@ -8,6 +8,8 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
 
 const resolutionOptions = [
   "Оставить открытым",
@@ -20,6 +22,7 @@ export function MobileDiscrepancyDetailsScreen({
   activeNavKey,
   discrepancy,
   onBack,
+  onOpenItem,
   onNavSelect,
 }) {
   const currentDiscrepancy = discrepancy ?? {
@@ -37,6 +40,8 @@ export function MobileDiscrepancyDetailsScreen({
   const [resolution, setResolution] = useState("Требует проверки");
   const [comment, setComment] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
+  const [result, setResult] = useState(null);
 
   return (
     <div className="mobile-discrepancy-details-screen">
@@ -48,7 +53,7 @@ export function MobileDiscrepancyDetailsScreen({
         <button
           type="button"
           aria-label="Синхронизация"
-          onClick={() => setFeedback("Синхронизация отмечена локально")}
+          onClick={() => setFeedback("Откройте экран синхронизации для отправки изменений")}
         >
           <SyncOutlined aria-hidden="true" />
         </button>
@@ -98,7 +103,7 @@ export function MobileDiscrepancyDetailsScreen({
 
         <section className="mobile-card mobile-discrepancy-detail-block">
           <h3>Фотофиксация</h3>
-          <button type="button" onClick={() => setFeedback("Фотофиксация будет добавлена локально позже")}>
+          <button type="button" onClick={() => setIsPhotoSheetOpen(true)}>
             <CameraOutlined aria-hidden="true" />
             Добавить фото
           </button>
@@ -135,16 +140,53 @@ export function MobileDiscrepancyDetailsScreen({
           <CheckCircleOutlined aria-hidden="true" />
           1 изменение ожидает отправки
         </span>
-        <button type="button" onClick={() => setFeedback("Решение сохранено локально")}>
+        <button
+          type="button"
+          onClick={() => {
+            setFeedback("");
+            setResult({
+              status: "success",
+              title: "Решение сохранено",
+              text: "Решение по расхождению добавлено в очередь синхронизации.",
+            });
+          }}
+        >
           Сохранить решение
         </button>
-        <button type="button" onClick={() => setFeedback("Оборудование будет открыто в следующем шаге")}>
+        <button type="button" onClick={() => onOpenItem?.(currentDiscrepancy.itemCode)}>
           <ExportOutlined aria-hidden="true" />
           Открыть оборудование
         </button>
       </div>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {isPhotoSheetOpen ? (
+        <MobileBottomSheet
+          title="Фотофиксация"
+          subtitle={currentDiscrepancy.title}
+          mode="sheet"
+          onClose={() => setIsPhotoSheetOpen(false)}
+          footer={({ close }) => (
+            <button className="mobile-primary-button" type="button" onClick={() => close(() => setIsPhotoSheetOpen(false))}>
+              Закрыть
+            </button>
+          )}
+        >
+          <div className="mobile-discrepancy-photo-sheet">
+            <CameraOutlined aria-hidden="true" />
+            <p>Фото будет прикреплено к расхождению и отправлено вместе с решением.</p>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      <MobileResultModal
+        isOpen={Boolean(result)}
+        status={result?.status}
+        title={result?.title}
+        text={result?.text}
+        onClose={() => setResult(null)}
+      />
     </div>
   );
 }

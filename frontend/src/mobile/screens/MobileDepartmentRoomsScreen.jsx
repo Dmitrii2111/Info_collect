@@ -4,16 +4,15 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   ExclamationCircleFilled,
-  FilterOutlined,
   InfoCircleOutlined,
   PlayCircleOutlined,
-  SearchOutlined,
   SyncOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileDepartmentRoomsData } from "../data/mobileMockData.js";
 
 const roomIcons = {
@@ -109,6 +108,7 @@ export function MobileDepartmentRoomsScreen({
   const progress = data.progressSummary ?? data.progress;
   const [activeOverlay, setActiveOverlay] = useState(null);
   const [activeFilter, setActiveFilter] = useState(filters[0]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
   const isZoneComplete = isCompleted || progress.value >= 100 || data.status === "Завершено";
   const checkedRooms = data.rooms.filter((room) => room.state === "complete").length;
@@ -117,10 +117,10 @@ export function MobileDepartmentRoomsScreen({
   const discrepancyCount = data.rooms.filter((room) => room.state === "error").length;
   const pendingCount = data.rooms.filter((room) => room.notes?.some((note) => note.includes("не отправ"))).length;
   const nextRoom = data.rooms.find((room) => room.state === "active" || room.state === "empty") ?? data.rooms[0];
-  const visibleRooms =
-    activeFilter === "Все"
-      ? data.rooms
-      : data.rooms.filter((room) => {
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleRooms = (activeFilter === "Все"
+    ? data.rooms
+    : data.rooms.filter((room) => {
         if (activeFilter === "В работе") {
           return room.state === "active";
         }
@@ -142,6 +142,21 @@ export function MobileDepartmentRoomsScreen({
         }
 
         return room.status === activeFilter;
+      })).filter((room) => {
+        if (!normalizedQuery) {
+          return true;
+        }
+
+        return [
+          room.title,
+          room.status,
+          room.progress,
+          room.action,
+          ...(room.notes ?? []),
+          ...(room.equipment ?? []).flatMap((item) => [item.title, item.id, item.status, item.note]),
+        ]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(normalizedQuery));
       });
 
   return (
@@ -203,32 +218,26 @@ export function MobileDepartmentRoomsScreen({
           ) : null}
         </section>
 
-        <section className="mobile-department-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input type="search" placeholder="Поиск помещения или оборудования" />
-          </label>
-          <div className="mobile-filter-row">
-            {filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter === "С расхождениями" ? <FilterOutlined aria-hidden="true" /> : null}
-                {filter}
-              </button>
-            ))}
-          </div>
-        </section>
+        <MobileSearchFilterBar
+          placeholder="Поиск помещения или оборудования"
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          filters={filters}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          filterLabel="Фильтр помещений"
+        />
 
         <section className="mobile-rooms-section">
           <h3>Помещения зоны</h3>
           <div className="mobile-rooms-list">
-            {visibleRooms.map((room) => (
-              <MobileRoomCard room={room} key={room.id ?? room.title} onOpenRoom={onOpenRoom} />
-            ))}
+            {visibleRooms.length > 0 ? (
+              visibleRooms.map((room) => (
+                <MobileRoomCard room={room} key={room.id ?? room.title} onOpenRoom={onOpenRoom} />
+              ))
+            ) : (
+              <div className="mobile-rooms-empty">Ничего не найдено</div>
+            )}
           </div>
         </section>
 

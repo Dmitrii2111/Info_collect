@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import {
   ArrowLeftOutlined,
-  CheckCircleOutlined,
   DatabaseOutlined,
   InfoCircleOutlined,
   MobileOutlined,
@@ -9,12 +8,22 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileConfirmModal } from "../components/MobileConfirmModal.jsx";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
 import { mobileSettingsData } from "../data/mobileMockData.js";
+import { getMobileDeviceLabel } from "../utils/mobileDevice.js";
 
 const appInfoIcons = {
   device: MobileOutlined,
   info: InfoCircleOutlined,
   user: UserOutlined,
+};
+
+const photoQualityTones = {
+  "Низкое": "low",
+  "Среднее": "medium",
+  "Высокое": "high",
 };
 
 function SettingsToggle({ item, checked, onChange }) {
@@ -41,10 +50,40 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
   const [toggles, setToggles] = useState(initialToggles);
   const [photoCompression, setPhotoCompression] = useState(data.photo.compressionEnabled);
   const [photoQuality, setPhotoQuality] = useState(data.photo.quality);
-  const [feedback, setFeedback] = useState("");
+  const [result, setResult] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [isServerEditOpen, setIsServerEditOpen] = useState(false);
+  const [draftServerAddress, setDraftServerAddress] = useState(data.server.address);
+  const [toggleResult, setToggleResult] = useState({
+    serverCheck: true,
+    serverSave: true,
+    retry: true,
+    refresh: true,
+    clearCache: true,
+  });
 
   const handleToggle = (key) => {
     setToggles((current) => ({ ...current, [key]: !current[key] }));
+  };
+
+  const showAlternatingResult = (key, successText, errorText, successTitle = "Готово", errorTitle = "Ошибка") => {
+    const isSuccess = toggleResult[key];
+    setToggleResult((current) => ({ ...current, [key]: !current[key] }));
+    setResult({
+      status: isSuccess ? "success" : "error",
+      title: isSuccess ? successTitle : errorTitle,
+      text: isSuccess ? successText : errorText,
+    });
+  };
+
+  const handleConfirmAction = (key) => {
+    setConfirmAction(null);
+    if (key === "refresh") {
+      showAlternatingResult("refresh", "Данные обновлены из mock-хранилища.", "Не удалось обновить данные.");
+      return;
+    }
+
+    showAlternatingResult("clearCache", "Локальный кэш очищен в демонстрационном режиме.", "Не удалось очистить кэш.");
   };
 
   return (
@@ -78,10 +117,24 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
             <strong>{data.server.lastCheck}</strong>
           </div>
           <div className="mobile-settings-actions is-two">
-            <button type="button" onClick={() => setFeedback("Подключение проверено локально")}>
+            <button
+              type="button"
+              onClick={() =>
+                showAlternatingResult(
+                  "serverCheck",
+                  "Подключение успешно.",
+                  "Ошибка подключения. Проверьте адрес сервера и сеть.",
+                  "Сервер доступен",
+                  "Сервер недоступен",
+                )
+              }
+            >
               Проверить
             </button>
-            <button type="button" onClick={() => setFeedback("Адрес сервера изменен локально")}>
+            <button type="button" onClick={() => {
+              setDraftServerAddress(serverAddress);
+              setIsServerEditOpen(true);
+            }}>
               Изменить
             </button>
           </div>
@@ -115,7 +168,12 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
             <button type="button" onClick={onOpenSync}>
               Открыть синхронизацию
             </button>
-            <button type="button" onClick={() => setFeedback("Повторная отправка отмечена локально")}>
+            <button
+              type="button"
+              onClick={() =>
+                showAlternatingResult("retry", "Повторная отправка выполнена.", "Ошибка повторной отправки.")
+              }
+            >
               Повторить отправку
             </button>
           </div>
@@ -131,7 +189,7 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
           <div className="mobile-settings-segmented" role="group" aria-label="Качество фото">
             {data.photo.qualities.map((quality) => (
               <button
-                className={quality === photoQuality ? "is-active" : ""}
+                className={`${quality === photoQuality ? "is-active" : ""} is-${photoQualityTones[quality]}`}
                 type="button"
                 key={quality}
                 onClick={() => setPhotoQuality(quality)}
@@ -154,10 +212,10 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
               <strong>{item.value}</strong>
             </div>
           ))}
-          <button type="button" onClick={() => setFeedback("Обновление данных отмечено локально")}>
+          <button type="button" onClick={() => setConfirmAction("refresh")}>
             Обновить данные
           </button>
-          <button className="is-danger" type="button" onClick={() => setFeedback("Очистка кэша требует подтверждения")}>
+          <button className="is-danger" type="button" onClick={() => setConfirmAction("clearCache")}>
             Очистить локальный кэш
           </button>
         </section>
@@ -175,23 +233,80 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
                   </span>
                   <div>
                     <small>{item.label}</small>
-                    <strong>{item.value}</strong>
+                    <strong>{item.label === "Устройство" ? getMobileDeviceLabel() : item.value}</strong>
                   </div>
                 </div>
               );
             })}
           </div>
         </section>
-
-        {feedback ? (
-          <div className="mobile-settings-feedback">
-            <CheckCircleOutlined aria-hidden="true" />
-            {feedback}
-          </div>
-        ) : null}
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {isServerEditOpen ? (
+        <MobileBottomSheet
+          title="Изменить сервер"
+          subtitle="Введите адрес локального сервера"
+          mode="modal"
+          onClose={() => setIsServerEditOpen(false)}
+          footer={({ close }) => (
+            <>
+              <button className="mobile-secondary-button" type="button" onClick={() => close(() => setIsServerEditOpen(false))}>
+                Отмена
+              </button>
+              <button
+                className="mobile-primary-button"
+                type="button"
+                onClick={() =>
+                  close(() => {
+                    const isSuccess = toggleResult.serverSave;
+                    setToggleResult((current) => ({ ...current, serverSave: !current.serverSave }));
+                    setIsServerEditOpen(false);
+                    if (isSuccess) {
+                      setServerAddress(draftServerAddress);
+                    }
+                    setResult({
+                      status: isSuccess ? "success" : "error",
+                      title: isSuccess ? "Адрес изменен" : "Не удалось изменить адрес",
+                      text: isSuccess ? "Новый адрес сервера сохранен." : "Проверьте формат адреса и повторите.",
+                    });
+                  })
+                }
+              >
+                Сохранить
+              </button>
+            </>
+          )}
+        >
+          <label className="mobile-settings-input">
+            <span>Адрес сервера</span>
+            <input value={draftServerAddress} onChange={(event) => setDraftServerAddress(event.target.value)} />
+          </label>
+        </MobileBottomSheet>
+      ) : null}
+
+      <MobileConfirmModal
+        isOpen={Boolean(confirmAction)}
+        title={confirmAction === "refresh" ? "Обновить данные" : "Очистить локальный кэш"}
+        text={
+          confirmAction === "refresh"
+            ? "Загрузить свежие данные из демонстрационного хранилища?"
+            : "Очистить локальный кэш в демонстрационном режиме?"
+        }
+        confirmLabel={confirmAction === "refresh" ? "Обновить" : "Очистить"}
+        tone={confirmAction === "clearCache" ? "danger" : "primary"}
+        onCancel={() => setConfirmAction(null)}
+        onConfirm={() => handleConfirmAction(confirmAction)}
+      />
+
+      <MobileResultModal
+        isOpen={Boolean(result)}
+        status={result?.status}
+        title={result?.title}
+        text={result?.text}
+        onClose={() => setResult(null)}
+      />
     </div>
   );
 }

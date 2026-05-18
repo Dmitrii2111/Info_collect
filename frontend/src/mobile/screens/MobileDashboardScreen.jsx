@@ -33,6 +33,7 @@ export function MobileDashboardScreen({
   onOpenScan,
   onOpenDiscrepancies,
   onOpenSync,
+  onOpenZone,
   onNavSelect,
 }) {
   const data = mobileDashboardData;
@@ -110,7 +111,12 @@ export function MobileDashboardScreen({
           <h3>Мои зоны</h3>
           <div className="mobile-zone-list">
             {data.zones.map((zone) => (
-              <article className={`mobile-zone-card is-${zone.tone}`} key={zone.title}>
+              <button
+                className={`mobile-zone-card is-${zone.tone}`}
+                type="button"
+                key={zone.title}
+                onClick={() => onOpenZone?.(zone)}
+              >
                 <div>
                   <strong>{zone.title}</strong>
                   <span>
@@ -119,7 +125,7 @@ export function MobileDashboardScreen({
                   </span>
                 </div>
                 <em>{zone.status}</em>
-              </article>
+              </button>
             ))}
           </div>
         </section>

@@ -4,14 +4,13 @@ import {
   CheckCircleOutlined,
   CloudUploadOutlined,
   DatabaseOutlined,
-  FilterOutlined,
   InfoCircleOutlined,
   RightOutlined,
-  SearchOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileInspectionsData } from "../data/mobileMockData.js";
 
 const statIcons = {
@@ -133,12 +132,12 @@ export function MobileInspectionsScreen({
   selectedInspectionId,
   onOpenMenu,
   onOpenInspection,
+  onOpenSync,
   onNavSelect,
 }) {
   const data = mobileInspectionsData;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
-  const [showFilters, setShowFilters] = useState(false);
   const [feedback, setFeedback] = useState("");
 
   const visibleInspections = useMemo(() => {
@@ -170,51 +169,23 @@ export function MobileInspectionsScreen({
     })}`);
   };
 
-  const handleFilterToggle = () => {
-    setShowFilters((current) => !current);
-    setFeedback("");
-  };
-
   return (
     <div className="mobile-inspections-screen">
       <MobileHeader title="InfoCollect" onMenu={onOpenMenu} onSync={handleSync} />
 
       <main className="mobile-inspections-content">
-        <section className="mobile-inspections-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input
-              type="search"
-              placeholder={data.searchPlaceholder}
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </label>
-          <button
-            className={`mobile-inspections-filter-button${showFilters ? " is-active" : ""}`}
-            type="button"
-            aria-label="Фильтр"
-            aria-expanded={showFilters}
-            onClick={handleFilterToggle}
-          >
-            <FilterOutlined aria-hidden="true" />
-          </button>
-        </section>
-
-        {showFilters ? (
-          <section className="mobile-filter-row" aria-label="Фильтр инспекций">
-            {data.filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </section>
-        ) : null}
+        <MobileSearchFilterBar
+          placeholder={data.searchPlaceholder}
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          filters={data.filters}
+          activeFilter={activeFilter}
+          onFilterChange={(filter) => {
+            setActiveFilter(filter);
+            setFeedback("");
+          }}
+          filterLabel="Фильтр инспекций"
+        />
 
         {feedback ? <div className="mobile-inspections-feedback">{feedback}</div> : null}
 
@@ -243,7 +214,7 @@ export function MobileInspectionsScreen({
           <div>
             <h3>{data.syncAlert.title}</h3>
             <p>{data.syncAlert.text}</p>
-            <button type="button">{data.syncAlert.action}</button>
+            <button type="button" onClick={onOpenSync}>{data.syncAlert.action}</button>
           </div>
         </section>
       </main>

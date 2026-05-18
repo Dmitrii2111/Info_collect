@@ -16,8 +16,12 @@ import {
   UserSwitchOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileConfirmModal } from "../components/MobileConfirmModal.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
 import { mobileProfileData } from "../data/mobileMockData.js";
+import { getMobileDeviceLabel } from "../utils/mobileDevice.js";
 
 const settingIcons = {
   camera: CameraOutlined,
@@ -50,17 +54,63 @@ function ProfileMenuRow({ item, iconMap, onSelect }) {
   );
 }
 
-export function MobileProfileScreen({ activeNavKey, onOpenMenu, onOpenHistory, onOpenSettings, onOpenSync, onNavSelect }) {
+export function MobileProfileScreen({
+  activeNavKey,
+  onOpenMenu,
+  onOpenHistory,
+  onOpenSettings,
+  onOpenSync,
+  onContinueWalkthrough,
+  onLogout,
+  onNavSelect,
+}) {
   const data = mobileProfileData;
   const [feedback, setFeedback] = useState("");
+  const [result, setResult] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [infoSheet, setInfoSheet] = useState(null);
+  const [isNextRetrySuccess, setIsNextRetrySuccess] = useState(true);
+
+  const settingDetails = {
+    server: {
+      title: "Сервер",
+      text: `Текущий адрес: http://192.168.1.10:8000. Статус подключения: ${data.user.status}.`,
+      action: "Открыть настройки сервера",
+      onAction: onOpenSettings,
+    },
+    photo: {
+      title: "Фото",
+      text: "Сжатие включено. Качество можно изменить в настройках фото, чтобы уменьшить размер отправки.",
+      action: "Открыть настройки фото",
+      onAction: onOpenSettings,
+    },
+    notifications: {
+      title: "Уведомления",
+      text: "Уведомления включены. Приложение покажет ошибки синхронизации и важные статусы обхода.",
+    },
+    help: {
+      title: "Помощь",
+      text: "Откройте объект, выберите зону, проверяйте помещения и отправляйте изменения через синхронизацию.",
+    },
+  };
 
   const handleProfileAction = (key) => {
-    if (key === "logout") {
-      setFeedback("Выход доступен после подтверждения");
+    if (key === "logout" || key === "switchUser") {
+      setConfirmAction(key);
       return;
     }
 
-    setFeedback(`${key === "switchUser" ? "Смена пользователя" : "Раздел"} отмечен локально`);
+    setFeedback("Действие выполнено");
+  };
+
+  const handleRetrySend = () => {
+    const isSuccess = isNextRetrySuccess;
+    setIsNextRetrySuccess((current) => !current);
+    setResult({
+      status: isSuccess ? "success" : "error",
+      title: isSuccess ? "Отправка выполнена" : "Ошибка отправки",
+      text: isSuccess ? "Очередь изменений повторно отправлена." : "Связь с сервером нестабильна, попробуйте позже.",
+    });
   };
 
   return (
@@ -92,7 +142,7 @@ export function MobileProfileScreen({ activeNavKey, onOpenMenu, onOpenHistory, o
             </p>
             <p>
               <InfoCircleOutlined aria-hidden="true" />
-              {data.user.device}
+              {getMobileDeviceLabel()}
             </p>
           </div>
         </section>
@@ -110,7 +160,7 @@ export function MobileProfileScreen({ activeNavKey, onOpenMenu, onOpenHistory, o
             ))}
           </div>
           <p>{data.today.current}</p>
-          <button type="button" onClick={() => setFeedback("Обход выбран локально")}>
+          <button type="button" onClick={onContinueWalkthrough}>
             <PlayCircleOutlined aria-hidden="true" />
             Продолжить обход
           </button>
@@ -137,7 +187,7 @@ export function MobileProfileScreen({ activeNavKey, onOpenMenu, onOpenHistory, o
           <button type="button" onClick={onOpenSync}>
             Открыть синхронизацию
           </button>
-          <button type="button" onClick={() => setFeedback("Повторная отправка отмечена локально")}>
+          <button type="button" onClick={handleRetrySend}>
             Повторить отправку
           </button>
         </section>
@@ -183,7 +233,7 @@ export function MobileProfileScreen({ activeNavKey, onOpenMenu, onOpenHistory, o
                     ? onOpenSettings?.()
                     : item.key === "history"
                       ? onOpenHistory?.()
-                      : setFeedback(`${item.title}: раздел будет доступен позже`)
+                    : setInfoSheet(settingDetails[item.key])
                 }
               />
             ))}
@@ -210,6 +260,60 @@ export function MobileProfileScreen({ activeNavKey, onOpenMenu, onOpenHistory, o
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {infoSheet ? (
+        <MobileBottomSheet
+          title={infoSheet.title}
+          mode="sheet"
+          onClose={() => setInfoSheet(null)}
+          footer={({ close }) => (
+            <>
+              {infoSheet.action ? (
+                <button
+                  className="mobile-primary-button"
+                  type="button"
+                  onClick={() => close(() => {
+                    setInfoSheet(null);
+                    infoSheet.onAction?.();
+                  })}
+                >
+                  {infoSheet.action}
+                </button>
+              ) : null}
+              <button className="mobile-secondary-button" type="button" onClick={() => close(() => setInfoSheet(null))}>
+                Закрыть
+              </button>
+            </>
+          )}
+        >
+          <p className="mobile-profile-sheet-text">{infoSheet.text}</p>
+        </MobileBottomSheet>
+      ) : null}
+
+      <MobileConfirmModal
+        isOpen={Boolean(confirmAction)}
+        title={confirmAction === "switchUser" ? "Сменить пользователя" : "Выйти"}
+        text={
+          confirmAction === "switchUser"
+            ? "Вы уверены, что хотите сменить пользователя?"
+            : "Вы уверены, что хотите выйти?"
+        }
+        confirmLabel={confirmAction === "switchUser" ? "Сменить пользователя" : "Выйти"}
+        tone={confirmAction === "logout" ? "danger" : "primary"}
+        onCancel={() => setConfirmAction(null)}
+        onConfirm={() => {
+          setConfirmAction(null);
+          onLogout?.();
+        }}
+      />
+
+      <MobileResultModal
+        isOpen={Boolean(result)}
+        status={result?.status}
+        title={result?.title}
+        text={result?.text}
+        onClose={() => setResult(null)}
+      />
     </div>
   );
 }

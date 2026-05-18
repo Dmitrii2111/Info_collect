@@ -1,15 +1,17 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   BarcodeOutlined,
   ClockCircleOutlined,
   InboxOutlined,
   PlusSquareOutlined,
-  SearchOutlined,
   SwapOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileWarehouseData } from "../data/mobileMockData.js";
 
 const quickActionIcons = {
@@ -66,6 +68,10 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
   const [feedback, setFeedback] = useState("");
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [isMoveSheetOpen, setIsMoveSheetOpen] = useState(false);
+  const [result, setResult] = useState(null);
+  const [isNextMoveSuccess, setIsNextMoveSuccess] = useState(true);
+  const positionsRef = useRef(null);
 
   const visibleItems = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -89,12 +95,30 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
   };
 
   const handleAction = (label) => {
+    if (label === "Открыть спорные" || label === "Спорные позиции") {
+      setFeedback("");
+      setActiveFilter("Спорные");
+      window.requestAnimationFrame(() => positionsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+      return;
+    }
+
+    if (label === "Перемещение") {
+      setFeedback("");
+      setIsMoveSheetOpen(true);
+      return;
+    }
+
     if (label === "Сканировать позицию" || label === "Новое поступление") {
       onOpenReceiptBatch?.();
       return;
     }
 
-    setFeedback(`${label}: действие сохранено локально`);
+    setFeedback("");
+    setResult({
+      status: "success",
+      title: label,
+      text: "Действие добавлено в очередь складских операций.",
+    });
   };
 
   return (
@@ -102,7 +126,7 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
       <MobileHeader
         title="Склад"
         onMenu={onOpenMenu}
-        onSync={() => setFeedback("Склад обновлен локально")}
+        onSync={() => setFeedback("Склад обновлен")}
       />
 
       <main className="mobile-warehouse-content">
@@ -138,33 +162,19 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
           </div>
         </section>
 
-        <section className="mobile-warehouse-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input
-              type="search"
-              placeholder="Поиск по оборудованию, ID или помещению"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </label>
-          <div className="mobile-filter-row">
-            {data.filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </section>
+        <MobileSearchFilterBar
+          placeholder="Поиск по оборудованию, ID или помещению"
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          filters={data.filters}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          filterLabel="Фильтр склада"
+        />
 
         {feedback ? <div className="mobile-warehouse-feedback">{feedback}</div> : null}
 
-        <section className="mobile-warehouse-section">
+        <section className="mobile-warehouse-section" ref={positionsRef}>
           <h3>Позиции склада</h3>
           <div className="mobile-warehouse-list">
             {visibleItems.length > 0 ? (
@@ -181,6 +191,21 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
             )}
           </div>
         </section>
+
+        {activeFilter === "Спорные" ? (
+          <section className="mobile-warehouse-section">
+            <h3>Спорные позиции</h3>
+            <div className="mobile-warehouse-disputed-list">
+              {visibleItems.map((item) => (
+                <article className={`is-${item.tone}`} key={`disputed-${item.id}`}>
+                  <strong>{item.title}</strong>
+                  <span>{item.code} • {item.status}</span>
+                  <p>{item.warning ?? item.problem ?? "Требуется сверка данных"}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="mobile-warehouse-section">
           <h3>Быстрые действия</h3>
@@ -207,6 +232,73 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {isMoveSheetOpen ? (
+        <MobileBottomSheet
+          title="Создать перемещение"
+          subtitle="Заполните минимальные данные для перемещения"
+          mode="sheet"
+          onClose={() => setIsMoveSheetOpen(false)}
+          footer={({ close }) => (
+            <>
+              <button className="mobile-secondary-button" type="button" onClick={() => close(() => setIsMoveSheetOpen(false))}>
+                Отмена
+              </button>
+              <button
+                className="mobile-primary-button"
+                type="button"
+                onClick={() =>
+                  close(() => {
+                    const isSuccess = isNextMoveSuccess;
+                    setIsMoveSheetOpen(false);
+                    setIsNextMoveSuccess((current) => !current);
+                    setResult({
+                      status: isSuccess ? "success" : "error",
+                      title: isSuccess ? "Перемещение создано" : "Не удалось создать перемещение",
+                      text: isSuccess
+                        ? "Заявка сохранена и появится в очереди синхронизации."
+                        : "Проверьте количество и повторите действие.",
+                    });
+                  })
+                }
+              >
+                Создать перемещение
+              </button>
+            </>
+          )}
+        >
+          <div className="mobile-move-sheet-form">
+            <label>
+              <span>Позиция</span>
+              <select defaultValue={selectedItemId ?? data.items[0]?.id}>
+                {data.items.map((item) => (
+                  <option value={item.id} key={item.id}>{item.title} • {item.code}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              <span>Откуда</span>
+              <input defaultValue="Склад временного хранения" />
+            </label>
+            <label>
+              <span>Куда</span>
+              <input defaultValue="Корпус А • 2 этаж • Приемное отделение" />
+            </label>
+            <label>
+              <span>Количество или серийный номер</span>
+              <input defaultValue="1" />
+            </label>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      <MobileResultModal
+        isOpen={Boolean(result)}
+        status={result?.status}
+        title={result?.title}
+        text={result?.text}
+        onClose={() => setResult(null)}
+      />
     </div>
   );
 }

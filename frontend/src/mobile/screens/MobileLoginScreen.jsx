@@ -1,10 +1,29 @@
 import { CustomerServiceOutlined, InfoCircleOutlined, SafetyCertificateOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
 import { mobileLoginState } from "../data/mobileMockData.js";
 
 export function MobileLoginScreen({ onLogin }) {
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
+  const [checkResult, setCheckResult] = useState(null);
+  const [isNextCheckSuccess, setIsNextCheckSuccess] = useState(true);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     onLogin();
+  };
+
+  const handleConnectionCheck = () => {
+    const isSuccess = isNextCheckSuccess;
+    setIsNextCheckSuccess((current) => !current);
+    setCheckResult({
+      status: isSuccess ? "success" : "error",
+      title: isSuccess ? "Подключение успешно" : "Ошибка подключения",
+      text: isSuccess
+        ? "Сервер доступен в текущей сети."
+        : "Проверьте адрес сервера и подключение к общей сети.",
+    });
   };
 
   return (
@@ -31,7 +50,7 @@ export function MobileLoginScreen({ onLogin }) {
                 <InfoCircleOutlined aria-hidden="true" />
                 Сервер не проверен
               </span>
-              <button type="button">Проверить подключение</button>
+              <button type="button" onClick={handleConnectionCheck}>Проверить подключение</button>
             </div>
 
             <label>
@@ -83,11 +102,40 @@ export function MobileLoginScreen({ onLogin }) {
 
       <footer className="mobile-login-footer">
         <p>{mobileLoginState.appVersion}</p>
-        <button type="button">
+        <button type="button" onClick={() => setIsHelpOpen(true)}>
           <CustomerServiceOutlined aria-hidden="true" />
           Помощь с подключением
         </button>
       </footer>
+
+      {isHelpOpen ? (
+        <MobileBottomSheet
+          title="Помощь с подключением"
+          subtitle="Проверьте базовые условия перед входом"
+          mode="sheet"
+          onClose={() => setIsHelpOpen(false)}
+          footer={({ close }) => (
+            <button className="mobile-primary-button" type="button" onClick={() => close(() => setIsHelpOpen(false))}>
+              Закрыть
+            </button>
+          )}
+        >
+          <ul className="mobile-help-list">
+            <li>Проверьте адрес сервера в поле входа.</li>
+            <li>Убедитесь, что устройство и сервер находятся в одной сети.</li>
+            <li>Нажмите «Проверить подключение».</li>
+            <li>Если ошибка повторяется, обратитесь к администратору.</li>
+          </ul>
+        </MobileBottomSheet>
+      ) : null}
+
+      <MobileResultModal
+        isOpen={Boolean(checkResult)}
+        status={checkResult?.status}
+        title={checkResult?.title}
+        text={checkResult?.text}
+        onClose={() => setCheckResult(null)}
+      />
     </div>
   );
 }

@@ -88,7 +88,7 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSel
         <button
           type="button"
           aria-label="Синхронизация"
-          onClick={() => setFeedback("Синхронизация отмечена локально")}
+          onClick={() => setFeedback("Откройте экран синхронизации для отправки изменений")}
         >
           <SyncOutlined aria-hidden="true" />
         </button>

@@ -6,12 +6,12 @@ import {
   DatabaseOutlined,
   InfoCircleOutlined,
   RightOutlined,
-  SearchOutlined,
   SyncOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 
 function WalkthroughRoomCard({ room, onOpenRoom }) {
   const isError = room.state === "error";
@@ -104,7 +104,7 @@ export function MobileWalkthroughRoomsScreen({
           <button
             type="button"
             aria-label="Синхронизация"
-            onClick={() => setFeedback("Синхронизация отмечена локально")}
+            onClick={() => setFeedback("Откройте экран синхронизации для отправки изменений")}
           >
             <SyncOutlined aria-hidden="true" />
           </button>
@@ -148,27 +148,15 @@ export function MobileWalkthroughRoomsScreen({
         </section>
 
         <section className="mobile-walkthrough-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input
-              type="search"
-              placeholder="Поиск помещения или оборудования"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </label>
-          <div className="mobile-filter-row">
-            {filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
+          <MobileSearchFilterBar
+            placeholder="Поиск помещения или оборудования"
+            searchValue={searchQuery}
+            onSearchChange={setSearchQuery}
+            filters={filters}
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+            filterLabel="Фильтр помещений обхода"
+          />
         </section>
 
         {feedback ? <div className="mobile-walkthrough-feedback">{feedback}</div> : null}

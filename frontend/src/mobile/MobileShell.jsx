@@ -29,6 +29,11 @@ import {
 import "./styles/mobile.css";
 
 const MOBILE_SESSION_KEY = "infocollect.mobile.session";
+const DEFAULT_MOBILE_USER = {
+  name: "Иван Иванов",
+  role: "Оператор",
+  initials: "ИИ",
+};
 
 function readMobileSession() {
   if (typeof window === "undefined") {
@@ -48,6 +53,36 @@ function clearMobileSession() {
   }
 
   window.localStorage.removeItem(MOBILE_SESSION_KEY);
+}
+
+function getSafeInitialScreen(session) {
+  const context = session.context ?? {};
+
+  if (["itemCard", "moveItem"].includes(session.activeScreen) && !context.selectedWarehouseItemId) {
+    return "warehouse";
+  }
+
+  if (session.activeScreen === "departmentRooms" && !(context.selectedObjectId && context.selectedFloorId && context.selectedDepartmentId)) {
+    return "objects";
+  }
+
+  if (
+    ["roomInspection", "equipmentData"].includes(session.activeScreen) &&
+    !((context.selectedObjectId && context.selectedFloorId && context.selectedDepartmentId && context.selectedRoomId) ||
+      (context.selectedInspectionId && context.selectedRoomId))
+  ) {
+    return context.selectedInspectionId ? "inspections" : "objects";
+  }
+
+  if (session.activeScreen === "equipmentData" && !context.selectedEquipmentId) {
+    return "roomInspection";
+  }
+
+  if (session.activeScreen === "discrepancyDetails" && !context.selectedDiscrepancyId) {
+    return "discrepancies";
+  }
+
+  return session.activeScreen ?? "dashboard";
 }
 
 function getObjectStructure(objectId) {
@@ -79,6 +114,10 @@ function findInspectionRoom(inspection, roomId) {
 
 function findWarehouseItem(itemId) {
   return mobileWarehouseData.items.find((item) => item.id === itemId) ?? null;
+}
+
+function findWarehouseItemByCode(itemCode) {
+  return mobileWarehouseData.items.find((item) => item.code === itemCode) ?? null;
 }
 
 function findDiscrepancy(discrepancyId) {
@@ -127,23 +166,33 @@ function getDrawerActiveKey(activeScreen) {
 
 export function MobileShell() {
   const savedSession = readMobileSession();
+  const savedContext = savedSession.context ?? {};
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(savedSession.authenticated));
-  const [activeScreen, setActiveScreen] = useState(savedSession.activeScreen ?? "dashboard");
-  const [selectedObjectId, setSelectedObjectId] = useState(null);
-  const [selectedFloorId, setSelectedFloorId] = useState(null);
-  const [selectedDepartmentId, setSelectedDepartmentId] = useState(null);
-  const [selectedRoomId, setSelectedRoomId] = useState(null);
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState(null);
-  const [selectedInspectionId, setSelectedInspectionId] = useState(null);
-  const [selectedWarehouseItemId, setSelectedWarehouseItemId] = useState(null);
-  const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(null);
-  const [discrepancySource, setDiscrepancySource] = useState("dashboard");
-  const [syncSource, setSyncSource] = useState("dashboard");
+  const [activeScreen, setActiveScreen] = useState(getSafeInitialScreen(savedSession));
+  const [selectedObjectId, setSelectedObjectId] = useState(savedContext.selectedObjectId ?? null);
+  const [selectedFloorId, setSelectedFloorId] = useState(savedContext.selectedFloorId ?? null);
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState(savedContext.selectedDepartmentId ?? null);
+  const [selectedRoomId, setSelectedRoomId] = useState(savedContext.selectedRoomId ?? null);
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState(savedContext.selectedEquipmentId ?? null);
+  const [selectedInspectionId, setSelectedInspectionId] = useState(savedContext.selectedInspectionId ?? null);
+  const [selectedWarehouseItemId, setSelectedWarehouseItemId] = useState(savedContext.selectedWarehouseItemId ?? null);
+  const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(savedContext.selectedDiscrepancyId ?? null);
+  const [discrepancySource, setDiscrepancySource] = useState(savedContext.discrepancySource ?? "dashboard");
+  const [syncSource, setSyncSource] = useState(savedContext.syncSource ?? "profile");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleLogin = () => {
+    const user = DEFAULT_MOBILE_USER;
+
     setIsAuthenticated(true);
     setActiveScreen("dashboard");
+
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        MOBILE_SESSION_KEY,
+        JSON.stringify({ authenticated: true, activeScreen: "dashboard", user, context: {} }),
+      );
+    }
   };
 
   useEffect(() => {
@@ -157,9 +206,38 @@ export function MobileShell() {
 
     window.localStorage.setItem(
       MOBILE_SESSION_KEY,
-      JSON.stringify({ authenticated: true, activeScreen }),
+      JSON.stringify({
+        authenticated: true,
+        activeScreen,
+        user: savedSession.user ?? DEFAULT_MOBILE_USER,
+        context: {
+          selectedObjectId,
+          selectedFloorId,
+          selectedDepartmentId,
+          selectedRoomId,
+          selectedEquipmentId,
+          selectedInspectionId,
+          selectedWarehouseItemId,
+          selectedDiscrepancyId,
+          discrepancySource,
+          syncSource,
+        },
+      }),
     );
-  }, [activeScreen, isAuthenticated]);
+  }, [
+    activeScreen,
+    discrepancySource,
+    isAuthenticated,
+    selectedDepartmentId,
+    selectedDiscrepancyId,
+    selectedEquipmentId,
+    selectedFloorId,
+    selectedInspectionId,
+    selectedObjectId,
+    selectedRoomId,
+    selectedWarehouseItemId,
+    syncSource,
+  ]);
 
   const handleLogout = () => {
     clearMobileSession();
@@ -252,6 +330,23 @@ export function MobileShell() {
     setActiveScreen("equipmentData");
   };
 
+  const handleOpenNextEquipment = () => {
+    const equipmentList = selectedRoom?.equipment ?? [];
+    const currentIndex = equipmentList.findIndex((item) => item.id === selectedEquipmentId);
+    const nextEquipment = equipmentList[currentIndex + 1];
+
+    if (!nextEquipment) {
+      return false;
+    }
+
+    setSelectedEquipmentId(nextEquipment.id);
+    return true;
+  };
+
+  const handleFinishEquipmentRoom = () => {
+    setActiveScreen(isInspectionRoomFlow ? "walkthroughRooms" : "departmentRooms");
+  };
+
   const handleOpenObjectStructure = (objectId) => {
     setSelectedObjectId(objectId);
     setSelectedFloorId(null);
@@ -288,10 +383,43 @@ export function MobileShell() {
     setActiveScreen("sync");
   };
 
+  const handleBackFromSync = () => {
+    setActiveScreen(syncSource || "profile");
+  };
+
+  const handleOpenDashboardZone = (zone) => {
+    if (zone.key === "diagnostics") {
+      setSelectedObjectId("building-a");
+      setSelectedFloorId("floor-3");
+      setSelectedDepartmentId("diagnostics");
+      setSelectedRoomId(null);
+      setActiveScreen("departmentRooms");
+      return;
+    }
+
+    if (zone.key === "warehouse") {
+      setActiveScreen("warehouse");
+      return;
+    }
+
+    handleContinueWalkthrough();
+  };
+
   const handleOpenDiscrepancyDetails = (discrepancyId, source = "discrepancies") => {
     setSelectedDiscrepancyId(discrepancyId);
     setDiscrepancySource(source);
     setActiveScreen("discrepancyDetails");
+  };
+
+  const handleOpenDiscrepancyItem = (itemCode) => {
+    const item = findWarehouseItemByCode(itemCode);
+
+    if (!item) {
+      return;
+    }
+
+    setSelectedWarehouseItemId(item.id);
+    setActiveScreen("itemCard");
   };
 
   const handleBackFromDiscrepancyDetails = () => {
@@ -319,6 +447,8 @@ export function MobileShell() {
         equipment={selectedEquipment}
         room={selectedRoom}
         onBack={() => setActiveScreen("roomInspection")}
+        onFinishRoom={handleFinishEquipmentRoom}
+        onOpenNextEquipment={handleOpenNextEquipment}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "roomInspection" ? (
@@ -378,6 +508,7 @@ export function MobileShell() {
         selectedInspectionId={selectedInspectionId}
         onOpenMenu={() => setIsDrawerOpen(true)}
         onOpenInspection={handleOpenInspection}
+        onOpenSync={() => handleOpenSync("inspections")}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "walkthroughRooms" ? (
@@ -430,12 +561,13 @@ export function MobileShell() {
         activeNavKey={discrepancySource === "itemCard" ? "warehouse" : "dashboard"}
         discrepancy={selectedDiscrepancy}
         onBack={handleBackFromDiscrepancyDetails}
+        onOpenItem={handleOpenDiscrepancyItem}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "sync" ? (
       <MobileSyncScreen
-        activeNavKey={syncSource === "profile" ? "profile" : "dashboard"}
-        onBack={() => setActiveScreen(syncSource === "profile" ? "profile" : "dashboard")}
+        activeNavKey="profile"
+        onBack={handleBackFromSync}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "settings" ? (
@@ -465,6 +597,8 @@ export function MobileShell() {
         onOpenHistory={() => setActiveScreen("history")}
         onOpenSettings={() => setActiveScreen("settings")}
         onOpenSync={() => handleOpenSync("profile")}
+        onContinueWalkthrough={handleContinueWalkthrough}
+        onLogout={handleLogout}
         onNavSelect={handleNavSelect}
       />
     ) : (
@@ -476,6 +610,7 @@ export function MobileShell() {
         onOpenScan={handleContinueRoomInspection}
         onOpenDiscrepancies={handleOpenDiscrepancies}
         onOpenSync={() => handleOpenSync("dashboard")}
+        onOpenZone={handleOpenDashboardZone}
         onNavSelect={handleNavSelect}
       />
     );

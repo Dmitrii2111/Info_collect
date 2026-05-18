@@ -54,18 +54,21 @@ export const mobileDashboardData = {
   },
   zones: [
     {
+      key: "reception",
       title: "2 этаж • Приемное отделение",
       progress: "12 / 28 помещений",
       status: "В работе",
       tone: "primary",
     },
     {
+      key: "diagnostics",
       title: "3 этаж • Диагностика",
       progress: "0 / 18 помещений",
       status: "Не начато",
       tone: "neutral",
     },
     {
+      key: "warehouse",
       title: "Склад временного хранения",
       progress: "15 / 15 помещений",
       status: "Есть расхождения",
@@ -226,7 +229,7 @@ export const mobileHistoryData = {
       status: "Синхронизировано",
       statusKey: "Синхронизация",
       tone: "success",
-      description: "Данные отправлены локально",
+      description: "Данные отправлены",
     },
     {
       id: "history-serial-0938",
@@ -252,7 +255,7 @@ export const mobileHistoryData = {
       date: "Сегодня",
       status: "Ожидает отправки",
       tone: "warning",
-      description: "Фото сохранено локально",
+      description: "Фото ожидает отправки",
     },
     {
       id: "history-discrepancy-0924",
@@ -292,7 +295,7 @@ export const mobileHistoryData = {
       date: "Сегодня",
       status: "Ожидает отправки",
       tone: "warning",
-      description: "Комментарий сохранен локально",
+      description: "Комментарий ожидает отправки",
     },
     {
       id: "history-conflict-0847",
@@ -330,10 +333,20 @@ export const mobileHistoryData = {
       user: "Иван Иванов",
       time: "08:16",
       date: "Сегодня",
-      status: "Локально",
+      status: "Ожидает отправки",
       statusKey: "Перемещения",
       tone: "info",
-      description: "Перемещение сохранено без отправки",
+      description: "Перемещение ожидает синхронизации",
+      details: [
+        { label: "Что перемещали", value: "Монитор пациента" },
+        { label: "ID / серийник", value: "EQ-201-05" },
+        { label: "Откуда", value: "Склад временного хранения" },
+        { label: "Куда", value: "2.01.32 — Пост медсестры" },
+        { label: "Кто выполнил", value: "Иван Иванов" },
+        { label: "Время", value: "Сегодня, 08:16" },
+        { label: "Статус синхронизации", value: "Ожидает отправки" },
+        { label: "Комментарий", value: "Перемещение подготовлено для обхода 2 этажа" },
+      ],
     },
   ],
 };
@@ -853,7 +866,7 @@ export const mobileDiscrepanciesData = {
       history: [
         { time: "09:18", text: "создано расхождение" },
         { time: "09:24", text: "добавлен комментарий" },
-        { time: "09:31", text: "сохранено локально" },
+        { time: "09:31", text: "ожидает отправки" },
       ],
     },
     {
@@ -904,7 +917,7 @@ export const mobileDiscrepanciesData = {
         { label: "Обнаружено", value: "Сегодня, 09:58" },
         { label: "Приоритет", value: "Средний" },
       ],
-      history: [{ time: "09:58", text: "сохранено локально" }],
+      history: [{ time: "09:58", text: "ожидает отправки" }],
     },
     {
       id: "disc-review-projector",
@@ -1016,7 +1029,7 @@ export const mobileSyncData = {
     },
   ],
   guide: [
-    "Ожидает отправки: сохранено локально, уйдет при появлении связи",
+    "Ожидает отправки: будет отправлено при появлении связи",
     "Конфликт: данные на сервере отличаются, нужно выбрать версию",
     "Ошибка: сбой соединения или системы, требуется повторная отправка",
   ],

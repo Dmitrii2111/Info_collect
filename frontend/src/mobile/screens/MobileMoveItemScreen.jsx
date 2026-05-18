@@ -137,7 +137,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
           <button
             type="button"
             aria-label="Синхронизация"
-            onClick={() => setFeedback("Синхронизация отмечена локально")}
+            onClick={() => setFeedback("Изменения будут отправлены на экране синхронизации")}
           >
             <SyncOutlined aria-hidden="true" />
           </button>
@@ -252,7 +252,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
                 </div>
               </div>
             ))}
-            <button type="button" onClick={() => setFeedback("Остальные помещения будут доступны на Stage 7")}>
+            <button type="button" onClick={() => setActiveOverlay("rooms")}>
               Показать ещё {data.hiddenRoomsCount} помещений
             </button>
           </div>
@@ -533,7 +533,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
           </div>
           <div className="mobile-confirm-note">
             <SyncOutlined aria-hidden="true" />
-            <p>Перемещение будет сохранено локально и отправлено при следующей синхронизации.</p>
+            <p>Перемещение будет добавлено в очередь синхронизации.</p>
           </div>
           <div className="mobile-confirm-warning">
             <WarningOutlined aria-hidden="true" />

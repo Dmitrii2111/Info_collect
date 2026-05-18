@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileConfirmModal } from "../components/MobileConfirmModal.jsx";
 
 const reasonOptions = [
   "Отсутствует маркировка",
@@ -36,6 +37,8 @@ export function MobileEquipmentDataScreen({
   equipment,
   room,
   onBack,
+  onFinishRoom,
+  onOpenNextEquipment,
   onNavSelect,
 }) {
   const currentEquipment = equipment ?? {
@@ -60,6 +63,7 @@ export function MobileEquipmentDataScreen({
   const [photo, setPhoto] = useState(null);
   const [photoMenuOpen, setPhotoMenuOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [isFinishConfirmOpen, setIsFinishConfirmOpen] = useState(false);
   const galleryInputRef = useRef(null);
   const cameraInputRef = useRef(null);
   const selectedStatus = getStatusByKey(statusKey);
@@ -121,7 +125,7 @@ export function MobileEquipmentDataScreen({
       return { name: file.name, url };
     });
     setPhotoMenuOpen(false);
-    setFeedback("Фото добавлено локально");
+    setFeedback("Фото добавлено");
     event.target.value = "";
   };
 
@@ -143,6 +147,15 @@ export function MobileEquipmentDataScreen({
     }
   };
 
+  const handleSaveAndNext = () => {
+    setFeedback("Изменения добавлены в очередь синхронизации");
+    const hasNext = onOpenNextEquipment?.();
+
+    if (!hasNext) {
+      setIsFinishConfirmOpen(true);
+    }
+  };
+
   return (
     <div className="mobile-equipment-data-screen">
       <header className="mobile-equipment-data-header">
@@ -153,7 +166,7 @@ export function MobileEquipmentDataScreen({
         <button
           type="button"
           aria-label="Дополнительно"
-          onClick={() => handleSave("Действие отмечено локально")}
+          onClick={() => handleSave("Проверьте статус, комментарий и фото перед сохранением")}
         >
           <MoreOutlined aria-hidden="true" />
         </button>
@@ -365,7 +378,7 @@ export function MobileEquipmentDataScreen({
         <section className="mobile-equipment-sync">
           <SyncOutlined aria-hidden="true" />
           <span>Онлайн • 2 изменения не отправлены</span>
-          <button type="button" onClick={() => handleSave("Синхронизация отмечена локально")}>
+          <button type="button" onClick={() => handleSave("Откройте экран синхронизации для отправки изменений")}>
             <SyncOutlined aria-hidden="true" />
           </button>
         </section>
@@ -374,10 +387,10 @@ export function MobileEquipmentDataScreen({
 
       <div className="mobile-equipment-action-bar">
         <div>
-          <button type="button" onClick={() => handleSave("Изменения сохранены локально")}>
+          <button type="button" onClick={() => handleSave("Изменения добавлены в очередь синхронизации")}>
             Сохранить
           </button>
-          <button type="button" onClick={() => handleSave("Сохранено локально", { goBack: true })}>
+          <button type="button" onClick={handleSaveAndNext}>
             Сохранить и к следующему
           </button>
         </div>
@@ -390,6 +403,18 @@ export function MobileEquipmentDataScreen({
       </div>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+      <MobileConfirmModal
+        isOpen={isFinishConfirmOpen}
+        title="Все оборудование проверено"
+        text="Все оборудование проверено. Закончить помещение?"
+        confirmLabel="Закончить помещение"
+        cancelLabel="Остаться"
+        onCancel={() => setIsFinishConfirmOpen(false)}
+        onConfirm={() => {
+          setIsFinishConfirmOpen(false);
+          onFinishRoom?.();
+        }}
+      />
     </div>
   );
 }

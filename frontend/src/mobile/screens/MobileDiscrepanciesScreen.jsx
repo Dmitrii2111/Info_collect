@@ -3,11 +3,11 @@ import {
   ArrowLeftOutlined,
   ClockCircleOutlined,
   RightOutlined,
-  SearchOutlined,
   SyncOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileDiscrepanciesData } from "../data/mobileMockData.js";
 
 function getCountByStatus(items, statusKey) {
@@ -84,6 +84,15 @@ export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepa
     onOpenDiscrepancy?.(id);
   };
 
+  const handleOpenNext = () => {
+    const currentIndex = visibleDiscrepancies.findIndex((item) => item.id === selectedDiscrepancyId);
+    const nextItem = visibleDiscrepancies[currentIndex + 1] ?? visibleDiscrepancies[0];
+
+    if (nextItem) {
+      handleSelect(nextItem.id);
+    }
+  };
+
   const unresolvedCount = data.discrepancies.filter((item) => item.statusKey !== "Решены").length;
 
   return (
@@ -96,7 +105,7 @@ export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepa
         <button
           type="button"
           aria-label="Синхронизация"
-          onClick={() => setFeedback("Синхронизация отмечена локально")}
+          onClick={() => setFeedback("Откройте экран синхронизации для отправки изменений")}
         >
           <SyncOutlined aria-hidden="true" />
         </button>
@@ -132,34 +141,20 @@ export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepa
               <span style={{ width: `${data.summary.progressValue}%` }} />
             </div>
           </div>
-          <button type="button" onClick={() => setFeedback("Следующее расхождение выбрано локально")}>
+          <button type="button" onClick={handleOpenNext}>
             Продолжить проверку
           </button>
         </section>
 
-        <section className="mobile-discrepancies-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input
-              type="search"
-              placeholder="Поиск помещения, оборудования или ID"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-            />
-          </label>
-          <div className="mobile-filter-row">
-            {data.filters.map((filter) => (
-              <button
-                className={filter === activeFilter ? "is-active" : ""}
-                type="button"
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </section>
+        <MobileSearchFilterBar
+          placeholder="Поиск помещения, оборудования или ID"
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          filters={data.filters}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          filterLabel="Фильтр расхождений"
+        />
 
         {feedback ? <div className="mobile-discrepancies-feedback">{feedback}</div> : null}
 
@@ -182,10 +177,10 @@ export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepa
       <div className="mobile-discrepancies-action-bar">
         <p>Осталось {unresolvedCount} неразрешенных расхождения</p>
         <div>
-          <button type="button" onClick={() => setFeedback("Следующее расхождение выбрано локально")}>
+          <button type="button" onClick={handleOpenNext}>
             Открыть следующее
           </button>
-          <button type="button" aria-label="Синхронизация" onClick={() => setFeedback("Синхронизация отмечена локально")}>
+          <button type="button" aria-label="Синхронизация" onClick={() => setFeedback("Откройте экран синхронизации для отправки изменений")}>
             <SyncOutlined aria-hidden="true" />
           </button>
         </div>

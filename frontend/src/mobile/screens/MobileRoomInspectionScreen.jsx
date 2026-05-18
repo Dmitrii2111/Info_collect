@@ -5,13 +5,13 @@ import {
   DatabaseOutlined,
   InfoCircleOutlined,
   RightOutlined,
-  SearchOutlined,
   SyncOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 
 const equipmentIcons = {
   success: CheckCircleOutlined,
@@ -82,7 +82,39 @@ export function MobileRoomInspectionScreen({
   const pendingCount = equipment.filter((item) => item.tone === "active").length;
   const remainingCount = Math.max(progress.total - progress.checked, 0);
   const [activeOverlay, setActiveOverlay] = useState(null);
+  const [activeFilter, setActiveFilter] = useState(filters[0]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleEquipment = equipment
+    .filter((item) => {
+      if (activeFilter === "Подтверждено") {
+        return item.tone === "success" || item.status === "Подтверждено";
+      }
+
+      if (activeFilter === "Расхождения") {
+        return item.tone === "error";
+      }
+
+      if (activeFilter === "Не отправлено") {
+        return item.tone === "active" || item.note?.includes("не отправ");
+      }
+
+      if (activeFilter === "Не проверено") {
+        return item.tone === "empty" || item.status === "Не найдено" || item.status === "Не начато";
+      }
+
+      return true;
+    })
+    .filter((item) => {
+      if (!normalizedQuery) {
+        return true;
+      }
+
+      return [item.title, item.id, item.status, item.note]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(normalizedQuery));
+    });
 
   const handleCompleteRoom = () => {
     setIsCompleted(true);
@@ -146,27 +178,23 @@ export function MobileRoomInspectionScreen({
           </button>
         </section>
 
-        <section className="mobile-room-inspection-tools">
-          <label className="mobile-search-field">
-            <SearchOutlined aria-hidden="true" />
-            <input type="search" placeholder="Поиск оборудования или ID" />
-          </label>
-          <div className="mobile-filter-row">
-            {filters.map((filter, index) => (
-              <button className={index === 0 ? "is-active" : ""} type="button" key={filter}>
-                {filter}
-              </button>
-            ))}
-          </div>
-        </section>
+        <MobileSearchFilterBar
+          placeholder="Поиск оборудования или ID"
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          filters={filters}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+          filterLabel="Фильтр оборудования"
+        />
 
         <section className="mobile-equipment-section">
-          {equipment.length > 0 ? (
-            equipment.map((item) => (
+          {visibleEquipment.length > 0 ? (
+            visibleEquipment.map((item) => (
               <MobileEquipmentCard item={item} key={item.id} onOpenEquipment={onOpenEquipment} />
             ))
           ) : (
-            <div className="mobile-equipment-empty">В помещении нет позиций для осмотра</div>
+            <div className="mobile-equipment-empty">Ничего не найдено</div>
           )}
         </section>
       </main>
