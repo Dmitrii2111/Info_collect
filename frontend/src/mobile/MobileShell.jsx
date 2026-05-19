@@ -23,9 +23,14 @@ import { MobileWalkthroughRoomsScreen } from "./screens/MobileWalkthroughRoomsSc
 import {
   mobileDiscrepanciesData,
   mobileInspectionsData,
-  mobileObjectStructuresById,
   mobileWarehouseData,
 } from "./data/mobileMockData.js";
+import {
+  getMobileDepartmentById,
+  getMobileEquipmentById,
+  getMobileObjectStructureById,
+  getMobileRoomById,
+} from "../domain/objects/index.js";
 import { clearMobileSession, getMobileSession, saveMobileSession } from "../services/session/sessionService.js";
 import "./styles/mobile.css";
 
@@ -63,25 +68,6 @@ function getSafeInitialScreen(session) {
   }
 
   return session.activeScreen ?? "dashboard";
-}
-
-function getObjectStructure(objectId) {
-  return mobileObjectStructuresById[objectId] ?? mobileObjectStructuresById["building-a"];
-}
-
-function findDepartment(objectId, floorId, departmentId) {
-  const structure = getObjectStructure(objectId);
-  const floor = structure.floors.find((item) => item.id === floorId);
-
-  return floor?.departments?.find((department) => department.id === departmentId) ?? null;
-}
-
-function findRoom(department, roomId) {
-  return department?.rooms?.find((room) => (room.id ?? room.title) === roomId) ?? null;
-}
-
-function findEquipment(room, equipmentId) {
-  return room?.equipment?.find((item) => item.id === equipmentId) ?? null;
 }
 
 function findInspection(inspectionId) {
@@ -394,12 +380,14 @@ export function MobileShell() {
     setActiveScreen(discrepancySource === "itemCard" ? "itemCard" : "discrepancies");
   };
 
-  const selectedStructure = getObjectStructure(selectedObjectId);
-  const selectedDepartment = findDepartment(selectedObjectId, selectedFloorId, selectedDepartmentId);
+  const selectedStructure = getMobileObjectStructureById(selectedObjectId) ?? getMobileObjectStructureById("building-a");
+  const selectedDepartment = getMobileDepartmentById(selectedObjectId, selectedDepartmentId);
   const selectedInspection = findInspection(selectedInspectionId);
   const selectedInspectionRoom = findInspectionRoom(selectedInspection, selectedRoomId);
-  const selectedRoom = selectedDepartment ? findRoom(selectedDepartment, selectedRoomId) : selectedInspectionRoom;
-  const selectedEquipment = findEquipment(selectedRoom, selectedEquipmentId);
+  const selectedRoom = selectedDepartment ? getMobileRoomById(selectedObjectId, selectedDepartmentId, selectedRoomId) : selectedInspectionRoom;
+  const selectedEquipment = selectedDepartment
+    ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
+    : selectedRoom?.equipment?.find((item) => item.id === selectedEquipmentId) ?? null;
   const selectedWarehouseItem = findWarehouseItem(selectedWarehouseItemId);
   const selectedDiscrepancy = findDiscrepancy(selectedDiscrepancyId);
   const roomInspectionContext = selectedDepartment ?? {
