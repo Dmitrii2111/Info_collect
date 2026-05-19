@@ -22,9 +22,13 @@ import { MobileWarehouseScreen } from "./screens/MobileWarehouseScreen.jsx";
 import { MobileWalkthroughRoomsScreen } from "./screens/MobileWalkthroughRoomsScreen.jsx";
 import {
   mobileDiscrepanciesData,
-  mobileInspectionsData,
   mobileWarehouseData,
 } from "./data/mobileMockData.js";
+import {
+  getMobileInspectionById,
+  getMobileInspectionEquipmentById,
+  getMobileInspectionRoomById,
+} from "../domain/inspections/index.js";
 import {
   getMobileDepartmentById,
   getMobileEquipmentById,
@@ -68,14 +72,6 @@ function getSafeInitialScreen(session) {
   }
 
   return session.activeScreen ?? "dashboard";
-}
-
-function findInspection(inspectionId) {
-  return mobileInspectionsData.inspections.find((inspection) => inspection.id === inspectionId) ?? null;
-}
-
-function findInspectionRoom(inspection, roomId) {
-  return inspection?.walkthrough?.rooms?.find((room) => room.id === roomId) ?? null;
 }
 
 function findWarehouseItem(itemId) {
@@ -382,12 +378,12 @@ export function MobileShell() {
 
   const selectedStructure = getMobileObjectStructureById(selectedObjectId) ?? getMobileObjectStructureById("building-a");
   const selectedDepartment = getMobileDepartmentById(selectedObjectId, selectedDepartmentId);
-  const selectedInspection = findInspection(selectedInspectionId);
-  const selectedInspectionRoom = findInspectionRoom(selectedInspection, selectedRoomId);
+  const selectedInspection = getMobileInspectionById(selectedInspectionId);
+  const selectedInspectionRoom = getMobileInspectionRoomById(selectedInspectionId, selectedRoomId);
   const selectedRoom = selectedDepartment ? getMobileRoomById(selectedObjectId, selectedDepartmentId, selectedRoomId) : selectedInspectionRoom;
   const selectedEquipment = selectedDepartment
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
-    : selectedRoom?.equipment?.find((item) => item.id === selectedEquipmentId) ?? null;
+    : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId);
   const selectedWarehouseItem = findWarehouseItem(selectedWarehouseItemId);
   const selectedDiscrepancy = findDiscrepancy(selectedDiscrepancyId);
   const roomInspectionContext = selectedDepartment ?? {
