@@ -26,34 +26,14 @@ import {
   mobileObjectStructuresById,
   mobileWarehouseData,
 } from "./data/mobileMockData.js";
+import { clearMobileSession, getMobileSession, saveMobileSession } from "../services/session/sessionService.js";
 import "./styles/mobile.css";
 
-const MOBILE_SESSION_KEY = "infocollect.mobile.session";
 const DEFAULT_MOBILE_USER = {
   name: "Иван Иванов",
   role: "Оператор",
   initials: "ИИ",
 };
-
-function readMobileSession() {
-  if (typeof window === "undefined") {
-    return {};
-  }
-
-  try {
-    return JSON.parse(window.localStorage.getItem(MOBILE_SESSION_KEY) ?? "{}");
-  } catch {
-    return {};
-  }
-}
-
-function clearMobileSession() {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  window.localStorage.removeItem(MOBILE_SESSION_KEY);
-}
 
 function getSafeInitialScreen(session) {
   const context = session.context ?? {};
@@ -165,7 +145,7 @@ function getDrawerActiveKey(activeScreen) {
 }
 
 export function MobileShell() {
-  const savedSession = readMobileSession();
+  const savedSession = getMobileSession();
   const savedContext = savedSession.context ?? {};
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(savedSession.authenticated));
   const [activeScreen, setActiveScreen] = useState(getSafeInitialScreen(savedSession));
@@ -187,12 +167,7 @@ export function MobileShell() {
     setIsAuthenticated(true);
     setActiveScreen("dashboard");
 
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        MOBILE_SESSION_KEY,
-        JSON.stringify({ authenticated: true, activeScreen: "dashboard", user, context: {} }),
-      );
-    }
+    saveMobileSession({ authenticated: true, activeScreen: "dashboard", user, context: {} });
   };
 
   useEffect(() => {
@@ -200,30 +175,23 @@ export function MobileShell() {
       return;
     }
 
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    window.localStorage.setItem(
-      MOBILE_SESSION_KEY,
-      JSON.stringify({
-        authenticated: true,
-        activeScreen,
-        user: savedSession.user ?? DEFAULT_MOBILE_USER,
-        context: {
-          selectedObjectId,
-          selectedFloorId,
-          selectedDepartmentId,
-          selectedRoomId,
-          selectedEquipmentId,
-          selectedInspectionId,
-          selectedWarehouseItemId,
-          selectedDiscrepancyId,
-          discrepancySource,
-          syncSource,
-        },
-      }),
-    );
+    saveMobileSession({
+      authenticated: true,
+      activeScreen,
+      user: savedSession.user ?? DEFAULT_MOBILE_USER,
+      context: {
+        selectedObjectId,
+        selectedFloorId,
+        selectedDepartmentId,
+        selectedRoomId,
+        selectedEquipmentId,
+        selectedInspectionId,
+        selectedWarehouseItemId,
+        selectedDiscrepancyId,
+        discrepancySource,
+        syncSource,
+      },
+    });
   }, [
     activeScreen,
     discrepancySource,

@@ -1,23 +1,11 @@
 import { ConfigProvider } from "antd";
 import { useEffect, useState } from "react";
 import { MobileShell } from "./mobile/MobileShell.jsx";
+import { clearDesktopSession, getDesktopSession, saveDesktopSession } from "./services/session/sessionService.js";
 import { DesktopLoginScreen } from "./shell/screens/DesktopLoginScreen.jsx";
 import { DesktopShell } from "./shell/DesktopShell.jsx";
 
 const MOBILE_VIEWPORT_QUERY = "(max-width: 767px)";
-const DESKTOP_SESSION_KEY = "infocollect.desktop.session";
-
-function readDesktopSession() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  try {
-    return JSON.parse(window.localStorage.getItem(DESKTOP_SESSION_KEY) ?? "null");
-  } catch {
-    return null;
-  }
-}
 
 function useIsMobileViewport() {
   const [isMobile, setIsMobile] = useState(() => {
@@ -43,22 +31,16 @@ function useIsMobileViewport() {
 
 function App() {
   const isMobile = useIsMobileViewport();
-  const [desktopSession, setDesktopSession] = useState(() => readDesktopSession());
+  const [desktopSession, setDesktopSession] = useState(() => getDesktopSession());
 
   const handleDesktopLogin = (session) => {
     setDesktopSession(session);
-
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(DESKTOP_SESSION_KEY, JSON.stringify(session));
-    }
+    saveDesktopSession(session);
   };
 
   const handleDesktopLogout = () => {
     setDesktopSession(null);
-
-    if (typeof window !== "undefined") {
-      window.localStorage.removeItem(DESKTOP_SESSION_KEY);
-    }
+    clearDesktopSession();
   };
 
   return (
