@@ -20,10 +20,7 @@ import { MobileSettingsScreen } from "./screens/MobileSettingsScreen.jsx";
 import { MobileSyncScreen } from "./screens/MobileSyncScreen.jsx";
 import { MobileWarehouseScreen } from "./screens/MobileWarehouseScreen.jsx";
 import { MobileWalkthroughRoomsScreen } from "./screens/MobileWalkthroughRoomsScreen.jsx";
-import {
-  mobileDiscrepanciesData,
-  mobileWarehouseData,
-} from "./data/mobileMockData.js";
+import { getMobileDiscrepancyById } from "../domain/discrepancies/index.js";
 import {
   getMobileInspectionById,
   getMobileInspectionEquipmentById,
@@ -35,6 +32,10 @@ import {
   getMobileObjectStructureById,
   getMobileRoomById,
 } from "../domain/objects/index.js";
+import {
+  getMobileWarehouseItemByCode,
+  getMobileWarehouseItemById,
+} from "../domain/warehouse/index.js";
 import { clearMobileSession, getMobileSession, saveMobileSession } from "../services/session/sessionService.js";
 import "./styles/mobile.css";
 
@@ -72,18 +73,6 @@ function getSafeInitialScreen(session) {
   }
 
   return session.activeScreen ?? "dashboard";
-}
-
-function findWarehouseItem(itemId) {
-  return mobileWarehouseData.items.find((item) => item.id === itemId) ?? null;
-}
-
-function findWarehouseItemByCode(itemCode) {
-  return mobileWarehouseData.items.find((item) => item.code === itemCode) ?? null;
-}
-
-function findDiscrepancy(discrepancyId) {
-  return mobileDiscrepanciesData.discrepancies.find((item) => item.id === discrepancyId) ?? null;
 }
 
 function getDrawerActiveKey(activeScreen) {
@@ -362,7 +351,7 @@ export function MobileShell() {
   };
 
   const handleOpenDiscrepancyItem = (itemCode) => {
-    const item = findWarehouseItemByCode(itemCode);
+    const item = getMobileWarehouseItemByCode(itemCode);
 
     if (!item) {
       return;
@@ -384,8 +373,8 @@ export function MobileShell() {
   const selectedEquipment = selectedDepartment
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
     : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId);
-  const selectedWarehouseItem = findWarehouseItem(selectedWarehouseItemId);
-  const selectedDiscrepancy = findDiscrepancy(selectedDiscrepancyId);
+  const selectedWarehouseItem = getMobileWarehouseItemById(selectedWarehouseItemId);
+  const selectedDiscrepancy = getMobileDiscrepancyById(selectedDiscrepancyId);
   const roomInspectionContext = selectedDepartment ?? {
     context: selectedInspection?.walkthrough?.context,
   };
