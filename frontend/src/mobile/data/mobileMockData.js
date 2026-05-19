@@ -33,6 +33,12 @@ export const mobileDrawerData = {
   version: "InfoCollect MVP • v0.1",
 };
 
+export const mobileAssignmentOperators = [
+  { id: "operator-ivanov", name: "Иван Иванов", role: "Оператор", status: "В сети" },
+  { id: "operator-petrova", name: "Анна Петрова", role: "Старшая смены", status: "В сети" },
+  { id: "operator-sidorov", name: "Павел Сидоров", role: "Инженер", status: "Недавно был в сети" },
+];
+
 export const mobileDashboardData = {
   syncSummary: {
     status: "Онлайн • синхронизировано 09:42",

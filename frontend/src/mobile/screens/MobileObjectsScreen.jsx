@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileObjectsData } from "../data/mobileMockData.js";
@@ -171,7 +172,7 @@ export function MobileObjectsScreen({
                 />
               ))
             ) : (
-              <div className="mobile-objects-empty">Ничего не найдено</div>
+              <MobileEmptyState className="mobile-objects-empty">Ничего не найдено</MobileEmptyState>
             )}
           </div>
         </section>

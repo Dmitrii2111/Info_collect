@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 
 function WalkthroughRoomCard({ room, onOpenRoom }) {
@@ -167,7 +168,7 @@ export function MobileWalkthroughRoomsScreen({
               <WalkthroughRoomCard room={room} key={room.id} onOpenRoom={onOpenRoom} />
             ))
           ) : (
-            <div className="mobile-walkthrough-empty">Помещения не найдены</div>
+            <MobileEmptyState className="mobile-walkthrough-empty">Помещения не найдены</MobileEmptyState>
           )}
         </section>
 

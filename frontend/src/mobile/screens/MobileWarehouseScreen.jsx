@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
 import { MobileResultModal } from "../components/MobileResultModal.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
@@ -187,7 +188,7 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
                 />
               ))
             ) : (
-              <div className="mobile-warehouse-empty">Позиции не найдены</div>
+              <MobileEmptyState className="mobile-warehouse-empty">Позиции не найдены</MobileEmptyState>
             )}
           </div>
         </section>

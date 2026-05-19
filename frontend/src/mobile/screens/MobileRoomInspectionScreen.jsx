@@ -11,6 +11,7 @@ import {
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 
 const equipmentIcons = {
@@ -194,7 +195,7 @@ export function MobileRoomInspectionScreen({
               <MobileEquipmentCard item={item} key={item.id} onOpenEquipment={onOpenEquipment} />
             ))
           ) : (
-            <div className="mobile-equipment-empty">Ничего не найдено</div>
+            <MobileEmptyState className="mobile-equipment-empty">Ничего не найдено</MobileEmptyState>
           )}
         </section>
       </main>
@@ -227,7 +228,7 @@ export function MobileRoomInspectionScreen({
               ) : (
                 <article>
                   <strong>Позиции не указаны</strong>
-                  <small>Для помещения нет mock-данных оборудования.</small>
+                  <small>Для помещения нет данных оборудования.</small>
                 </article>
               )}
             </div>

@@ -10,7 +10,10 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileConfirmModal } from "../components/MobileConfirmModal.jsx";
 import { MobileResultModal } from "../components/MobileResultModal.jsx";
+import { mobileAssignmentOperators } from "../data/mobileMockData.js";
 
 function normalizeQuantity(quantity) {
   if (typeof quantity === "object" && quantity) {
@@ -44,6 +47,9 @@ export function MobileItemCardScreen({
 }) {
   const [feedback, setFeedback] = useState("");
   const [result, setResult] = useState(null);
+  const [isAssignSheetOpen, setIsAssignSheetOpen] = useState(false);
+  const [selectedOperatorId, setSelectedOperatorId] = useState(null);
+  const [pendingOperator, setPendingOperator] = useState(null);
   const currentItem = item ?? {
     title: "Позиция не выбрана",
     code: "Нет ID",
@@ -60,15 +66,38 @@ export function MobileItemCardScreen({
   const history = currentItem.history?.length
     ? currentItem.history
     : [{ title: "История отсутствует", meta: "Данных пока нет" }];
+  const selectedOperator = mobileAssignmentOperators.find((operator) => operator.id === selectedOperatorId) ?? null;
 
   const handleAction = (label) => {
     setFeedback("");
     setResult({
       status: "success",
-      title: label === "Назначить" ? "Назначение подготовлено" : "Синхронизация",
-      text: label === "Назначить"
-        ? "Позиция добавлена в очередь назначения ответственному."
-        : "Данные позиции будут отправлены при следующей синхронизации.",
+      title: "Синхронизация",
+      text: "Данные позиции будут отправлены при следующей синхронизации.",
+    });
+  };
+
+  const handleOpenAssignSheet = () => {
+    setFeedback("");
+    setSelectedOperatorId(null);
+    setIsAssignSheetOpen(true);
+  };
+
+  const handlePrepareAssign = () => {
+    if (!selectedOperator) {
+      return;
+    }
+
+    setPendingOperator(selectedOperator);
+    setIsAssignSheetOpen(false);
+  };
+
+  const handleConfirmAssign = () => {
+    setPendingOperator(null);
+    setResult({
+      status: "success",
+      title: "Назначение подготовлено",
+      text: "Позиция добавлена в очередь назначения ответственному.",
     });
   };
 
@@ -185,7 +214,7 @@ export function MobileItemCardScreen({
               <SwapOutlined aria-hidden="true" />
               Переместить
             </button>
-            <button type="button" onClick={() => handleAction("Назначить")}>
+            <button type="button" onClick={handleOpenAssignSheet}>
               <UserSwitchOutlined aria-hidden="true" />
               Назначить
             </button>
@@ -194,6 +223,54 @@ export function MobileItemCardScreen({
       </main>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {isAssignSheetOpen ? (
+        <MobileBottomSheet
+          title="Выбор оператора"
+          subtitle="Выберите ответственного для позиции"
+          mode="modal"
+          onClose={() => setIsAssignSheetOpen(false)}
+          footer={({ close }) => (
+            <>
+              <button className="mobile-secondary-button" type="button" onClick={() => close(() => setIsAssignSheetOpen(false))}>
+                Отмена
+              </button>
+              <button
+                className="mobile-primary-button"
+                type="button"
+                disabled={!selectedOperator}
+                onClick={() => close(handlePrepareAssign)}
+              >
+                Продолжить
+              </button>
+            </>
+          )}
+        >
+          <div className="mobile-operator-select-list">
+            {mobileAssignmentOperators.map((operator) => (
+              <button
+                className={operator.id === selectedOperatorId ? "is-selected" : ""}
+                type="button"
+                key={operator.id}
+                onClick={() => setSelectedOperatorId(operator.id)}
+              >
+                <strong>{operator.name}</strong>
+                <span>{operator.role} • {operator.status}</span>
+              </button>
+            ))}
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      <MobileConfirmModal
+        isOpen={Boolean(pendingOperator)}
+        title="Назначить позицию"
+        text={`Назначить позицию оператору ${pendingOperator?.name ?? ""}?`}
+        confirmLabel="Назначить"
+        onCancel={() => setPendingOperator(null)}
+        onConfirm={handleConfirmAssign}
+      />
+
       <MobileResultModal
         isOpen={Boolean(result)}
         status={result?.status}

@@ -141,6 +141,11 @@
 }.mobile-app .mobile-secondary-button {
   background: #e8e7f1;
   color: #515f74;
+}.mobile-app .mobile-primary-button:disabled,
+.mobile-app .mobile-secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+  box-shadow: none;
 }.mobile-app .mobile-status-card {
   display: grid;
   gap: 12px;
@@ -2400,6 +2405,38 @@
   background: #ffffff;
   color: #00288e;
   font-size: 14px;
+}
+
+.mobile-app .mobile-operator-select-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mobile-app .mobile-operator-select-list button {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid #e3e1eb;
+  border-radius: 10px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.mobile-app .mobile-operator-select-list button.is-selected {
+  border-color: #00288e;
+  background: #eef2ff;
+}
+
+.mobile-app .mobile-operator-select-list strong {
+  color: #1a1b22;
+  font-size: 15px;
+  line-height: 20px;
+}
+
+.mobile-app .mobile-operator-select-list span {
+  color: #757684;
+  font-size: 13px;
+  line-height: 18px;
 }
 
 .mobile-app .mobile-move-item-screen {
@@ -6980,6 +7017,12 @@
   box-shadow: 0 4px 12px rgba(0, 40, 142, 0.18);
 }
 
+.mobile-app .mobile-equipment-action-bar > div button:first-child {
+  background: #e8e7f1;
+  color: #515f74;
+  box-shadow: none;
+}
+
 .mobile-app .mobile-sync-screen {
   min-height: 100dvh;
   background: #f8f7ff;
@@ -7818,6 +7861,27 @@
   border-radius: 10px;
   background: #ffffff;
   text-align: left;
+}
+
+.mobile-app .mobile-settings-photo-card .mobile-settings-toggle-row {
+  border-color: #00288e;
+  background: #00288e;
+}
+
+.mobile-app .mobile-settings-photo-card .mobile-settings-toggle-row strong {
+  color: #ffffff;
+}
+
+.mobile-app .mobile-settings-photo-card .mobile-settings-toggle-row span {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.mobile-app .mobile-settings-photo-card .mobile-settings-switch.is-on {
+  background: #ffffff;
+}
+
+.mobile-app .mobile-settings-photo-card .mobile-settings-switch.is-on i {
+  background: #00288e;
 }
 
 .mobile-app .mobile-settings-toggle-row strong {

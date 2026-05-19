@@ -11,6 +11,7 @@ import {
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileHistoryData } from "../data/mobileMockData.js";
 
@@ -161,7 +162,7 @@ export function MobileHistoryScreen({ activeNavKey, onBack, onOpenSync, onNavSel
                 />
               ))
             ) : (
-              <div className="mobile-history-empty">События не найдены</div>
+              <MobileEmptyState className="mobile-history-empty">События не найдены</MobileEmptyState>
             )}
           </div>
         </section>

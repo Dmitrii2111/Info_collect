@@ -7,6 +7,7 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileDiscrepanciesData } from "../data/mobileMockData.js";
 
@@ -169,7 +170,7 @@ export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepa
               />
             ))
           ) : (
-            <div className="mobile-discrepancies-empty">Расхождения не найдены</div>
+            <MobileEmptyState className="mobile-discrepancies-empty">Расхождения не найдены</MobileEmptyState>
           )}
         </section>
       </main>

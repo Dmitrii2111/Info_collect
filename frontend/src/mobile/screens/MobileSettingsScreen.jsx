@@ -79,11 +79,11 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
   const handleConfirmAction = (key) => {
     setConfirmAction(null);
     if (key === "refresh") {
-      showAlternatingResult("refresh", "Данные обновлены из mock-хранилища.", "Не удалось обновить данные.");
+      showAlternatingResult("refresh", "Данные обновлены.", "Не удалось обновить данные.");
       return;
     }
 
-    showAlternatingResult("clearCache", "Локальный кэш очищен в демонстрационном режиме.", "Не удалось очистить кэш.");
+    showAlternatingResult("clearCache", "Локальный кэш очищен.", "Не удалось очистить кэш.");
   };
 
   return (
@@ -179,7 +179,7 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
           </div>
         </section>
 
-        <section className="mobile-card mobile-settings-card">
+        <section className="mobile-card mobile-settings-card mobile-settings-photo-card">
           <h2>Фото</h2>
           <SettingsToggle
             item={{ title: "Сжатие фото", subtitle: "Уменьшать размер файлов перед отправкой" }}
@@ -291,8 +291,8 @@ export function MobileSettingsScreen({ activeNavKey, onBack, onOpenSync, onNavSe
         title={confirmAction === "refresh" ? "Обновить данные" : "Очистить локальный кэш"}
         text={
           confirmAction === "refresh"
-            ? "Загрузить свежие данные из демонстрационного хранилища?"
-            : "Очистить локальный кэш в демонстрационном режиме?"
+            ? "Загрузить свежие данные?"
+            : "Очистить локальный кэш?"
         }
         confirmLabel={confirmAction === "refresh" ? "Обновить" : "Очистить"}
         tone={confirmAction === "clearCache" ? "danger" : "primary"}

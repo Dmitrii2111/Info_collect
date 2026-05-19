@@ -9,6 +9,7 @@ import {
   WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileInspectionsData } from "../data/mobileMockData.js";
@@ -204,8 +205,8 @@ export function MobileInspectionsScreen({
                 onOpenInspection={handleOpenInspection}
               />
             ))
-          ) : (
-            <div className="mobile-inspections-empty">Инспекции не найдены</div>
+            ) : (
+            <MobileEmptyState className="mobile-inspections-empty">Инспекции не найдены</MobileEmptyState>
           )}
         </section>
 

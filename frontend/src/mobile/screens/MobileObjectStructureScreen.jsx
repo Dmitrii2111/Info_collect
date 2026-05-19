@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 
 const floorIcons = {
@@ -223,7 +224,7 @@ export function MobileObjectStructureScreen({
                 />
               ))
             ) : (
-              <div className="mobile-structure-empty">Ничего не найдено</div>
+              <MobileEmptyState className="mobile-structure-empty">Ничего не найдено</MobileEmptyState>
             )}
           </div>
         </section>

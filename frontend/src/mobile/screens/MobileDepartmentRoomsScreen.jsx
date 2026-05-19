@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
+import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
 import { mobileDepartmentRoomsData } from "../data/mobileMockData.js";
 
@@ -236,7 +237,7 @@ export function MobileDepartmentRoomsScreen({
                 <MobileRoomCard room={room} key={room.id ?? room.title} onOpenRoom={onOpenRoom} />
               ))
             ) : (
-              <div className="mobile-rooms-empty">Ничего не найдено</div>
+              <MobileEmptyState className="mobile-rooms-empty">Ничего не найдено</MobileEmptyState>
             )}
           </div>
         </section>

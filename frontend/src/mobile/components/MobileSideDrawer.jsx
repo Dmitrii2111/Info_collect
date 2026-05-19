@@ -12,7 +12,7 @@ import {
   UnorderedListOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mobileDrawerData } from "../data/mobileMockData.js";
 
 const drawerIcons = {
@@ -49,7 +49,14 @@ function DrawerItem({ item, isActive, onSelect }) {
 
 export function MobileSideDrawer({ activeKey, onClose, onSelect }) {
   const data = mobileDrawerData;
+  const closeTimerRef = useRef(null);
   const [isClosing, setIsClosing] = useState(false);
+
+  useEffect(() => () => {
+    if (closeTimerRef.current) {
+      window.clearTimeout(closeTimerRef.current);
+    }
+  }, []);
 
   const close = (afterClose) => {
     if (isClosing) {
@@ -57,7 +64,7 @@ export function MobileSideDrawer({ activeKey, onClose, onSelect }) {
     }
 
     setIsClosing(true);
-    window.setTimeout(() => {
+    closeTimerRef.current = window.setTimeout(() => {
       if (typeof afterClose === "function") {
         afterClose();
         return;

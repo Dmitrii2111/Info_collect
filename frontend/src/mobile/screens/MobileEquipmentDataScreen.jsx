@@ -63,6 +63,7 @@ export function MobileEquipmentDataScreen({
   const [photo, setPhoto] = useState(null);
   const [photoMenuOpen, setPhotoMenuOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [isSaveConfirmOpen, setIsSaveConfirmOpen] = useState(false);
   const [isFinishConfirmOpen, setIsFinishConfirmOpen] = useState(false);
   const galleryInputRef = useRef(null);
   const cameraInputRef = useRef(null);
@@ -153,6 +154,11 @@ export function MobileEquipmentDataScreen({
 
     if (!hasNext) {
       setIsFinishConfirmOpen(true);
+      return;
+    }
+
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0);
     }
   };
 
@@ -387,22 +393,28 @@ export function MobileEquipmentDataScreen({
 
       <div className="mobile-equipment-action-bar">
         <div>
-          <button type="button" onClick={() => handleSave("Изменения добавлены в очередь синхронизации")}>
+          <button type="button" onClick={onBack}>
+            Отмена
+          </button>
+          <button type="button" onClick={() => setIsSaveConfirmOpen(true)}>
             Сохранить
           </button>
-          <button type="button" onClick={handleSaveAndNext}>
-            Сохранить и к следующему
-          </button>
         </div>
-        <button
-          type="button"
-          onClick={onBack}
-        >
-          Отменить
-        </button>
       </div>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+      <MobileConfirmModal
+        isOpen={isSaveConfirmOpen}
+        title="Вы уверены?"
+        text="Сохранить результат проверки и перейти к следующей позиции?"
+        confirmLabel="Сохранить и к следующему"
+        cancelLabel="Отмена"
+        onCancel={() => setIsSaveConfirmOpen(false)}
+        onConfirm={() => {
+          setIsSaveConfirmOpen(false);
+          handleSaveAndNext();
+        }}
+      />
       <MobileConfirmModal
         isOpen={isFinishConfirmOpen}
         title="Все оборудование проверено"
