@@ -545,7 +545,7 @@ function RestoreBackupModal({ selectedBackupId, onSelectBackup, onClose, onConfi
   return (
     <DesktopModalShell
       title="Восстановить из резервной копии"
-      subtitle="Выберите локальную mock-копию для восстановления настроек"
+      subtitle="Выберите локальную копию для восстановления настроек"
       onClose={onClose}
       size="wide"
       footer={(
@@ -560,7 +560,7 @@ function RestoreBackupModal({ selectedBackupId, onSelectBackup, onClose, onConfi
     >
       <div className="st-modal-warning">
         <WarningOutlined aria-hidden="true" />
-        <span>Восстановление перезапишет текущую конфигурацию в mock-state.</span>
+        <span>Восстановление перезапишет текущую конфигурацию.</span>
       </div>
       <div className="st-backup-choice-list">
         {BACKUP_RESTORE_OPTIONS.map((backup) => (
@@ -776,7 +776,7 @@ export function DesktopSettingsScreen() {
       loadingTitle: "Восстанавливаем резервную копию",
       loadingSubtitle: "Проверяем архив и применяем настройки",
       successTitle: "Резервная копия восстановлена",
-      successSubtitle: "Параметры обновлены в локальном mock-state.",
+      successSubtitle: "Параметры обновлены.",
     }, () => {
       const selectedBackup = BACKUP_RESTORE_OPTIONS.find((backup) => backup.id === selectedBackupId);
       setLastBackup(selectedBackup?.meta.split(" · ")[0].replace("Сегодня, ", "") ?? "02:00");
@@ -837,7 +837,7 @@ export function DesktopSettingsScreen() {
       loadingTitle: "Импортируем мастер-данные",
       loadingSubtitle: "Проверяем структуру файла",
       successTitle: "Мастер-данные обновлены",
-      successSubtitle: "Файл принят в локальный mock-state.",
+      successSubtitle: "Файл принят.",
     }, () => {
       setMasterFileName(fileName);
       setMasterImportedAt(`Сегодня, ${new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })}`);
@@ -861,7 +861,7 @@ export function DesktopSettingsScreen() {
       loadingTitle: "Проверяем путь",
       loadingSubtitle: "Обновляем настройки хранилища",
       successTitle: "Путь к хранилищу обновлен",
-      successSubtitle: "Новый путь сохранен в локальном mock-state.",
+      successSubtitle: "Новый путь сохранен.",
     }, () => setStoragePath(nextPath));
   };
 
@@ -888,7 +888,7 @@ export function DesktopSettingsScreen() {
               loadingTitle: "Сохраняем настройки",
               loadingSubtitle: "Применяем локальные параметры",
               successTitle: "Настройки сохранены",
-              successSubtitle: "Изменения сохранены в mock-state.",
+              successSubtitle: "Изменения сохранены.",
             })}
           >
             <SaveOutlined aria-hidden="true" />
@@ -916,7 +916,7 @@ export function DesktopSettingsScreen() {
               loadingTitle: "Создаем резервную копию",
               loadingSubtitle: "Сохраняем текущие параметры",
               successTitle: "Резервная копия создана",
-              successSubtitle: "Новая копия добавлена в локальный mock-state.",
+              successSubtitle: "Новая копия добавлена.",
               onSuccess: () => setLastBackup(new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })),
             })}
           >
@@ -969,7 +969,7 @@ export function DesktopSettingsScreen() {
                 loadingTitle: "Создаем резервную копию",
                 loadingSubtitle: "Сохраняем текущие параметры",
                 successTitle: "Резервная копия создана",
-                successSubtitle: "Новая копия добавлена в локальный mock-state.",
+                successSubtitle: "Новая копия добавлена.",
                 onSuccess: () => setLastBackup(new Date().toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })),
               })}
               onRestoreBackup={() => setWorkflow({ phase: "restore" })}
@@ -982,7 +982,7 @@ export function DesktopSettingsScreen() {
               loadingTitle: tool.chevron === "download" ? "Готовим пакет диагностики" : "Выполняем обслуживание",
               loadingSubtitle: tool.label,
               successTitle: tool.chevron === "download" ? "Пакет диагностики готов" : "Обслуживание завершено",
-              successSubtitle: "Действие выполнено в локальном mock-state.",
+              successSubtitle: "Действие выполнено.",
             })}
             onRestartService={() => openConfirm({
               title: "Перезапустить сервис",
@@ -993,13 +993,13 @@ export function DesktopSettingsScreen() {
                 loadingTitle: "Перезапускаем сервис",
                 loadingSubtitle: "Проверяем состояние компонентов",
                 successTitle: "Сервис перезапущен",
-                successSubtitle: "Компоненты снова доступны в локальном mock-state.",
+                successSubtitle: "Компоненты снова доступны.",
               },
               onSuccess: () => setServiceStatus("СТАБИЛЬНО"),
             })}
             onResetSyncQueue={() => openConfirm({
               title: "Сбросить очередь синхронизации",
-              subtitle: "Локальные задачи очереди будут удалены из mock-state.",
+              subtitle: "Локальные задачи очереди будут удалены.",
               warning: "После подтверждения очередь синхронизации станет пустой.",
               confirmLabel: "Сбросить очередь",
               danger: true,
@@ -1015,7 +1015,7 @@ export function DesktopSettingsScreen() {
               loadingTitle: "Очищаем кэш системы",
               loadingSubtitle: "Удаляем временные локальные файлы",
               successTitle: "Кэш системы очищен",
-              successSubtitle: "Временные данные очищены в mock-state.",
+              successSubtitle: "Временные данные очищены.",
             })}
             onResetSettings={() => openConfirm({
               title: "Сбросить системные настройки",

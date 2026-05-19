@@ -382,7 +382,7 @@ function SaveStateModal({ title, entity, onClose }) {
           <LoadingOutlined aria-hidden="true" />
           <div>
             <strong>Сохраняем изменения</strong>
-            <span>Локальная 3-секундная заглушка.</span>
+            <span>Подготовка отчета занимает несколько секунд.</span>
           </div>
         </div>
       ) : (
@@ -390,7 +390,7 @@ function SaveStateModal({ title, entity, onClose }) {
           <CheckCircleOutlined aria-hidden="true" />
           <div>
             <strong>Готово</strong>
-            <span>Изменения применены во frontend mock state.</span>
+            <span>Изменения применены к текущему состоянию.</span>
           </div>
         </div>
       )}

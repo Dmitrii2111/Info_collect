@@ -410,7 +410,7 @@ function EmployeeConfirmModal({ operation, onClose, onConfirm }) {
         <ExclamationCircleOutlined aria-hidden="true" />
         <div>
           <strong>{isDisable ? "Сотрудник потеряет доступ к системе" : "Будет создан временный пароль"}</strong>
-          <span>{isDisable ? "Данные сотрудника сохранятся в локальном mock state." : "Backend/API не вызывается, показан только frontend status flow."}</span>
+          <span>{isDisable ? "Данные сотрудника будут сохранены в текущем состоянии." : "Проверьте параметры действия перед подтверждением."}</span>
         </div>
       </div>
       {isDisable ? (
@@ -449,7 +449,7 @@ function EmployeeStatusModal({ operation, onClose, onComplete }) {
   return (
     <DesktopModalShell
       title={phase === "success" ? copy[1] : phase === "error" ? "Ошибка операции" : copy[0]}
-      subtitle={operation.employee?.name ?? "Frontend mock state"}
+      subtitle={operation.employee?.name ?? "Текущее состояние"}
       size="narrow"
       onClose={onClose}
       closeDisabled={phase === "loading"}
@@ -464,7 +464,7 @@ function EmployeeStatusModal({ operation, onClose, onComplete }) {
           <LoadingOutlined aria-hidden="true" />
           <div>
             <strong>{copy[0]}</strong>
-            <span>Локальная 3-секундная заглушка, backend/API не вызывается.</span>
+            <span>Действие выполняется в текущем рабочем состоянии.</span>
           </div>
         </div>
       ) : phase === "success" ? (

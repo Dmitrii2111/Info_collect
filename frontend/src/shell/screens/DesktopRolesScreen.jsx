@@ -431,7 +431,7 @@ function RoleStatusModal({ operation, onClose, onComplete }) {
   return (
     <DesktopModalShell
       title={phase === "success" ? copy[2] : copy[0]}
-      subtitle={operation.role?.label ?? "Frontend mock state"}
+      subtitle={operation.role?.label ?? "Текущее состояние"}
       size="narrow"
       onClose={onClose}
       closeDisabled={phase === "loading"}

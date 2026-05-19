@@ -659,7 +659,7 @@ export function DesktopWarehouseScreen({ onNavigate }) {
           time: "сейчас",
           text: "Создано перемещение",
           highlight: selectedItem.id,
-          author: "Frontend mock",
+          author: "Оператор",
           tone: "primary",
         }, ...currentOps]);
         setModal("success");

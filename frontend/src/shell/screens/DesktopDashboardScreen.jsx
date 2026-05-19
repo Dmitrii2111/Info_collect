@@ -15,6 +15,8 @@ import {
   UserAddOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
+import { useState } from "react";
+import { DesktopModalShell } from "../components/DesktopModalShell.jsx";
 import "../styles/desktopScreenCommon.css";
 import "../styles/dashboardScreen.css";
 
@@ -88,9 +90,18 @@ const KPI_CARDS = [
   },
 ];
 
-function KpiCard({ card }) {
+const KPI_TARGETS = {
+  "Объекты": "objects",
+  "Инспекции": "inspections",
+  "Помещения": "objects",
+  "Позиций оборудования": "registry",
+  "Расхождения": "discrepancies",
+  "Очередь синхр.": "sync",
+};
+
+function KpiCard({ card, onOpen }) {
   return (
-    <div className={`db-kpi-card${card.variant ? ` db-kpi-card--${card.variant}` : ""}`}>
+    <button className={`db-kpi-card${card.variant ? ` db-kpi-card--${card.variant}` : ""}`} type="button" onClick={onOpen}>
       <div className="db-kpi-card__top">
         <div className={`db-kpi-icon db-kpi-icon--${card.iconBg}`}>
           <MaterialIcon name={card.icon} />
@@ -101,7 +112,7 @@ function KpiCard({ card }) {
       </div>
       <p className={`db-kpi-value${card.variant === "attention" ? " db-kpi-value--red" : ""}`}>{card.value}</p>
       <p className="db-kpi-label">{card.label}</p>
-    </div>
+    </button>
   );
 }
 
@@ -169,12 +180,12 @@ function StatusPill({ label, tone }) {
   );
 }
 
-function ActiveInspectionsPanel() {
+function ActiveInspectionsPanel({ onNavigate, onOpenDetails }) {
   return (
     <div className="db-panel">
       <div className="db-panel__header">
         <h3 className="db-panel__title">Активные инспекции</h3>
-        <button className="db-panel__link" type="button">Все инспекции</button>
+        <button className="db-panel__link" type="button" onClick={() => onNavigate?.("inspections")}>Все инспекции</button>
       </div>
       <div className="db-table-wrap">
         <table className="db-table">
@@ -205,7 +216,7 @@ function ActiveInspectionsPanel() {
                   <StatusPill label={row.statusLabel} tone={row.statusTone} />
                 </td>
                 <td className="db-table__cell--right">
-                  <button className="db-table__icon-btn" type="button">
+                  <button className="db-table__icon-btn" type="button" onClick={() => onOpenDetails?.("Инспекция", row)}>
                     <MaterialIcon name="more_vert" />
                   </button>
                 </td>
@@ -241,12 +252,12 @@ const WAREHOUSE_ROWS = [
   },
 ];
 
-function WarehousePanel() {
+function WarehousePanel({ onNavigate, onOpenDetails }) {
   return (
     <div className="db-panel">
       <div className="db-panel__header">
         <h3 className="db-panel__title">Склад и поступления</h3>
-        <button className="db-panel__link" type="button">Управление запасами</button>
+        <button className="db-panel__link" type="button" onClick={() => onNavigate?.("warehouse")}>Управление запасами</button>
       </div>
       <div className="db-table-wrap">
         <table className="db-table">
@@ -278,7 +289,7 @@ function WarehousePanel() {
                 </td>
                 <td className="db-table__sm">{row.responsible}</td>
                 <td className="db-table__cell--right">
-                  <button className="db-action-btn" type="button">ПРИНЯТЬ</button>
+                  <button className="db-action-btn" type="button" onClick={() => onOpenDetails?.("Позиция склада", row)}>ПРИНЯТЬ</button>
                 </td>
               </tr>
             ))}
@@ -315,7 +326,21 @@ const ALERTS = [
   },
 ];
 
-function AttentionPanel() {
+function AttentionPanel({ onNavigate, onOpenDetails }) {
+  const handleAlertAction = (alert) => {
+    if (alert.btnLabel === "УСТРАНИТЬ") {
+      onNavigate?.("discrepancies");
+      return;
+    }
+
+    if (alert.btnLabel === "РЕШИТЬ") {
+      onNavigate?.("sync");
+      return;
+    }
+
+    onOpenDetails?.("Журнал ошибки", alert);
+  };
+
   return (
     <div className="db-panel">
       <div className="db-panel__header db-panel__header--attention">
@@ -334,7 +359,7 @@ function AttentionPanel() {
               <h4 className="db-alert__title">{alert.title}</h4>
               <p className="db-alert__text">{alert.text}</p>
             </div>
-            <button className={`db-alert__btn db-alert__btn--${alert.tone}`} type="button">
+            <button className={`db-alert__btn db-alert__btn--${alert.tone}`} type="button" onClick={() => handleAlertAction(alert)}>
               {alert.btnLabel}
             </button>
           </div>
@@ -379,7 +404,7 @@ const TIMELINE_ITEMS = [
   },
 ];
 
-function ActivityTimeline() {
+function ActivityTimeline({ onNavigate }) {
   return (
     <div className="db-panel">
       <div className="db-panel__header">
@@ -399,7 +424,7 @@ function ActivityTimeline() {
           </div>
         ))}
       </div>
-      <button className="db-timeline__more-btn" type="button">
+      <button className="db-timeline__more-btn" type="button" onClick={() => onNavigate?.("history")}>
         Открыть историю
       </button>
     </div>
@@ -408,18 +433,18 @@ function ActivityTimeline() {
 
 // ── Quick Actions ────────────────────────────────────────────────────────────
 
-function QuickActions() {
+function QuickActions({ onNavigate }) {
   return (
     <div className="db-quick-actions">
-      <button className="db-quick-btn db-quick-btn--primary" type="button">
+      <button className="db-quick-btn db-quick-btn--primary" type="button" onClick={() => onNavigate?.("receipts")}>
         <MaterialIcon name="add_box" />
         Создать поступление
       </button>
-      <button className="db-quick-btn db-quick-btn--outline" type="button">
+      <button className="db-quick-btn db-quick-btn--outline" type="button" onClick={() => onNavigate?.("reports")}>
         <MaterialIcon name="download" />
         Экспорт отчёта
       </button>
-      <button className="db-quick-btn db-quick-btn--outline" type="button">
+      <button className="db-quick-btn db-quick-btn--outline" type="button" onClick={() => onNavigate?.("staff")}>
         <MaterialIcon name="person_add" />
         Добавить сотрудника
       </button>
@@ -429,15 +454,21 @@ function QuickActions() {
 
 // ── Root ─────────────────────────────────────────────────────────────────────
 
-export function DesktopDashboardScreen() {
+export function DesktopDashboardScreen({ onNavigate }) {
+  const [detailModal, setDetailModal] = useState(null);
+
+  const openDetails = (title, item) => {
+    setDetailModal({ title, item });
+  };
+
   return (
     <div className="db-screen">
-      <QuickActions />
+      <QuickActions onNavigate={onNavigate} />
 
       {/* KPI Grid */}
       <div className="db-kpi-grid">
         {KPI_CARDS.map((card) => (
-          <KpiCard key={card.label} card={card} />
+          <KpiCard key={card.label} card={card} onOpen={() => onNavigate?.(KPI_TARGETS[card.label])} />
         ))}
       </div>
 
@@ -445,16 +476,39 @@ export function DesktopDashboardScreen() {
       <div className="db-main-layout">
         {/* Left column — 9/12 */}
         <div className="db-main-col">
-          <ActiveInspectionsPanel />
-          <WarehousePanel />
-          <AttentionPanel />
+          <ActiveInspectionsPanel onNavigate={onNavigate} onOpenDetails={openDetails} />
+          <WarehousePanel onNavigate={onNavigate} onOpenDetails={openDetails} />
+          <AttentionPanel onNavigate={onNavigate} onOpenDetails={openDetails} />
         </div>
 
         {/* Right column — 3/12 */}
         <div className="db-side-col">
-          <ActivityTimeline />
+          <ActivityTimeline onNavigate={onNavigate} />
         </div>
       </div>
+
+      {detailModal ? (
+        <DesktopModalShell
+          title={detailModal.title}
+          subtitle="Подробности выбранного элемента"
+          size="narrow"
+          onClose={() => setDetailModal(null)}
+          footer={(
+            <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={() => setDetailModal(null)}>
+              Закрыть
+            </button>
+          )}
+        >
+          <div className="db-detail-modal">
+            {Object.entries(detailModal.item).map(([key, value]) => (
+              <div key={key}>
+                <span>{key}</span>
+                <strong>{typeof value === "object" ? JSON.stringify(value) : value}</strong>
+              </div>
+            ))}
+          </div>
+        </DesktopModalShell>
+      ) : null}
     </div>
   );
 }

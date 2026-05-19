@@ -3,10 +3,12 @@ import { Avatar, Dropdown } from "antd";
 import {
   BellOutlined,
   LogoutOutlined,
+  SafetyCertificateOutlined,
   QuestionCircleOutlined,
   SearchOutlined,
   ToolOutlined,
   UserOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import {
   DESKTOP_ADMIN_SECTIONS,
@@ -14,6 +16,7 @@ import {
   DESKTOP_SECTION_META,
 } from "./desktopNavigation.js";
 import { DesktopScreen } from "./DesktopScreen.jsx";
+import { DesktopModalShell } from "./components/DesktopModalShell.jsx";
 
 const PREVIEW_USER = {
   name: "Иван Иванов",
@@ -51,9 +54,13 @@ function SidebarSection({ items, activeKey, onSelect }) {
   );
 }
 
-export function DesktopShell() {
+export function DesktopShell({ session, onLogout }) {
   const [activeSectionKey, setActiveSectionKey] = useState("dashboard");
+  const [activeModal, setActiveModal] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
   const activeSection = DESKTOP_SECTION_META[activeSectionKey] ?? DESKTOP_SECTION_META.dashboard;
+  const currentUser = session?.user ?? PREVIEW_USER;
+  const currentServer = session?.server ?? "http://192.168.1.10:8000";
 
   const profileMenu = {
     items: [
@@ -62,7 +69,26 @@ export function DesktopShell() {
         icon: <UserOutlined />,
         label: "Профиль",
       },
+      {
+        key: "switchUser",
+        icon: <UserSwitchOutlined />,
+        label: "Сменить пользователя",
+      },
+      {
+        key: "logout",
+        icon: <LogoutOutlined />,
+        label: "Выйти",
+        danger: true,
+      },
     ],
+    onClick: ({ key }) => {
+      if (key === "profile") {
+        setActiveModal("profile");
+        return;
+      }
+
+      setConfirmAction(key);
+    },
   };
 
   return (
@@ -97,24 +123,22 @@ export function DesktopShell() {
 
           <div className="desktop-shell-sidebar-footer">
             <div className="desktop-shell-sidebar-links">
-              <button className="desktop-shell-sidebar-link" type="button">
+              <button className="desktop-shell-sidebar-link" type="button" onClick={() => setActiveModal("help")}>
                 <QuestionCircleOutlined aria-hidden="true" />
                 Помощь
               </button>
-              <Dropdown menu={profileMenu} trigger={["click"]}>
-                <button className="desktop-shell-sidebar-link is-danger" type="button">
-                  <LogoutOutlined aria-hidden="true" />
-                  Выйти
-                </button>
-              </Dropdown>
+              <button className="desktop-shell-sidebar-link is-danger" type="button" onClick={() => setConfirmAction("logout")}>
+                <LogoutOutlined aria-hidden="true" />
+                Выйти
+              </button>
             </div>
             <div className="desktop-shell-profile-block">
               <div className="desktop-shell-profile-avatar" aria-hidden="true">
-                {PREVIEW_USER.initials}
+                {currentUser.initials}
               </div>
               <div className="desktop-shell-profile-info">
-                <strong>{PREVIEW_USER.name}</strong>
-                <small>{PREVIEW_USER.role}</small>
+                <strong>{currentUser.name}</strong>
+                <small>{currentUser.role}</small>
               </div>
             </div>
           </div>
@@ -147,8 +171,8 @@ export function DesktopShell() {
               <Dropdown menu={profileMenu} trigger={["click"]}>
                 <button className="desktop-shell-profile" type="button">
                   <div className="desktop-shell-profile-text">
-                    <span className="desktop-shell-profile-name">{PREVIEW_USER.name}</span>
-                    <span className="desktop-shell-profile-role">{PREVIEW_USER.role}</span>
+                    <span className="desktop-shell-profile-name">{currentUser.name}</span>
+                    <span className="desktop-shell-profile-role">{currentUser.role}</span>
                   </div>
                   <Avatar size={32} icon={<UserOutlined />} />
                 </button>
@@ -161,6 +185,97 @@ export function DesktopShell() {
           </main>
         </div>
       </div>
+
+      {activeModal === "profile" ? (
+        <DesktopModalShell
+          title="Профиль"
+          subtitle="Текущая desktop-сессия"
+          size="narrow"
+          onClose={() => setActiveModal(null)}
+          footer={(
+            <>
+              <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={() => setConfirmAction("switchUser")}>
+                <UserSwitchOutlined aria-hidden="true" />
+                Сменить пользователя
+              </button>
+              <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={() => setConfirmAction("logout")}>
+                <LogoutOutlined aria-hidden="true" />
+                Выйти
+              </button>
+            </>
+          )}
+        >
+          <div className="desktop-profile-modal">
+            <div className="desktop-profile-modal-avatar" aria-hidden="true">{currentUser.initials}</div>
+            <div className="desktop-profile-modal-grid">
+              <div><span>ФИО</span><strong>{currentUser.name}</strong></div>
+              <div><span>Роль</span><strong>{currentUser.role}</strong></div>
+              <div><span>Статус</span><strong>{currentUser.status ?? "В системе"}</strong></div>
+              <div><span>Последний вход</span><strong>{session?.lastLogin ?? "Текущая сессия"}</strong></div>
+              <div><span>Сервер</span><strong>{currentServer}</strong></div>
+            </div>
+          </div>
+        </DesktopModalShell>
+      ) : null}
+
+      {activeModal === "help" ? (
+        <DesktopModalShell
+          title="Помощь"
+          subtitle="Быстрая инструкция по рабочему месту"
+          size="narrow"
+          onClose={() => setActiveModal(null)}
+          footer={(
+            <button className="reg-modal-btn reg-modal-btn-primary" type="button" onClick={() => setActiveModal(null)}>
+              Закрыть
+            </button>
+          )}
+        >
+          <ul className="desktop-help-list">
+            <li>Выберите раздел в левом меню, чтобы открыть объекты, инспекции, склад, отчеты или синхронизацию.</li>
+            <li>Используйте фильтры и поиск внутри разделов, чтобы сузить список записей.</li>
+            <li>Открывайте карточки объектов, оборудования и складских позиций через строки таблиц и кнопки действий.</li>
+            <li>При проблемах с синхронизацией откройте раздел “Синхронизация” и проверьте очередь отправки.</li>
+            <li>При ошибке доступа обратитесь к администратору системы.</li>
+          </ul>
+        </DesktopModalShell>
+      ) : null}
+
+      {confirmAction ? (
+        <DesktopModalShell
+          title={confirmAction === "switchUser" ? "Сменить пользователя" : "Выйти"}
+          subtitle={
+            confirmAction === "switchUser"
+              ? "Вы уверены, что хотите сменить пользователя?"
+              : "Вы уверены, что хотите выйти?"
+          }
+          size="narrow"
+          onClose={() => setConfirmAction(null)}
+          footer={(
+            <>
+              <button className="reg-modal-btn reg-modal-btn-secondary" type="button" onClick={() => setConfirmAction(null)}>
+                Отмена
+              </button>
+              <button
+                className="reg-modal-btn reg-modal-btn-primary"
+                type="button"
+                onClick={() => {
+                  setConfirmAction(null);
+                  setActiveModal(null);
+                  onLogout?.();
+                }}
+              >
+                {confirmAction === "switchUser" ? <UserSwitchOutlined aria-hidden="true" /> : <LogoutOutlined aria-hidden="true" />}
+                {confirmAction === "switchUser" ? "Сменить пользователя" : "Выйти"}
+              </button>
+            </>
+          )}
+        >
+          <div className="desktop-confirm-inline">
+            <SafetyCertificateOutlined aria-hidden="true" />
+            <span>Текущая сессия будет завершена на этом рабочем месте.</span>
+          </div>
+        </DesktopModalShell>
+      ) : null}
     </div>
   );
 }

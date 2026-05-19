@@ -108,7 +108,7 @@ export const ROLE_HISTORY_ITEMS = [
     change: "Обновлена матрица прав",
     before: "Версия 3.1",
     after: "Версия 3.2",
-    comment: "Плановое обновление mock state",
+    comment: "Плановое обновление состояния",
     status: "Готово",
   },
 ];
