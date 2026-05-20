@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeftOutlined,
   CameraOutlined,
@@ -10,6 +10,14 @@ import {
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 import { MobileResultModal } from "../components/MobileResultModal.jsx";
+import {
+  MOBILE_DRAFT_ENTITY_TYPES,
+  MOBILE_DRAFT_TYPES,
+  createMobileDraft,
+  findMobileDraftByEntity,
+  markMobileDraftReadyToQueue,
+  saveMobileDraft,
+} from "../../services/offline/index.js";
 
 const resolutionOptions = [
   "Оставить открытым",
@@ -17,6 +25,9 @@ const resolutionOptions = [
   "Передать ответственному",
   "Отметить как решено",
 ];
+const DEFAULT_RESOLUTION = "Требует проверки";
+const DRAFT_SOURCE_SCREEN = "discrepancyDetails";
+const DRAFT_AUTOSAVE_DELAY_MS = 300;
 
 export function MobileDiscrepancyDetailsScreen({
   activeNavKey,
@@ -37,11 +48,122 @@ export function MobileDiscrepancyDetailsScreen({
     details: [],
     history: [],
   };
-  const [resolution, setResolution] = useState("Требует проверки");
+  const [resolution, setResolution] = useState(DEFAULT_RESOLUTION);
   const [comment, setComment] = useState("");
   const [feedback, setFeedback] = useState("");
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [result, setResult] = useState(null);
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [hasDraftInputChanged, setHasDraftInputChanged] = useState(false);
+  const latestDraftRef = useRef(null);
+  const discrepancyId = currentDiscrepancy.id ?? null;
+  const itemCode = currentDiscrepancy.itemCode ?? null;
+  const draftEntityId = discrepancyId ?? itemCode;
+
+  const createCurrentDraft = () => createMobileDraft({
+    ...(latestDraftRef.current ?? {}),
+    type: MOBILE_DRAFT_TYPES.DISCREPANCY_RESOLUTION,
+    entityType: MOBILE_DRAFT_ENTITY_TYPES.discrepancy,
+    entityId: draftEntityId,
+    sourceScreen: DRAFT_SOURCE_SCREEN,
+    payload: {
+      resolution,
+      comment,
+    },
+    context: {
+      ...((latestDraftRef.current?.context) ?? {}),
+      discrepancyId,
+      itemCode,
+    },
+  });
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    latestDraftRef.current = null;
+    setIsDraftLoaded(false);
+    setHasDraftInputChanged(false);
+    setResolution(DEFAULT_RESOLUTION);
+    setComment("");
+
+    if (!draftEntityId) {
+      setIsDraftLoaded(true);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    findMobileDraftByEntity({
+      type: MOBILE_DRAFT_TYPES.DISCREPANCY_RESOLUTION,
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.discrepancy,
+      entityId: draftEntityId,
+      sourceScreen: DRAFT_SOURCE_SCREEN,
+    })
+      .then((draft) => {
+        if (isCancelled) {
+          return;
+        }
+
+        latestDraftRef.current = draft;
+        setResolution(typeof draft?.payload?.resolution === "string" ? draft.payload.resolution : DEFAULT_RESOLUTION);
+        setComment(typeof draft?.payload?.comment === "string" ? draft.payload.comment : "");
+        setIsDraftLoaded(true);
+      })
+      .catch(() => {
+        if (isCancelled) {
+          return;
+        }
+
+        setResolution(DEFAULT_RESOLUTION);
+        setComment("");
+        setIsDraftLoaded(true);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [draftEntityId]);
+
+  useEffect(() => {
+    if (!isDraftLoaded || !hasDraftInputChanged || !draftEntityId) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      saveMobileDraft(createCurrentDraft())
+        .then((savedDraft) => {
+          latestDraftRef.current = savedDraft;
+        })
+        .catch(() => {});
+    }, DRAFT_AUTOSAVE_DELAY_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [comment, draftEntityId, hasDraftInputChanged, isDraftLoaded, resolution]);
+
+  const handleResolutionChange = (nextResolution) => {
+    setResolution(nextResolution);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleCommentChange = (nextComment) => {
+    setComment(nextComment);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleSaveResolution = () => {
+    setFeedback("");
+    saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
+      .then((savedDraft) => {
+        latestDraftRef.current = savedDraft;
+        setHasDraftInputChanged(false);
+      })
+      .catch(() => {});
+    setResult({
+      status: "success",
+      title: "Решение сохранено",
+      text: "Решение по расхождению добавлено в очередь синхронизации.",
+    });
+  };
 
   return (
     <div className="mobile-discrepancy-details-screen">
@@ -118,7 +240,7 @@ export function MobileDiscrepancyDetailsScreen({
                   type="radio"
                   name="discrepancy-resolution"
                   checked={option === resolution}
-                  onChange={() => setResolution(option)}
+                  onChange={() => handleResolutionChange(option)}
                 />
                 <span>{option}</span>
               </label>
@@ -128,7 +250,7 @@ export function MobileDiscrepancyDetailsScreen({
             placeholder="Комментарий к решению..."
             rows={3}
             value={comment}
-            onChange={(event) => setComment(event.target.value)}
+            onChange={(event) => handleCommentChange(event.target.value)}
           />
         </section>
 
@@ -142,14 +264,7 @@ export function MobileDiscrepancyDetailsScreen({
         </span>
         <button
           type="button"
-          onClick={() => {
-            setFeedback("");
-            setResult({
-              status: "success",
-              title: "Решение сохранено",
-              text: "Решение по расхождению добавлено в очередь синхронизации.",
-            });
-          }}
+          onClick={handleSaveResolution}
         >
           Сохранить решение
         </button>
