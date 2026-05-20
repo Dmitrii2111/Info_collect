@@ -34,3 +34,17 @@ export {
   putRecord,
   withStore,
 } from "./indexedDbAdapter.js";
+
+export {
+  canRetryOperation,
+  createIdempotencyKey,
+  createOperationError,
+  createQueueOperation,
+  incrementOperationAttempt,
+  markOperationConflict,
+  markOperationFailed,
+  markOperationQueued,
+  markOperationSynced,
+  markOperationSyncing,
+  normalizeQueueOperation,
+} from "./syncQueueModel.js";
