@@ -48,3 +48,20 @@ export {
   markOperationSyncing,
   normalizeQueueOperation,
 } from "./syncQueueModel.js";
+
+export {
+  MOBILE_DRAFT_ENTITY_TYPES,
+  MOBILE_DRAFT_STATUS,
+  MOBILE_DRAFT_TYPES,
+  MOBILE_DRAFT_WARNINGS,
+  createMobileDraft,
+  createMobileDraftKey,
+  discardMobileDraft,
+  getDraftQueueOperationType,
+  isMobileDraftStatus,
+  isMobileDraftType,
+  markMobileDraftQueued,
+  markMobileDraftReadyToQueue,
+  normalizeMobileDraft,
+  updateMobileDraftPayload,
+} from "./mobileDraftModel.js";
