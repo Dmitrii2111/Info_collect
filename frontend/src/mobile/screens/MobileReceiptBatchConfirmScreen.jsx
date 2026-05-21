@@ -28,8 +28,8 @@ const resultOptions = [
 const DRAFT_SOURCE_SCREEN = "receiptBatchConfirm";
 const DRAFT_AUTOSAVE_DELAY_MS = 300;
 
-export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSelect }) {
-  const data = mobileReceiptBatchConfirmData;
+export function MobileReceiptBatchConfirmScreen({ activeNavKey, batch, onBack, onNavSelect }) {
+  const data = batch ?? mobileReceiptBatchConfirmData;
   const defaultChecks = () => Object.fromEntries(data.checks.map((check) => [check.id, check.checked]));
   const draftEntityId = data.id;
   const latestDraftRef = useRef(null);

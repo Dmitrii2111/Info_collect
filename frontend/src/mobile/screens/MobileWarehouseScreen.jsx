@@ -63,7 +63,7 @@ function WarehouseItemCard({ item, isSelected, onSelect }) {
   );
 }
 
-export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, onOpenReceiptBatch, onNavSelect }) {
+export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, onOpenReceiptBatches, onNavSelect }) {
   const data = mobileWarehouseData;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
@@ -109,8 +109,13 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
       return;
     }
 
-    if (label === "Сканировать позицию" || label === "Новое поступление") {
-      onOpenReceiptBatch?.();
+    if (label === "Поступления") {
+      onOpenReceiptBatches?.();
+      return;
+    }
+
+    if (label === "Сканировать позицию") {
+      setFeedback("Сканер позиции будет доступен отдельно от проверки поступлений");
       return;
     }
 

@@ -14,6 +14,7 @@ import { MobileMoveItemScreen } from "./screens/MobileMoveItemScreen.jsx";
 import { MobileObjectStructureScreen } from "./screens/MobileObjectStructureScreen.jsx";
 import { MobileObjectsScreen } from "./screens/MobileObjectsScreen.jsx";
 import { MobileProfileScreen } from "./screens/MobileProfileScreen.jsx";
+import { MobileReceiptBatchesScreen } from "./screens/MobileReceiptBatchesScreen.jsx";
 import { MobileReceiptBatchConfirmScreen } from "./screens/MobileReceiptBatchConfirmScreen.jsx";
 import { MobileRoomInspectionScreen } from "./screens/MobileRoomInspectionScreen.jsx";
 import { MobileSettingsScreen } from "./screens/MobileSettingsScreen.jsx";
@@ -36,6 +37,7 @@ import {
   getMobileWarehouseItemByCode,
   getMobileWarehouseItemById,
 } from "../domain/warehouse/index.js";
+import { mobileReceiptBatchesData } from "./data/mobileMockData.js";
 import { clearMobileSession, getMobileSession, saveMobileSession } from "../services/session/sessionService.js";
 import "./styles/mobile.css";
 
@@ -50,6 +52,10 @@ function getSafeInitialScreen(session) {
 
   if (["itemCard", "moveItem"].includes(session.activeScreen) && !context.selectedWarehouseItemId) {
     return "warehouse";
+  }
+
+  if (session.activeScreen === "receiptBatchConfirm" && !context.selectedReceiptBatchId) {
+    return "receiptBatches";
   }
 
   if (session.activeScreen === "departmentRooms" && !(context.selectedObjectId && context.selectedFloorId && context.selectedDepartmentId)) {
@@ -84,7 +90,7 @@ function getDrawerActiveKey(activeScreen) {
     return "inspections";
   }
 
-  if (["warehouse", "itemCard", "moveItem", "receiptBatchConfirm"].includes(activeScreen)) {
+  if (["warehouse", "itemCard", "moveItem", "receiptBatches", "receiptBatchConfirm"].includes(activeScreen)) {
     return "warehouse";
   }
 
@@ -127,6 +133,7 @@ export function MobileShell() {
   const [selectedEquipmentId, setSelectedEquipmentId] = useState(savedContext.selectedEquipmentId ?? null);
   const [selectedInspectionId, setSelectedInspectionId] = useState(savedContext.selectedInspectionId ?? null);
   const [selectedWarehouseItemId, setSelectedWarehouseItemId] = useState(savedContext.selectedWarehouseItemId ?? null);
+  const [selectedReceiptBatchId, setSelectedReceiptBatchId] = useState(savedContext.selectedReceiptBatchId ?? null);
   const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(savedContext.selectedDiscrepancyId ?? null);
   const [discrepancySource, setDiscrepancySource] = useState(savedContext.discrepancySource ?? "dashboard");
   const [syncSource, setSyncSource] = useState(savedContext.syncSource ?? "profile");
@@ -158,6 +165,7 @@ export function MobileShell() {
         selectedEquipmentId,
         selectedInspectionId,
         selectedWarehouseItemId,
+        selectedReceiptBatchId,
         selectedDiscrepancyId,
         discrepancySource,
         syncSource,
@@ -173,6 +181,7 @@ export function MobileShell() {
     selectedFloorId,
     selectedInspectionId,
     selectedObjectId,
+    selectedReceiptBatchId,
     selectedRoomId,
     selectedWarehouseItemId,
     syncSource,
@@ -309,7 +318,13 @@ export function MobileShell() {
     setActiveScreen("moveItem");
   };
 
-  const handleOpenReceiptBatchConfirm = () => {
+  const handleOpenReceiptBatches = () => {
+    setSelectedReceiptBatchId(null);
+    setActiveScreen("receiptBatches");
+  };
+
+  const handleOpenReceiptBatchConfirm = (batchId) => {
+    setSelectedReceiptBatchId(batchId);
     setActiveScreen("receiptBatchConfirm");
   };
 
@@ -374,6 +389,7 @@ export function MobileShell() {
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
     : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId);
   const selectedWarehouseItem = getMobileWarehouseItemById(selectedWarehouseItemId);
+  const selectedReceiptBatch = mobileReceiptBatchesData.find((batch) => batch.id === selectedReceiptBatchId) ?? null;
   const selectedDiscrepancy = getMobileDiscrepancyById(selectedDiscrepancyId);
   const roomInspectionContext = selectedDepartment ?? {
     context: selectedInspection?.walkthrough?.context,
@@ -465,7 +481,7 @@ export function MobileShell() {
         activeNavKey="warehouse"
         onOpenMenu={() => setIsDrawerOpen(true)}
         onOpenItem={handleOpenWarehouseItem}
-        onOpenReceiptBatch={handleOpenReceiptBatchConfirm}
+        onOpenReceiptBatches={handleOpenReceiptBatches}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "itemCard" ? (
@@ -484,12 +500,29 @@ export function MobileShell() {
         onBack={() => setActiveScreen("itemCard")}
         onNavSelect={handleNavSelect}
       />
-    ) : activeScreen === "receiptBatchConfirm" ? (
-      <MobileReceiptBatchConfirmScreen
+    ) : activeScreen === "receiptBatches" ? (
+      <MobileReceiptBatchesScreen
         activeNavKey="warehouse"
         onBack={() => setActiveScreen("warehouse")}
+        onOpenBatch={handleOpenReceiptBatchConfirm}
         onNavSelect={handleNavSelect}
       />
+    ) : activeScreen === "receiptBatchConfirm" ? (
+      selectedReceiptBatch ? (
+        <MobileReceiptBatchConfirmScreen
+          activeNavKey="warehouse"
+          batch={selectedReceiptBatch}
+          onBack={() => setActiveScreen("receiptBatches")}
+          onNavSelect={handleNavSelect}
+        />
+      ) : (
+        <MobileReceiptBatchesScreen
+          activeNavKey="warehouse"
+          onBack={() => setActiveScreen("warehouse")}
+          onOpenBatch={handleOpenReceiptBatchConfirm}
+          onNavSelect={handleNavSelect}
+        />
+      )
     ) : activeScreen === "discrepancies" ? (
       <MobileDiscrepanciesScreen
         activeNavKey="dashboard"
