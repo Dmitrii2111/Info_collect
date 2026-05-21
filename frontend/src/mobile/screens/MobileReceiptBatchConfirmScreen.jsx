@@ -12,26 +12,127 @@ import {
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { mobileReceiptBatchConfirmData } from "../data/mobileMockData.js";
+import {
+  MOBILE_DRAFT_ENTITY_TYPES,
+  MOBILE_DRAFT_TYPES,
+  createMobileDraft,
+  findMobileDraftByEntity,
+  markMobileDraftReadyToQueue,
+  saveMobileDraft,
+} from "../../services/offline/index.js";
 
 const resultOptions = [
   { key: "confirmed", label: "Подтвердить", tone: "success", icon: CheckCircleOutlined },
   { key: "rejected", label: "Отклонить", tone: "danger", icon: CloseCircleOutlined },
 ];
+const DRAFT_SOURCE_SCREEN = "receiptBatchConfirm";
+const DRAFT_AUTOSAVE_DELAY_MS = 300;
 
 export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSelect }) {
   const data = mobileReceiptBatchConfirmData;
+  const defaultChecks = () => Object.fromEntries(data.checks.map((check) => [check.id, check.checked]));
+  const draftEntityId = data.id;
+  const latestDraftRef = useRef(null);
   const [actualQuantity, setActualQuantity] = useState(data.quantity);
-  const [checks, setChecks] = useState(() =>
-    Object.fromEntries(data.checks.map((check) => [check.id, check.checked])),
-  );
+  const [checks, setChecks] = useState(defaultChecks);
   const [result, setResult] = useState("confirmed");
   const [selectedReasons, setSelectedReasons] = useState([]);
   const [comment, setComment] = useState("");
   const [photoMenuOpen, setPhotoMenuOpen] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [hasDraftInputChanged, setHasDraftInputChanged] = useState(false);
   const galleryInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+
+  const createCurrentDraft = () => createMobileDraft({
+    ...(latestDraftRef.current ?? {}),
+    type: MOBILE_DRAFT_TYPES.RECEIPT_BATCH_CONFIRM,
+    entityType: MOBILE_DRAFT_ENTITY_TYPES.receiptBatch,
+    entityId: draftEntityId,
+    sourceScreen: DRAFT_SOURCE_SCREEN,
+    payload: {
+      actualQuantity,
+      checks,
+      result,
+      selectedReasons,
+      comment,
+    },
+    context: {
+      ...((latestDraftRef.current?.context) ?? {}),
+      receiptBatchId: data.id,
+      itemCode: data.itemCode,
+    },
+  });
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    latestDraftRef.current = null;
+    setIsDraftLoaded(false);
+    setHasDraftInputChanged(false);
+    setActualQuantity(data.quantity);
+    setChecks(defaultChecks());
+    setResult("confirmed");
+    setSelectedReasons([]);
+    setComment("");
+
+    if (!draftEntityId) {
+      setIsDraftLoaded(true);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    findMobileDraftByEntity({
+      type: MOBILE_DRAFT_TYPES.RECEIPT_BATCH_CONFIRM,
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.receiptBatch,
+      entityId: draftEntityId,
+      sourceScreen: DRAFT_SOURCE_SCREEN,
+    })
+      .then((draft) => {
+        if (isCancelled) {
+          return;
+        }
+
+        latestDraftRef.current = draft;
+        const payload = draft?.payload ?? {};
+        setActualQuantity(payload.actualQuantity ?? data.quantity);
+        setChecks(payload.checks && typeof payload.checks === "object" && !Array.isArray(payload.checks) ? payload.checks : defaultChecks());
+        setResult(typeof payload.result === "string" ? payload.result : "confirmed");
+        setSelectedReasons(Array.isArray(payload.selectedReasons) ? payload.selectedReasons : []);
+        setComment(typeof payload.comment === "string" ? payload.comment : "");
+        setIsDraftLoaded(true);
+      })
+      .catch(() => {
+        if (isCancelled) {
+          return;
+        }
+
+        setIsDraftLoaded(true);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [draftEntityId]);
+
+  useEffect(() => {
+    if (!isDraftLoaded || !hasDraftInputChanged || !draftEntityId) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      saveMobileDraft(createCurrentDraft())
+        .then((savedDraft) => {
+          latestDraftRef.current = savedDraft;
+        })
+        .catch(() => {});
+    }, DRAFT_AUTOSAVE_DELAY_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [actualQuantity, checks, comment, draftEntityId, hasDraftInputChanged, isDraftLoaded, result, selectedReasons]);
 
   useEffect(() => {
     return () => {
@@ -74,6 +175,40 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSel
     setSelectedReasons((current) =>
       current.includes(reason) ? current.filter((item) => item !== reason) : [...current, reason],
     );
+    setHasDraftInputChanged(true);
+  };
+
+  const handleActualQuantityChange = (nextQuantity) => {
+    setActualQuantity(nextQuantity);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleCheckToggle = (checkId) => {
+    setChecks((current) => ({ ...current, [checkId]: !current[checkId] }));
+    setHasDraftInputChanged(true);
+  };
+
+  const handleResultChange = (nextResult) => {
+    setResult(nextResult);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleCommentChange = (nextComment) => {
+    setComment(nextComment);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleConfirmReceipt = () => {
+    if (isDraftLoaded && draftEntityId) {
+      saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
+        .then((savedDraft) => {
+          latestDraftRef.current = savedDraft;
+          setHasDraftInputChanged(false);
+        })
+        .catch(() => {});
+    }
+
+    setFeedback(`${selectedResult.label}: проверка сохранена локально`);
   };
 
   const selectedResult = resultOptions.find((option) => option.key === result) ?? resultOptions[0];
@@ -142,16 +277,16 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSel
             <div>
               <button
                 type="button"
-                onClick={() => setActualQuantity((value) => Math.max(0, Number(value) - 1))}
+                onClick={() => handleActualQuantityChange(Math.max(0, Number(actualQuantity) - 1))}
               >
                 <MinusOutlined aria-hidden="true" />
               </button>
               <input
                 type="number"
                 value={actualQuantity}
-                onChange={(event) => setActualQuantity(event.target.value)}
+                onChange={(event) => handleActualQuantityChange(event.target.value)}
               />
-              <button type="button" onClick={() => setActualQuantity((value) => Number(value) + 1)}>
+              <button type="button" onClick={() => handleActualQuantityChange(Number(actualQuantity) + 1)}>
                 <PlusOutlined aria-hidden="true" />
               </button>
             </div>
@@ -163,7 +298,7 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSel
                 <input
                   type="checkbox"
                   checked={Boolean(checks[check.id])}
-                  onChange={() => setChecks((current) => ({ ...current, [check.id]: !current[check.id] }))}
+                  onChange={() => handleCheckToggle(check.id)}
                 />
                 <span>{check.label}</span>
               </label>
@@ -181,7 +316,7 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSel
                     className={option.key === result ? `is-active is-${option.tone}` : ""}
                     type="button"
                     key={option.key}
-                    onClick={() => setResult(option.key)}
+                    onClick={() => handleResultChange(option.key)}
                   >
                     <Icon aria-hidden="true" />
                     {option.label}
@@ -259,7 +394,7 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSel
               placeholder="Опишите результат проверки или причину отклонения..."
               rows={3}
               value={comment}
-              onChange={(event) => setComment(event.target.value)}
+              onChange={(event) => handleCommentChange(event.target.value)}
             />
           </label>
         </section>
@@ -275,7 +410,7 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, onBack, onNavSel
       <div className="mobile-receipt-action-bar">
         <button
           type="button"
-          onClick={() => setFeedback(`${selectedResult.label}: проверка сохранена локально`)}
+          onClick={handleConfirmReceipt}
         >
           Подтвердить поступление
         </button>
