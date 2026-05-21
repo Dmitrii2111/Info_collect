@@ -18,6 +18,7 @@ import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_TYPES,
   createMobileDraft,
+  enqueueMobileDraft,
   findMobileDraftByEntity,
   markMobileDraftReadyToQueue,
   saveMobileDraft,
@@ -255,6 +256,13 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
         .then((savedDraft) => {
           latestDraftRef.current = savedDraft;
           setHasDraftInputChanged(false);
+          enqueueMobileDraft(savedDraft)
+            .then((result) => {
+              if (result?.draft) {
+                latestDraftRef.current = result.draft;
+              }
+            })
+            .catch(() => {});
         })
         .catch(() => {});
     }

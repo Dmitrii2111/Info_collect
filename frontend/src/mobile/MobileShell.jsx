@@ -121,6 +121,54 @@ function getDrawerActiveKey(activeScreen) {
   return "dashboard";
 }
 
+function getEquipmentInspectionOverride(savedDraft) {
+  const payload = savedDraft?.payload ?? {};
+  const statusKey = payload.statusKey ?? payload.preferredStatusKey;
+  const selectedReasons = Array.isArray(payload.selectedReasons) ? payload.selectedReasons : [];
+  const comment = typeof payload.comment === "string" ? payload.comment.trim() : "";
+
+  if (["issue", "mismatch", "discrepancy"].includes(statusKey) || selectedReasons.length > 0) {
+    return {
+      status: "Есть расхождение",
+      tone: "error",
+      note: selectedReasons[0] || comment || "Требуется сверка",
+    };
+  }
+
+  if (["notFound", "missing"].includes(statusKey)) {
+    return {
+      status: "Не найдено",
+      tone: "error",
+      note: comment || "Оборудование не найдено",
+    };
+  }
+
+  if (statusKey === "found" || payload.preferredStatusKey === "found") {
+    return {
+      status: "Подтверждено",
+      tone: "success",
+      note: comment || "Проверено локально",
+    };
+  }
+
+  return {
+    status: "В работе",
+    tone: "active",
+    note: "Черновик сохранен локально",
+  };
+}
+
+function applyEquipmentInspectionOverrides(room, overrides) {
+  if (!room?.equipment?.length) {
+    return room;
+  }
+
+  return {
+    ...room,
+    equipment: room.equipment.map((item) => (overrides[item.id] ? { ...item, ...overrides[item.id] } : item)),
+  };
+}
+
 export function MobileShell() {
   const savedSession = getMobileSession();
   const savedContext = savedSession.context ?? {};
@@ -135,6 +183,7 @@ export function MobileShell() {
   const [selectedWarehouseItemId, setSelectedWarehouseItemId] = useState(savedContext.selectedWarehouseItemId ?? null);
   const [selectedReceiptBatchId, setSelectedReceiptBatchId] = useState(savedContext.selectedReceiptBatchId ?? null);
   const [receiptBatches, setReceiptBatches] = useState(mobileReceiptBatchesData);
+  const [equipmentInspectionOverrides, setEquipmentInspectionOverrides] = useState({});
   const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(savedContext.selectedDiscrepancyId ?? null);
   const [discrepancySource, setDiscrepancySource] = useState(savedContext.discrepancySource ?? "dashboard");
   const [syncSource, setSyncSource] = useState(savedContext.syncSource ?? "profile");
@@ -296,6 +345,19 @@ export function MobileShell() {
     setActiveScreen(isInspectionRoomFlow ? "walkthroughRooms" : "departmentRooms");
   };
 
+  const handleEquipmentInspectionSaved = (savedDraft) => {
+    const equipmentId = savedDraft?.context?.equipmentId ?? savedDraft?.entityId;
+
+    if (!equipmentId) {
+      return;
+    }
+
+    setEquipmentInspectionOverrides((currentOverrides) => ({
+      ...currentOverrides,
+      [equipmentId]: getEquipmentInspectionOverride(savedDraft),
+    }));
+  };
+
   const handleOpenObjectStructure = (objectId) => {
     setSelectedObjectId(objectId);
     setSelectedFloorId(null);
@@ -398,9 +460,10 @@ export function MobileShell() {
   const selectedInspection = getMobileInspectionById(selectedInspectionId);
   const selectedInspectionRoom = getMobileInspectionRoomById(selectedInspectionId, selectedRoomId);
   const selectedRoom = selectedDepartment ? getMobileRoomById(selectedObjectId, selectedDepartmentId, selectedRoomId) : selectedInspectionRoom;
-  const selectedEquipment = selectedDepartment
+  const selectedRoomWithEquipmentOverrides = applyEquipmentInspectionOverrides(selectedRoom, equipmentInspectionOverrides);
+  const selectedEquipment = selectedRoomWithEquipmentOverrides?.equipment?.find((item) => item.id === selectedEquipmentId) ?? (selectedDepartment
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
-    : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId);
+    : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId));
   const selectedWarehouseItem = getMobileWarehouseItemById(selectedWarehouseItemId);
   const selectedReceiptBatch = receiptBatches.find((batch) => batch.id === selectedReceiptBatchId) ?? null;
   const selectedDiscrepancy = getMobileDiscrepancyById(selectedDiscrepancyId);
@@ -415,8 +478,9 @@ export function MobileShell() {
         activeNavKey={isInspectionRoomFlow ? "inspections" : "objects"}
         department={roomInspectionContext}
         equipment={selectedEquipment}
-        room={selectedRoom}
+        room={selectedRoomWithEquipmentOverrides}
         onBack={() => setActiveScreen("roomInspection")}
+        onEquipmentInspectionSaved={handleEquipmentInspectionSaved}
         onFinishRoom={handleFinishEquipmentRoom}
         onOpenNextEquipment={handleOpenNextEquipment}
         onNavSelect={handleNavSelect}
@@ -425,7 +489,7 @@ export function MobileShell() {
       <MobileRoomInspectionScreen
         activeNavKey={isInspectionRoomFlow ? "inspections" : "objects"}
         department={roomInspectionContext}
-        room={selectedRoom}
+        room={selectedRoomWithEquipmentOverrides}
         onBack={() => setActiveScreen(isInspectionRoomFlow ? "walkthroughRooms" : "departmentRooms")}
         onOpenEquipment={handleOpenEquipment}
         onNavSelect={handleNavSelect}

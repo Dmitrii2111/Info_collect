@@ -16,6 +16,7 @@ import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_TYPES,
   createMobileDraft,
+  enqueueMobileDraft,
   findMobileDraftByEntity,
   markMobileDraftReadyToQueue,
   saveMobileDraft,
@@ -245,6 +246,13 @@ export function MobileReceiptBatchConfirmScreen({
         .then((savedDraft) => {
           latestDraftRef.current = savedDraft;
           setHasDraftInputChanged(false);
+          enqueueMobileDraft(savedDraft)
+            .then((result) => {
+              if (result?.draft) {
+                latestDraftRef.current = result.draft;
+              }
+            })
+            .catch(() => {});
           onCompleteReceiptBatch?.({ batchId: draftEntityId, status: nextStatus });
         })
         .catch(() => {});

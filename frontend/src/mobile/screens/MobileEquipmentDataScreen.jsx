@@ -15,6 +15,7 @@ import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_TYPES,
   createMobileDraft,
+  enqueueMobileDraft,
   findMobileDraftByEntity,
   markMobileDraftReadyToQueue,
   saveMobileDraft,
@@ -49,6 +50,7 @@ export function MobileEquipmentDataScreen({
   room,
   onBack,
   onFinishRoom,
+  onEquipmentInspectionSaved,
   onOpenNextEquipment,
   onNavSelect,
 }) {
@@ -312,26 +314,40 @@ export function MobileEquipmentDataScreen({
   };
 
   const handleSaveAndNext = () => {
+    const continueAfterSave = () => {
+      setFeedback("Изменения добавлены в очередь синхронизации");
+      const hasNext = onOpenNextEquipment?.();
+
+      if (!hasNext) {
+        setIsFinishConfirmOpen(true);
+        return;
+      }
+
+      if (typeof window !== "undefined") {
+        window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0);
+      }
+    };
+
     if (isDraftLoaded && draftEntityId) {
       saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
         .then((savedDraft) => {
           latestDraftRef.current = savedDraft;
           setHasDraftInputChanged(false);
+          enqueueMobileDraft(savedDraft)
+            .then((result) => {
+              if (result?.draft) {
+                latestDraftRef.current = result.draft;
+              }
+            })
+            .catch(() => {});
+          onEquipmentInspectionSaved?.(savedDraft);
+          continueAfterSave();
         })
         .catch(() => {});
-    }
-
-    setFeedback("Изменения добавлены в очередь синхронизации");
-    const hasNext = onOpenNextEquipment?.();
-
-    if (!hasNext) {
-      setIsFinishConfirmOpen(true);
       return;
     }
 
-    if (typeof window !== "undefined") {
-      window.setTimeout(() => window.scrollTo({ top: 0, behavior: "smooth" }), 0);
-    }
+    continueAfterSave();
   };
 
   return (
