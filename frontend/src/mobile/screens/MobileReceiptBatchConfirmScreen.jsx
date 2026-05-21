@@ -20,6 +20,7 @@ import {
   markMobileDraftReadyToQueue,
   saveMobileDraft,
 } from "../../services/offline/index.js";
+import { MobileResultModal } from "../components/MobileResultModal.jsx";
 
 const resultOptions = [
   { key: "confirmed", label: "Подтвердить", tone: "success", icon: CheckCircleOutlined },
@@ -28,7 +29,14 @@ const resultOptions = [
 const DRAFT_SOURCE_SCREEN = "receiptBatchConfirm";
 const DRAFT_AUTOSAVE_DELAY_MS = 300;
 
-export function MobileReceiptBatchConfirmScreen({ activeNavKey, batch, onBack, onNavSelect }) {
+export function MobileReceiptBatchConfirmScreen({
+  activeNavKey,
+  batch,
+  onBack,
+  onCompleteReceiptBatch,
+  onNavSelect,
+  onSaveReceiptBatchDraft,
+}) {
   const data = batch ?? mobileReceiptBatchConfirmData;
   const defaultChecks = () => Object.fromEntries(data.checks.map((check) => [check.id, check.checked]));
   const draftEntityId = data.id;
@@ -41,6 +49,7 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, batch, onBack, o
   const [photoMenuOpen, setPhotoMenuOpen] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [resultModal, setResultModal] = useState(null);
   const [isDraftLoaded, setIsDraftLoaded] = useState(false);
   const [hasDraftInputChanged, setHasDraftInputChanged] = useState(false);
   const galleryInputRef = useRef(null);
@@ -198,12 +207,45 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, batch, onBack, o
     setHasDraftInputChanged(true);
   };
 
+  const getFinalBatchStatus = () => {
+    const hasConflictInput =
+      result === "rejected" ||
+      selectedReasons.length > 0 ||
+      Boolean(comment.trim()) ||
+      Boolean(photo) ||
+      Number(data.conflictCount ?? 0) > 0;
+
+    return hasConflictInput ? "Конфликт" : "Подтверждено";
+  };
+
+  const handleSaveDraft = () => {
+    if (!isDraftLoaded || !draftEntityId) {
+      return;
+    }
+
+    saveMobileDraft(createCurrentDraft())
+      .then((savedDraft) => {
+        latestDraftRef.current = savedDraft;
+        setHasDraftInputChanged(false);
+        onSaveReceiptBatchDraft?.(draftEntityId, "В проверке");
+        setResultModal({
+          status: "success",
+          title: "Черновик сохранён",
+          text: "Данные проверки поступления сохранены локально.",
+        });
+      })
+      .catch(() => {});
+  };
+
   const handleConfirmReceipt = () => {
     if (isDraftLoaded && draftEntityId) {
+      const nextStatus = getFinalBatchStatus();
+
       saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
         .then((savedDraft) => {
           latestDraftRef.current = savedDraft;
           setHasDraftInputChanged(false);
+          onCompleteReceiptBatch?.({ batchId: draftEntityId, status: nextStatus });
         })
         .catch(() => {});
     }
@@ -408,6 +450,9 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, batch, onBack, o
       </main>
 
       <div className="mobile-receipt-action-bar">
+        <button type="button" onClick={handleSaveDraft}>
+          Сохранить
+        </button>
         <button
           type="button"
           onClick={handleConfirmReceipt}
@@ -418,6 +463,14 @@ export function MobileReceiptBatchConfirmScreen({ activeNavKey, batch, onBack, o
       </div>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      <MobileResultModal
+        isOpen={Boolean(resultModal)}
+        status={resultModal?.status}
+        title={resultModal?.title}
+        text={resultModal?.text}
+        onClose={() => setResultModal(null)}
+      />
     </div>
   );
 }

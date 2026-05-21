@@ -134,6 +134,7 @@ export function MobileShell() {
   const [selectedInspectionId, setSelectedInspectionId] = useState(savedContext.selectedInspectionId ?? null);
   const [selectedWarehouseItemId, setSelectedWarehouseItemId] = useState(savedContext.selectedWarehouseItemId ?? null);
   const [selectedReceiptBatchId, setSelectedReceiptBatchId] = useState(savedContext.selectedReceiptBatchId ?? null);
+  const [receiptBatches, setReceiptBatches] = useState(mobileReceiptBatchesData);
   const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(savedContext.selectedDiscrepancyId ?? null);
   const [discrepancySource, setDiscrepancySource] = useState(savedContext.discrepancySource ?? "dashboard");
   const [syncSource, setSyncSource] = useState(savedContext.syncSource ?? "profile");
@@ -328,6 +329,18 @@ export function MobileShell() {
     setActiveScreen("receiptBatchConfirm");
   };
 
+  const handleUpdateReceiptBatchStatus = (batchId, nextStatus) => {
+    setReceiptBatches((currentBatches) =>
+      currentBatches.map((batch) => (batch.id === batchId ? { ...batch, status: nextStatus } : batch)),
+    );
+  };
+
+  const handleCompleteReceiptBatch = ({ batchId, status }) => {
+    handleUpdateReceiptBatchStatus(batchId, status);
+    setSelectedReceiptBatchId(null);
+    setActiveScreen("receiptBatches");
+  };
+
   const handleOpenDiscrepancies = () => {
     setActiveScreen("discrepancies");
   };
@@ -389,7 +402,7 @@ export function MobileShell() {
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
     : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId);
   const selectedWarehouseItem = getMobileWarehouseItemById(selectedWarehouseItemId);
-  const selectedReceiptBatch = mobileReceiptBatchesData.find((batch) => batch.id === selectedReceiptBatchId) ?? null;
+  const selectedReceiptBatch = receiptBatches.find((batch) => batch.id === selectedReceiptBatchId) ?? null;
   const selectedDiscrepancy = getMobileDiscrepancyById(selectedDiscrepancyId);
   const roomInspectionContext = selectedDepartment ?? {
     context: selectedInspection?.walkthrough?.context,
@@ -503,6 +516,7 @@ export function MobileShell() {
     ) : activeScreen === "receiptBatches" ? (
       <MobileReceiptBatchesScreen
         activeNavKey="warehouse"
+        batches={receiptBatches}
         onBack={() => setActiveScreen("warehouse")}
         onOpenBatch={handleOpenReceiptBatchConfirm}
         onNavSelect={handleNavSelect}
@@ -513,11 +527,14 @@ export function MobileShell() {
           activeNavKey="warehouse"
           batch={selectedReceiptBatch}
           onBack={() => setActiveScreen("receiptBatches")}
+          onCompleteReceiptBatch={handleCompleteReceiptBatch}
           onNavSelect={handleNavSelect}
+          onSaveReceiptBatchDraft={handleUpdateReceiptBatchStatus}
         />
       ) : (
         <MobileReceiptBatchesScreen
           activeNavKey="warehouse"
+          batches={receiptBatches}
           onBack={() => setActiveScreen("warehouse")}
           onOpenBatch={handleOpenReceiptBatchConfirm}
           onNavSelect={handleNavSelect}

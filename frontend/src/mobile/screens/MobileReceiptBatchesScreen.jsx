@@ -7,8 +7,6 @@ import {
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
-import { mobileReceiptBatchesData } from "../data/mobileMockData.js";
-
 function getReceiptTone(batch) {
   if (batch.conflictCount > 0 || batch.status === "Конфликт") {
     return "error";
@@ -25,9 +23,7 @@ function getReceiptTone(batch) {
   return batch.tone ?? "primary";
 }
 
-export function MobileReceiptBatchesScreen({ activeNavKey, onBack, onOpenBatch, onNavSelect }) {
-  const batches = mobileReceiptBatchesData;
-
+export function MobileReceiptBatchesScreen({ activeNavKey, batches = [], onBack, onOpenBatch, onNavSelect }) {
   return (
     <div className="mobile-warehouse-screen">
       <header className="mobile-item-card-header">
