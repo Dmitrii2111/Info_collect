@@ -76,3 +76,17 @@ export {
   listMobileDrafts,
   saveMobileDraft,
 } from "./mobileDraftRepository.js";
+
+export {
+  createSyncQueueRepositoryError,
+  deleteSyncQueueOperation,
+  findSyncQueueOperationByIdempotencyKey,
+  getSyncQueueOperation,
+  isSyncQueueRepositoryError,
+  listSyncQueueOperations,
+  saveSyncQueueOperation,
+} from "./syncQueueRepository.js";
+
+export {
+  enqueueMobileDraft,
+} from "./mobileDraftQueueAdapter.js";
