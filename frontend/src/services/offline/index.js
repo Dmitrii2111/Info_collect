@@ -94,5 +94,11 @@ export {
 } from "./syncQueueProcessor.js";
 
 export {
+  createOfflineSyncTransport,
+  syncQueueOperation,
+  validateOperationForTransport,
+} from "./syncQueueTransport.js";
+
+export {
   enqueueMobileDraft,
 } from "./mobileDraftQueueAdapter.js";

@@ -12,6 +12,7 @@ import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileResultModal } from "../components/MobileResultModal.jsx";
 import { mobileSyncData } from "../data/mobileMockData.js";
 import {
+  createOfflineSyncTransport,
   listSyncQueueOperations,
   processQueue,
   retryQueueOperation,
@@ -104,6 +105,32 @@ function getQueueCounts(queueItems) {
   ];
 }
 
+function formatAttentionCount(value, forms) {
+  const mod10 = value % 10;
+  const mod100 = value % 100;
+
+  if (mod10 === 1 && mod100 !== 11) {
+    return `${value} ${forms[0]}`;
+  }
+
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
+    return `${value} ${forms[1]}`;
+  }
+
+  return `${value} ${forms[2]}`;
+}
+
+function getAttentionText(queueCounts) {
+  const errorCount = queueCounts.find((count) => count.key === "error")?.value ?? 0;
+  const conflictCount = queueCounts.find((count) => count.key === "conflict")?.value ?? 0;
+  const attentionParts = [
+    errorCount > 0 ? formatAttentionCount(errorCount, ["ошибка", "ошибки", "ошибок"]) : null,
+    conflictCount > 0 ? formatAttentionCount(conflictCount, ["конфликт", "конфликта", "конфликтов"]) : null,
+  ].filter(Boolean);
+
+  return attentionParts.length > 0 ? `Требуют внимания: ${attentionParts.join(", ")}` : "";
+}
+
 function SyncQueueItem({ item, isSelected, onSelect }) {
   const Icon = toneIcons[item.tone] ?? SyncOutlined;
 
@@ -173,6 +200,8 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
 
   const queueItems = useMemo(() => queueOperations.map(mapQueueOperationToItem), [queueOperations]);
   const queueCounts = useMemo(() => getQueueCounts(queueItems), [queueItems]);
+  const attentionText = useMemo(() => getAttentionText(queueCounts), [queueCounts]);
+  const transport = useMemo(() => createOfflineSyncTransport(), []);
   const updatedAt = lastReadAt
     ? new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit" }).format(lastReadAt)
     : data.updatedAt;
@@ -191,13 +220,13 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
     }
 
     setIsProcessing(true);
-    processQueue()
+    processQueue({ transport })
       .then((summary) => loadQueueOperations().then(() => {
         setResult({
           status: summary.failed > 0 ? "error" : "success",
           title: "Обработка очереди выполнена локально",
           text: summary.failed > 0
-            ? "Отправка на сервер пока не подключена. Операции переведены в ошибку до подключения транспорта."
+            ? "Контракт отправки на сервер пока не подключён. Операции переведены в ошибку с деталями."
             : "Очередь перечитана, операций для обработки нет.",
         });
       }))
@@ -233,14 +262,14 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
     }
 
     setIsProcessing(true);
-    retryQueueOperation(selectedQueueId)
+    retryQueueOperation(selectedQueueId, { transport })
       .then((retryResult) => loadQueueOperations().then(() => {
         setResult({
           status: retryResult.status === "skipped" ? "success" : "error",
           title: retryResult.status === "skipped" ? "Повторная обработка не требуется" : "Повторная обработка выполнена локально",
           text: retryResult.status === "skipped"
             ? "Операция не подходит для повторной обработки."
-            : "Отправка на сервер пока не подключена. Операция осталась в ошибке до подключения транспорта.",
+            : "Контракт отправки на сервер пока не подключён. Операция осталась в ошибке с деталями.",
         });
       }))
       .catch(() => {
@@ -300,7 +329,7 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
           </div>
         </section>
 
-        <p className="mobile-sync-attention">{data.attention}</p>
+        {attentionText ? <p className="mobile-sync-attention">{attentionText}</p> : null}
 
         <section className="mobile-sync-queue-section">
           <h2>Очередь изменений</h2>
