@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ApartmentOutlined,
   ArrowLeftOutlined,
@@ -14,6 +14,17 @@ import {
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 import { mobileMoveItemData } from "../data/mobileMockData.js";
+import {
+  MOBILE_DRAFT_ENTITY_TYPES,
+  MOBILE_DRAFT_TYPES,
+  createMobileDraft,
+  findMobileDraftByEntity,
+  markMobileDraftReadyToQueue,
+  saveMobileDraft,
+} from "../../services/offline/index.js";
+
+const DRAFT_SOURCE_SCREEN = "moveItem";
+const DRAFT_AUTOSAVE_DELAY_MS = 300;
 
 function getAvailableQuantity(item) {
   const quantity = item?.quantity;
@@ -34,11 +45,12 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
   };
   const availableQuantity = Math.max(getAvailableQuantity(currentItem), 1);
   const defaultWarehouseQuantity = Math.min(data.targetWarehouse.quantity, availableQuantity);
+  const defaultRoomQuantities = () => Object.fromEntries(data.rooms.map((room) => [room.id, room.quantity]));
+  const draftEntityId = currentItem.id ?? currentItem.code;
+  const latestDraftRef = useRef(null);
   const [selectedWarehouse, setSelectedWarehouse] = useState(data.targetWarehouse);
   const [warehouseQuantity, setWarehouseQuantity] = useState(defaultWarehouseQuantity);
-  const [roomQuantities, setRoomQuantities] = useState(() =>
-    Object.fromEntries(data.rooms.map((room) => [room.id, room.quantity])),
-  );
+  const [roomQuantities, setRoomQuantities] = useState(defaultRoomQuantities);
   const [searchQuery, setSearchQuery] = useState("");
   const [roomPickerQuery, setRoomPickerQuery] = useState("");
   const [warehousePickerQuery, setWarehousePickerQuery] = useState("");
@@ -46,6 +58,103 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
   const [comment, setComment] = useState("");
   const [feedback, setFeedback] = useState("");
   const [activeOverlay, setActiveOverlay] = useState(null);
+
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [hasDraftInputChanged, setHasDraftInputChanged] = useState(false);
+
+  const createCurrentDraft = () => createMobileDraft({
+    ...(latestDraftRef.current ?? {}),
+    type: MOBILE_DRAFT_TYPES.WAREHOUSE_MOVE,
+    entityType: MOBILE_DRAFT_ENTITY_TYPES.warehouseItem,
+    entityId: draftEntityId,
+    sourceScreen: DRAFT_SOURCE_SCREEN,
+    payload: {
+      selectedWarehouseId: selectedWarehouse.id,
+      warehouseQuantity,
+      roomQuantities,
+      selectedReason,
+      comment,
+    },
+    context: {
+      ...((latestDraftRef.current?.context) ?? {}),
+      itemCode: currentItem.code,
+      itemId: currentItem.id ?? null,
+    },
+  });
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    latestDraftRef.current = null;
+    setIsDraftLoaded(false);
+    setHasDraftInputChanged(false);
+    setSelectedWarehouse(data.targetWarehouse);
+    setWarehouseQuantity(defaultWarehouseQuantity);
+    setRoomQuantities(defaultRoomQuantities());
+    setSelectedReason(data.reasonOptions[0]);
+    setComment("");
+
+    if (!draftEntityId) {
+      setIsDraftLoaded(true);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    findMobileDraftByEntity({
+      type: MOBILE_DRAFT_TYPES.WAREHOUSE_MOVE,
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.warehouseItem,
+      entityId: draftEntityId,
+      sourceScreen: DRAFT_SOURCE_SCREEN,
+    })
+      .then((draft) => {
+        if (isCancelled) {
+          return;
+        }
+
+        latestDraftRef.current = draft;
+        const payload = draft?.payload ?? {};
+        const draftWarehouse = data.warehouses.find((warehouse) => warehouse.id === payload.selectedWarehouseId);
+
+        setSelectedWarehouse(draftWarehouse ?? data.targetWarehouse);
+        setWarehouseQuantity(payload.warehouseQuantity ?? defaultWarehouseQuantity);
+        setRoomQuantities(
+          payload.roomQuantities && typeof payload.roomQuantities === "object" && !Array.isArray(payload.roomQuantities)
+            ? payload.roomQuantities
+            : defaultRoomQuantities(),
+        );
+        setSelectedReason(typeof payload.selectedReason === "string" ? payload.selectedReason : data.reasonOptions[0]);
+        setComment(typeof payload.comment === "string" ? payload.comment : "");
+        setIsDraftLoaded(true);
+      })
+      .catch(() => {
+        if (isCancelled) {
+          return;
+        }
+
+        setIsDraftLoaded(true);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [draftEntityId]);
+
+  useEffect(() => {
+    if (!isDraftLoaded || !hasDraftInputChanged || !draftEntityId) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      saveMobileDraft(createCurrentDraft())
+        .then((savedDraft) => {
+          latestDraftRef.current = savedDraft;
+        })
+        .catch(() => {});
+    }, DRAFT_AUTOSAVE_DELAY_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [comment, draftEntityId, hasDraftInputChanged, isDraftLoaded, roomQuantities, selectedReason, selectedWarehouse.id, warehouseQuantity]);
 
   const visibleRooms = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -94,6 +203,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
       ...current,
       [roomId]: Math.max(0, Number(current[roomId] ?? 0) + delta),
     }));
+    setHasDraftInputChanged(true);
     setFeedback("");
   };
 
@@ -102,6 +212,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
       ...current,
       [roomId]: Math.max(1, Number(current[roomId] ?? 0)),
     }));
+    setHasDraftInputChanged(true);
     setFeedback("");
     setActiveOverlay(null);
   };
@@ -113,8 +224,24 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
 
     setSelectedWarehouse(warehouse);
     setWarehouseQuantity(Math.max(1, Math.min(warehouse.quantity || defaultWarehouseQuantity, availableQuantity)));
+    setHasDraftInputChanged(true);
     setFeedback("");
     setActiveOverlay(null);
+  };
+
+  const handleWarehouseQuantityChange = (nextQuantity) => {
+    setWarehouseQuantity(nextQuantity);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleSelectedReasonChange = (nextReason) => {
+    setSelectedReason(nextReason);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleCommentChange = (nextComment) => {
+    setComment(nextComment);
+    setHasDraftInputChanged(true);
   };
 
   const handleSave = () => {
@@ -123,6 +250,15 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
   };
 
   const handleConfirmSave = () => {
+    if (isDraftLoaded && draftEntityId) {
+      saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
+        .then((savedDraft) => {
+          latestDraftRef.current = savedDraft;
+          setHasDraftInputChanged(false);
+        })
+        .catch(() => {});
+    }
+
     setActiveOverlay("success");
   };
 
@@ -221,7 +357,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
                 min="0"
                 max={availableQuantity}
                 value={warehouseQuantity}
-                onChange={(event) => setWarehouseQuantity(Math.max(0, Number(event.target.value)))}
+                onChange={(event) => handleWarehouseQuantityChange(Math.max(0, Number(event.target.value)))}
               />
               <small>шт.</small>
             </label>
@@ -280,7 +416,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
               className={reason === selectedReason ? "is-active" : ""}
               type="button"
               key={reason}
-              onClick={() => setSelectedReason(reason)}
+              onClick={() => handleSelectedReasonChange(reason)}
             >
               {reason}
             </button>
@@ -293,7 +429,7 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
             placeholder="Добавьте комментарий к перемещению"
             value={comment}
             rows={4}
-            onChange={(event) => setComment(event.target.value)}
+            onChange={(event) => handleCommentChange(event.target.value)}
           />
         </label>
 
@@ -453,13 +589,13 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
                   </div>
                   {isSelected ? (
                     <div className="mobile-overlay-stepper">
-                      <button type="button" onClick={() => setWarehouseQuantity((value) => Math.max(0, value - 1))}>
+                      <button type="button" onClick={() => handleWarehouseQuantityChange(Math.max(0, warehouseQuantity - 1))}>
                         <MinusOutlined aria-hidden="true" />
                       </button>
                       <strong>{warehouseQuantity}</strong>
                       <button
                         type="button"
-                        onClick={() => setWarehouseQuantity((value) => Math.min(availableQuantity, value + 1))}
+                        onClick={() => handleWarehouseQuantityChange(Math.min(availableQuantity, warehouseQuantity + 1))}
                       >
                         <PlusOutlined aria-hidden="true" />
                       </button>

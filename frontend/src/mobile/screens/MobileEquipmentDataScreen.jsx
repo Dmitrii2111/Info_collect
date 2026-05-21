@@ -11,6 +11,17 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileConfirmModal } from "../components/MobileConfirmModal.jsx";
+import {
+  MOBILE_DRAFT_ENTITY_TYPES,
+  MOBILE_DRAFT_TYPES,
+  createMobileDraft,
+  findMobileDraftByEntity,
+  markMobileDraftReadyToQueue,
+  saveMobileDraft,
+} from "../../services/offline/index.js";
+
+const DRAFT_SOURCE_SCREEN = "equipmentData";
+const DRAFT_AUTOSAVE_DELAY_MS = 300;
 
 const reasonOptions = [
   "Отсутствует маркировка",
@@ -48,13 +59,14 @@ export function MobileEquipmentDataScreen({
     tone: "empty",
     note: "Данные отсутствуют",
   };
+  const defaultSelectedReasons = () => (currentEquipment.tone === "error" ? [reasonOptions[0]] : []);
+  const draftEntityId = currentEquipment.id;
+  const latestDraftRef = useRef(null);
   const [statusKey, setStatusKey] = useState("notFound");
   const [preferredStatusKey, setPreferredStatusKey] = useState("notFound");
   const [serialNumber, setSerialNumber] = useState(currentEquipment.serial ?? "");
   const [actualCount, setActualCount] = useState(currentEquipment.actualCount ?? 1);
-  const [selectedReasons, setSelectedReasons] = useState(() =>
-    currentEquipment.tone === "error" ? [reasonOptions[0]] : [],
-  );
+  const [selectedReasons, setSelectedReasons] = useState(defaultSelectedReasons);
   const [comment, setComment] = useState(currentEquipment.note ?? "");
   const [commissioningStatus, setCommissioningStatus] = useState("Не выполнены");
   const [commissioningDate, setCommissioningDate] = useState("");
@@ -67,21 +79,129 @@ export function MobileEquipmentDataScreen({
   const [isFinishConfirmOpen, setIsFinishConfirmOpen] = useState(false);
   const galleryInputRef = useRef(null);
   const cameraInputRef = useRef(null);
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [hasDraftInputChanged, setHasDraftInputChanged] = useState(false);
   const selectedStatus = getStatusByKey(statusKey);
 
+  const createCurrentDraft = () => createMobileDraft({
+    ...(latestDraftRef.current ?? {}),
+    type: MOBILE_DRAFT_TYPES.EQUIPMENT_DATA,
+    entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
+    entityId: draftEntityId,
+    sourceScreen: DRAFT_SOURCE_SCREEN,
+    payload: {
+      statusKey,
+      preferredStatusKey,
+      serialNumber,
+      actualCount,
+      selectedReasons,
+      comment,
+      commissioningStatus,
+      commissioningDate,
+      trainingStatus,
+      trainingDate,
+    },
+    context: {
+      ...((latestDraftRef.current?.context) ?? {}),
+      equipmentId: currentEquipment.id,
+      roomId: room?.id ?? null,
+      departmentId: department?.id ?? null,
+    },
+  });
+
   useEffect(() => {
+    let isCancelled = false;
+
+    latestDraftRef.current = null;
+    setIsDraftLoaded(false);
+    setHasDraftInputChanged(false);
     setStatusKey("notFound");
     setPreferredStatusKey("notFound");
     setSerialNumber(currentEquipment.serial ?? "");
     setActualCount(currentEquipment.actualCount ?? 1);
-    setSelectedReasons(currentEquipment.tone === "error" ? [reasonOptions[0]] : []);
+    setSelectedReasons(defaultSelectedReasons());
     setComment(currentEquipment.note ?? "");
     setCommissioningStatus("Не выполнены");
     setCommissioningDate("");
     setTrainingStatus("Не проведено");
     setTrainingDate("");
     setFeedback("");
-  }, [currentEquipment.id, currentEquipment.note, currentEquipment.serial, currentEquipment.actualCount, currentEquipment.tone]);
+
+    if (!draftEntityId) {
+      setIsDraftLoaded(true);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    findMobileDraftByEntity({
+      type: MOBILE_DRAFT_TYPES.EQUIPMENT_DATA,
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
+      entityId: draftEntityId,
+      sourceScreen: DRAFT_SOURCE_SCREEN,
+    })
+      .then((draft) => {
+        if (isCancelled) {
+          return;
+        }
+
+        latestDraftRef.current = draft;
+        const payload = draft?.payload ?? {};
+
+        setStatusKey(typeof payload.statusKey === "string" ? payload.statusKey : "notFound");
+        setPreferredStatusKey(typeof payload.preferredStatusKey === "string" ? payload.preferredStatusKey : "notFound");
+        setSerialNumber(typeof payload.serialNumber === "string" ? payload.serialNumber : currentEquipment.serial ?? "");
+        setActualCount(payload.actualCount ?? currentEquipment.actualCount ?? 1);
+        setSelectedReasons(Array.isArray(payload.selectedReasons) ? payload.selectedReasons : defaultSelectedReasons());
+        setComment(typeof payload.comment === "string" ? payload.comment : currentEquipment.note ?? "");
+        setCommissioningStatus(typeof payload.commissioningStatus === "string" ? payload.commissioningStatus : "Не выполнены");
+        setCommissioningDate(typeof payload.commissioningDate === "string" ? payload.commissioningDate : "");
+        setTrainingStatus(typeof payload.trainingStatus === "string" ? payload.trainingStatus : "Не проведено");
+        setTrainingDate(typeof payload.trainingDate === "string" ? payload.trainingDate : "");
+        setIsDraftLoaded(true);
+      })
+      .catch(() => {
+        if (isCancelled) {
+          return;
+        }
+
+        setIsDraftLoaded(true);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [draftEntityId]);
+
+  useEffect(() => {
+    if (!isDraftLoaded || !hasDraftInputChanged || !draftEntityId) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      saveMobileDraft(createCurrentDraft())
+        .then((savedDraft) => {
+          latestDraftRef.current = savedDraft;
+        })
+        .catch(() => {});
+    }, DRAFT_AUTOSAVE_DELAY_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [
+    actualCount,
+    comment,
+    commissioningDate,
+    commissioningStatus,
+    draftEntityId,
+    hasDraftInputChanged,
+    isDraftLoaded,
+    preferredStatusKey,
+    selectedReasons,
+    serialNumber,
+    statusKey,
+    trainingDate,
+    trainingStatus,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -96,6 +216,7 @@ export function MobileEquipmentDataScreen({
     if (nextStatusKey !== "issue") {
       setPreferredStatusKey(nextStatusKey);
     }
+    setHasDraftInputChanged(true);
     setFeedback("");
   };
 
@@ -109,7 +230,49 @@ export function MobileEquipmentDataScreen({
 
       return nextReasons;
     });
+    setHasDraftInputChanged(true);
     setFeedback("");
+  };
+
+  const handleSerialNumberChange = (nextSerialNumber) => {
+    setSerialNumber(nextSerialNumber);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleActualCountChange = (nextActualCount) => {
+    setActualCount(nextActualCount);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleCommissioningStatusChange = (nextStatus) => {
+    setCommissioningStatus(nextStatus);
+    if (nextStatus !== "Выполнены") {
+      setCommissioningDate("");
+    }
+    setHasDraftInputChanged(true);
+  };
+
+  const handleCommissioningDateChange = (nextDate) => {
+    setCommissioningDate(nextDate);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleTrainingStatusChange = (nextStatus) => {
+    setTrainingStatus(nextStatus);
+    if (nextStatus !== "Проведено") {
+      setTrainingDate("");
+    }
+    setHasDraftInputChanged(true);
+  };
+
+  const handleTrainingDateChange = (nextDate) => {
+    setTrainingDate(nextDate);
+    setHasDraftInputChanged(true);
+  };
+
+  const handleCommentChange = (nextComment) => {
+    setComment(nextComment);
+    setHasDraftInputChanged(true);
   };
 
   const handlePhotoChange = (event) => {
@@ -149,6 +312,15 @@ export function MobileEquipmentDataScreen({
   };
 
   const handleSaveAndNext = () => {
+    if (isDraftLoaded && draftEntityId) {
+      saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
+        .then((savedDraft) => {
+          latestDraftRef.current = savedDraft;
+          setHasDraftInputChanged(false);
+        })
+        .catch(() => {});
+    }
+
     setFeedback("Изменения добавлены в очередь синхронизации");
     const hasNext = onOpenNextEquipment?.();
 
@@ -228,21 +400,21 @@ export function MobileEquipmentDataScreen({
             <input
               placeholder="Введите серийный номер"
               value={serialNumber}
-              onChange={(event) => setSerialNumber(event.target.value)}
+              onChange={(event) => handleSerialNumberChange(event.target.value)}
             />
           </label>
           <label className="mobile-equipment-field">
             <span>Количество по факту</span>
             <div className="mobile-equipment-counter">
-              <button type="button" onClick={() => setActualCount((value) => Math.max(0, Number(value) - 1))}>
+              <button type="button" onClick={() => handleActualCountChange(Math.max(0, Number(actualCount) - 1))}>
                 <MinusOutlined aria-hidden="true" />
               </button>
               <input
                 type="number"
                 value={actualCount}
-                onChange={(event) => setActualCount(event.target.value)}
+                onChange={(event) => handleActualCountChange(event.target.value)}
               />
-              <button type="button" onClick={() => setActualCount((value) => Number(value) + 1)}>
+              <button type="button" onClick={() => handleActualCountChange(Number(actualCount) + 1)}>
                 <PlusOutlined aria-hidden="true" />
               </button>
             </div>
@@ -255,12 +427,7 @@ export function MobileEquipmentDataScreen({
                   className={commissioningStatus === option ? "is-active" : ""}
                   type="button"
                   key={option}
-                  onClick={() => {
-                    setCommissioningStatus(option);
-                    if (option !== "Выполнены") {
-                      setCommissioningDate("");
-                    }
-                  }}
+                  onClick={() => handleCommissioningStatusChange(option)}
                 >
                   {option}
                 </button>
@@ -273,7 +440,7 @@ export function MobileEquipmentDataScreen({
               <input
                 type="date"
                 value={commissioningDate}
-                onChange={(event) => setCommissioningDate(event.target.value)}
+                onChange={(event) => handleCommissioningDateChange(event.target.value)}
               />
             </label>
           ) : null}
@@ -285,12 +452,7 @@ export function MobileEquipmentDataScreen({
                   className={trainingStatus === option ? "is-active" : ""}
                   type="button"
                   key={option}
-                  onClick={() => {
-                    setTrainingStatus(option);
-                    if (option !== "Проведено") {
-                      setTrainingDate("");
-                    }
-                  }}
+                  onClick={() => handleTrainingStatusChange(option)}
                 >
                   {option}
                 </button>
@@ -303,7 +465,7 @@ export function MobileEquipmentDataScreen({
               <input
                 type="date"
                 value={trainingDate}
-                onChange={(event) => setTrainingDate(event.target.value)}
+                onChange={(event) => handleTrainingDateChange(event.target.value)}
               />
             </label>
           ) : null}
@@ -332,7 +494,7 @@ export function MobileEquipmentDataScreen({
               placeholder="Добавьте пояснение..."
               value={comment}
               rows={3}
-              onChange={(event) => setComment(event.target.value)}
+              onChange={(event) => handleCommentChange(event.target.value)}
             />
           </label>
           <div className="mobile-equipment-photo">
