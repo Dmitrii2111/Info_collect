@@ -43,6 +43,10 @@ function getStatusByKey(statusKey) {
   return statusOptions.find((status) => status.key === statusKey) ?? statusOptions[1];
 }
 
+function isDraftForEquipment(draft, equipmentId) {
+  return draft?.entityId === equipmentId || draft?.context?.equipmentId === equipmentId;
+}
+
 export function MobileEquipmentDataScreen({
   activeNavKey,
   department,
@@ -63,6 +67,7 @@ export function MobileEquipmentDataScreen({
   };
   const defaultSelectedReasons = () => (currentEquipment.tone === "error" ? [reasonOptions[0]] : []);
   const draftEntityId = currentEquipment.id;
+  const currentDraftEntityIdRef = useRef(draftEntityId);
   const latestDraftRef = useRef(null);
   const [statusKey, setStatusKey] = useState("notFound");
   const [preferredStatusKey, setPreferredStatusKey] = useState("notFound");
@@ -85,31 +90,37 @@ export function MobileEquipmentDataScreen({
   const [hasDraftInputChanged, setHasDraftInputChanged] = useState(false);
   const selectedStatus = getStatusByKey(statusKey);
 
-  const createCurrentDraft = () => createMobileDraft({
-    ...(latestDraftRef.current ?? {}),
-    type: MOBILE_DRAFT_TYPES.EQUIPMENT_DATA,
-    entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
-    entityId: draftEntityId,
-    sourceScreen: DRAFT_SOURCE_SCREEN,
-    payload: {
-      statusKey,
-      preferredStatusKey,
-      serialNumber,
-      actualCount,
-      selectedReasons,
-      comment,
-      commissioningStatus,
-      commissioningDate,
-      trainingStatus,
-      trainingDate,
-    },
-    context: {
-      ...((latestDraftRef.current?.context) ?? {}),
-      equipmentId: currentEquipment.id,
-      roomId: room?.id ?? null,
-      departmentId: department?.id ?? null,
-    },
-  });
+  currentDraftEntityIdRef.current = draftEntityId;
+
+  const createCurrentDraft = () => {
+    const currentDraft = isDraftForEquipment(latestDraftRef.current, draftEntityId) ? latestDraftRef.current : null;
+
+    return createMobileDraft({
+      ...(currentDraft ?? {}),
+      type: MOBILE_DRAFT_TYPES.EQUIPMENT_DATA,
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
+      entityId: draftEntityId,
+      sourceScreen: DRAFT_SOURCE_SCREEN,
+      payload: {
+        statusKey,
+        preferredStatusKey,
+        serialNumber,
+        actualCount,
+        selectedReasons,
+        comment,
+        commissioningStatus,
+        commissioningDate,
+        trainingStatus,
+        trainingDate,
+      },
+      context: {
+        ...((currentDraft?.context) ?? {}),
+        equipmentId: currentEquipment.id,
+        roomId: room?.id ?? null,
+        departmentId: department?.id ?? null,
+      },
+    });
+  };
 
   useEffect(() => {
     let isCancelled = false;
@@ -183,7 +194,9 @@ export function MobileEquipmentDataScreen({
     const timeoutId = window.setTimeout(() => {
       saveMobileDraft(createCurrentDraft())
         .then((savedDraft) => {
-          latestDraftRef.current = savedDraft;
+          if (isDraftForEquipment(savedDraft, currentDraftEntityIdRef.current)) {
+            latestDraftRef.current = savedDraft;
+          }
         })
         .catch(() => {});
     }, DRAFT_AUTOSAVE_DELAY_MS);
@@ -331,11 +344,13 @@ export function MobileEquipmentDataScreen({
     if (isDraftLoaded && draftEntityId) {
       saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
         .then((savedDraft) => {
-          latestDraftRef.current = savedDraft;
+          if (isDraftForEquipment(savedDraft, currentDraftEntityIdRef.current)) {
+            latestDraftRef.current = savedDraft;
+          }
           setHasDraftInputChanged(false);
           enqueueMobileDraft(savedDraft)
             .then((result) => {
-              if (result?.draft) {
+              if (isDraftForEquipment(result?.draft, currentDraftEntityIdRef.current)) {
                 latestDraftRef.current = result.draft;
               }
             })

@@ -38,6 +38,12 @@ import {
   getMobileWarehouseItemById,
 } from "../domain/warehouse/index.js";
 import { mobileReceiptBatchesData } from "./data/mobileMockData.js";
+import {
+  MOBILE_DRAFT_ENTITY_TYPES,
+  MOBILE_DRAFT_STATUS,
+  MOBILE_DRAFT_TYPES,
+  listMobileDrafts,
+} from "../services/offline/index.js";
 import { clearMobileSession, getMobileSession, saveMobileSession } from "../services/session/sessionService.js";
 import "./styles/mobile.css";
 
@@ -132,6 +138,7 @@ function getEquipmentInspectionOverride(savedDraft) {
       status: "Есть расхождение",
       tone: "error",
       note: selectedReasons[0] || comment || "Требуется сверка",
+      updatedAt: savedDraft?.updatedAt ?? null,
     };
   }
 
@@ -140,6 +147,7 @@ function getEquipmentInspectionOverride(savedDraft) {
       status: "Не найдено",
       tone: "error",
       note: comment || "Оборудование не найдено",
+      updatedAt: savedDraft?.updatedAt ?? null,
     };
   }
 
@@ -148,6 +156,7 @@ function getEquipmentInspectionOverride(savedDraft) {
       status: "Подтверждено",
       tone: "success",
       note: comment || "Проверено локально",
+      updatedAt: savedDraft?.updatedAt ?? null,
     };
   }
 
@@ -155,6 +164,7 @@ function getEquipmentInspectionOverride(savedDraft) {
     status: "В работе",
     tone: "active",
     note: "Черновик сохранен локально",
+    updatedAt: savedDraft?.updatedAt ?? null,
   };
 }
 
@@ -163,9 +173,20 @@ function applyEquipmentInspectionOverrides(room, overrides) {
     return room;
   }
 
+  const equipment = room.equipment.map((item) => (overrides[item.id] ? { ...item, ...overrides[item.id] } : item));
+  const checkedCount = equipment.filter((item) => (
+    item.status === "Подтверждено" ||
+    item.status === "Есть расхождение" ||
+    item.status === "Не найдено"
+  )).length;
+  const totalCount = equipment.length;
+  const progressValue = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
+
   return {
     ...room,
-    equipment: room.equipment.map((item) => (overrides[item.id] ? { ...item, ...overrides[item.id] } : item)),
+    progress: `${checkedCount} из ${totalCount} позиций проверено`,
+    progressValue,
+    equipment,
   };
 }
 
@@ -183,6 +204,7 @@ export function MobileShell() {
   const [selectedWarehouseItemId, setSelectedWarehouseItemId] = useState(savedContext.selectedWarehouseItemId ?? null);
   const [selectedReceiptBatchId, setSelectedReceiptBatchId] = useState(savedContext.selectedReceiptBatchId ?? null);
   const [receiptBatches, setReceiptBatches] = useState(mobileReceiptBatchesData);
+  const [persistedEquipmentInspectionOverrides, setPersistedEquipmentInspectionOverrides] = useState({});
   const [equipmentInspectionOverrides, setEquipmentInspectionOverrides] = useState({});
   const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(savedContext.selectedDiscrepancyId ?? null);
   const [discrepancySource, setDiscrepancySource] = useState(savedContext.discrepancySource ?? "dashboard");
@@ -460,7 +482,63 @@ export function MobileShell() {
   const selectedInspection = getMobileInspectionById(selectedInspectionId);
   const selectedInspectionRoom = getMobileInspectionRoomById(selectedInspectionId, selectedRoomId);
   const selectedRoom = selectedDepartment ? getMobileRoomById(selectedObjectId, selectedDepartmentId, selectedRoomId) : selectedInspectionRoom;
-  const selectedRoomWithEquipmentOverrides = applyEquipmentInspectionOverrides(selectedRoom, equipmentInspectionOverrides);
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (!selectedRoom?.id) {
+      setPersistedEquipmentInspectionOverrides({});
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    listMobileDrafts()
+      .then((drafts) => {
+        if (isCancelled) {
+          return;
+        }
+
+        const nextOverrides = drafts
+          .filter((draft) => (
+            draft.type === MOBILE_DRAFT_TYPES.EQUIPMENT_DATA &&
+            draft.entityType === MOBILE_DRAFT_ENTITY_TYPES.equipment &&
+            draft.context?.roomId === selectedRoom.id &&
+            [
+              MOBILE_DRAFT_STATUS.readyToQueue,
+              MOBILE_DRAFT_STATUS.queued,
+              "failed",
+            ].includes(draft.status)
+          ))
+          .reduce((overrides, draft) => {
+            const equipmentId = draft.context?.equipmentId ?? draft.entityId;
+
+            if (!equipmentId) {
+              return overrides;
+            }
+
+            return {
+              ...overrides,
+              [equipmentId]: getEquipmentInspectionOverride(draft),
+            };
+          }, {});
+
+        setPersistedEquipmentInspectionOverrides(nextOverrides);
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setPersistedEquipmentInspectionOverrides({});
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedRoom?.id]);
+
+  const selectedRoomWithEquipmentOverrides = applyEquipmentInspectionOverrides(selectedRoom, {
+    ...persistedEquipmentInspectionOverrides,
+    ...equipmentInspectionOverrides,
+  });
   const selectedEquipment = selectedRoomWithEquipmentOverrides?.equipment?.find((item) => item.id === selectedEquipmentId) ?? (selectedDepartment
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
     : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId));

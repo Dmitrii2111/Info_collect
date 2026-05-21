@@ -88,5 +88,11 @@ export {
 } from "./syncQueueRepository.js";
 
 export {
+  processNextQueueOperation,
+  processQueue,
+  retryQueueOperation,
+} from "./syncQueueProcessor.js";
+
+export {
   enqueueMobileDraft,
 } from "./mobileDraftQueueAdapter.js";

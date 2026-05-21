@@ -11,7 +11,11 @@ import {
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileResultModal } from "../components/MobileResultModal.jsx";
 import { mobileSyncData } from "../data/mobileMockData.js";
-import { listSyncQueueOperations } from "../../services/offline/index.js";
+import {
+  listSyncQueueOperations,
+  processQueue,
+  retryQueueOperation,
+} from "../../services/offline/index.js";
 
 const toneIcons = {
   conflict: ExclamationCircleOutlined,
@@ -143,9 +147,10 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
   const [lastReadAt, setLastReadAt] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [result, setResult] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const loadQueueOperations = () => {
-    listSyncQueueOperations()
+    return listSyncQueueOperations()
       .then((operations) => {
         const sortedOperations = [...operations].sort((first, second) => (
           new Date(second.updatedAt ?? second.createdAt ?? 0).getTime() -
@@ -158,6 +163,7 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
       .catch(() => {
         setQueueOperations([]);
         setFeedback("Не удалось прочитать локальную очередь");
+        return [];
       });
   };
 
@@ -180,12 +186,31 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
   }, [activeFilter, queueItems]);
 
   const handleSyncNow = () => {
-    loadQueueOperations();
-    setResult({
-      status: "success",
-      title: "Очередь обновлена",
-      text: "Реальная отправка будет подключена следующим этапом.",
-    });
+    if (isProcessing) {
+      return;
+    }
+
+    setIsProcessing(true);
+    processQueue()
+      .then((summary) => loadQueueOperations().then(() => {
+        setResult({
+          status: summary.failed > 0 ? "error" : "success",
+          title: "Обработка очереди выполнена локально",
+          text: summary.failed > 0
+            ? "Отправка на сервер пока не подключена. Операции переведены в ошибку до подключения транспорта."
+            : "Очередь перечитана, операций для обработки нет.",
+        });
+      }))
+      .catch(() => {
+        setResult({
+          status: "error",
+          title: "Ошибка обработки очереди",
+          text: "Не удалось обработать локальную очередь.",
+        });
+      })
+      .finally(() => {
+        setIsProcessing(false);
+      });
   };
 
   const handleQueueSelect = (queueId) => {
@@ -194,12 +219,40 @@ export function MobileSyncScreen({ activeNavKey, onBack, onNavSelect }) {
   };
 
   const handleRetry = () => {
-    loadQueueOperations();
-    setResult({
-      status: "success",
-      title: "Очередь перечитана",
-      text: "Повторная отправка будет подключена следующим этапом.",
-    });
+    if (isProcessing) {
+      return;
+    }
+
+    if (!selectedQueueId) {
+      setResult({
+        status: "error",
+        title: "Операция не выбрана",
+        text: "Выберите строку очереди для повторной обработки.",
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    retryQueueOperation(selectedQueueId)
+      .then((retryResult) => loadQueueOperations().then(() => {
+        setResult({
+          status: retryResult.status === "skipped" ? "success" : "error",
+          title: retryResult.status === "skipped" ? "Повторная обработка не требуется" : "Повторная обработка выполнена локально",
+          text: retryResult.status === "skipped"
+            ? "Операция не подходит для повторной обработки."
+            : "Отправка на сервер пока не подключена. Операция осталась в ошибке до подключения транспорта.",
+        });
+      }))
+      .catch(() => {
+        setResult({
+          status: "error",
+          title: "Ошибка повторной обработки",
+          text: "Не удалось обработать выбранную операцию.",
+        });
+      })
+      .finally(() => {
+        setIsProcessing(false);
+      });
   };
 
   return (
