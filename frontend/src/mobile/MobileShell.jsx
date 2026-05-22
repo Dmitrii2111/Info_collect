@@ -37,12 +37,13 @@ import {
   getMobileWarehouseItemByCode,
   getMobileWarehouseItemById,
 } from "../domain/warehouse/index.js";
-import { mobileReceiptBatchesData } from "./data/mobileMockData.js";
+import { mobileDashboardData, mobileInspectionsData, mobileObjectsData, mobileProfileData, mobileReceiptBatchesData } from "./data/mobileMockData.js";
 import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_STATUS,
   MOBILE_DRAFT_TYPES,
   listMobileDrafts,
+  listSyncQueueOperations,
 } from "../services/offline/index.js";
 import { clearMobileSession, getMobileSession, saveMobileSession } from "../services/session/sessionService.js";
 import "./styles/mobile.css";
@@ -190,9 +191,364 @@ function applyEquipmentInspectionOverrides(room, overrides) {
   };
 }
 
+function getCheckedEquipmentCount(equipment = []) {
+  return equipment.filter((item) => (
+    item.status === "Подтверждено" ||
+    item.status === "Есть расхождение" ||
+    item.status === "Не найдено"
+  )).length;
+}
+
+function getEquipmentProblemCount(equipment = []) {
+  return equipment.filter((item) => item.status === "Есть расхождение" || item.tone === "error").length;
+}
+
+function getRoomWithComputedInspectionState(room, overrides) {
+  const nextRoom = applyEquipmentInspectionOverrides(room, overrides);
+
+  if (!nextRoom?.equipment?.length) {
+    return nextRoom;
+  }
+
+  const checkedCount = getCheckedEquipmentCount(nextRoom.equipment);
+  const problemCount = getEquipmentProblemCount(nextRoom.equipment);
+  const hasIssue = problemCount > 0;
+  const isComplete = checkedCount === nextRoom.equipment.length;
+
+  return {
+    ...nextRoom,
+    checkedCount,
+    problemCount,
+    state: isComplete ? (hasIssue ? "error" : "complete") : checkedCount > 0 ? "active" : "empty",
+    status: isComplete ? (hasIssue ? "Есть расхождения" : "Завершено") : checkedCount > 0 ? "В работе" : "Не начато",
+    statusKey: isComplete ? (hasIssue ? "Расхождения" : "Завершено") : checkedCount > 0 ? "В работе" : "Не начато",
+    action: checkedCount > 0 ? "Продолжить осмотр" : "Начать осмотр",
+    notes: hasIssue ? [`${problemCount} расх.`] : checkedCount > 0 ? ["Есть локальные изменения"] : [],
+  };
+}
+
+function applyDepartmentInspectionOverrides(department, overrides) {
+  if (!department?.rooms?.length) {
+    return department;
+  }
+
+  const rooms = department.rooms.map((room) => getRoomWithComputedInspectionState(room, overrides));
+  const checkedRooms = rooms.filter((room) => room.state === "complete" || room.state === "error").length;
+  const activeRooms = rooms.filter((room) => room.state === "active").length;
+  const problemCount = rooms.reduce((sum, room) => sum + (room.problemCount ?? getEquipmentProblemCount(room.equipment ?? [])), 0);
+  const totalEquipment = rooms.reduce((sum, room) => sum + (room.equipment?.length ?? 0), 0);
+  const checkedEquipment = rooms.reduce((sum, room) => sum + getCheckedEquipmentCount(room.equipment ?? []), 0);
+  const progressValue = totalEquipment > 0 ? Math.round((checkedEquipment / totalEquipment) * 100) : 0;
+  const isComplete = totalEquipment > 0 && checkedEquipment === totalEquipment;
+  const isStarted = checkedEquipment > 0 || activeRooms > 0;
+
+  return {
+    ...department,
+    rooms,
+    status: isComplete ? "Завершено" : isStarted ? "В работе" : "Не начато",
+    progress: `${checkedEquipment} из ${totalEquipment}`,
+    checkedCount: checkedEquipment,
+    problemCount,
+    stats: [
+      { label: "Объекты", values: [`${rooms.length} Помещения`, `${totalEquipment} Позиции`] },
+      { label: "Статус", values: [`${problemCount} Проблем`, `${checkedEquipment} проверено`], tone: problemCount > 0 ? "warning" : "default" },
+    ],
+    progressSummary: { value: progressValue, detail: `${checkedEquipment} из ${totalEquipment}` },
+  };
+}
+
+function applyInspectionOverrides(inspection, overrides) {
+  if (!inspection?.walkthrough?.rooms?.length) {
+    return inspection;
+  }
+
+  const rooms = inspection.walkthrough.rooms.map((room) => getRoomWithComputedInspectionState(room, overrides));
+
+  return {
+    ...inspection,
+    walkthrough: {
+      ...inspection.walkthrough,
+      rooms,
+    },
+  };
+}
+
+function getMobileFieldSessionContext(user) {
+  return {
+    workerLogin: user?.workerLogin ?? user?.login ?? null,
+    workerFullName: user?.workerFullName ?? user?.name ?? null,
+    deviceUid: user?.deviceUid ?? user?.device?.deviceUid ?? null,
+    platform: user?.platform ?? user?.device?.platform ?? null,
+    appVersion: user?.appVersion ?? user?.device?.appVersion ?? null,
+  };
+}
+
+function createDashboardData(department) {
+  if (!department?.rooms?.length) {
+    return mobileDashboardData;
+  }
+
+  const totalRooms = department.rooms.length;
+  const totalEquipment = department.rooms.reduce((sum, room) => sum + (room.equipment?.length ?? 0), 0);
+  const checkedEquipment = department.rooms.reduce((sum, room) => sum + getCheckedEquipmentCount(room.equipment ?? []), 0);
+  const problemCount = department.rooms.reduce((sum, room) => sum + (room.problemCount ?? getEquipmentProblemCount(room.equipment ?? [])), 0);
+  const isStarted = checkedEquipment > 0;
+  const isComplete = totalEquipment > 0 && checkedEquipment === totalEquipment;
+  const startedRooms = department.rooms.filter((room) => (room.checkedCount ?? getCheckedEquipmentCount(room.equipment ?? [])) > 0).length;
+
+  return {
+    ...mobileDashboardData,
+    syncSummary: {
+      status: "Онлайн",
+      pending: checkedEquipment > 0 ? `${checkedEquipment} изменений ожидают отправки` : "Нет локальных изменений",
+    },
+    currentWalkthrough: isStarted ? {
+      title: "Текущий обход",
+      location: `${department.context} • ${department.title}`,
+      checkedRooms: startedRooms,
+      totalRooms,
+      progress: department.progressSummary?.value ?? 0,
+      discrepancies: problemCount,
+      pendingChanges: checkedEquipment,
+    } : null,
+    zones: [
+      {
+        key: department.id,
+        title: `${department.context} • ${department.title}`,
+        progress: `${totalRooms} помещения • ${totalEquipment} позиций`,
+        status: isComplete ? "Завершено" : isStarted ? "В работе" : "Не начато",
+        tone: problemCount > 0 ? "error" : isStarted ? "primary" : "neutral",
+      },
+    ],
+    recentActions: [],
+  };
+}
+
+function createObjectsData(department) {
+  if (!department?.rooms?.length) {
+    return mobileObjectsData;
+  }
+
+  const totalRooms = department.rooms.length;
+  const totalEquipment = department.rooms.reduce((sum, room) => sum + (room.equipment?.length ?? 0), 0);
+  const checkedEquipment = department.rooms.reduce((sum, room) => sum + getCheckedEquipmentCount(room.equipment ?? []), 0);
+  const problemCount = department.rooms.reduce((sum, room) => sum + (room.problemCount ?? getEquipmentProblemCount(room.equipment ?? [])), 0);
+  const isStarted = checkedEquipment > 0;
+
+  return {
+    ...mobileObjectsData,
+    summary: {
+      ...mobileObjectsData.summary,
+      actionLabel: isStarted ? "Продолжить обход" : "Начать обход",
+      stats: [
+        { label: "Зоны", value: "1", tone: "default" },
+        { label: "Помещения", value: String(totalRooms), tone: "default" },
+        { label: "Позиции", value: String(totalEquipment), tone: "default" },
+        { label: "Проблемы", value: String(problemCount), tone: problemCount > 0 ? "warning" : "default" },
+      ],
+    },
+    objects: mobileObjectsData.objects.slice(0, 1).map((object) => ({
+      ...object,
+      title: department.context?.split(" • ")[0] ?? object.title,
+      subtitle: department.context,
+      description: department.title,
+      status: isStarted ? "В работе" : "Не начато",
+      tone: isStarted ? "primary" : "neutral",
+      progressLabel: `${checkedEquipment} из ${totalEquipment} позиций проверено`,
+      progressValue: totalEquipment > 0 ? Math.round((checkedEquipment / totalEquipment) * 100) : 0,
+      details: [
+        { label: `${totalRooms} помещения`, tone: "muted" },
+        { label: `${totalEquipment} позиций`, tone: "muted" },
+      ],
+      action: isStarted ? "Продолжить обход" : "Начать обход",
+    })),
+    recentZones: [`${department.context} • ${department.title}`],
+  };
+}
+
+function createInspectionsData(department) {
+  if (!department?.rooms?.length) {
+    return mobileInspectionsData;
+  }
+
+  const totalRooms = department.rooms.length;
+  const totalEquipment = department.rooms.reduce((sum, room) => sum + (room.equipment?.length ?? 0), 0);
+  const checkedEquipment = department.rooms.reduce((sum, room) => sum + getCheckedEquipmentCount(room.equipment ?? []), 0);
+  const checkedRooms = department.rooms.filter((room) => (room.checkedCount ?? getCheckedEquipmentCount(room.equipment ?? [])) > 0).length;
+  const problemCount = department.rooms.reduce((sum, room) => sum + (room.problemCount ?? getEquipmentProblemCount(room.equipment ?? [])), 0);
+  const progressValue = totalEquipment > 0 ? Math.round((checkedEquipment / totalEquipment) * 100) : 0;
+  const isStarted = checkedEquipment > 0;
+  const isComplete = totalEquipment > 0 && checkedEquipment === totalEquipment;
+  const status = isComplete ? "Завершено" : isStarted ? "В работе" : "Ожидание";
+  const baseInspection = mobileInspectionsData.inspections[0];
+
+  return {
+    ...mobileInspectionsData,
+    summary: {
+      ...mobileInspectionsData.summary,
+      total: "1 инспекция",
+    },
+    syncAlert: {
+      ...mobileInspectionsData.syncAlert,
+      title: checkedEquipment > 0 ? "Есть неотправленные изменения" : "Нет неотправленных изменений",
+      text: checkedEquipment > 0 ? `${checkedEquipment} изменений ожидают отправки` : "Очередь по назначенной инспекции пуста",
+    },
+    inspections: [
+      {
+        ...baseInspection,
+        title: department.context,
+        context: department.title,
+        status,
+        statusKey: status,
+        statusType: isComplete ? "completed" : isStarted ? "active" : "pending",
+        progressLabel: `${checkedEquipment} из ${totalEquipment} позиций`,
+        progressValue,
+        action: isStarted ? "Продолжить" : "Начать",
+        walkthrough: {
+          ...baseInspection.walkthrough,
+          title: department.context,
+          context: department.title,
+          progressLabel: `${checkedEquipment} из ${totalEquipment} позиций проверено`,
+          progressValue,
+          continueLabel: isStarted ? "Продолжить обход" : "Начать обход",
+          metrics: [
+            { label: "Всего", value: String(totalRooms), suffix: "пом.", tone: "default" },
+            { label: "Позиции", value: String(totalEquipment), tone: "default" },
+            { label: "Проверено", value: String(checkedEquipment), tone: "success" },
+            { label: "С расхождениями", value: String(problemCount), tone: "error" },
+            { label: "Не начато", value: String(Math.max(totalRooms - checkedRooms, 0)), tone: "default" },
+          ],
+          rooms: department.rooms,
+        },
+        stats: [
+          { label: `${totalRooms} помещения`, tone: "default", icon: "rooms" },
+          { label: `${totalEquipment} позиций`, tone: "default", icon: "inventory" },
+          { label: `${problemCount} расхождений`, tone: problemCount > 0 ? "error" : "default", icon: "warning" },
+          { label: `${checkedEquipment} изменений не отправлено`, tone: checkedEquipment > 0 ? "warning" : "default", icon: "sync" },
+        ],
+      },
+    ],
+  };
+}
+
+function createObjectStructureData(structure, department) {
+  if (!department?.rooms?.length) {
+    return structure;
+  }
+
+  const totalRooms = department.rooms.length;
+  const totalEquipment = department.rooms.reduce((sum, room) => sum + (room.equipment?.length ?? 0), 0);
+  const checkedEquipment = department.rooms.reduce((sum, room) => sum + getCheckedEquipmentCount(room.equipment ?? []), 0);
+  const problemCount = department.rooms.reduce((sum, room) => sum + (room.problemCount ?? getEquipmentProblemCount(room.equipment ?? [])), 0);
+  const floorTitle = department.context?.split(" • ")[1] ?? "Этаж";
+  const progressValue = totalEquipment > 0 ? Math.round((checkedEquipment / totalEquipment) * 100) : 0;
+  const statusType = progressValue >= 100
+    ? (problemCount > 0 ? "discrepancy" : "completed")
+    : checkedEquipment > 0
+      ? (problemCount > 0 ? "discrepancy" : "inProgress")
+      : "notStarted";
+
+  return {
+    ...structure,
+    title: department.context?.split(" • ")[0] ?? structure?.title,
+    pendingLabel: checkedEquipment > 0 ? `${checkedEquipment} не отправлено` : "Нет изменений",
+    stats: [
+      { label: "1 этаж", value: `${totalRooms} помещения`, tone: "default" },
+      { label: `${totalEquipment} позиций`, value: `${problemCount} расхождений`, tone: problemCount > 0 ? "error" : "default" },
+    ],
+    progress: {
+      label: `${checkedEquipment} из ${totalEquipment} позиций проверено`,
+      value: progressValue,
+    },
+    floors: [
+      {
+        id: department.floorId ?? "floor-2",
+        title: floorTitle,
+        statusLine: `${totalRooms} помещения • ${department.status}`,
+        statusType,
+        summary: [`${checkedEquipment} из ${totalEquipment} позиций`, `${problemCount} расх.`],
+        departments: [department],
+      },
+    ],
+  };
+}
+
+function getSyncQueueCounts(operations = []) {
+  return operations.reduce((counts, operation) => {
+    const status = operation.status ?? "queued";
+
+    return {
+      ...counts,
+      [status]: (counts[status] ?? 0) + 1,
+      total: counts.total + 1,
+    };
+  }, {
+    cancelled: 0,
+    conflict: 0,
+    failed: 0,
+    queued: 0,
+    synced: 0,
+    syncing: 0,
+    total: 0,
+  });
+}
+
+function createProfileData(department, queueOperations) {
+  if (!department?.rooms?.length) {
+    return mobileProfileData;
+  }
+
+  const totalRooms = department.rooms.length;
+  const totalEquipment = department.rooms.reduce((sum, room) => sum + (room.equipment?.length ?? 0), 0);
+  const checkedEquipment = department.rooms.reduce((sum, room) => sum + getCheckedEquipmentCount(room.equipment ?? []), 0);
+  const checkedRooms = department.rooms.filter((room) => (room.checkedCount ?? getCheckedEquipmentCount(room.equipment ?? [])) > 0).length;
+  const problemCount = department.rooms.reduce((sum, room) => sum + (room.problemCount ?? getEquipmentProblemCount(room.equipment ?? [])), 0);
+  const queueCounts = getSyncQueueCounts(queueOperations);
+  const pendingCount = queueCounts.queued + queueCounts.syncing;
+  const errorCount = queueCounts.failed + queueCounts.cancelled;
+  const progress = totalEquipment > 0 ? Math.round((checkedEquipment / totalEquipment) * 100) : 0;
+  const isStarted = checkedEquipment > 0;
+  const isComplete = totalEquipment > 0 && checkedEquipment === totalEquipment;
+  const zoneStatus = isComplete ? "Завершено" : isStarted ? "В работе" : "Не начато";
+
+  return {
+    ...mobileProfileData,
+    today: {
+      stats: [
+        { label: "Помещения", value: `${checkedRooms} из ${totalRooms}`, tone: "neutral" },
+        { label: "Позиции", value: `${checkedEquipment} из ${totalEquipment}`, tone: "neutral" },
+        { label: "Расхождения", value: String(problemCount), tone: problemCount > 0 ? "warning" : "neutral" },
+        { label: "В очереди", value: `${pendingCount + errorCount + queueCounts.conflict} изменений`, tone: "primary" },
+      ],
+      current: isStarted ? `Работа ведется в ${department.context} • ${department.title}` : "Назначенный обход еще не начат",
+      canContinue: isStarted,
+    },
+    sync: {
+      status: pendingCount + errorCount + queueCounts.conflict > 0 ? "Есть локальные изменения" : "Очередь пуста",
+      pending: `${pendingCount} ожидают отправки`,
+      conflicts: `${queueCounts.conflict} конфликтов`,
+      errors: `${errorCount} ошибок отправки`,
+      synced: `${queueCounts.synced} отправлено`,
+    },
+    zones: [
+      {
+        id: department.id,
+        title: department.context,
+        subtitle: `${department.title} • ${totalRooms} помещения • ${totalEquipment} позиции`,
+        status: zoneStatus,
+        tone: problemCount > 0 ? "warning" : isStarted ? "primary" : "neutral",
+        progress,
+        progressLabel: `${checkedEquipment} из ${totalEquipment} позиций`,
+        warning: problemCount > 0 ? `${problemCount} расх.` : null,
+      },
+    ],
+  };
+}
+
 export function MobileShell() {
   const savedSession = getMobileSession();
   const savedContext = savedSession.context ?? {};
+  const mobileFieldSessionContext = getMobileFieldSessionContext(savedSession.user);
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(savedSession.authenticated));
   const [activeScreen, setActiveScreen] = useState(getSafeInitialScreen(savedSession));
   const [selectedObjectId, setSelectedObjectId] = useState(savedContext.selectedObjectId ?? null);
@@ -210,6 +566,7 @@ export function MobileShell() {
   const [discrepancySource, setDiscrepancySource] = useState(savedContext.discrepancySource ?? "dashboard");
   const [syncSource, setSyncSource] = useState(savedContext.syncSource ?? "profile");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [syncQueueOperations, setSyncQueueOperations] = useState([]);
 
   const handleLogin = () => {
     const user = DEFAULT_MOBILE_USER;
@@ -320,7 +677,7 @@ export function MobileShell() {
     setSelectedObjectId("building-a");
     setSelectedFloorId("floor-2");
     setSelectedDepartmentId("emergency");
-    setSelectedRoomId("room-201-29");
+    setSelectedRoomId("fixture-room-1-01-9");
     setActiveScreen("roomInspection");
   };
 
@@ -477,20 +834,14 @@ export function MobileShell() {
     setActiveScreen(discrepancySource === "itemCard" ? "itemCard" : "discrepancies");
   };
 
-  const selectedStructure = getMobileObjectStructureById(selectedObjectId) ?? getMobileObjectStructureById("building-a");
-  const selectedDepartment = getMobileDepartmentById(selectedObjectId, selectedDepartmentId);
-  const selectedInspection = getMobileInspectionById(selectedInspectionId);
-  const selectedInspectionRoom = getMobileInspectionRoomById(selectedInspectionId, selectedRoomId);
-  const selectedRoom = selectedDepartment ? getMobileRoomById(selectedObjectId, selectedDepartmentId, selectedRoomId) : selectedInspectionRoom;
+  const selectedStructureBase = getMobileObjectStructureById(selectedObjectId) ?? getMobileObjectStructureById("building-a");
+  const selectedDepartmentBase = getMobileDepartmentById(selectedObjectId, selectedDepartmentId);
+  const fixtureDepartmentBase = getMobileDepartmentById("building-a", "emergency");
+  const selectedInspectionBase = getMobileInspectionById(selectedInspectionId);
+  const selectedInspectionRoomBase = getMobileInspectionRoomById(selectedInspectionId, selectedRoomId);
+  const selectedRoom = selectedDepartmentBase ? getMobileRoomById(selectedObjectId, selectedDepartmentId, selectedRoomId) : selectedInspectionRoomBase;
   useEffect(() => {
     let isCancelled = false;
-
-    if (!selectedRoom?.id) {
-      setPersistedEquipmentInspectionOverrides({});
-      return () => {
-        isCancelled = true;
-      };
-    }
 
     listMobileDrafts()
       .then((drafts) => {
@@ -502,7 +853,6 @@ export function MobileShell() {
           .filter((draft) => (
             draft.type === MOBILE_DRAFT_TYPES.EQUIPMENT_DATA &&
             draft.entityType === MOBILE_DRAFT_ENTITY_TYPES.equipment &&
-            draft.context?.roomId === selectedRoom.id &&
             [
               MOBILE_DRAFT_STATUS.readyToQueue,
               MOBILE_DRAFT_STATUS.queued,
@@ -533,12 +883,48 @@ export function MobileShell() {
     return () => {
       isCancelled = true;
     };
-  }, [selectedRoom?.id]);
+  }, []);
 
-  const selectedRoomWithEquipmentOverrides = applyEquipmentInspectionOverrides(selectedRoom, {
+  useEffect(() => {
+    let isCancelled = false;
+
+    listSyncQueueOperations()
+      .then((operations) => {
+        if (!isCancelled) {
+          setSyncQueueOperations(operations);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setSyncQueueOperations([]);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeScreen]);
+
+  const equipmentInspectionOverrideMap = {
     ...persistedEquipmentInspectionOverrides,
     ...equipmentInspectionOverrides,
-  });
+  };
+  const selectedDepartment = applyDepartmentInspectionOverrides(selectedDepartmentBase, equipmentInspectionOverrideMap);
+  const fixtureDepartment = applyDepartmentInspectionOverrides(fixtureDepartmentBase, equipmentInspectionOverrideMap);
+  const inspectionsData = createInspectionsData(fixtureDepartment);
+  const selectedInspection = inspectionsData.inspections.find((inspection) => inspection.id === selectedInspectionId) ??
+    applyInspectionOverrides(selectedInspectionBase, equipmentInspectionOverrideMap);
+  const selectedInspectionRoom = selectedInspection?.walkthrough?.rooms?.find((room) => room.id === selectedRoomId) ?? selectedInspectionRoomBase;
+  const selectedRoomWithEquipmentOverrides = selectedDepartment
+    ? selectedDepartment.rooms?.find((room) => (room.id ?? room.title) === selectedRoomId) ?? null
+    : selectedInspectionRoom;
+  const dashboardData = createDashboardData(selectedDepartment ?? fixtureDepartment);
+  const objectsData = createObjectsData(selectedDepartment ?? fixtureDepartment);
+  const profileData = createProfileData(selectedDepartment ?? fixtureDepartment, syncQueueOperations);
+  const selectedStructure = createObjectStructureData(
+    selectedStructureBase,
+    selectedDepartment ?? fixtureDepartment,
+  );
   const selectedEquipment = selectedRoomWithEquipmentOverrides?.equipment?.find((item) => item.id === selectedEquipmentId) ?? (selectedDepartment
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
     : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId));
@@ -556,6 +942,7 @@ export function MobileShell() {
         activeNavKey={isInspectionRoomFlow ? "inspections" : "objects"}
         department={roomInspectionContext}
         equipment={selectedEquipment}
+        fieldSession={mobileFieldSessionContext}
         room={selectedRoomWithEquipmentOverrides}
         onBack={() => setActiveScreen("roomInspection")}
         onEquipmentInspectionSaved={handleEquipmentInspectionSaved}
@@ -578,6 +965,7 @@ export function MobileShell() {
         department={selectedDepartment}
         onBack={() => setActiveScreen("objectStructure")}
         onOpenRoom={handleOpenRoom}
+        onOpenSync={() => handleOpenSync("objects")}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "objectStructure" ? (
@@ -593,6 +981,7 @@ export function MobileShell() {
     ) : activeScreen === "objects" ? (
       <MobileObjectsScreen
         activeNavKey="objects"
+        objectsData={objectsData}
         onOpenMenu={() => setIsDrawerOpen(true)}
         onContinueWalkthrough={handleContinueWalkthrough}
         onOpenObjectStructure={handleOpenObjectStructure}
@@ -617,6 +1006,7 @@ export function MobileShell() {
     ) : activeScreen === "inspections" ? (
       <MobileInspectionsScreen
         activeNavKey="inspections"
+        inspectionsData={inspectionsData}
         selectedInspectionId={selectedInspectionId}
         onOpenMenu={() => setIsDrawerOpen(true)}
         onOpenInspection={handleOpenInspection}
@@ -726,6 +1116,7 @@ export function MobileShell() {
     ) : activeScreen === "profile" ? (
       <MobileProfileScreen
         activeNavKey="profile"
+        profileData={profileData}
         onOpenMenu={() => setIsDrawerOpen(true)}
         onOpenHistory={() => setActiveScreen("history")}
         onOpenSettings={() => setActiveScreen("settings")}
@@ -737,6 +1128,7 @@ export function MobileShell() {
     ) : (
       <MobileDashboardScreen
         activeNavKey="dashboard"
+        dashboardData={dashboardData}
         onOpenMenu={() => setIsDrawerOpen(true)}
         onContinueWalkthrough={handleContinueWalkthrough}
         onOpenRooms={handleContinueWalkthrough}

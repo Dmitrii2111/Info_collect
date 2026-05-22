@@ -78,6 +78,14 @@ export {
 } from "./mobileDraftRepository.js";
 
 export {
+  createMediaDraftId,
+  deleteMediaDraft,
+  findMediaDraftByEntity,
+  listMediaDrafts,
+  saveMediaDraft,
+} from "./mediaDraftRepository.js";
+
+export {
   createSyncQueueRepositoryError,
   deleteSyncQueueOperation,
   findSyncQueueOperationByIdempotencyKey,

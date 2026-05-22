@@ -40,8 +40,22 @@ function parseCheckedCount(progress = "") {
   };
 }
 
+function getRoomContext(room, department) {
+  return [
+    room?.building ?? room?.corpus,
+    room?.floor ? `${room.floor} этаж` : null,
+    room?.departmentName ?? department?.title,
+    room?.roomCode ?? room?.roomNumber,
+  ].filter(Boolean).join(" • ") || department?.context || "Контекст помещения не указан";
+}
+
+function getEquipmentPositionCode(item) {
+  return item?.designPositionCode ?? item?.positionCode ?? "Без шифра";
+}
+
 function MobileEquipmentCard({ item, onOpenEquipment }) {
   const Icon = equipmentIcons[item.tone] ?? DatabaseOutlined;
+  const positionCode = getEquipmentPositionCode(item);
 
   return (
     <button
@@ -50,7 +64,7 @@ function MobileEquipmentCard({ item, onOpenEquipment }) {
       onClick={() => onOpenEquipment?.(item.id)}
     >
       <div>
-        <span>{item.id}</span>
+        <span>{positionCode}</span>
         <h3>{item.title}</h3>
         <p>
           <em>{item.status}</em>
@@ -78,6 +92,7 @@ export function MobileRoomInspectionScreen({
     equipment: [],
   };
   const progress = parseCheckedCount(currentRoom.progress);
+  const roomContext = getRoomContext(currentRoom, department);
   const equipment = currentRoom.equipment ?? [];
   const discrepancyCount = equipment.filter((item) => item.tone === "error").length;
   const pendingCount = equipment.filter((item) => item.tone === "active").length;
@@ -112,7 +127,7 @@ export function MobileRoomInspectionScreen({
         return true;
       }
 
-      return [item.title, item.id, item.status, item.note]
+      return [item.title, getEquipmentPositionCode(item), item.status, item.note]
         .filter(Boolean)
         .some((value) => value.toLowerCase().includes(normalizedQuery));
     });
@@ -142,7 +157,7 @@ export function MobileRoomInspectionScreen({
           <div className="mobile-room-summary-head">
             <div>
               <h2>{currentRoom.title}</h2>
-              <p>{department?.context}</p>
+              <p>{roomContext}</p>
             </div>
             <span>{isCompleted ? "Завершено" : currentRoom.status}</span>
           </div>
@@ -180,7 +195,7 @@ export function MobileRoomInspectionScreen({
         </section>
 
         <MobileSearchFilterBar
-          placeholder="Поиск оборудования или ID"
+          placeholder="Поиск оборудования или ПОЗ"
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
           filters={filters}
@@ -214,14 +229,14 @@ export function MobileRoomInspectionScreen({
           onClose={() => setActiveOverlay(null)}
         >
           <div className="mobile-room-info-sheet">
-            <p>{department?.context ?? "Контекст помещения не указан"}</p>
+            <p>{roomContext}</p>
             <div>
               <h3>Ожидаемые позиции</h3>
               {equipment.length > 0 ? (
                 equipment.map((item) => (
                   <article key={item.id}>
                     <strong>{item.title}</strong>
-                    <span>{item.id}</span>
+                    <span>{getEquipmentPositionCode(item)}</span>
                     <small>{item.status} • {item.note}</small>
                   </article>
                 ))

@@ -63,13 +63,13 @@ export function MobileProfileScreen({
   onContinueWalkthrough,
   onLogout,
   onNavSelect,
+  profileData,
 }) {
-  const data = mobileProfileData;
+  const data = profileData ?? mobileProfileData;
   const [feedback, setFeedback] = useState("");
   const [result, setResult] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
   const [infoSheet, setInfoSheet] = useState(null);
-  const [isNextRetrySuccess, setIsNextRetrySuccess] = useState(true);
 
   const settingDetails = {
     server: {
@@ -101,16 +101,6 @@ export function MobileProfileScreen({
     }
 
     setFeedback("Действие выполнено");
-  };
-
-  const handleRetrySend = () => {
-    const isSuccess = isNextRetrySuccess;
-    setIsNextRetrySuccess((current) => !current);
-    setResult({
-      status: isSuccess ? "success" : "error",
-      title: isSuccess ? "Отправка выполнена" : "Ошибка отправки",
-      text: isSuccess ? "Очередь изменений повторно отправлена." : "Связь с сервером нестабильна, попробуйте позже.",
-    });
   };
 
   return (
@@ -160,10 +150,12 @@ export function MobileProfileScreen({
             ))}
           </div>
           <p>{data.today.current}</p>
-          <button type="button" onClick={onContinueWalkthrough}>
-            <PlayCircleOutlined aria-hidden="true" />
-            Продолжить обход
-          </button>
+          {data.today.canContinue ? (
+            <button type="button" onClick={onContinueWalkthrough}>
+              <PlayCircleOutlined aria-hidden="true" />
+              Продолжить обход
+            </button>
+          ) : null}
         </section>
 
         <section className="mobile-card mobile-profile-sync-card">
@@ -187,9 +179,6 @@ export function MobileProfileScreen({
           <button type="button" onClick={onOpenSync}>
             Открыть синхронизацию
           </button>
-          <button type="button" onClick={handleRetrySend}>
-            Повторить отправку
-          </button>
         </section>
 
         <section className="mobile-profile-section">
@@ -207,14 +196,11 @@ export function MobileProfileScreen({
                     <ExclamationCircleOutlined aria-hidden="true" />
                     {zone.warning}
                   </p>
-                ) : (
-                  <>
-                    <div className="mobile-profile-zone-track" aria-hidden="true">
-                      <span style={{ width: `${zone.progress}%` }} />
-                    </div>
-                    <small>{zone.progressLabel}</small>
-                  </>
-                )}
+                ) : null}
+                <div className="mobile-profile-zone-track" aria-hidden="true">
+                  <span style={{ width: `${zone.progress}%` }} />
+                </div>
+                <small>{zone.progressLabel}</small>
               </article>
             ))}
           </div>

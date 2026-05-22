@@ -6504,7 +6504,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(72px + env(safe-area-inset-bottom));
+  bottom: 64px;
   z-index: 40;
   display: grid;
   gap: 8px;
@@ -6861,11 +6861,15 @@
 .mobile-app .mobile-equipment-photo {
   display: grid;
   gap: 8px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
-.mobile-app .mobile-equipment-photo > div {
+.mobile-app .mobile-equipment-photo > div:first-child {
   display: flex;
   justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
   color: #1a1b22;
   font-size: 14px;
   font-weight: 600;
@@ -6894,6 +6898,9 @@
 .mobile-app .mobile-equipment-photo-preview {
   display: grid;
   gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   padding: 10px;
   border: 1px solid #c4c5d5;
   border-radius: 12px;
@@ -6902,6 +6909,7 @@
 
 .mobile-app .mobile-equipment-photo-preview img {
   width: 100%;
+  max-width: 100%;
   max-height: 180px;
   object-fit: cover;
   border-radius: 8px;
@@ -6909,9 +6917,13 @@
 }
 
 .mobile-app .mobile-equipment-photo-preview span {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   color: #444653;
   font-size: 13px;
   line-height: 18px;
+  text-overflow: ellipsis;
   word-break: break-word;
 }
 
@@ -6928,6 +6940,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+  min-width: 0;
 }
 
 .mobile-app .mobile-equipment-photo-actions button {
@@ -6980,7 +6993,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(64px + env(safe-area-inset-bottom));
+  bottom: 64px;
   z-index: 40;
   display: grid;
   gap: 8px;

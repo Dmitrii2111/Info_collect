@@ -130,13 +130,14 @@ function InspectionCard({ inspection, isSelected, onOpenInspection }) {
 
 export function MobileInspectionsScreen({
   activeNavKey,
+  inspectionsData,
   selectedInspectionId,
   onOpenMenu,
   onOpenInspection,
   onOpenSync,
   onNavSelect,
 }) {
-  const data = mobileInspectionsData;
+  const data = inspectionsData ?? mobileInspectionsData;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
   const [feedback, setFeedback] = useState("");

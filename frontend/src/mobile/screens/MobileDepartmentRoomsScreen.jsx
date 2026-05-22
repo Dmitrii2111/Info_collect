@@ -101,6 +101,7 @@ export function MobileDepartmentRoomsScreen({
   department,
   onBack,
   onOpenRoom,
+  onOpenSync,
   onNavSelect,
 }) {
   const data = department ?? mobileDepartmentRoomsData;
@@ -117,6 +118,7 @@ export function MobileDepartmentRoomsScreen({
   const remainingRooms = Math.max(totalRooms - checkedRooms, 0);
   const discrepancyCount = data.rooms.filter((room) => room.state === "error").length;
   const pendingCount = data.rooms.filter((room) => room.notes?.some((note) => note.includes("не отправ"))).length;
+  const isZoneStarted = data.rooms.some((room) => room.state === "active" || room.state === "complete" || room.state === "error");
   const nextRoom = data.rooms.find((room) => room.state === "active" || room.state === "empty") ?? data.rooms[0];
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const visibleRooms = (activeFilter === "Все"
@@ -167,7 +169,7 @@ export function MobileDepartmentRoomsScreen({
           <ArrowLeftOutlined aria-hidden="true" />
         </button>
         <h1>Отделение</h1>
-        <button type="button" aria-label="Синхронизация">
+        <button type="button" aria-label="Синхронизация" onClick={onOpenSync}>
           <SyncOutlined aria-hidden="true" />
         </button>
       </header>
@@ -210,7 +212,7 @@ export function MobileDepartmentRoomsScreen({
                 onClick={() => nextRoom && onOpenRoom?.(nextRoom.id ?? nextRoom.title)}
               >
                 <PlayCircleOutlined aria-hidden="true" />
-                Продолжить обход
+                {isZoneStarted ? "Продолжить обход" : "Начать обход"}
               </button>
               <button type="button" onClick={onBack}>
                 Открыть структуру

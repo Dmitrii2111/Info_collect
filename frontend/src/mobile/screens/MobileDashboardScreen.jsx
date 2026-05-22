@@ -27,6 +27,7 @@ const recentActionIcons = {
 
 export function MobileDashboardScreen({
   activeNavKey,
+  dashboardData,
   onOpenMenu,
   onContinueWalkthrough,
   onOpenRooms,
@@ -36,7 +37,7 @@ export function MobileDashboardScreen({
   onOpenZone,
   onNavSelect,
 }) {
-  const data = mobileDashboardData;
+  const data = dashboardData ?? mobileDashboardData;
   const walk = data.currentWalkthrough;
 
   return (
@@ -67,45 +68,47 @@ export function MobileDashboardScreen({
           </div>
         </section>
 
-        <section className="mobile-card mobile-current-card">
-          <div className="mobile-current-accent" aria-hidden="true" />
-          <div className="mobile-section-title-row">
-            <h3>{walk.title}</h3>
-            <ApartmentOutlined aria-hidden="true" />
-          </div>
-          <p>{walk.location}</p>
-          <div className="mobile-progress-label">
-            <span>
-              {walk.checkedRooms} из {walk.totalRooms} помещений проверено
-            </span>
-            <strong>{walk.progress}%</strong>
-          </div>
-          <div className="mobile-progress-track" aria-hidden="true">
-            <span style={{ width: `${walk.progress}%` }} />
-          </div>
-          <div className="mobile-stat-grid">
-            <div>
-              <strong>{walk.totalRooms}</strong>
-              <span>помещения</span>
+        {walk ? (
+          <section className="mobile-card mobile-current-card">
+            <div className="mobile-current-accent" aria-hidden="true" />
+            <div className="mobile-section-title-row">
+              <h3>{walk.title}</h3>
+              <ApartmentOutlined aria-hidden="true" />
             </div>
-            <div>
-              <strong className="is-success">{walk.checkedRooms}</strong>
-              <span>проверено</span>
+            <p>{walk.location}</p>
+            <div className="mobile-progress-label">
+              <span>
+                {walk.checkedRooms} из {walk.totalRooms} помещений проверено
+              </span>
+              <strong>{walk.progress}%</strong>
             </div>
-            <div className="is-error-soft">
-              <strong className="is-error">{walk.discrepancies}</strong>
-              <span>расхождений</span>
+            <div className="mobile-progress-track" aria-hidden="true">
+              <span style={{ width: `${walk.progress}%` }} />
             </div>
-            <div className="is-primary-soft">
-              <strong>{walk.pendingChanges}</strong>
-              <span>изменений</span>
+            <div className="mobile-stat-grid">
+              <div>
+                <strong>{walk.totalRooms}</strong>
+                <span>помещения</span>
+              </div>
+              <div>
+                <strong className="is-success">{walk.checkedRooms}</strong>
+                <span>проверено</span>
+              </div>
+              <div className="is-error-soft">
+                <strong className="is-error">{walk.discrepancies}</strong>
+                <span>расхождений</span>
+              </div>
+              <div className="is-primary-soft">
+                <strong>{walk.pendingChanges}</strong>
+                <span>изменений</span>
+              </div>
             </div>
-          </div>
-          <button className="mobile-primary-button" type="button" onClick={onContinueWalkthrough}>
-            Продолжить обход
-            <RightOutlined aria-hidden="true" />
-          </button>
-        </section>
+            <button className="mobile-primary-button" type="button" onClick={onContinueWalkthrough}>
+              Продолжить обход
+              <RightOutlined aria-hidden="true" />
+            </button>
+          </section>
+        ) : null}
 
         <section className="mobile-dashboard-section">
           <h3>Мои зоны</h3>
@@ -162,8 +165,9 @@ export function MobileDashboardScreen({
 
         <section className="mobile-dashboard-section mobile-recent-section">
           <h3>Последние действия</h3>
-          <ul className="mobile-recent-list">
-            {data.recentActions.map((action) => {
+          {data.recentActions.length > 0 ? (
+            <ul className="mobile-recent-list">
+              {data.recentActions.map((action) => {
               const Icon = recentActionIcons[action.tone];
 
               return (
@@ -172,8 +176,11 @@ export function MobileDashboardScreen({
                   <span>{action.text}</span>
                 </li>
               );
-            })}
-          </ul>
+              })}
+            </ul>
+          ) : (
+            <p className="mobile-recent-empty">Нет действий</p>
+          )}
         </section>
       </main>
 

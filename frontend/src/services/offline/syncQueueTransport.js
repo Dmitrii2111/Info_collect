@@ -49,6 +49,125 @@ function createPayloadIncompleteResult(missingFields) {
   });
 }
 
+function getEquipmentPlannedItemId(operation) {
+  return operation?.payload?.backendPlannedItemId ??
+    operation?.payload?.plannedItemId ??
+    operation?.context?.backendPlannedItemId ??
+    operation?.context?.plannedItemId ??
+    null;
+}
+
+function getEquipmentWorkerLogin(operation) {
+  return operation?.payload?.workerLogin ?? operation?.context?.workerLogin ?? null;
+}
+
+function getEquipmentDeviceUid(operation) {
+  return operation?.payload?.deviceUid ?? operation?.context?.deviceUid ?? null;
+}
+
+function getEquipmentPlatform(operation) {
+  return operation?.payload?.platform ?? operation?.context?.platform ?? null;
+}
+
+function getEquipmentEventUid(operation) {
+  return operation?.payload?.eventUid ?? operation?.context?.eventUid ?? operation?.idempotencyKey ?? operation?.id ?? null;
+}
+
+function getEquipmentBatchUid(operation) {
+  const seed = operation?.context?.batchUid ??
+    operation?.context?.batch_uid ??
+    operation?.idempotencyKey ??
+    operation?.id ??
+    null;
+
+  return seed ? `offline-batch:${seed}` : null;
+}
+
+function mapEquipmentPresenceStatus(operation) {
+  const statusKey = operation?.payload?.statusKey ?? operation?.payload?.preferredStatusKey;
+  const selectedReasons = Array.isArray(operation?.payload?.selectedReasons) ? operation.payload.selectedReasons : [];
+
+  if (statusKey === "issue" || selectedReasons.length > 0) {
+    return "conflict";
+  }
+
+  if (statusKey === "found") {
+    return "found";
+  }
+
+  if (statusKey === "notFound" || statusKey === "missing") {
+    return "missing";
+  }
+
+  return null;
+}
+
+function mapEquipmentSerialState(operation) {
+  return operation?.payload?.serialNumber ? "serial_entered" : "unknown";
+}
+
+function mapEquipmentPnrStatus(operation) {
+  const status = operation?.payload?.commissioningStatus;
+
+  if (status === "Выполнены" || status === "done") {
+    return "done";
+  }
+
+  if (status === "Не выполнены" || status === "not_done") {
+    return "not_done";
+  }
+
+  if (status === "Не требуется" || status === "not_required") {
+    return "not_required";
+  }
+
+  return null;
+}
+
+function getEquipmentCommunicationsStatus(operation) {
+  return operation?.payload?.communicationsStatus ??
+    operation?.payload?.communications_status ??
+    operation?.context?.communicationsStatus ??
+    operation?.context?.communications_status ??
+    null;
+}
+
+function getEquipmentBackendReadiness(operation) {
+  return {
+    batch_uid: getEquipmentBatchUid(operation),
+    worker_login: getEquipmentWorkerLogin(operation),
+    device_uid: getEquipmentDeviceUid(operation),
+    platform: getEquipmentPlatform(operation),
+    event_uid: getEquipmentEventUid(operation),
+    planned_item_id: getEquipmentPlannedItemId(operation),
+    action_type: "item_check",
+    presence_status: mapEquipmentPresenceStatus(operation),
+    serial_state: mapEquipmentSerialState(operation),
+    pnr_status: mapEquipmentPnrStatus(operation),
+    communications_status: getEquipmentCommunicationsStatus(operation),
+  };
+}
+
+function getMissingEquipmentBackendFields(operation) {
+  const readiness = getEquipmentBackendReadiness(operation);
+
+  return [
+    "batch_uid",
+    "worker_login",
+    "device_uid",
+    "platform",
+    "event_uid",
+    "planned_item_id",
+    "presence_status",
+    "serial_state",
+    "pnr_status",
+    "communications_status",
+  ].filter((field) => {
+    const value = readiness[field];
+    return value === null || value === undefined || value === "";
+  });
+}
+
 export function validateOperationForTransport(operation) {
   if (!SUPPORTED_OPERATION_TYPES.has(operation?.type)) {
     return createFailure(UNSUPPORTED_OPERATION_ERROR);
@@ -59,7 +178,7 @@ export function validateOperationForTransport(operation) {
   }
 
   if (operation.type === OFFLINE_OPERATION_TYPES.EQUIPMENT_CHECK_UPDATE) {
-    const missingFields = getMissingFields(operation, ["entityId", "payload.statusKey"]);
+    const missingFields = getMissingEquipmentBackendFields(operation);
 
     if (missingFields.length > 0) {
       return createPayloadIncompleteResult(missingFields);
@@ -68,7 +187,9 @@ export function validateOperationForTransport(operation) {
     return createFailure({
       ...CONTRACT_NOT_READY_ERROR,
       details: {
-        reason: "planned_item_id, enum mapping, worker_login, device_uid and event_uid are not finalized",
+        action_type: "item_check",
+        reason: "Backend /api/sync/batches sending is intentionally not connected in Package 31",
+        readiness: getEquipmentBackendReadiness(operation),
       },
     });
   }

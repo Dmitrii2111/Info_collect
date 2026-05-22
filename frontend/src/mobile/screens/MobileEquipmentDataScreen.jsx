@@ -15,14 +15,19 @@ import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_TYPES,
   createMobileDraft,
+  createMediaDraftId,
+  deleteMediaDraft,
   enqueueMobileDraft,
+  findMediaDraftByEntity,
   findMobileDraftByEntity,
   markMobileDraftReadyToQueue,
+  saveMediaDraft,
   saveMobileDraft,
 } from "../../services/offline/index.js";
 
 const DRAFT_SOURCE_SCREEN = "equipmentData";
 const DRAFT_AUTOSAVE_DELAY_MS = 300;
+const PHOTO_SLOT = "primary";
 
 const reasonOptions = [
   "Отсутствует маркировка",
@@ -47,10 +52,29 @@ function isDraftForEquipment(draft, equipmentId) {
   return draft?.entityId === equipmentId || draft?.context?.equipmentId === equipmentId;
 }
 
+function createPhotoFromMediaDraft(mediaDraft) {
+  if (!mediaDraft?.blob) {
+    return null;
+  }
+
+  return {
+    name: mediaDraft.name ?? "Фото оборудования",
+    url: URL.createObjectURL(mediaDraft.blob),
+    mediaDraftId: mediaDraft.id,
+    size: mediaDraft.size ?? mediaDraft.blob.size ?? null,
+    type: mediaDraft.type ?? mediaDraft.blob.type ?? null,
+  };
+}
+
+function getEquipmentPositionCode(equipment) {
+  return equipment?.designPositionCode ?? equipment?.positionCode ?? "Без шифра";
+}
+
 export function MobileEquipmentDataScreen({
   activeNavKey,
   department,
   equipment,
+  fieldSession,
   room,
   onBack,
   onFinishRoom,
@@ -89,11 +113,18 @@ export function MobileEquipmentDataScreen({
   const [isDraftLoaded, setIsDraftLoaded] = useState(false);
   const [hasDraftInputChanged, setHasDraftInputChanged] = useState(false);
   const selectedStatus = getStatusByKey(statusKey);
+  const equipmentPositionCode = getEquipmentPositionCode(currentEquipment);
 
   currentDraftEntityIdRef.current = draftEntityId;
 
   const createCurrentDraft = () => {
     const currentDraft = isDraftForEquipment(latestDraftRef.current, draftEntityId) ? latestDraftRef.current : null;
+    const backendPlannedItemId = currentEquipment.backendPlannedItemId ?? currentEquipment.plannedItemId ?? null;
+    const sourceRowId = currentEquipment.sourceRowId ?? null;
+    const externalPositionId = currentEquipment.externalPositionId ?? null;
+    const importRowNumber = currentEquipment.importRowNumber ?? sourceRowId;
+    const positionCode = currentEquipment.positionCode ?? null;
+    const designPositionCode = currentEquipment.designPositionCode ?? positionCode;
 
     return createMobileDraft({
       ...(currentDraft ?? {}),
@@ -112,12 +143,42 @@ export function MobileEquipmentDataScreen({
         commissioningDate,
         trainingStatus,
         trainingDate,
+        photoMediaDraftId: photo?.mediaDraftId ?? null,
+        photoName: photo?.name ?? null,
+        photoSize: photo?.size ?? null,
+        photoType: photo?.type ?? null,
+        backendPlannedItemId,
+        plannedItemId: backendPlannedItemId,
+        sourceRowId,
+        externalPositionId,
+        importRowNumber,
+        positionCode,
+        designPositionCode,
       },
       context: {
         ...((currentDraft?.context) ?? {}),
         equipmentId: currentEquipment.id,
+        backendPlannedItemId,
+        plannedItemId: backendPlannedItemId,
+        sourceRowId,
+        externalPositionId,
+        importRowNumber,
+        positionCode,
+        designPositionCode,
         roomId: room?.id ?? null,
+        roomCode: currentEquipment.roomCode ?? room?.roomCode ?? null,
+        roomNumber: currentEquipment.roomNumber ?? room?.roomNumber ?? null,
+        roomName: currentEquipment.roomName ?? room?.roomName ?? null,
         departmentId: department?.id ?? null,
+        departmentName: currentEquipment.departmentName ?? department?.title ?? null,
+        building: currentEquipment.building ?? null,
+        corpus: currentEquipment.corpus ?? currentEquipment.building ?? null,
+        floor: currentEquipment.floor ?? null,
+        workerLogin: fieldSession?.workerLogin ?? null,
+        workerFullName: fieldSession?.workerFullName ?? null,
+        deviceUid: fieldSession?.deviceUid ?? null,
+        platform: fieldSession?.platform ?? null,
+        appVersion: fieldSession?.appVersion ?? null,
       },
     });
   };
@@ -133,11 +194,13 @@ export function MobileEquipmentDataScreen({
     setSerialNumber(currentEquipment.serial ?? "");
     setActualCount(currentEquipment.actualCount ?? 1);
     setSelectedReasons(defaultSelectedReasons());
-    setComment(currentEquipment.note ?? "");
+    setComment("");
     setCommissioningStatus("Не выполнены");
     setCommissioningDate("");
     setTrainingStatus("Не проведено");
     setTrainingDate("");
+    setPhoto(null);
+    setPhotoMenuOpen(false);
     setFeedback("");
 
     if (!draftEntityId) {
@@ -153,7 +216,15 @@ export function MobileEquipmentDataScreen({
       entityId: draftEntityId,
       sourceScreen: DRAFT_SOURCE_SCREEN,
     })
-      .then((draft) => {
+      .then((draft) => findMediaDraftByEntity({
+        entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
+        entityId: draftEntityId,
+        sourceScreen: DRAFT_SOURCE_SCREEN,
+        slot: PHOTO_SLOT,
+      })
+        .catch(() => null)
+        .then((mediaDraft) => ({ draft, mediaDraft })))
+      .then(({ draft, mediaDraft }) => {
         if (isCancelled) {
           return;
         }
@@ -166,11 +237,12 @@ export function MobileEquipmentDataScreen({
         setSerialNumber(typeof payload.serialNumber === "string" ? payload.serialNumber : currentEquipment.serial ?? "");
         setActualCount(payload.actualCount ?? currentEquipment.actualCount ?? 1);
         setSelectedReasons(Array.isArray(payload.selectedReasons) ? payload.selectedReasons : defaultSelectedReasons());
-        setComment(typeof payload.comment === "string" ? payload.comment : currentEquipment.note ?? "");
+        setComment(typeof payload.comment === "string" ? payload.comment : "");
         setCommissioningStatus(typeof payload.commissioningStatus === "string" ? payload.commissioningStatus : "Не выполнены");
         setCommissioningDate(typeof payload.commissioningDate === "string" ? payload.commissioningDate : "");
         setTrainingStatus(typeof payload.trainingStatus === "string" ? payload.trainingStatus : "Не проведено");
         setTrainingDate(typeof payload.trainingDate === "string" ? payload.trainingDate : "");
+        setPhoto(createPhotoFromMediaDraft(mediaDraft));
         setIsDraftLoaded(true);
       })
       .catch(() => {
@@ -210,6 +282,10 @@ export function MobileEquipmentDataScreen({
     draftEntityId,
     hasDraftInputChanged,
     isDraftLoaded,
+    photo?.mediaDraftId,
+    photo?.name,
+    photo?.size,
+    photo?.type,
     preferredStatusKey,
     selectedReasons,
     serialNumber,
@@ -293,22 +369,64 @@ export function MobileEquipmentDataScreen({
   const handlePhotoChange = (event) => {
     const file = event.target.files?.[0];
 
-    if (!file) return;
+    if (!file || !draftEntityId) return;
 
     const url = URL.createObjectURL(file);
-    setPhoto((currentPhoto) => {
-      if (currentPhoto?.url) {
-        URL.revokeObjectURL(currentPhoto.url);
-      }
+    const mediaDraft = {
+      id: createMediaDraftId({
+        entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
+        entityId: draftEntityId,
+        sourceScreen: DRAFT_SOURCE_SCREEN,
+        slot: PHOTO_SLOT,
+      }),
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
+      entityId: draftEntityId,
+      sourceScreen: DRAFT_SOURCE_SCREEN,
+      slot: PHOTO_SLOT,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      blob: file,
+    };
 
-      return { name: file.name, url };
-    });
+    saveMediaDraft(mediaDraft)
+      .then((savedMediaDraft) => {
+        if (currentDraftEntityIdRef.current !== draftEntityId) {
+          URL.revokeObjectURL(url);
+          return;
+        }
+
+        setPhoto((currentPhoto) => {
+          if (currentPhoto?.url) {
+            URL.revokeObjectURL(currentPhoto.url);
+          }
+
+          return {
+            name: savedMediaDraft.name,
+            url,
+            mediaDraftId: savedMediaDraft.id,
+            size: savedMediaDraft.size,
+            type: savedMediaDraft.type,
+          };
+        });
+        setHasDraftInputChanged(true);
+        setFeedback("Фото добавлено");
+      })
+      .catch(() => {
+        URL.revokeObjectURL(url);
+      });
+
     setPhotoMenuOpen(false);
-    setFeedback("Фото добавлено");
     event.target.value = "";
   };
 
   const handleRemovePhoto = () => {
+    const mediaDraftId = photo?.mediaDraftId;
+
+    if (mediaDraftId) {
+      deleteMediaDraft(mediaDraftId).catch(() => {});
+    }
+
     setPhoto((currentPhoto) => {
       if (currentPhoto?.url) {
         URL.revokeObjectURL(currentPhoto.url);
@@ -316,6 +434,7 @@ export function MobileEquipmentDataScreen({
 
       return null;
     });
+    setHasDraftInputChanged(true);
     setFeedback("Фото удалено");
   };
 
@@ -397,7 +516,7 @@ export function MobileEquipmentDataScreen({
           </div>
           <p>
             <span>
-              ID: <strong>{currentEquipment.id}</strong>
+              ПОЗ: <strong>{equipmentPositionCode}</strong>
             </span>
             <span>
               Тип: <strong>{currentEquipment.type ?? "Встроенный"}</strong>

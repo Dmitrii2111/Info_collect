@@ -90,13 +90,14 @@ function MobileObjectCard({ object, onOpenObjectStructure }) {
 
 export function MobileObjectsScreen({
   activeNavKey,
+  objectsData,
   onOpenMenu,
   onContinueWalkthrough,
   onOpenObjectStructure,
   onOpenRecentZone,
   onNavSelect,
 }) {
-  const data = mobileObjectsData;
+  const data = objectsData ?? mobileObjectsData;
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
   const [searchQuery, setSearchQuery] = useState("");
   const [syncStatus, setSyncStatus] = useState(data.summary.updatedAt);
@@ -146,7 +147,7 @@ export function MobileObjectsScreen({
           </div>
           <div className="mobile-objects-summary-actions">
             <span>{syncStatus}</span>
-            <button type="button" onClick={onContinueWalkthrough}>Продолжить обход</button>
+            <button type="button" onClick={onContinueWalkthrough}>{data.summary.actionLabel ?? "Продолжить обход"}</button>
           </div>
         </section>
 
