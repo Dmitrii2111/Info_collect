@@ -21,7 +21,6 @@ import { MobileSettingsScreen } from "./screens/MobileSettingsScreen.jsx";
 import { MobileSyncScreen } from "./screens/MobileSyncScreen.jsx";
 import { MobileWarehouseScreen } from "./screens/MobileWarehouseScreen.jsx";
 import { MobileWalkthroughRoomsScreen } from "./screens/MobileWalkthroughRoomsScreen.jsx";
-import { getMobileDiscrepancyById } from "../domain/discrepancies/index.js";
 import {
   getMobileInspectionById,
   getMobileInspectionEquipmentById,
@@ -33,11 +32,9 @@ import {
   getMobileObjectStructureById,
   getMobileRoomById,
 } from "../domain/objects/index.js";
-import {
-  getMobileWarehouseItemByCode,
-  getMobileWarehouseItemById,
-} from "../domain/warehouse/index.js";
-import { mobileDashboardData, mobileInspectionsData, mobileObjectsData, mobileProfileData, mobileReceiptBatchesData } from "./data/mobileMockData.js";
+import { getMobileWarehouseItemById } from "../domain/warehouse/index.js";
+import { createLocalDiscrepanciesData, createLocalHistoryData } from "./data/mobileDerivedLocalData.js";
+import { mobileDashboardData, mobileDrawerData, mobileInspectionsData, mobileObjectsData, mobileProfileData, mobileReceiptBatchesData } from "./data/mobileMockData.js";
 import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_STATUS,
@@ -493,6 +490,36 @@ function getSyncQueueCounts(operations = []) {
   });
 }
 
+function formatDrawerBadge(count) {
+  return count > 0 ? String(count) : undefined;
+}
+
+function updateDrawerBadges({ discrepanciesCount = 0, syncCount = 0 } = {}) {
+  mobileDrawerData.mainItems = mobileDrawerData.mainItems.map((item) => {
+    if (item.key === "warehouse") {
+      const nextItem = { ...item };
+      delete nextItem.badge;
+      return nextItem;
+    }
+
+    if (item.key === "discrepancies") {
+      return {
+        ...item,
+        badge: formatDrawerBadge(discrepanciesCount),
+      };
+    }
+
+    if (item.key === "sync") {
+      return {
+        ...item,
+        badge: formatDrawerBadge(syncCount),
+      };
+    }
+
+    return item;
+  });
+}
+
 function createProfileData(department, queueOperations) {
   if (!department?.rooms?.length) {
     return mobileProfileData;
@@ -566,6 +593,7 @@ export function MobileShell() {
   const [discrepancySource, setDiscrepancySource] = useState(savedContext.discrepancySource ?? "dashboard");
   const [syncSource, setSyncSource] = useState(savedContext.syncSource ?? "profile");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [mobileDrafts, setMobileDrafts] = useState([]);
   const [syncQueueOperations, setSyncQueueOperations] = useState([]);
 
   const handleLogin = () => {
@@ -819,15 +847,31 @@ export function MobileShell() {
     setActiveScreen("discrepancyDetails");
   };
 
-  const handleOpenDiscrepancyItem = (itemCode) => {
-    const item = getMobileWarehouseItemByCode(itemCode);
+  const handleOpenDiscrepancyEquipment = (discrepancy) => {
+    const equipmentId = discrepancy?.equipmentId ?? discrepancy?.entityId ?? null;
+    const roomId = discrepancy?.roomId ?? null;
 
-    if (!item) {
-      return;
+    if (!equipmentId || !roomId) {
+      return false;
     }
 
-    setSelectedWarehouseItemId(item.id);
-    setActiveScreen("itemCard");
+    const sourceDepartment = [selectedDepartment, fixtureDepartment].filter(Boolean).find((department) => (
+      (department.rooms ?? []).some((room) => (
+        room.id === roomId && (room.equipment ?? []).some((item) => item.id === equipmentId)
+      ))
+    ));
+
+    if (!sourceDepartment) {
+      return false;
+    }
+
+    setSelectedObjectId("building-a");
+    setSelectedFloorId(sourceDepartment.floorId ?? "floor-2");
+    setSelectedDepartmentId(sourceDepartment.id ?? discrepancy.departmentId ?? "emergency");
+    setSelectedRoomId(roomId);
+    setSelectedEquipmentId(equipmentId);
+    setActiveScreen("equipmentData");
+    return true;
   };
 
   const handleBackFromDiscrepancyDetails = () => {
@@ -849,6 +893,7 @@ export function MobileShell() {
           return;
         }
 
+        setMobileDrafts(drafts);
         const nextOverrides = drafts
           .filter((draft) => (
             draft.type === MOBILE_DRAFT_TYPES.EQUIPMENT_DATA &&
@@ -876,6 +921,7 @@ export function MobileShell() {
       })
       .catch(() => {
         if (!isCancelled) {
+          setMobileDrafts([]);
           setPersistedEquipmentInspectionOverrides({});
         }
       });
@@ -883,7 +929,7 @@ export function MobileShell() {
     return () => {
       isCancelled = true;
     };
-  }, []);
+  }, [activeScreen]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -921,6 +967,15 @@ export function MobileShell() {
   const dashboardData = createDashboardData(selectedDepartment ?? fixtureDepartment);
   const objectsData = createObjectsData(selectedDepartment ?? fixtureDepartment);
   const profileData = createProfileData(selectedDepartment ?? fixtureDepartment, syncQueueOperations);
+  const discrepanciesData = createLocalDiscrepanciesData(mobileDrafts, syncQueueOperations);
+  const historyData = createLocalHistoryData(mobileDrafts, syncQueueOperations);
+  const syncBadgeCount = syncQueueOperations.filter((operation) => (
+    ["queued", "syncing", "failed", "conflict", "cancelled"].includes(operation.status)
+  )).length;
+  updateDrawerBadges({
+    discrepanciesCount: discrepanciesData.discrepancies.length,
+    syncCount: syncBadgeCount,
+  });
   const selectedStructure = createObjectStructureData(
     selectedStructureBase,
     selectedDepartment ?? fixtureDepartment,
@@ -930,7 +985,7 @@ export function MobileShell() {
     : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId));
   const selectedWarehouseItem = getMobileWarehouseItemById(selectedWarehouseItemId);
   const selectedReceiptBatch = receiptBatches.find((batch) => batch.id === selectedReceiptBatchId) ?? null;
-  const selectedDiscrepancy = getMobileDiscrepancyById(selectedDiscrepancyId);
+  const selectedDiscrepancy = discrepanciesData.discrepancies.find((item) => item.id === selectedDiscrepancyId) ?? null;
   const roomInspectionContext = selectedDepartment ?? {
     context: selectedInspection?.walkthrough?.context,
   };
@@ -1075,6 +1130,7 @@ export function MobileShell() {
     ) : activeScreen === "discrepancies" ? (
       <MobileDiscrepanciesScreen
         activeNavKey="dashboard"
+        discrepanciesData={discrepanciesData}
         onBack={() => setActiveScreen("dashboard")}
         onOpenDiscrepancy={(discrepancyId) => handleOpenDiscrepancyDetails(discrepancyId, "discrepancies")}
         onNavSelect={handleNavSelect}
@@ -1084,7 +1140,7 @@ export function MobileShell() {
         activeNavKey={discrepancySource === "itemCard" ? "warehouse" : "dashboard"}
         discrepancy={selectedDiscrepancy}
         onBack={handleBackFromDiscrepancyDetails}
-        onOpenItem={handleOpenDiscrepancyItem}
+        onOpenEquipment={handleOpenDiscrepancyEquipment}
         onNavSelect={handleNavSelect}
       />
     ) : activeScreen === "sync" ? (
@@ -1103,6 +1159,7 @@ export function MobileShell() {
     ) : activeScreen === "history" ? (
       <MobileHistoryScreen
         activeNavKey="profile"
+        historyData={historyData}
         onBack={() => setActiveScreen("profile")}
         onOpenSync={() => handleOpenSync("profile")}
         onNavSelect={handleNavSelect}

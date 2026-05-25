@@ -32,7 +32,7 @@ function DiscrepancyCard({ item, isSelected, onSelect }) {
       <div>
         <span>{item.context}</span>
         <h3>{item.title}</h3>
-        <small>ID: {item.itemCode}</small>
+        <small>ПОЗ: {item.itemCode}</small>
       </div>
       <em>{item.severityLabel}</em>
       <p>
@@ -55,8 +55,8 @@ function DiscrepancyCard({ item, isSelected, onSelect }) {
   );
 }
 
-export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepancy, onNavSelect }) {
-  const data = mobileDiscrepanciesData;
+export function MobileDiscrepanciesScreen({ activeNavKey, discrepanciesData, onBack, onOpenDiscrepancy, onNavSelect }) {
+  const data = discrepanciesData ?? mobileDiscrepanciesData;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
   const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(null);
@@ -142,13 +142,15 @@ export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepa
               <span style={{ width: `${data.summary.progressValue}%` }} />
             </div>
           </div>
-          <button type="button" onClick={handleOpenNext}>
-            Продолжить проверку
-          </button>
+          {data.discrepancies.length > 0 ? (
+            <button type="button" onClick={handleOpenNext}>
+              Продолжить проверку
+            </button>
+          ) : null}
         </section>
 
         <MobileSearchFilterBar
-          placeholder="Поиск помещения, оборудования или ID"
+          placeholder="Поиск помещения, оборудования или ПОЗ"
           searchValue={searchQuery}
           onSearchChange={setSearchQuery}
           filters={data.filters}
@@ -170,17 +172,19 @@ export function MobileDiscrepanciesScreen({ activeNavKey, onBack, onOpenDiscrepa
               />
             ))
           ) : (
-            <MobileEmptyState className="mobile-discrepancies-empty">Расхождения не найдены</MobileEmptyState>
+            <MobileEmptyState className="mobile-discrepancies-empty">Расхождений пока нет</MobileEmptyState>
           )}
         </section>
       </main>
 
       <div className="mobile-discrepancies-action-bar">
-        <p>Осталось {unresolvedCount} неразрешенных расхождения</p>
+        <p>{unresolvedCount > 0 ? `Осталось ${unresolvedCount} неразрешенных расхождения` : "Локальных расхождений нет"}</p>
         <div>
-          <button type="button" onClick={handleOpenNext}>
-            Открыть следующее
-          </button>
+          {unresolvedCount > 0 ? (
+            <button type="button" onClick={handleOpenNext}>
+              Открыть следующее
+            </button>
+          ) : null}
           <button type="button" aria-label="Синхронизация" onClick={() => setFeedback("Откройте экран синхронизации для отправки изменений")}>
             <SyncOutlined aria-hidden="true" />
           </button>

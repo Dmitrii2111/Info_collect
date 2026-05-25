@@ -65,8 +65,8 @@ function HistoryEventCard({ event, isSelected, onSelect }) {
   );
 }
 
-export function MobileHistoryScreen({ activeNavKey, onBack, onOpenSync, onNavSelect }) {
-  const data = mobileHistoryData;
+export function MobileHistoryScreen({ activeNavKey, historyData, onBack, onOpenSync, onNavSelect }) {
+  const data = historyData ?? mobileHistoryData;
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState(data.filters[0]);
   const [selectedEventId, setSelectedEventId] = useState(null);
@@ -130,7 +130,7 @@ export function MobileHistoryScreen({ activeNavKey, onBack, onOpenSync, onNavSel
 
         <section className="mobile-history-tools">
           <MobileSearchFilterBar
-            placeholder="Поиск по действию, помещению или ID"
+            placeholder="Поиск по действию, помещению или ПОЗ"
             searchValue={searchQuery}
             onSearchChange={setSearchQuery}
             filters={data.filters}
@@ -162,7 +162,7 @@ export function MobileHistoryScreen({ activeNavKey, onBack, onOpenSync, onNavSel
                 />
               ))
             ) : (
-              <MobileEmptyState className="mobile-history-empty">События не найдены</MobileEmptyState>
+              <MobileEmptyState className="mobile-history-empty">История действий пока пуста</MobileEmptyState>
             )}
           </div>
         </section>

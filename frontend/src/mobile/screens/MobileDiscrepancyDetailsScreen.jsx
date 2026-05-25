@@ -15,6 +15,7 @@ import {
   MOBILE_DRAFT_TYPES,
   createMobileDraft,
   enqueueMobileDraft,
+  findMediaDraftByEntity,
   findMobileDraftByEntity,
   markMobileDraftReadyToQueue,
   saveMobileDraft,
@@ -28,18 +29,33 @@ const resolutionOptions = [
 ];
 const DEFAULT_RESOLUTION = "Требует проверки";
 const DRAFT_SOURCE_SCREEN = "discrepancyDetails";
+const EQUIPMENT_DRAFT_SOURCE_SCREEN = "equipmentData";
+const PHOTO_SLOT = "primary";
 const DRAFT_AUTOSAVE_DELAY_MS = 300;
+
+function createPhotoFromMediaDraft(mediaDraft) {
+  if (!mediaDraft?.blob) {
+    return null;
+  }
+
+  return {
+    name: mediaDraft.name ?? "Фото оборудования",
+    url: URL.createObjectURL(mediaDraft.blob),
+    size: mediaDraft.size ?? mediaDraft.blob.size ?? null,
+    type: mediaDraft.type ?? mediaDraft.blob.type ?? null,
+  };
+}
 
 export function MobileDiscrepancyDetailsScreen({
   activeNavKey,
   discrepancy,
   onBack,
-  onOpenItem,
+  onOpenEquipment,
   onNavSelect,
 }) {
   const currentDiscrepancy = discrepancy ?? {
     title: "Расхождение не выбрано",
-    itemCode: "Нет ID",
+    itemCode: "Без шифра",
     context: "Контекст не указан",
     severity: "review",
     severityLabel: "Требует проверки",
@@ -52,6 +68,7 @@ export function MobileDiscrepancyDetailsScreen({
   const [resolution, setResolution] = useState(DEFAULT_RESOLUTION);
   const [comment, setComment] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [evidencePhoto, setEvidencePhoto] = useState(null);
   const [isPhotoSheetOpen, setIsPhotoSheetOpen] = useState(false);
   const [result, setResult] = useState(null);
   const [isDraftLoaded, setIsDraftLoaded] = useState(false);
@@ -59,7 +76,7 @@ export function MobileDiscrepancyDetailsScreen({
   const latestDraftRef = useRef(null);
   const discrepancyId = currentDiscrepancy.id ?? null;
   const itemCode = currentDiscrepancy.itemCode ?? null;
-  const draftEntityId = discrepancyId ?? itemCode;
+  const draftEntityId = discrepancy ? (discrepancyId ?? itemCode) : null;
 
   const createCurrentDraft = () => createMobileDraft({
     ...(latestDraftRef.current ?? {}),
@@ -70,11 +87,22 @@ export function MobileDiscrepancyDetailsScreen({
     payload: {
       resolution,
       comment,
+      sourceDiscrepancyId: discrepancyId,
+      sourceDraftId: currentDiscrepancy.sourceDraftId ?? currentDiscrepancy.draftId ?? null,
+      equipmentId: currentDiscrepancy.equipmentId ?? currentDiscrepancy.entityId ?? null,
+      roomId: currentDiscrepancy.roomId ?? null,
+      departmentId: currentDiscrepancy.departmentId ?? null,
+      positionCode: currentDiscrepancy.positionCode ?? currentDiscrepancy.itemCode ?? null,
+      designPositionCode: currentDiscrepancy.designPositionCode ?? currentDiscrepancy.itemCode ?? null,
     },
     context: {
       ...((latestDraftRef.current?.context) ?? {}),
       discrepancyId,
       itemCode,
+      sourceDraftId: currentDiscrepancy.sourceDraftId ?? currentDiscrepancy.draftId ?? null,
+      equipmentId: currentDiscrepancy.equipmentId ?? currentDiscrepancy.entityId ?? null,
+      roomId: currentDiscrepancy.roomId ?? null,
+      departmentId: currentDiscrepancy.departmentId ?? null,
     },
   });
 
@@ -126,6 +154,68 @@ export function MobileDiscrepancyDetailsScreen({
   }, [draftEntityId]);
 
   useEffect(() => {
+    let isCancelled = false;
+    const equipmentId = currentDiscrepancy.equipmentId ?? currentDiscrepancy.entityId ?? null;
+
+    setEvidencePhoto(null);
+
+    if (!equipmentId && !currentDiscrepancy.photoName) {
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    findMediaDraftByEntity({
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.equipment,
+      entityId: equipmentId,
+      sourceScreen: EQUIPMENT_DRAFT_SOURCE_SCREEN,
+      slot: PHOTO_SLOT,
+    })
+      .then((mediaDraft) => {
+        if (isCancelled) {
+          return;
+        }
+
+        setEvidencePhoto(createPhotoFromMediaDraft(mediaDraft) ?? (
+          currentDiscrepancy.photoName
+            ? {
+                name: currentDiscrepancy.photoName,
+                url: null,
+                size: currentDiscrepancy.photoSize ?? null,
+                type: currentDiscrepancy.photoType ?? null,
+              }
+            : null
+        ));
+      })
+      .catch(() => {
+        if (!isCancelled && currentDiscrepancy.photoName) {
+          setEvidencePhoto({
+            name: currentDiscrepancy.photoName,
+            url: null,
+            size: currentDiscrepancy.photoSize ?? null,
+            type: currentDiscrepancy.photoType ?? null,
+          });
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [
+    currentDiscrepancy.entityId,
+    currentDiscrepancy.equipmentId,
+    currentDiscrepancy.photoName,
+    currentDiscrepancy.photoSize,
+    currentDiscrepancy.photoType,
+  ]);
+
+  useEffect(() => () => {
+    if (evidencePhoto?.url) {
+      URL.revokeObjectURL(evidencePhoto.url);
+    }
+  }, [evidencePhoto]);
+
+  useEffect(() => {
     if (!isDraftLoaded || !hasDraftInputChanged || !draftEntityId) {
       return undefined;
     }
@@ -153,6 +243,15 @@ export function MobileDiscrepancyDetailsScreen({
 
   const handleSaveResolution = () => {
     setFeedback("");
+    if (!draftEntityId) {
+      setResult({
+        status: "error",
+        title: "Решение не сохранено",
+        text: "Расхождение не выбрано. Вернитесь к списку и откройте карточку заново.",
+      });
+      return;
+    }
+
     saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft()))
       .then((savedDraft) => {
         latestDraftRef.current = savedDraft;
@@ -164,13 +263,27 @@ export function MobileDiscrepancyDetailsScreen({
             }
           })
           .catch(() => {});
+        setResult({
+          status: "success",
+          title: "Решение сохранено",
+          text: "Решение по расхождению добавлено в очередь синхронизации.",
+        });
       })
-      .catch(() => {});
-    setResult({
-      status: "success",
-      title: "Решение сохранено",
-      text: "Решение по расхождению добавлено в очередь синхронизации.",
-    });
+      .catch(() => {
+        setResult({
+          status: "error",
+          title: "Решение не сохранено",
+          text: "Не удалось сохранить локальный черновик. Попробуйте ещё раз.",
+        });
+      });
+  };
+
+  const handleOpenEquipment = () => {
+    const didOpen = onOpenEquipment?.(currentDiscrepancy);
+
+    if (!didOpen) {
+      setFeedback("Оборудование не найдено в текущем локальном обходе");
+    }
   };
 
   return (
@@ -192,13 +305,13 @@ export function MobileDiscrepancyDetailsScreen({
       <main className="mobile-discrepancy-details-content">
         <section className="mobile-discrepancy-context">
           <strong>{currentDiscrepancy.context}</strong>
-          <span>{currentDiscrepancy.locationLine ?? "Корпус А • 2 этаж • Приемное отделение"}</span>
+          <span>{currentDiscrepancy.locationLine ?? "Локальный обход"}</span>
         </section>
 
         <section className="mobile-card mobile-discrepancy-detail-summary">
           <div>
             <h2>{currentDiscrepancy.title}</h2>
-            <p>ID: {currentDiscrepancy.itemCode} • Тип: {currentDiscrepancy.type}</p>
+            <p>ПОЗ: {currentDiscrepancy.itemCode} • Тип: {currentDiscrepancy.type}</p>
           </div>
           <div className="mobile-discrepancy-detail-tags">
             <span className={`is-${currentDiscrepancy.severity}`}>{currentDiscrepancy.severityLabel}</span>
@@ -233,10 +346,17 @@ export function MobileDiscrepancyDetailsScreen({
 
         <section className="mobile-card mobile-discrepancy-detail-block">
           <h3>Фотофиксация</h3>
-          <button type="button" onClick={() => setIsPhotoSheetOpen(true)}>
-            <CameraOutlined aria-hidden="true" />
-            Добавить фото
-          </button>
+          {evidencePhoto ? (
+            <div className="mobile-discrepancy-evidence-photo">
+              {evidencePhoto.url ? <img src={evidencePhoto.url} alt="Фото расхождения" /> : null}
+              <span>{evidencePhoto.name}</span>
+            </div>
+          ) : (
+            <button type="button" onClick={() => setIsPhotoSheetOpen(true)}>
+              <CameraOutlined aria-hidden="true" />
+              Добавить фото
+            </button>
+          )}
         </section>
 
         <section className="mobile-card mobile-discrepancy-detail-block">
@@ -273,10 +393,11 @@ export function MobileDiscrepancyDetailsScreen({
         <button
           type="button"
           onClick={handleSaveResolution}
+          disabled={!draftEntityId}
         >
           Сохранить решение
         </button>
-        <button type="button" onClick={() => onOpenItem?.(currentDiscrepancy.itemCode)}>
+        <button type="button" onClick={handleOpenEquipment}>
           <ExportOutlined aria-hidden="true" />
           Открыть оборудование
         </button>
