@@ -28,6 +28,8 @@ const toneIcons = {
 const operationTypeLabels = {
   DISCREPANCY_RESOLVE: "Расхождение",
   RECEIPT_BATCH_CONFIRM: "Поступление",
+  WAREHOUSE_CREATE: "Создание склада",
+  WAREHOUSE_CLOSE: "Закрытие склада",
   WAREHOUSE_MOVE_CREATE: "Перемещение",
   EQUIPMENT_CHECK_UPDATE: "Осмотр оборудования",
 };

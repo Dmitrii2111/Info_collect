@@ -23,6 +23,8 @@ const PAYLOAD_INCOMPLETE_ERROR = {
 const SUPPORTED_OPERATION_TYPES = new Set([
   OFFLINE_OPERATION_TYPES.DISCREPANCY_RESOLVE,
   OFFLINE_OPERATION_TYPES.RECEIPT_BATCH_CONFIRM,
+  OFFLINE_OPERATION_TYPES.WAREHOUSE_CREATE,
+  OFFLINE_OPERATION_TYPES.WAREHOUSE_CLOSE,
   OFFLINE_OPERATION_TYPES.WAREHOUSE_MOVE_CREATE,
   OFFLINE_OPERATION_TYPES.EQUIPMENT_CHECK_UPDATE,
 ]);
@@ -175,6 +177,18 @@ export function validateOperationForTransport(operation) {
 
   if (operation.type === OFFLINE_OPERATION_TYPES.WAREHOUSE_MOVE_CREATE) {
     return createFailure(WAREHOUSE_MOVE_UNSUPPORTED_ERROR);
+  }
+
+  if (
+    operation.type === OFFLINE_OPERATION_TYPES.WAREHOUSE_CREATE ||
+    operation.type === OFFLINE_OPERATION_TYPES.WAREHOUSE_CLOSE
+  ) {
+    return createFailure({
+      ...CONTRACT_NOT_READY_ERROR,
+      details: {
+        reason: "Backend warehouse create/close contract is intentionally not connected in Package 33",
+      },
+    });
   }
 
   if (operation.type === OFFLINE_OPERATION_TYPES.EQUIPMENT_CHECK_UPDATE) {

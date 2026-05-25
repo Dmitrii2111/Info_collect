@@ -1,111 +1,79 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BarcodeOutlined,
   ClockCircleOutlined,
   InboxOutlined,
   PlusSquareOutlined,
   SwapOutlined,
-  WarningOutlined,
 } from "@ant-design/icons";
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 import { MobileEmptyState } from "../components/MobileEmptyState.jsx";
 import { MobileHeader } from "../components/MobileHeader.jsx";
-import { MobileResultModal } from "../components/MobileResultModal.jsx";
-import { MobileSearchFilterBar } from "../components/MobileSearchFilterBar.jsx";
+import { mobileEquipmentFixtureRooms } from "../data/mobileEquipmentFixtureData.js";
 import { mobileWarehouseData } from "../data/mobileMockData.js";
+import {
+  closeLocalWarehouse,
+  createLocalWarehouseFromRoom,
+  getWarehouseStockTotals,
+  listActiveLocalWarehouses,
+} from "../../domain/warehouse/localWarehouseRepository.js";
 
 const quickActionIcons = {
-  error: WarningOutlined,
   primary: BarcodeOutlined,
   secondary: PlusSquareOutlined,
   warning: SwapOutlined,
 };
 
-function WarehouseItemCard({ item, isSelected, onSelect }) {
-  return (
-    <article
-      className={`mobile-warehouse-item is-${item.tone}${isSelected ? " is-selected" : ""}`}
-      role="button"
-      tabIndex={0}
-      onClick={() => onSelect?.(item)}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onSelect?.(item);
-        }
-      }}
-    >
-      <div className="mobile-warehouse-item-head">
-        <div>
-          <h4>{item.title}</h4>
-          <p>{item.code}</p>
-        </div>
-        <span>{item.status}</span>
-      </div>
-      <div className="mobile-warehouse-item-body">
-        <p>
-          <InboxOutlined aria-hidden="true" />
-          {item.location}
-        </p>
-        {item.warning ? (
-          <p className="is-warning">
-            <WarningOutlined aria-hidden="true" />
-            {item.warning}
-          </p>
-        ) : null}
-      </div>
-      <div className="mobile-warehouse-item-footer">
-        {item.pending ? <SwapOutlined aria-hidden="true" /> : <ClockCircleOutlined aria-hidden="true" />}
-        {item.footer}
-      </div>
-    </article>
-  );
-}
-
 export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, onOpenReceiptBatches, onNavSelect }) {
   const data = mobileWarehouseData;
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState(data.filters[0]);
+  const [warehouses, setWarehouses] = useState([]);
+  const [isLoadingWarehouses, setIsLoadingWarehouses] = useState(true);
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
   const [feedback, setFeedback] = useState("");
-  const [selectedItemId, setSelectedItemId] = useState(null);
-  const [isMoveSheetOpen, setIsMoveSheetOpen] = useState(false);
-  const [result, setResult] = useState(null);
-  const [isNextMoveSuccess, setIsNextMoveSuccess] = useState(true);
-  const positionsRef = useRef(null);
 
-  const visibleItems = useMemo(() => {
-    const normalizedQuery = searchQuery.trim().toLowerCase();
-    const filteredByStatus =
-      activeFilter === "Все" ? data.items : data.items.filter((item) => item.statusKey === activeFilter);
-
-    if (!normalizedQuery) {
-      return filteredByStatus;
-    }
-
-    return filteredByStatus.filter((item) =>
-      [item.title, item.code, item.status, item.location, item.warning]
-        .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(normalizedQuery)),
-    );
-  }, [activeFilter, data.items, searchQuery]);
-
-  const handleItemSelect = (item) => {
-    setSelectedItemId(item.id);
-    onOpenItem?.(item.id);
+  const loadWarehouses = () => {
+    setIsLoadingWarehouses(true);
+    return listActiveLocalWarehouses()
+      .then((nextWarehouses) => {
+        setWarehouses(nextWarehouses);
+        setFeedback("");
+      })
+      .catch(() => {
+        setWarehouses([]);
+        setFeedback("Не удалось загрузить локальные склады");
+      })
+      .finally(() => setIsLoadingWarehouses(false));
   };
 
-  const handleAction = (label) => {
-    if (label === "Открыть спорные" || label === "Спорные позиции") {
-      setFeedback("");
-      setActiveFilter("Спорные");
-      window.requestAnimationFrame(() => positionsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
-      return;
-    }
+  useEffect(() => {
+    loadWarehouses();
+  }, []);
 
-    if (label === "Перемещение") {
+  const activeRoomIds = useMemo(() => new Set(warehouses.map((warehouse) => warehouse.roomId)), [warehouses]);
+  const availableRooms = useMemo(
+    () => mobileEquipmentFixtureRooms.filter((room) => !activeRoomIds.has(room.id)),
+    [activeRoomIds],
+  );
+
+  const stockTotals = useMemo(() => (
+    warehouses.reduce((summary, warehouse) => {
+      const totals = getWarehouseStockTotals(warehouse);
+
+      return {
+        itemsCount: summary.itemsCount + totals.itemsCount,
+        quantityTotal: summary.quantityTotal + totals.quantityTotal,
+      };
+    }, { itemsCount: 0, quantityTotal: 0 })
+  ), [warehouses]);
+  const hasActiveWarehouses = warehouses.length > 0;
+  const summaryStatus = hasActiveWarehouses ? "Локально создано" : data.summary.status;
+  const updatedText = hasActiveWarehouses ? "Локальные склады сохранены на устройстве" : data.summary.updatedAt;
+
+  const handleAction = (label) => {
+    if (label === "Создать склад") {
       setFeedback("");
-      setIsMoveSheetOpen(true);
+      setIsCreateSheetOpen(true);
       return;
     }
 
@@ -119,12 +87,38 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
       return;
     }
 
+    setFeedback(warehouses.length > 0 ? "Нет оборудования для перемещения" : "Склады ещё не созданы");
+  };
+
+  const handleCreateWarehouse = (room) => {
+    createLocalWarehouseFromRoom(room)
+      .then(() => loadWarehouses())
+      .then(() => {
+        setIsCreateSheetOpen(false);
+        setFeedback(`Склад создан: ${room.roomCode ?? room.roomNumber} ${room.roomName ?? ""}`.trim());
+      })
+      .catch((error) => {
+        setFeedback(error?.message ?? "Не удалось создать склад");
+      });
+  };
+
+  const handleCloseWarehouse = (warehouse) => {
+    closeLocalWarehouse(warehouse.id)
+      .then(() => loadWarehouses())
+      .then(() => setFeedback(`Склад закрыт: ${warehouse.roomCode ?? warehouse.roomName}`))
+      .catch((error) => {
+        setFeedback(error?.message ?? "Не удалось закрыть склад");
+      });
+  };
+
+  const handleOpenDevMoveTest = () => {
+    if (!data.devMoveTestItem?.id) {
+      setFeedback("Тестовый сценарий перемещения недоступен");
+      return;
+    }
+
     setFeedback("");
-    setResult({
-      status: "success",
-      title: label,
-      text: "Действие добавлено в очередь складских операций.",
-    });
+    onOpenItem?.(data.devMoveTestItem.id);
   };
 
   return (
@@ -132,7 +126,7 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
       <MobileHeader
         title="Склад"
         onMenu={onOpenMenu}
-        onSync={() => setFeedback("Склад обновлен")}
+        onSync={() => loadWarehouses()}
       />
 
       <main className="mobile-warehouse-content">
@@ -142,21 +136,33 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
               <h2>{data.summary.title}</h2>
               <p>{data.summary.subtitle}</p>
             </div>
-            <span>{data.summary.status}</span>
+            <span>{summaryStatus}</span>
           </div>
 
-          <div className="mobile-warehouse-metrics">
-            {data.summary.metrics.map((metric) => (
-              <div className={`is-${metric.tone}`} key={metric.label}>
-                <span>{metric.label}</span>
-                <strong>{metric.value}</strong>
+          {hasActiveWarehouses ? (
+            <div className="mobile-warehouse-metrics">
+              <div className="is-primary">
+                <span>Склады</span>
+                <strong>{warehouses.length}</strong>
               </div>
-            ))}
-          </div>
+              <div className="is-neutral">
+                <span>Позиции</span>
+                <strong>{stockTotals.itemsCount}</strong>
+              </div>
+              <div className="is-secondary">
+                <span>Остаток</span>
+                <strong>{stockTotals.quantityTotal}</strong>
+              </div>
+            </div>
+          ) : (
+            <MobileEmptyState className="mobile-warehouse-empty">
+              Склады ещё не созданы
+            </MobileEmptyState>
+          )}
 
           <div className="mobile-warehouse-updated">
             <ClockCircleOutlined aria-hidden="true" />
-            {data.summary.updatedAt}
+            {isLoadingWarehouses ? "Загрузка локальных складов" : updatedText}
           </div>
 
           <div className="mobile-warehouse-summary-actions">
@@ -168,50 +174,79 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
           </div>
         </section>
 
-        <MobileSearchFilterBar
-          placeholder="Поиск по оборудованию, ID или помещению"
-          searchValue={searchQuery}
-          onSearchChange={setSearchQuery}
-          filters={data.filters}
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-          filterLabel="Фильтр склада"
-        />
-
         {feedback ? <div className="mobile-warehouse-feedback">{feedback}</div> : null}
 
-        <section className="mobile-warehouse-section" ref={positionsRef}>
-          <h3>Позиции склада</h3>
-          <div className="mobile-warehouse-list">
-            {visibleItems.length > 0 ? (
-              visibleItems.map((item) => (
-                <WarehouseItemCard
-                  isSelected={item.id === selectedItemId}
-                  item={item}
-                  key={item.id}
-                  onSelect={handleItemSelect}
-                />
-              ))
-            ) : (
-              <MobileEmptyState className="mobile-warehouse-empty">Позиции не найдены</MobileEmptyState>
-            )}
-          </div>
+        <section className="mobile-warehouse-section">
+          <h3>Созданные склады</h3>
+          {warehouses.length > 0 ? (
+            <div className="mobile-warehouse-list">
+              {warehouses.map((warehouse) => {
+                const totals = getWarehouseStockTotals(warehouse);
+                const isEmpty = totals.itemsCount === 0 && totals.quantityTotal === 0;
+
+                return (
+                  <article className="mobile-warehouse-item is-neutral" key={warehouse.id}>
+                    <div className="mobile-warehouse-item-head">
+                      <div>
+                        <h4>{warehouse.roomCode} — {warehouse.roomName}</h4>
+                        <p>{warehouse.building} • {warehouse.floor} этаж • {warehouse.departmentName}</p>
+                      </div>
+                      <span>Активен</span>
+                    </div>
+                    <div className="mobile-warehouse-item-body">
+                      <p>
+                        <InboxOutlined aria-hidden="true" />
+                        {isEmpty ? "Остатков нет" : `${totals.itemsCount} позиций • ${totals.quantityTotal} шт.`}
+                      </p>
+                    </div>
+                    <div className="mobile-warehouse-item-footer">
+                      <ClockCircleOutlined aria-hidden="true" />
+                      Создан локально
+                    </div>
+                    <button
+                      className="mobile-secondary-button"
+                      type="button"
+                      disabled={!isEmpty}
+                      onClick={() => handleCloseWarehouse(warehouse)}
+                    >
+                      Закрыть склад
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <MobileEmptyState className="mobile-warehouse-empty">
+              Создайте склад, выбрав помещение из структуры объекта. После этого здесь появятся остатки и перемещения.
+            </MobileEmptyState>
+          )}
         </section>
 
-        {activeFilter === "Спорные" ? (
-          <section className="mobile-warehouse-section">
-            <h3>Спорные позиции</h3>
-            <div className="mobile-warehouse-disputed-list">
-              {visibleItems.map((item) => (
-                <article className={`is-${item.tone}`} key={`disputed-${item.id}`}>
-                  <strong>{item.title}</strong>
-                  <span>{item.code} • {item.status}</span>
-                  <p>{item.warning ?? item.problem ?? "Требуется сверка данных"}</p>
-                </article>
-              ))}
+        <section className="mobile-warehouse-section">
+          <h3>Тестовый сценарий перемещения</h3>
+          <article className="mobile-warehouse-item is-neutral">
+            <div className="mobile-warehouse-item-head">
+              <div>
+                <h4>{data.devMoveTestItem.title}</h4>
+                <p>{data.devMoveTestItem.code}</p>
+              </div>
+              <span>{data.devMoveTestItem.status}</span>
             </div>
-          </section>
-        ) : null}
+            <div className="mobile-warehouse-item-body">
+              <p>
+                <InboxOutlined aria-hidden="true" />
+                {data.devMoveTestItem.location}
+              </p>
+            </div>
+            <div className="mobile-warehouse-item-footer">
+              <SwapOutlined aria-hidden="true" />
+              {data.devMoveTestItem.footer}
+            </div>
+            <button className="mobile-primary-button" type="button" onClick={handleOpenDevMoveTest}>
+              Открыть тест перемещения
+            </button>
+          </article>
+        </section>
 
         <section className="mobile-warehouse-section">
           <h3>Быстрые действия</h3>
@@ -239,72 +274,36 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
 
-      {isMoveSheetOpen ? (
+      {isCreateSheetOpen ? (
         <MobileBottomSheet
-          title="Создать перемещение"
-          subtitle="Заполните минимальные данные для перемещения"
-          mode="sheet"
-          onClose={() => setIsMoveSheetOpen(false)}
-          footer={({ close }) => (
-            <>
-              <button className="mobile-secondary-button" type="button" onClick={() => close(() => setIsMoveSheetOpen(false))}>
-                Отмена
-              </button>
-              <button
-                className="mobile-primary-button"
-                type="button"
-                onClick={() =>
-                  close(() => {
-                    const isSuccess = isNextMoveSuccess;
-                    setIsMoveSheetOpen(false);
-                    setIsNextMoveSuccess((current) => !current);
-                    setResult({
-                      status: isSuccess ? "success" : "error",
-                      title: isSuccess ? "Перемещение создано" : "Не удалось создать перемещение",
-                      text: isSuccess
-                        ? "Заявка сохранена и появится в очереди синхронизации."
-                        : "Проверьте количество и повторите действие.",
-                    });
-                  })
-                }
-              >
-                Создать перемещение
-              </button>
-            </>
-          )}
+          title="Создать склад"
+          subtitle="Выберите помещение из структуры объекта"
+          onClose={() => setIsCreateSheetOpen(false)}
         >
-          <div className="mobile-move-sheet-form">
-            <label>
-              <span>Позиция</span>
-              <select defaultValue={selectedItemId ?? data.items[0]?.id}>
-                {data.items.map((item) => (
-                  <option value={item.id} key={item.id}>{item.title} • {item.code}</option>
-                ))}
-              </select>
-            </label>
-            <label>
-              <span>Откуда</span>
-              <input defaultValue="Склад временного хранения" />
-            </label>
-            <label>
-              <span>Куда</span>
-              <input defaultValue="Корпус А • 2 этаж • Приемное отделение" />
-            </label>
-            <label>
-              <span>Количество или серийный номер</span>
-              <input defaultValue="1" />
-            </label>
+          <div className="mobile-warehouse-list">
+            {availableRooms.length > 0 ? (
+              availableRooms.map((room) => (
+                <article className="mobile-warehouse-item is-neutral" key={room.id}>
+                  <div className="mobile-warehouse-item-head">
+                    <div>
+                      <h4>{room.roomCode} — {room.roomName}</h4>
+                      <p>{room.building} • {room.floor} этаж • {room.departmentName}</p>
+                    </div>
+                    <span>{room.equipment?.length ?? 0} поз.</span>
+                  </div>
+                  <button className="mobile-primary-button" type="button" onClick={() => handleCreateWarehouse(room)}>
+                    Выбрать помещение
+                  </button>
+                </article>
+              ))
+            ) : (
+              <MobileEmptyState className="mobile-warehouse-empty">
+                Все помещения уже используются как активные склады
+              </MobileEmptyState>
+            )}
           </div>
         </MobileBottomSheet>
       ) : null}
-
-      <MobileResultModal
-        isOpen={Boolean(result)}
-        status={result?.status}
-        title={result?.title}
-        text={result?.text}
-        onClose={() => setResult(null)}
-      />
     </div>
   );
 }

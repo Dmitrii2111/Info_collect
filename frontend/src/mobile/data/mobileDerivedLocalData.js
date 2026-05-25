@@ -250,6 +250,8 @@ function getOperationTypeLabel(operationType) {
     DISCREPANCY_RESOLVE: "Расхождение",
     EQUIPMENT_CHECK_UPDATE: "Осмотр оборудования",
     RECEIPT_BATCH_CONFIRM: "Поступление",
+    WAREHOUSE_CREATE: "Создание склада",
+    WAREHOUSE_CLOSE: "Закрытие склада",
     WAREHOUSE_MOVE_CREATE: "Перемещение",
   };
 
@@ -310,14 +312,20 @@ function createOperationHistoryEvent(operation) {
   const type = getOperationTypeLabel(operation.type);
   const errorMessage = operation.error?.message ?? operation.error?.code ?? null;
   const timestamp = operation.updatedAt ?? operation.createdAt ?? null;
+  const titleByType = {
+    WAREHOUSE_CREATE: "Создан склад",
+    WAREHOUSE_CLOSE: "Закрыт склад",
+  };
 
   return {
     id: `queue-history:${operation.id}`,
     timestamp,
     type,
-    title: status.tone === "error" ? `Ошибка отправки: ${type}` : `Операция в очереди: ${type}`,
+    title: titleByType[operation.type] ?? (status.tone === "error" ? `Ошибка отправки: ${type}` : `Операция в очереди: ${type}`),
     context: operation.context?.roomName ?? operation.entityType ?? "Offline queue",
-    item: operation.context?.positionCode ?? operation.entityId ?? operation.context?.draftId,
+    item: operation.context?.roomCode
+      ? `${operation.context.roomCode} • ${operation.context.roomName ?? ""}`.trim()
+      : operation.context?.positionCode ?? operation.entityId ?? operation.context?.draftId,
     user: "Оператор",
     time: formatLocalTime(timestamp),
     date: "Сегодня",
