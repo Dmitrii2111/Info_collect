@@ -33,8 +33,54 @@ export function getWarehouseStockTotals(warehouse) {
   const stockItems = Array.isArray(warehouse?.stockItems) ? warehouse.stockItems : [];
 
   return {
-    itemsCount: stockItems.length,
+    itemsCount: stockItems.filter((item) => getStockQuantity(item) > 0).length,
     quantityTotal: stockItems.reduce((sum, item) => sum + getStockQuantity(item), 0),
+  };
+}
+
+function getMovementHistory(warehouse) {
+  return Array.isArray(warehouse?.movements) ? warehouse.movements : [];
+}
+
+function hasAppliedMovement(warehouses, movementId) {
+  return warehouses.some((warehouse) => (
+    getMovementHistory(warehouse).some((movement) => movement?.movementId === movementId)
+  ));
+}
+
+function getStockItemKey(stockItem) {
+  return [
+    stockItem?.sourceReceiptBatchId,
+    stockItem?.sourceReceiptLineId,
+    stockItem?.positionCode ?? stockItem?.designPositionCode,
+    stockItem?.hasDiscrepancy ? "issue" : "accepted",
+  ].filter(Boolean).join(":");
+}
+
+function createMoveQueueContext(input, sourceWarehouse, sourceStockItem, destination) {
+  return {
+    movementId: input.movementId,
+    sourceWarehouseId: sourceWarehouse.id,
+    sourceWarehouseRoomCode: sourceWarehouse.roomCode,
+    sourceWarehouseRoomName: sourceWarehouse.roomName,
+    sourceStockItemId: sourceStockItem.id,
+    sourceReceiptBatchId: sourceStockItem.sourceReceiptBatchId ?? null,
+    sourceReceiptLineId: sourceStockItem.sourceReceiptLineId ?? null,
+    positionCode: sourceStockItem.positionCode ?? sourceStockItem.designPositionCode ?? null,
+    designPositionCode: sourceStockItem.designPositionCode ?? sourceStockItem.positionCode ?? null,
+    name: sourceStockItem.name ?? "Складская позиция",
+    quantity: Number(input.quantity),
+    unit: sourceStockItem.unit ?? "",
+    destinationType: input.destinationType,
+    destinationWarehouseId: destination?.id ?? null,
+    destinationWarehouseRoomCode: destination?.roomCode ?? null,
+    destinationWarehouseRoomName: destination?.roomName ?? null,
+    destinationDepartmentName: destination?.departmentName ?? null,
+    destinationFloor: destination?.floor ?? null,
+    destinationBuilding: destination?.building ?? destination?.corpus ?? null,
+    movedBy: input.movedBy ?? null,
+    movedAt: input.movedAt,
+    comment: input.comment ?? "",
   };
 }
 
@@ -129,6 +175,20 @@ export function listActiveLocalWarehouses() {
 
 export function getLocalWarehouse(warehouseId) {
   return getRecord(OFFLINE_DB_STORES.cacheMeta, warehouseId).then(normalizeWarehouse);
+}
+
+export function getLocalWarehouseStockItem(stockItemId) {
+  return listActiveLocalWarehouses().then((warehouses) => {
+    for (const warehouse of warehouses) {
+      const stockItem = (warehouse.stockItems ?? []).find((item) => item?.id === stockItemId && getStockQuantity(item) > 0);
+
+      if (stockItem) {
+        return { warehouse, stockItem };
+      }
+    }
+
+    return null;
+  });
 }
 
 export function updateLocalWarehouse(warehouse) {
@@ -284,5 +344,119 @@ export function addReceiptItemsToWarehouse(warehouseId, receiptBatch, options = 
       ...warehouse,
       stockItems: [...stockItems, ...newStockItems],
     });
+  });
+}
+
+export function moveLocalWarehouseStockItem(input = {}) {
+  const quantity = Number(input.quantity);
+
+  if (!input.movementId) {
+    return Promise.reject(createWarehouseError("LOCAL_WAREHOUSE_MOVE_ID_REQUIRED", "Movement id is required"));
+  }
+
+  if (!input.sourceWarehouseId || !input.sourceStockItemId) {
+    return Promise.reject(createWarehouseError("LOCAL_WAREHOUSE_MOVE_SOURCE_REQUIRED", "Источник перемещения не указан"));
+  }
+
+  if (!Number.isFinite(quantity) || quantity <= 0) {
+    return Promise.reject(createWarehouseError("LOCAL_WAREHOUSE_MOVE_QUANTITY_INVALID", "Количество перемещения должно быть больше 0"));
+  }
+
+  if (input.destinationType !== "warehouse") {
+    return Promise.reject(createWarehouseError("LOCAL_WAREHOUSE_MOVE_DESTINATION_TYPE_UNSUPPORTED", "Перемещение с физического склада возможно только на другой склад", input));
+  }
+
+  return listLocalWarehouses().then((warehouses) => {
+    if (hasAppliedMovement(warehouses, input.movementId)) {
+      return { alreadyApplied: true, movementId: input.movementId };
+    }
+
+    const sourceWarehouse = warehouses.find((warehouse) => warehouse.id === input.sourceWarehouseId && warehouse.status === "active");
+
+    if (!sourceWarehouse) {
+      throw createWarehouseError("LOCAL_WAREHOUSE_MOVE_SOURCE_NOT_FOUND", "Исходный склад не найден", input);
+    }
+
+    const sourceStockItem = (sourceWarehouse.stockItems ?? []).find((item) => item.id === input.sourceStockItemId);
+    const availableQuantity = getStockQuantity(sourceStockItem);
+
+    if (!sourceStockItem || availableQuantity <= 0) {
+      throw createWarehouseError("LOCAL_WAREHOUSE_MOVE_STOCK_NOT_FOUND", "Позиция не найдена в остатках склада", input);
+    }
+
+    if (quantity > availableQuantity) {
+      throw createWarehouseError("LOCAL_WAREHOUSE_MOVE_QUANTITY_EXCEEDS_AVAILABLE", "Количество превышает доступный остаток", {
+        availableQuantity,
+        quantity,
+      });
+    }
+
+    const movedAt = input.movedAt ?? nowIso();
+    const destinationWarehouse = warehouses.find((warehouse) => warehouse.id === input.destinationWarehouseId && warehouse.status === "active");
+
+    if (!destinationWarehouse) {
+      throw createWarehouseError("LOCAL_WAREHOUSE_MOVE_DESTINATION_NOT_FOUND", "Склад назначения не найден", input);
+    }
+
+    if (destinationWarehouse?.id === sourceWarehouse.id) {
+      throw createWarehouseError("LOCAL_WAREHOUSE_MOVE_SAME_WAREHOUSE", "Выберите другой склад назначения", input);
+    }
+
+    const movementContext = createMoveQueueContext({ ...input, destinationType: "warehouse", quantity, movedAt }, sourceWarehouse, sourceStockItem, destinationWarehouse);
+    const remainingQuantity = availableQuantity - quantity;
+    const nextSourceStockItems = (sourceWarehouse.stockItems ?? [])
+      .map((item) => (
+        item.id === sourceStockItem.id
+          ? { ...item, quantity: remainingQuantity, updatedAt: movedAt }
+          : item
+      ))
+      .filter((item) => getStockQuantity(item) > 0);
+    const nextSourceWarehouse = {
+      ...sourceWarehouse,
+      stockItems: nextSourceStockItems,
+      movements: [...getMovementHistory(sourceWarehouse), movementContext],
+    };
+
+    const movedStockKey = getStockItemKey(sourceStockItem);
+    const destinationStockItems = Array.isArray(destinationWarehouse.stockItems) ? destinationWarehouse.stockItems : [];
+    const matchingDestinationStock = destinationStockItems.find((item) => getStockItemKey(item) === movedStockKey);
+    const nextDestinationStockItems = matchingDestinationStock
+      ? destinationStockItems.map((item) => (
+        item.id === matchingDestinationStock.id
+          ? {
+              ...item,
+              quantity: getStockQuantity(item) + quantity,
+              updatedAt: movedAt,
+            }
+          : item
+      ))
+      : [
+          ...destinationStockItems,
+          {
+            ...sourceStockItem,
+            id: `${destinationWarehouse.id}:moved:${sourceStockItem.id}`,
+            warehouseId: destinationWarehouse.id,
+            quantity,
+            destinationWarehouseId: destinationWarehouse.id,
+            destinationWarehouseRoomCode: destinationWarehouse.roomCode,
+            destinationWarehouseRoomName: destinationWarehouse.roomName,
+            createdAt: movedAt,
+            updatedAt: movedAt,
+            source: sourceStockItem.source ?? "warehouse_move",
+          },
+        ];
+    const nextDestinationWarehouse = {
+      ...destinationWarehouse,
+      stockItems: nextDestinationStockItems,
+      movements: [...getMovementHistory(destinationWarehouse), movementContext],
+    };
+
+    return updateLocalWarehouse(nextSourceWarehouse)
+      .then((updatedSourceWarehouse) => updateLocalWarehouse(nextDestinationWarehouse)
+        .then((updatedDestinationWarehouse) => ({
+          movement: movementContext,
+          sourceWarehouse: updatedSourceWarehouse,
+          destinationWarehouse: updatedDestinationWarehouse,
+        })));
   });
 }

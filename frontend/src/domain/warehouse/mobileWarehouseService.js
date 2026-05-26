@@ -1,29 +1,5 @@
 import { mobileWarehouseData } from "../../mobile/data/mobileMockData.js";
 
-export function getMobileWarehouseItemById(itemId) {
-  if (!itemId) {
-    return null;
-  }
-
-  if (mobileWarehouseData.devMoveTestItem?.id === itemId) {
-    return mobileWarehouseData.devMoveTestItem;
-  }
-
-  return mobileWarehouseData.items.find((item) => item.id === itemId) ?? null;
-}
-
-export function getMobileWarehouseItemByCode(itemCode) {
-  if (!itemCode) {
-    return null;
-  }
-
-  if (mobileWarehouseData.devMoveTestItem?.code === itemCode) {
-    return mobileWarehouseData.devMoveTestItem;
-  }
-
-  return mobileWarehouseData.items.find((item) => item.code === itemCode) ?? null;
-}
-
 function getStockItemQuantity(stockItem) {
   const quantity = stockItem?.quantity;
 
@@ -36,6 +12,69 @@ function getStockItemQuantity(stockItem) {
   }
 
   return Number(quantity ?? 0) || 0;
+}
+
+export function createMobileWarehouseStockItemCard(warehouse, stockItem) {
+  if (!warehouse || !stockItem) {
+    return null;
+  }
+
+  const quantity = getStockItemQuantity(stockItem);
+  const positionCode = stockItem.positionCode ?? stockItem.designPositionCode ?? "Без ПОЗ";
+  const sourceWarehouseTitle = `${warehouse.roomCode ?? ""} — ${warehouse.roomName ?? ""}`.trim();
+  const receiptLabel = stockItem.receiptDisplayNumber ?? stockItem.sourceReceiptBatchId ?? "не указано";
+
+  return {
+    ...stockItem,
+    id: stockItem.id,
+    isRealStockItem: true,
+    sourceWarehouseId: warehouse.id,
+    sourceStockItemId: stockItem.id,
+    sourceWarehouseRoomCode: warehouse.roomCode ?? null,
+    sourceWarehouseRoomName: warehouse.roomName ?? null,
+    title: stockItem.name ?? "Складская позиция",
+    code: positionCode,
+    status: stockItem.hasDiscrepancy ? "Принято с замечаниями" : "На складе",
+    tone: stockItem.hasDiscrepancy ? "warning" : "neutral",
+    location: sourceWarehouseTitle || "Локальный склад",
+    plannedLocation: `Источник: поступление ${receiptLabel}`,
+    quantity: {
+      total: quantity,
+      available: quantity,
+      reserved: 0,
+      disputed: stockItem.hasDiscrepancy ? quantity : 0,
+      unit: stockItem.unit ?? "",
+    },
+    details: [
+      { label: "ПОЗ", value: positionCode },
+      { label: "Склад", value: sourceWarehouseTitle || "Локальный склад" },
+      { label: "Поступление", value: receiptLabel },
+      { label: "Статус", value: stockItem.hasDiscrepancy ? "Есть расхождение" : "Принято" },
+    ],
+    sync: { status: "Локально", pending: 0, conflicts: stockItem.hasDiscrepancy ? 1 : 0 },
+    history: [
+      {
+        title: "Позиция на складе",
+        meta: stockItem.updatedAt ?? stockItem.createdAt ?? "локально",
+      },
+    ],
+  };
+}
+
+export function getMobileWarehouseItemById(itemId) {
+  if (!itemId) {
+    return null;
+  }
+
+  return mobileWarehouseData.items.find((item) => item.id === itemId) ?? null;
+}
+
+export function getMobileWarehouseItemByCode(itemCode) {
+  if (!itemCode) {
+    return null;
+  }
+
+  return mobileWarehouseData.items.find((item) => item.code === itemCode) ?? null;
 }
 
 export function createWarehouseMoveDestinationOptions({ warehouses = [], rooms = [] } = {}) {

@@ -67,6 +67,7 @@ export function MobileItemCardScreen({
     ? currentItem.history
     : [{ title: "История отсутствует", meta: "Данных пока нет" }];
   const selectedOperator = mobileAssignmentOperators.find((operator) => operator.id === selectedOperatorId) ?? null;
+  const showAssignAction = !currentItem.isRealStockItem;
 
   const handleAction = (label) => {
     setFeedback("");
@@ -214,10 +215,12 @@ export function MobileItemCardScreen({
               <SwapOutlined aria-hidden="true" />
               Переместить
             </button>
-            <button type="button" onClick={handleOpenAssignSheet}>
-              <UserSwitchOutlined aria-hidden="true" />
-              Назначить
-            </button>
+            {showAssignAction ? (
+              <button type="button" onClick={handleOpenAssignSheet}>
+                <UserSwitchOutlined aria-hidden="true" />
+                Назначить
+              </button>
+            ) : null}
           </div>
         </section>
       </main>

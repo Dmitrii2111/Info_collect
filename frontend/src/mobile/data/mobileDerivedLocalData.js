@@ -417,14 +417,20 @@ function createDraftHistoryEvent(draft) {
     : receiptOutcome === "conflict"
       ? "Поступление с замечаниями"
       : `Сохранен черновик: ${type}`;
+  const isWarehouseMove = draft.type === "WAREHOUSE_MOVE";
+  const moveDestination = draft.context?.destinationWarehouseRoomName ??
+    draft.payload?.destinationWarehouseName ??
+    "склад назначения не указан";
 
   return {
     id: `draft-history:${draft.id}`,
     timestamp,
     type,
-    title: type === "Расхождения" ? "Зафиксировано локальное расхождение" : receiptTitle,
-    context: draft.context?.destinationWarehouseName ?? getRoomContext(draft),
-    item: draft.type === "EQUIPMENT_DATA" ? `${getEquipmentTitle(draft)} • ${positionCode}` : draft.entityId,
+    title: isWarehouseMove ? "Перемещение выполнено" : type === "Расхождения" ? "Зафиксировано локальное расхождение" : receiptTitle,
+    context: isWarehouseMove ? `${draft.context?.sourceWarehouseRoomName ?? "Склад"} → ${moveDestination}` : draft.context?.destinationWarehouseName ?? getRoomContext(draft),
+    item: isWarehouseMove
+      ? `${draft.payload?.name ?? "Складская позиция"} • ${draft.payload?.positionCode ?? draft.context?.positionCode ?? "Без ПОЗ"}`
+      : draft.type === "EQUIPMENT_DATA" ? `${getEquipmentTitle(draft)} • ${positionCode}` : draft.entityId,
     user: draft.context?.operatorName ?? draft.payload?.operatorName ?? "Оператор",
     time: formatLocalTime(timestamp),
     date: "Сегодня",
@@ -433,6 +439,8 @@ function createDraftHistoryEvent(draft) {
     tone: type === "Расхождения" ? "error" : "info",
     description: isEquipmentIssueDraft(draft)
       ? getEquipmentIssueReason(draft)
+      : isWarehouseMove
+        ? `${draft.payload?.quantity ?? draft.context?.quantity ?? ""} ${draft.payload?.unit ?? draft.context?.unit ?? ""}`.trim()
       : receiptOutcome === "placed"
         ? "Поступление размещено на локальный склад"
         : receiptOutcome === "placed_with_discrepancy"
@@ -449,6 +457,12 @@ function createDraftHistoryEvent(draft) {
         { label: "Партия", value: draft.context?.batchNumber ?? draft.entityId },
         { label: "Склад", value: draft.context?.destinationWarehouseName ?? "Не выбран" },
         { label: "Объем", value: `${draft.context?.positionsCount ?? draft.payload?.positions?.length ?? 0} поз. • ${draft.context?.totalQuantity ?? draft.payload?.actualQuantity ?? ""} шт.` },
+      ] : []),
+      ...(isWarehouseMove ? [
+        { label: "ПОЗ", value: draft.payload?.positionCode ?? draft.context?.positionCode ?? "Без ПОЗ" },
+        { label: "Источник", value: draft.context?.sourceWarehouseRoomName ?? draft.payload?.sourceWarehouseId ?? "Склад" },
+        { label: "Назначение", value: moveDestination },
+        { label: "Количество", value: `${draft.payload?.quantity ?? draft.context?.quantity ?? ""} ${draft.payload?.unit ?? draft.context?.unit ?? ""}`.trim() },
       ] : []),
     ],
   };
@@ -469,18 +483,26 @@ function createOperationHistoryEvent(operation) {
         : null,
     WAREHOUSE_CREATE: "Создан склад",
     WAREHOUSE_CLOSE: "Закрыт склад",
+    WAREHOUSE_MOVE_CREATE: "Перемещение выполнено",
   };
+  const moveDestination = operation.context?.destinationWarehouseRoomName ??
+    operation.context?.destinationWarehouseName ??
+    "склад назначения не указан";
 
   return {
     id: `queue-history:${operation.id}`,
     timestamp,
     type,
     title: titleByType[operation.type] ?? (status.tone === "error" ? `Ошибка отправки: ${type}` : `Операция в очереди: ${type}`),
-    context: operation.context?.destinationWarehouseName ?? operation.context?.roomName ?? operation.entityType ?? "Offline queue",
+    context: operation.type === "WAREHOUSE_MOVE_CREATE"
+      ? `${operation.context?.sourceWarehouseRoomName ?? "Склад"} → ${moveDestination}`
+      : operation.context?.destinationWarehouseName ?? operation.context?.roomName ?? operation.entityType ?? "Offline queue",
     item: operation.context?.roomCode
       ? `${operation.context.roomCode} • ${operation.context.roomName ?? ""}`.trim()
-      : operation.context?.positionCode ?? operation.entityId ?? operation.context?.draftId,
-    user: operation.context?.operatorName ?? "Оператор",
+      : operation.type === "WAREHOUSE_MOVE_CREATE"
+        ? `${operation.context?.name ?? "Складская позиция"} • ${operation.context?.positionCode ?? "Без ПОЗ"}`
+        : operation.context?.positionCode ?? operation.entityId ?? operation.context?.draftId,
+    user: operation.context?.operatorName ?? operation.context?.movedBy ?? "Оператор",
     time: formatLocalTime(timestamp),
     date: "Сегодня",
     ...status,
@@ -494,6 +516,12 @@ function createOperationHistoryEvent(operation) {
         { label: "Партия", value: operation.context?.batchNumber ?? operation.entityId },
         { label: "Склад", value: operation.context?.destinationWarehouseName ?? "Не выбран" },
         { label: "Объем", value: `${operation.context?.positionsCount ?? 0} поз. • ${operation.context?.totalQuantity ?? ""} шт.` },
+      ] : []),
+      ...(operation.type === "WAREHOUSE_MOVE_CREATE" ? [
+        { label: "Оператор", value: operation.context?.operatorName ?? operation.context?.movedBy ?? "Оператор" },
+        { label: "Источник", value: operation.context?.sourceWarehouseRoomName ?? operation.context?.sourceWarehouseId ?? "Склад" },
+        { label: "Назначение", value: moveDestination },
+        { label: "Количество", value: `${operation.context?.quantity ?? ""} ${operation.context?.unit ?? ""}`.trim() },
       ] : []),
       { label: "Ошибка", value: errorMessage },
     ],

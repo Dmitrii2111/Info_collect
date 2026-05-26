@@ -14,6 +14,7 @@ import {
 import { MobileBottomNav } from "../components/MobileBottomNav.jsx";
 import { MobileBottomSheet } from "../components/MobileBottomSheet.jsx";
 import { mobileMoveItemData } from "../data/mobileMockData.js";
+import { listActiveLocalWarehouses, moveLocalWarehouseStockItem } from "../../domain/warehouse/localWarehouseRepository.js";
 import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_TYPES,
@@ -37,7 +38,410 @@ function getAvailableQuantity(item) {
   return Number.parseInt(quantity, 10) || 1;
 }
 
-export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }) {
+function getRealMoveDisplayQuantity(value) {
+  const quantity = Number(value);
+
+  return Number.isFinite(quantity) ? quantity : 0;
+}
+
+function createMovementId() {
+  return `warehouse-move:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function MobileRealMoveItemScreen({ activeNavKey, item, onBack, onMoveSaved, onNavSelect, operatorName }) {
+  const availableQuantity = Math.max(getAvailableQuantity(item), 0);
+  const draftEntityId = item?.sourceStockItemId ?? item?.id;
+  const latestDraftRef = useRef(null);
+  const [movementId, setMovementId] = useState(() => createMovementId());
+  const [quantity, setQuantity] = useState(Math.min(availableQuantity, 1) || 1);
+  const [destinationId, setDestinationId] = useState("");
+  const [warehouses, setWarehouses] = useState([]);
+  const [comment, setComment] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [activeOverlay, setActiveOverlay] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const warehouseOptions = warehouses.filter((warehouse) => warehouse.id !== item?.sourceWarehouseId);
+  const destinationOptions = warehouseOptions;
+  const selectedWarehouse = warehouseOptions.find((warehouse) => warehouse.id === destinationId) ?? null;
+  const selectedDestination = selectedWarehouse;
+  const destinationLabel = `${selectedWarehouse?.roomCode ?? ""} — ${selectedWarehouse?.roomName ?? ""}`.trim();
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    listActiveLocalWarehouses()
+      .then((nextWarehouses) => {
+        if (isCancelled) {
+          return;
+        }
+
+        const nextWarehouseOptions = nextWarehouses.filter((warehouse) => warehouse.id !== item?.sourceWarehouseId);
+        setWarehouses(nextWarehouses);
+        setDestinationId(nextWarehouseOptions[0]?.id ?? "");
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setWarehouses([]);
+          setDestinationId("");
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [item?.sourceWarehouseId]);
+
+  useEffect(() => {
+    if (!draftEntityId) {
+      return;
+    }
+
+    findMobileDraftByEntity({
+      type: MOBILE_DRAFT_TYPES.WAREHOUSE_MOVE,
+      entityType: MOBILE_DRAFT_ENTITY_TYPES.warehouseItem,
+      entityId: draftEntityId,
+      sourceScreen: DRAFT_SOURCE_SCREEN,
+    })
+      .then((draft) => {
+        latestDraftRef.current = draft;
+        const payload = draft?.payload ?? {};
+
+        if (payload.movementId) {
+          setMovementId(payload.movementId);
+        }
+
+        if (payload.quantity) {
+          setQuantity(Math.min(Math.max(Number(payload.quantity) || 1, 1), availableQuantity || 1));
+        }
+
+        if (payload.destinationWarehouseId) {
+          setDestinationId(payload.destinationWarehouseId);
+        }
+
+        if (typeof payload.comment === "string") {
+          setComment(payload.comment);
+        }
+      })
+      .catch(() => {});
+  }, [availableQuantity, draftEntityId]);
+
+  useEffect(() => {
+    if (destinationOptions.length === 0) {
+      setDestinationId("");
+      return;
+    }
+
+    if (!destinationOptions.some((destination) => destination.id === destinationId)) {
+      setDestinationId(destinationOptions[0].id);
+    }
+  }, [destinationId, destinationOptions]);
+
+  const createCurrentDraft = (movementContext) => createMobileDraft({
+    ...(latestDraftRef.current ?? {}),
+    type: MOBILE_DRAFT_TYPES.WAREHOUSE_MOVE,
+    entityType: MOBILE_DRAFT_ENTITY_TYPES.warehouseItem,
+    entityId: draftEntityId,
+    sourceScreen: DRAFT_SOURCE_SCREEN,
+    payload: {
+      movementId,
+      sourceWarehouseId: item?.sourceWarehouseId ?? null,
+      sourceStockItemId: item?.sourceStockItemId ?? item?.id ?? null,
+      sourceReceiptBatchId: item?.sourceReceiptBatchId ?? null,
+      sourceReceiptLineId: item?.sourceReceiptLineId ?? null,
+      positionCode: item?.positionCode ?? item?.designPositionCode ?? item?.code ?? null,
+      designPositionCode: item?.designPositionCode ?? item?.positionCode ?? item?.code ?? null,
+      name: item?.name ?? item?.title ?? "Складская позиция",
+      quantity: Number(quantity),
+      unit: item?.unit ?? item?.quantity?.unit ?? "",
+      destinationType: "warehouse",
+      destinationWarehouseId: selectedWarehouse?.id ?? null,
+      destinationWarehouseName: destinationLabel,
+      movedBy: operatorName ?? "Оператор",
+      movedAt: movementContext?.movedAt ?? new Date().toISOString(),
+      comment,
+    },
+    context: {
+      ...((latestDraftRef.current?.context) ?? {}),
+      ...(movementContext ?? {}),
+      operatorName: operatorName ?? "Оператор",
+      itemCode: item?.code ?? item?.positionCode ?? item?.designPositionCode ?? null,
+      itemId: item?.id ?? null,
+    },
+  });
+
+  const validateMove = () => {
+    const nextQuantity = Number(quantity);
+
+    if (!item?.isRealStockItem || !item?.sourceWarehouseId || !item?.sourceStockItemId) {
+      return "Позиция склада не выбрана";
+    }
+
+    if (!Number.isFinite(nextQuantity) || nextQuantity <= 0) {
+      return "Количество перемещения должно быть больше 0";
+    }
+
+    if (nextQuantity > availableQuantity) {
+      return "Количество превышает доступный остаток";
+    }
+
+    if (!selectedDestination) {
+      return "Нет склада назначения. Создайте ещё один склад.";
+    }
+
+    return "";
+  };
+
+  const handleSave = () => {
+    const validationMessage = validateMove();
+
+    if (validationMessage) {
+      setFeedback(validationMessage);
+      return;
+    }
+
+    setFeedback("");
+    setActiveOverlay("confirm");
+  };
+
+  const handleConfirmSave = () => {
+    const validationMessage = validateMove();
+
+    if (validationMessage) {
+      setFeedback(validationMessage);
+      setActiveOverlay(null);
+      return;
+    }
+
+    setIsSaving(true);
+    const movedAt = new Date().toISOString();
+
+    moveLocalWarehouseStockItem({
+      movementId,
+      sourceWarehouseId: item.sourceWarehouseId,
+      sourceStockItemId: item.sourceStockItemId,
+      quantity: Number(quantity),
+      destinationType: "warehouse",
+      destinationWarehouseId: selectedWarehouse?.id,
+      movedBy: operatorName ?? "Оператор",
+      movedAt,
+      comment,
+    })
+      .then((moveResult) => {
+        const movementContext = moveResult?.movement ?? {
+          movementId,
+          movedAt,
+          quantity: Number(quantity),
+          destinationType: "warehouse",
+        };
+
+        return saveMobileDraft(markMobileDraftReadyToQueue(createCurrentDraft(movementContext)));
+      })
+      .then((savedDraft) => {
+        latestDraftRef.current = savedDraft;
+        return enqueueMobileDraft(savedDraft);
+      })
+      .then((result) => {
+        if (result?.draft) {
+          latestDraftRef.current = result.draft;
+        }
+
+        onMoveSaved?.();
+        setFeedback("");
+        setActiveOverlay("success");
+      })
+      .catch((error) => {
+        setFeedback(error?.message ?? "Не удалось сохранить перемещение");
+        setActiveOverlay(null);
+      })
+      .finally(() => setIsSaving(false));
+  };
+
+  return (
+    <div className="mobile-move-item-screen">
+      <header className="mobile-move-header">
+        <div>
+          <button type="button" aria-label="Назад к карточке позиции" onClick={onBack}>
+            <ArrowLeftOutlined aria-hidden="true" />
+          </button>
+          <h1>Перемещение</h1>
+          <button type="button" aria-label="Синхронизация" onClick={() => setFeedback("Изменения будут отправлены на экране синхронизации")}>
+            <SyncOutlined aria-hidden="true" />
+          </button>
+        </div>
+      </header>
+
+      <main className="mobile-move-content">
+        <section className="mobile-card mobile-move-source">
+          <div>
+            <h2>{item?.title ?? "Складская позиция"}</h2>
+            <span>{item?.code ?? "Без ПОЗ"}</span>
+          </div>
+          <p>
+            <InboxOutlined aria-hidden="true" />
+            {item?.location ?? "Локальный склад"}
+          </p>
+          <small>
+            Доступно: <strong>{availableQuantity} {item?.quantity?.unit ?? item?.unit ?? ""}</strong>
+          </small>
+        </section>
+
+        <section className="mobile-card mobile-move-distribution">
+          <div>
+            <h3>Одно направление</h3>
+            <span>{destinationOptions.length} складов доступно</span>
+          </div>
+          <div className="mobile-move-stats">
+            <span>
+              Доступно
+              <strong>{availableQuantity}</strong>
+            </span>
+            <span>
+              Перемещается
+              <strong>{getRealMoveDisplayQuantity(quantity)}</strong>
+            </span>
+            <span>
+              Останется
+              <strong>{Math.max(availableQuantity - getRealMoveDisplayQuantity(quantity), 0)}</strong>
+            </span>
+          </div>
+        </section>
+
+        <section className="mobile-move-destinations">
+          <div className="mobile-move-destination-head">
+            <div>
+              <h3>Куда переместить</h3>
+              <p>Выберите склад назначения</p>
+            </div>
+          </div>
+
+          <div className="mobile-move-sheet-form">
+            <label>
+              <span>Склад назначения</span>
+              <select
+                value={destinationId}
+                disabled={destinationOptions.length === 0}
+                onChange={(event) => {
+                  setDestinationId(event.target.value);
+                  setFeedback("");
+                }}
+              >
+                {destinationOptions.map((destination) => (
+                  <option value={destination.id} key={destination.id}>
+                    {destination.roomCode ?? destination.roomNumber} — {destination.roomName ?? destination.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {destinationOptions.length === 0 ? (
+              <div className="mobile-move-feedback">Нет склада назначения. Создайте ещё один склад.</div>
+            ) : null}
+            <label>
+              <span>Количество</span>
+              <input
+                type="number"
+                min="1"
+                max={availableQuantity}
+                value={quantity}
+                onChange={(event) => {
+                  setQuantity(event.target.value);
+                  setFeedback("");
+                }}
+              />
+            </label>
+          </div>
+        </section>
+
+        <label className="mobile-move-comment">
+          <span>Комментарий</span>
+          <textarea
+            placeholder="Добавьте комментарий к перемещению"
+            value={comment}
+            rows={4}
+            onChange={(event) => setComment(event.target.value)}
+          />
+        </label>
+
+        {feedback ? <div className="mobile-move-feedback">{feedback}</div> : null}
+      </main>
+
+      <div className="mobile-move-action-bar">
+        <button type="button" onClick={onBack}>Отмена</button>
+        <button type="button" disabled={isSaving || availableQuantity <= 0} onClick={handleSave}>Сохранить перемещение</button>
+      </div>
+
+      <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />
+
+      {activeOverlay === "confirm" ? (
+        <MobileBottomSheet
+          title="Сохранить перемещение?"
+          subtitle="Проверьте направление и количество."
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          footer={({ close }) => (
+            <div className="mobile-overlay-actions is-vertical">
+              <button type="button" disabled={isSaving} onClick={() => close(handleConfirmSave)}>Да, сохранить</button>
+              <button type="button" onClick={() => close()}>Вернуться к редактированию</button>
+            </div>
+          )}
+        >
+          <div className="mobile-confirm-context">
+            <h3>{item?.title ?? "Складская позиция"}</h3>
+            <p>ПОЗ: {item?.code ?? "Без ПОЗ"}</p>
+            <span>
+              <InboxOutlined aria-hidden="true" />
+              Источник: {item?.location ?? "Локальный склад"}
+            </span>
+          </div>
+          <div className="mobile-confirm-destinations">
+            <h3>Направление</h3>
+            <p>
+              <span>{destinationLabel || "Не выбрано"}</span>
+              <strong>{quantity} {item?.quantity?.unit ?? item?.unit ?? ""}</strong>
+            </p>
+          </div>
+          <div className="mobile-confirm-note">
+            <SyncOutlined aria-hidden="true" />
+            <p>Перемещение будет добавлено в очередь синхронизации.</p>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+
+      {activeOverlay === "success" ? (
+        <MobileBottomSheet
+          title="Успех"
+          subtitle="Перемещение сохранено"
+          mode="modal"
+          onClose={() => setActiveOverlay(null)}
+          className="mobile-success-sheet"
+        >
+          <div className="mobile-success-icon">
+            <CheckCircleOutlined aria-hidden="true" />
+          </div>
+          <div className="mobile-success-context">
+            <div>
+              <InboxOutlined aria-hidden="true" />
+            </div>
+            <div>
+              <h3>{item?.title ?? "Складская позиция"}</h3>
+              <p>{quantity} {item?.quantity?.unit ?? item?.unit ?? ""} → {destinationLabel}</p>
+            </div>
+          </div>
+          <div className="mobile-confirm-note">
+            <SyncOutlined aria-hidden="true" />
+            <p>Изменения будут отправлены при следующей синхронизации.</p>
+          </div>
+          <div className="mobile-success-actions">
+            <button type="button" onClick={onBack}>К карточке позиции</button>
+            <button type="button" onClick={() => onNavSelect("warehouse")}>К складу</button>
+          </div>
+        </MobileBottomSheet>
+      ) : null}
+    </div>
+  );
+}
+
+function MobileLegacyMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }) {
   const data = mobileMoveItemData;
   const currentItem = item ?? {
     title: "Позиция не выбрана",
@@ -733,4 +1137,12 @@ export function MobileMoveItemScreen({ activeNavKey, item, onBack, onNavSelect }
       ) : null}
     </div>
   );
+}
+
+export function MobileMoveItemScreen(props) {
+  if (props.item?.isRealStockItem) {
+    return <MobileRealMoveItemScreen {...props} />;
+  }
+
+  return <MobileLegacyMoveItemScreen {...props} />;
 }

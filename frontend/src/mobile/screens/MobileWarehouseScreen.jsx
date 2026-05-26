@@ -25,6 +25,18 @@ const quickActionIcons = {
   warning: SwapOutlined,
 };
 
+function getStockItemQuantity(stockItem) {
+  if (typeof stockItem?.quantity === "number") {
+    return stockItem.quantity;
+  }
+
+  if (stockItem?.quantity && typeof stockItem.quantity === "object") {
+    return Number(stockItem.quantity.available ?? stockItem.quantity.total ?? 0);
+  }
+
+  return Number(stockItem?.quantity ?? 0) || 0;
+}
+
 export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, onOpenReceiptBatches, onNavSelect }) {
   const data = mobileWarehouseData;
   const [warehouses, setWarehouses] = useState([]);
@@ -111,16 +123,6 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
       });
   };
 
-  const handleOpenDevMoveTest = () => {
-    if (!data.devMoveTestItem?.id) {
-      setFeedback("Тестовый сценарий перемещения недоступен");
-      return;
-    }
-
-    setFeedback("");
-    onOpenItem?.(data.devMoveTestItem.id);
-  };
-
   return (
     <div className="mobile-warehouse-screen">
       <MobileHeader
@@ -200,15 +202,27 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
                       </p>
                       {!isEmpty ? (
                         <div className="mobile-warehouse-stock-list">
-                          {(warehouse.stockItems ?? []).map((stockItem) => (
-                            <div className="mobile-warehouse-stock-item" key={stockItem.id}>
+                          {(warehouse.stockItems ?? []).filter((stockItem) => getStockItemQuantity(stockItem) > 0).map((stockItem) => (
+                            <div
+                              className="mobile-warehouse-stock-item"
+                              role="button"
+                              tabIndex={0}
+                              key={stockItem.id}
+                              onClick={() => onOpenItem?.(stockItem.id)}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter" || event.key === " ") {
+                                  event.preventDefault();
+                                  onOpenItem?.(stockItem.id);
+                                }
+                              }}
+                            >
                               <div>
                                 <strong>{stockItem.positionCode ?? stockItem.designPositionCode ?? "Без ПОЗ"}</strong>
                                 <span>{stockItem.name}</span>
                                 <small>Источник: поступление {stockItem.receiptDisplayNumber ?? ""}</small>
                                 {stockItem.hasDiscrepancy ? <small>Есть расхождение: {stockItem.discrepancyReason ?? "требуется проверка"}</small> : null}
                               </div>
-                              <em>{stockItem.quantity} {stockItem.unit}</em>
+                              <em>{getStockItemQuantity(stockItem)} {stockItem.unit}</em>
                             </div>
                           ))}
                         </div>
@@ -235,32 +249,6 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
               Создайте склад, выбрав помещение из структуры объекта. После этого здесь появятся остатки и перемещения.
             </MobileEmptyState>
           )}
-        </section>
-
-        <section className="mobile-warehouse-section">
-          <h3>Тестовый сценарий перемещения</h3>
-          <article className="mobile-warehouse-item is-neutral">
-            <div className="mobile-warehouse-item-head">
-              <div>
-                <h4>{data.devMoveTestItem.title}</h4>
-                <p>{data.devMoveTestItem.code}</p>
-              </div>
-              <span>{data.devMoveTestItem.status}</span>
-            </div>
-            <div className="mobile-warehouse-item-body">
-              <p>
-                <InboxOutlined aria-hidden="true" />
-                {data.devMoveTestItem.location}
-              </p>
-            </div>
-            <div className="mobile-warehouse-item-footer">
-              <SwapOutlined aria-hidden="true" />
-              {data.devMoveTestItem.footer}
-            </div>
-            <button className="mobile-primary-button" type="button" onClick={handleOpenDevMoveTest}>
-              Открыть тест перемещения
-            </button>
-          </article>
         </section>
 
         <section className="mobile-warehouse-section">

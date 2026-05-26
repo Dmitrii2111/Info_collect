@@ -33,6 +33,7 @@ import {
   getMobileRoomById,
 } from "../domain/objects/index.js";
 import { getMobileWarehouseItemById } from "../domain/warehouse/index.js";
+import { createMobileWarehouseStockItemCard } from "../domain/warehouse/mobileWarehouseService.js";
 import { listLocalWarehouses } from "../domain/warehouse/localWarehouseRepository.js";
 import { applyLocalReceiptStatesToBatches, listLocalReceiptStates } from "../domain/receipts/localReceiptRepository.js";
 import { createLocalDiscrepanciesData, createLocalHistoryData } from "./data/mobileDerivedLocalData.js";
@@ -1029,7 +1030,12 @@ export function MobileShell() {
   const selectedEquipment = selectedRoomWithEquipmentOverrides?.equipment?.find((item) => item.id === selectedEquipmentId) ?? (selectedDepartment
     ? getMobileEquipmentById(selectedObjectId, selectedDepartmentId, selectedRoomId, selectedEquipmentId)
     : getMobileInspectionEquipmentById(selectedInspectionId, selectedRoomId, selectedEquipmentId));
-  const selectedWarehouseItem = getMobileWarehouseItemById(selectedWarehouseItemId);
+  const selectedWarehouseStockItem = localWarehouses
+    .flatMap((warehouse) => (warehouse.stockItems ?? []).map((stockItem) => ({ warehouse, stockItem })))
+    .find(({ stockItem }) => stockItem.id === selectedWarehouseItemId);
+  const selectedWarehouseItem = selectedWarehouseStockItem
+    ? createMobileWarehouseStockItemCard(selectedWarehouseStockItem.warehouse, selectedWarehouseStockItem.stockItem)
+    : getMobileWarehouseItemById(selectedWarehouseItemId);
   const selectedReceiptBatch = receiptBatches.find((batch) => batch.id === selectedReceiptBatchId) ?? null;
   const selectedDiscrepancy = discrepanciesData.discrepancies.find((item) => item.id === selectedDiscrepancyId) ?? null;
   const roomInspectionContext = selectedDepartment ?? {
@@ -1144,7 +1150,13 @@ export function MobileShell() {
         activeNavKey="warehouse"
         item={selectedWarehouseItem}
         onBack={() => setActiveScreen("itemCard")}
+        onMoveSaved={() => {
+          listLocalWarehouses()
+            .then(setLocalWarehouses)
+            .catch(() => {});
+        }}
         onNavSelect={handleNavSelect}
+        operatorName={savedSession.user?.name ?? DEFAULT_MOBILE_USER.name}
       />
     ) : activeScreen === "receiptBatches" ? (
       <MobileReceiptBatchesScreen
