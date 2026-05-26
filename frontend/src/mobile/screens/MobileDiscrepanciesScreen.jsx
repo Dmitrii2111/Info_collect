@@ -30,7 +30,10 @@ function DiscrepancyCard({ item, isSelected, onSelect }) {
       }}
     >
       <div>
-        <span>{item.context}</span>
+        <span>
+          {item.context}
+          {item.locationBadge ? <mark>{item.locationBadge}</mark> : null}
+        </span>
         <h3>{item.title}</h3>
         <small>ПОЗ: {item.itemCode}</small>
       </div>
@@ -43,6 +46,12 @@ function DiscrepancyCard({ item, isSelected, onSelect }) {
         <p>
           <SyncOutlined aria-hidden="true" />
           {item.comment}
+        </p>
+      ) : null}
+      {item.sourceType === "receipt" ? (
+        <p>
+          <ClockCircleOutlined aria-hidden="true" />
+          {item.details?.find((detail) => detail.label === "Поступление")?.value} • {item.details?.find((detail) => detail.label === "Количество по факту")?.value}
         </p>
       ) : null}
       <footer>

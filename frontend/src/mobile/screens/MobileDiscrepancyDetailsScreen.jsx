@@ -77,6 +77,7 @@ export function MobileDiscrepancyDetailsScreen({
   const discrepancyId = currentDiscrepancy.id ?? null;
   const itemCode = currentDiscrepancy.itemCode ?? null;
   const draftEntityId = discrepancy ? (discrepancyId ?? itemCode) : null;
+  const canOpenEquipment = currentDiscrepancy.sourceType !== "receipt";
 
   const createCurrentDraft = () => createMobileDraft({
     ...(latestDraftRef.current ?? {}),
@@ -235,6 +236,13 @@ export function MobileDiscrepancyDetailsScreen({
     setResolution(nextResolution);
     setHasDraftInputChanged(true);
   };
+  const receiptDetails = currentDiscrepancy.sourceType === "receipt"
+    ? {
+        receipt: currentDiscrepancy.details?.filter((detail) => ["Поступление", "Документ", "Поставщик"].includes(detail.label)) ?? [],
+        position: currentDiscrepancy.details?.filter((detail) => ["ПОЗ", "Наименование", "Количество по документу", "Количество по факту"].includes(detail.label)) ?? [],
+        placement: currentDiscrepancy.details?.filter((detail) => ["Склад", "Выявил", "Когда", "Причина"].includes(detail.label)) ?? [],
+      }
+    : null;
 
   const handleCommentChange = (nextComment) => {
     setComment(nextComment);
@@ -305,7 +313,10 @@ export function MobileDiscrepancyDetailsScreen({
       <main className="mobile-discrepancy-details-content">
         <section className="mobile-discrepancy-context">
           <strong>{currentDiscrepancy.context}</strong>
-          <span>{currentDiscrepancy.locationLine ?? "Локальный обход"}</span>
+          <span>
+            {currentDiscrepancy.locationLine ?? "Локальный обход"}
+            {currentDiscrepancy.locationBadge ? <mark>{currentDiscrepancy.locationBadge}</mark> : null}
+          </span>
         </section>
 
         <section className="mobile-card mobile-discrepancy-detail-summary">
@@ -325,14 +336,26 @@ export function MobileDiscrepancyDetailsScreen({
               <p>{currentDiscrepancy.comment ?? "Требуется уточнение и подтверждение на месте"}</p>
             </div>
           </div>
-          <div className="mobile-discrepancy-detail-grid">
-            {(currentDiscrepancy.details ?? []).map((detail) => (
-              <div key={detail.label}>
-                <span>{detail.label}</span>
-                <strong>{detail.value}</strong>
-              </div>
-            ))}
-          </div>
+          {!receiptDetails ? (
+            <div className="mobile-discrepancy-detail-grid">
+              {(currentDiscrepancy.details ?? []).map((detail) => (
+                <div key={detail.label}>
+                  <span>{detail.label}</span>
+                  <strong>{detail.value}</strong>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          {receiptDetails ? (
+            <div className="mobile-discrepancy-detail-grid">
+              {[...receiptDetails.receipt, ...receiptDetails.position, ...receiptDetails.placement].map((detail) => (
+                <div key={`receipt-${detail.label}`}>
+                  <span>{detail.label}</span>
+                  <strong>{detail.value}</strong>
+                </div>
+              ))}
+            </div>
+          ) : null}
           <div className="mobile-discrepancy-detail-history">
             <h3>История</h3>
             {(currentDiscrepancy.history ?? []).map((event) => (
@@ -397,10 +420,17 @@ export function MobileDiscrepancyDetailsScreen({
         >
           Сохранить решение
         </button>
-        <button type="button" onClick={handleOpenEquipment}>
-          <ExportOutlined aria-hidden="true" />
-          Открыть оборудование
-        </button>
+        {canOpenEquipment ? (
+          <button type="button" onClick={handleOpenEquipment}>
+            <ExportOutlined aria-hidden="true" />
+            Открыть оборудование
+          </button>
+        ) : (
+          <button type="button" onClick={() => setFeedback("Расхождение относится к поступлению на склад")}>
+            <ExportOutlined aria-hidden="true" />
+            Открыть склад
+          </button>
+        )}
       </div>
 
       <MobileBottomNav activeKey={activeNavKey} onSelect={onNavSelect} />

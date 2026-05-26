@@ -177,8 +177,116 @@ function isEquipmentIssueDraft(draft) {
     hasProblemEvidence;
 }
 
-export function createLocalDiscrepanciesData(drafts = [], operations = []) {
-  const discrepancies = drafts
+function createReceiptStockDiscrepancy(warehouse, stockItem) {
+  const timestamp = stockItem.identifiedAt ?? stockItem.updatedAt ?? stockItem.createdAt ?? null;
+  const positionCode = stockItem.positionCode ?? stockItem.designPositionCode ?? "Без ПОЗ";
+  const reason = stockItem.discrepancyReason ?? "Расхождение при поступлении";
+  const warehouseLabel = `${warehouse.roomCode ?? stockItem.destinationWarehouseRoomCode ?? ""} ${warehouse.roomName ?? stockItem.destinationWarehouseRoomName ?? ""}`.trim();
+  const receiptLabel = stockItem.receiptDisplayNumber ?? stockItem.sourceReceiptBatchId;
+
+  return {
+    id: `receipt-discrepancy:${stockItem.sourceReceiptBatchId}:${stockItem.sourceReceiptLineId}`,
+    sourceType: "receipt",
+    sourceReceiptBatchId: stockItem.sourceReceiptBatchId,
+    sourceReceiptLineId: stockItem.sourceReceiptLineId,
+    warehouseId: warehouse.id,
+    equipmentId: null,
+    entityId: null,
+    positionCode,
+    designPositionCode: stockItem.designPositionCode ?? positionCode,
+    updatedAt: timestamp,
+    title: stockItem.name ?? "Позиция поступления",
+    itemCode: positionCode,
+    context: warehouseLabel || "Локальный склад",
+    locationBadge: warehouse.status === "active" ? "Склад" : null,
+    type: "Поступление",
+    reason,
+    comment: Array.isArray(stockItem.discrepancyReasons) && stockItem.discrepancyReasons.length > 0
+      ? stockItem.discrepancyReasons.join(", ")
+      : stockItem.discrepancyComment || stockItem.discrepancyReason || null,
+    date: "Сегодня",
+    responsible: stockItem.identifiedBy ?? "Оператор",
+    locationLine: [warehouse.building ?? warehouse.corpus, warehouse.floor ? `${warehouse.floor} этаж` : null, warehouse.departmentName].filter(Boolean).join(" • ") || "Локальный склад",
+    priority: "Локально",
+      status: "Новое",
+      statusKey: "Новые",
+      syncState: "Локально",
+      severity: "conflict",
+      severityLabel: "Принято с замечаниями",
+    details: [
+      { label: "Поступление", value: receiptLabel },
+      { label: "Документ", value: stockItem.receiptDocumentName ?? "Не указан" },
+      { label: "Поставщик", value: stockItem.supplier ?? "Не указан" },
+      { label: "ПОЗ", value: positionCode },
+      { label: "Наименование", value: stockItem.name ?? "Позиция поступления" },
+      { label: "Склад", value: warehouseLabel },
+      { label: "Количество по документу", value: `${stockItem.documentQuantity ?? ""} ${stockItem.unit ?? ""}`.trim() },
+      { label: "Количество по факту", value: `${stockItem.actualQuantity ?? stockItem.quantity ?? ""} ${stockItem.unit ?? ""}`.trim() },
+      { label: "Выявил", value: stockItem.identifiedBy ?? "Оператор" },
+      { label: "Когда", value: formatLocalTime(timestamp) },
+      { label: "Причина", value: reason },
+    ],
+    history: [
+      { time: formatLocalTime(timestamp), text: "расхождение выявлено при проверке поступления" },
+    ],
+  };
+}
+
+function createReceiptStateLineDiscrepancy(receiptState, line) {
+  const timestamp = receiptState.identifiedAt ?? receiptState.confirmedAt ?? receiptState.checkedAt ?? receiptState.updatedAt ?? null;
+  const positionCode = line.positionCode ?? line.designPositionCode ?? "Без ПОЗ";
+  const reason = Array.isArray(line.discrepancyReasons) && line.discrepancyReasons.length > 0
+    ? line.discrepancyReasons.join(", ")
+    : line.discrepancyReason ?? "Расхождение при поступлении";
+  const receiptLabel = receiptState.displayNumber ?? receiptState.batchNumber ?? receiptState.receiptBatchId;
+
+  return {
+    id: `receipt-discrepancy:${receiptState.receiptBatchId}:${line.lineId}`,
+    sourceType: "receipt",
+    sourceReceiptBatchId: receiptState.receiptBatchId,
+    sourceReceiptLineId: line.lineId,
+    warehouseId: null,
+    equipmentId: null,
+    entityId: null,
+    positionCode,
+    designPositionCode: line.designPositionCode ?? positionCode,
+    updatedAt: timestamp,
+    title: line.name ?? "Позиция поступления",
+    itemCode: positionCode,
+    context: receiptLabel ?? "Поступление",
+    locationBadge: null,
+    type: "Поступление",
+    reason,
+    comment: line.discrepancyComment || receiptState.comment || null,
+    date: "Сегодня",
+    responsible: receiptState.confirmedBy ?? receiptState.operatorName ?? "Оператор",
+    locationLine: "Поступление не принято на склад",
+    priority: "Локально",
+    status: "Новое",
+    statusKey: "Новые",
+    syncState: "Локально",
+    severity: "conflict",
+    severityLabel: "Не принято по факту",
+    details: [
+      { label: "Поступление", value: receiptLabel },
+      { label: "Документ", value: receiptState.documentName ?? "Не указан" },
+      { label: "Поставщик", value: line.supplier ?? receiptState.supplier ?? "Не указан" },
+      { label: "ПОЗ", value: positionCode },
+      { label: "Наименование", value: line.name ?? "Позиция поступления" },
+      { label: "Количество по документу", value: `${line.documentQuantity ?? ""} ${line.unit ?? ""}`.trim() },
+      { label: "Количество по факту", value: `${line.actualQuantity ?? 0} ${line.unit ?? ""}`.trim() },
+      { label: "Выявил", value: receiptState.confirmedBy ?? receiptState.operatorName ?? "Оператор" },
+      { label: "Когда", value: formatLocalTime(timestamp) },
+      { label: "Причина", value: reason },
+    ],
+    history: [
+      { time: formatLocalTime(timestamp), text: "расхождение выявлено при проверке поступления" },
+    ],
+  };
+}
+
+export function createLocalDiscrepanciesData(drafts = [], operations = [], warehouses = [], receiptStates = []) {
+  const equipmentDiscrepancies = drafts
     .filter(isEquipmentIssueDraft)
     .map((draft) => {
       const operation = getQueueOperationForDraft(draft, operations);
@@ -229,6 +337,23 @@ export function createLocalDiscrepanciesData(drafts = [], operations = []) {
         ...queueStatus,
       };
     })
+  const receiptStockDiscrepancies = (Array.isArray(warehouses) ? warehouses : [])
+    .flatMap((warehouse) => (
+      (warehouse.stockItems ?? [])
+        .filter((stockItem) => stockItem?.hasDiscrepancy)
+        .map((stockItem) => createReceiptStockDiscrepancy(warehouse, stockItem))
+    ));
+  const stockDiscrepancyIds = new Set(receiptStockDiscrepancies.map((item) => item.id));
+  const receiptStateDiscrepancies = (Array.isArray(receiptStates) ? receiptStates : [])
+    .filter((receiptState) => ["conflict", "placed_with_discrepancy"].includes(receiptState?.status))
+    .flatMap((receiptState) => (
+      (receiptState.lineReviewItems ?? [])
+        .filter((line) => line?.hasDiscrepancy)
+        .map((line) => createReceiptStateLineDiscrepancy(receiptState, line))
+    ))
+    .filter((item) => !stockDiscrepancyIds.has(item.id));
+
+  const discrepancies = [...equipmentDiscrepancies, ...receiptStockDiscrepancies, ...receiptStateDiscrepancies]
     .sort((first, second) => (
       new Date(second.updatedAt ?? second.date ?? 0).getTime() - new Date(first.updatedAt ?? first.date ?? 0).getTime()
     ));
@@ -284,25 +409,47 @@ function createDraftHistoryEvent(draft) {
     WAREHOUSE_MOVE: "Перемещения",
   };
   const type = typeByDraftType[draft.type] ?? "Проверки";
+  const receiptOutcome = draft.payload?.receiptOutcome ?? draft.context?.receiptOutcome;
+  const receiptTitle = receiptOutcome === "placed"
+    ? "Поступление размещено"
+    : receiptOutcome === "placed_with_discrepancy"
+      ? "Поступление размещено с расхождениями"
+    : receiptOutcome === "conflict"
+      ? "Поступление с замечаниями"
+      : `Сохранен черновик: ${type}`;
 
   return {
     id: `draft-history:${draft.id}`,
     timestamp,
     type,
-    title: type === "Расхождения" ? "Зафиксировано локальное расхождение" : `Сохранен черновик: ${type}`,
-    context: getRoomContext(draft),
+    title: type === "Расхождения" ? "Зафиксировано локальное расхождение" : receiptTitle,
+    context: draft.context?.destinationWarehouseName ?? getRoomContext(draft),
     item: draft.type === "EQUIPMENT_DATA" ? `${getEquipmentTitle(draft)} • ${positionCode}` : draft.entityId,
-    user: "Оператор",
+    user: draft.context?.operatorName ?? draft.payload?.operatorName ?? "Оператор",
     time: formatLocalTime(timestamp),
     date: "Сегодня",
     status: draft.status === "queued" ? "Ожидает отправки" : "Локально",
     statusKey: type,
     tone: type === "Расхождения" ? "error" : "info",
-    description: isEquipmentIssueDraft(draft) ? getEquipmentIssueReason(draft) : "Данные сохранены локально",
+    description: isEquipmentIssueDraft(draft)
+      ? getEquipmentIssueReason(draft)
+      : receiptOutcome === "placed"
+        ? "Поступление размещено на локальный склад"
+        : receiptOutcome === "placed_with_discrepancy"
+          ? "Поступление размещено на склад с расхождениями"
+        : receiptOutcome === "conflict"
+          ? "Поступление сохранено с замечаниями"
+          : "Данные сохранены локально",
     details: [
       { label: "Источник", value: "Черновик" },
       { label: "Тип", value: draft.type },
       { label: "Статус", value: draft.status },
+      ...(draft.type === "RECEIPT_BATCH_CONFIRM" ? [
+        { label: "Оператор", value: draft.context?.operatorName ?? draft.payload?.operatorName ?? "Оператор" },
+        { label: "Партия", value: draft.context?.batchNumber ?? draft.entityId },
+        { label: "Склад", value: draft.context?.destinationWarehouseName ?? "Не выбран" },
+        { label: "Объем", value: `${draft.context?.positionsCount ?? draft.payload?.positions?.length ?? 0} поз. • ${draft.context?.totalQuantity ?? draft.payload?.actualQuantity ?? ""} шт.` },
+      ] : []),
     ],
   };
 }
@@ -313,6 +460,13 @@ function createOperationHistoryEvent(operation) {
   const errorMessage = operation.error?.message ?? operation.error?.code ?? null;
   const timestamp = operation.updatedAt ?? operation.createdAt ?? null;
   const titleByType = {
+    RECEIPT_BATCH_CONFIRM: operation.context?.receiptOutcome === "placed"
+      ? "Поступление размещено"
+      : operation.context?.receiptOutcome === "placed_with_discrepancy"
+        ? "Поступление размещено с расхождениями"
+      : operation.context?.receiptOutcome === "conflict"
+        ? "Поступление с замечаниями"
+        : null,
     WAREHOUSE_CREATE: "Создан склад",
     WAREHOUSE_CLOSE: "Закрыт склад",
   };
@@ -322,11 +476,11 @@ function createOperationHistoryEvent(operation) {
     timestamp,
     type,
     title: titleByType[operation.type] ?? (status.tone === "error" ? `Ошибка отправки: ${type}` : `Операция в очереди: ${type}`),
-    context: operation.context?.roomName ?? operation.entityType ?? "Offline queue",
+    context: operation.context?.destinationWarehouseName ?? operation.context?.roomName ?? operation.entityType ?? "Offline queue",
     item: operation.context?.roomCode
       ? `${operation.context.roomCode} • ${operation.context.roomName ?? ""}`.trim()
       : operation.context?.positionCode ?? operation.entityId ?? operation.context?.draftId,
-    user: "Оператор",
+    user: operation.context?.operatorName ?? "Оператор",
     time: formatLocalTime(timestamp),
     date: "Сегодня",
     ...status,
@@ -335,6 +489,12 @@ function createOperationHistoryEvent(operation) {
       { label: "Операция", value: operation.type },
       { label: "Статус", value: operation.status },
       { label: "Попытки", value: String(operation.attempts ?? 0) },
+      ...(operation.type === "RECEIPT_BATCH_CONFIRM" ? [
+        { label: "Оператор", value: operation.context?.operatorName ?? "Оператор" },
+        { label: "Партия", value: operation.context?.batchNumber ?? operation.entityId },
+        { label: "Склад", value: operation.context?.destinationWarehouseName ?? "Не выбран" },
+        { label: "Объем", value: `${operation.context?.positionsCount ?? 0} поз. • ${operation.context?.totalQuantity ?? ""} шт.` },
+      ] : []),
       { label: "Ошибка", value: errorMessage },
     ],
   };

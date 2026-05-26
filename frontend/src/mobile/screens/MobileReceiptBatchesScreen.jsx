@@ -16,7 +16,7 @@ function getReceiptTone(batch) {
     return "warning";
   }
 
-  if (batch.status === "Подтверждено") {
+  if (batch.status === "Подтверждено" || batch.status === "Размещено") {
     return "completed";
   }
 
@@ -24,6 +24,8 @@ function getReceiptTone(batch) {
 }
 
 export function MobileReceiptBatchesScreen({ activeNavKey, batches = [], onBack, onOpenBatch, onNavSelect }) {
+  const activeBatches = batches.filter((batch) => !["Размещено", "Подтверждено", "Конфликт", "С расхождениями"].includes(batch.status));
+
   return (
     <div className="mobile-warehouse-screen">
       <header className="mobile-item-card-header">
@@ -39,23 +41,23 @@ export function MobileReceiptBatchesScreen({ activeNavKey, batches = [], onBack,
           <div className="mobile-warehouse-summary-head">
             <div>
               <h2>Партии для проверки</h2>
-              <p>Поступления созданы на desktop и ожидают обработки оператором</p>
+              <p>Поступления назначены диспетчером и ожидают проверки оператором</p>
             </div>
-            <span>{batches.length}</span>
+            <span>{activeBatches.length}</span>
           </div>
 
           <div className="mobile-warehouse-metrics">
             <div className="is-primary">
               <span>Ожидают</span>
-              <strong>{batches.filter((batch) => batch.status === "Ожидает проверки").length}</strong>
+              <strong>{activeBatches.filter((batch) => batch.status === "Ожидает проверки").length}</strong>
             </div>
             <div className="is-secondary">
               <span>В проверке</span>
-              <strong>{batches.filter((batch) => batch.status === "В проверке").length}</strong>
+              <strong>{activeBatches.filter((batch) => batch.status === "В проверке").length}</strong>
             </div>
             <div className="is-error">
               <span>Конфликты</span>
-              <strong>{batches.filter((batch) => batch.conflictCount > 0 || batch.status === "Конфликт").length}</strong>
+              <strong>{activeBatches.filter((batch) => batch.conflictCount > 0 || batch.status === "Конфликт").length}</strong>
             </div>
           </div>
         </section>
@@ -63,8 +65,8 @@ export function MobileReceiptBatchesScreen({ activeNavKey, batches = [], onBack,
         <section className="mobile-warehouse-section">
           <h3>Список поступлений</h3>
           <div className="mobile-warehouse-list">
-            {batches.length > 0 ? (
-              batches.map((batch) => (
+            {activeBatches.length > 0 ? (
+              activeBatches.map((batch) => (
                 <article
                   className={`mobile-warehouse-item is-${getReceiptTone(batch)}`}
                   role="button"
@@ -81,7 +83,7 @@ export function MobileReceiptBatchesScreen({ activeNavKey, batches = [], onBack,
                   <div className="mobile-warehouse-item-head">
                     <div>
                       <h4>Партия {batch.batchNumber ?? batch.number}</h4>
-                      <p>{batch.objectName ?? batch.warehouseName}</p>
+                      <p>{batch.source ?? batch.objectName ?? "Назначено диспетчером"}</p>
                     </div>
                     <span>{batch.status}</span>
                   </div>
@@ -108,7 +110,9 @@ export function MobileReceiptBatchesScreen({ activeNavKey, batches = [], onBack,
                 </article>
               ))
             ) : (
-              <MobileEmptyState className="mobile-warehouse-empty">Поступления не найдены</MobileEmptyState>
+              <MobileEmptyState className="mobile-warehouse-empty">
+                Поступлений для проверки нет. Партии появятся после назначения диспетчером.
+              </MobileEmptyState>
             )}
           </div>
         </section>

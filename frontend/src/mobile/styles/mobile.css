@@ -1901,6 +1901,53 @@
   color: #ba1a1a;
 }
 
+.mobile-app .mobile-warehouse-stock-list {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.mobile-app .mobile-warehouse-stock-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.04);
+}
+
+.mobile-app .mobile-warehouse-stock-item div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mobile-app .mobile-warehouse-stock-item strong,
+.mobile-app .mobile-warehouse-stock-item span,
+.mobile-app .mobile-warehouse-stock-item small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mobile-app .mobile-warehouse-stock-item strong {
+  font-size: 12px;
+  color: #0f172a;
+}
+
+.mobile-app .mobile-warehouse-stock-item span,
+.mobile-app .mobile-warehouse-stock-item small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.mobile-app .mobile-warehouse-stock-item em {
+  flex: 0 0 auto;
+  font-style: normal;
+  color: #0f172a;
+  font-weight: 800;
+}
+
 .mobile-app .mobile-warehouse-item-footer {
   padding-top: 10px;
   border-top: 1px solid rgba(196, 197, 213, 0.35);
@@ -4445,6 +4492,144 @@
   line-height: 24px;
 }
 
+.mobile-app .mobile-receipt-lines {
+  display: grid;
+  gap: 8px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.mobile-app .mobile-receipt-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(0, 40, 142, 0.05);
+}
+
+.mobile-app .mobile-receipt-line div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mobile-app .mobile-receipt-line strong,
+.mobile-app .mobile-receipt-line span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mobile-app .mobile-receipt-line strong {
+  color: #00288e;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mobile-app .mobile-receipt-line span {
+  color: #444653;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mobile-app .mobile-receipt-line em {
+  flex: 0 0 auto;
+  font-style: normal;
+  color: #1f2130;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mobile-app .mobile-receipt-quantity-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mobile-app .mobile-receipt-quantity-summary span {
+  display: grid;
+  gap: 3px;
+  padding: 10px;
+  border: 1px solid #e3e1eb;
+  border-radius: 12px;
+  color: #444653;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mobile-app .mobile-receipt-quantity-summary strong {
+  color: #1a1b22;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.mobile-app .mobile-receipt-line-checks {
+  display: grid;
+  gap: 8px;
+}
+
+.mobile-app .mobile-receipt-line-checks label {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #e3e1eb;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.mobile-app .mobile-receipt-line-checks label.is-mismatch {
+  border-color: rgba(186, 26, 26, 0.36);
+  background: rgba(186, 26, 26, 0.06);
+}
+
+.mobile-app .mobile-receipt-line-checks input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #00288e;
+}
+
+.mobile-app .mobile-receipt-line-checks > label > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.mobile-app .mobile-receipt-line-checks strong,
+.mobile-app .mobile-receipt-line-checks em,
+.mobile-app .mobile-receipt-line-checks small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mobile-app .mobile-receipt-line-checks strong {
+  color: #00288e;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mobile-app .mobile-receipt-line-checks em,
+.mobile-app .mobile-receipt-line-checks small {
+  color: #444653;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.mobile-app .mobile-receipt-line-checks input[type="number"] {
+  width: 72px;
+  height: 36px;
+  border: 1px solid #c4c5d5;
+  border-radius: 8px;
+  color: #1a1b22;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+}
+
 .mobile-app .mobile-receipt-quantity {
   display: grid;
   gap: 8px;
@@ -4926,9 +5111,23 @@
 }
 
 .mobile-app .mobile-discrepancy-card > div:first-child > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: #444653;
   font-size: 12px;
   line-height: 16px;
+}
+
+.mobile-app .mobile-discrepancy-card mark,
+.mobile-app .mobile-discrepancy-context mark {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #d5e3fc;
+  color: #00288e;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
 }
 
 .mobile-app .mobile-discrepancy-card h3 {
@@ -5154,6 +5353,9 @@
 }
 
 .mobile-app .mobile-discrepancy-context span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   color: #757684;
   font-size: 13px;
   line-height: 18px;

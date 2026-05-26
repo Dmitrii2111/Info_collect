@@ -33,8 +33,11 @@ import {
   getMobileRoomById,
 } from "../domain/objects/index.js";
 import { getMobileWarehouseItemById } from "../domain/warehouse/index.js";
+import { listLocalWarehouses } from "../domain/warehouse/localWarehouseRepository.js";
+import { applyLocalReceiptStatesToBatches, listLocalReceiptStates } from "../domain/receipts/localReceiptRepository.js";
 import { createLocalDiscrepanciesData, createLocalHistoryData } from "./data/mobileDerivedLocalData.js";
-import { mobileDashboardData, mobileDrawerData, mobileInspectionsData, mobileObjectsData, mobileProfileData, mobileReceiptBatchesData } from "./data/mobileMockData.js";
+import { mobileReceiptFixtureBatches } from "./data/mobileReceiptFixtureData.js";
+import { mobileDashboardData, mobileDrawerData, mobileInspectionsData, mobileObjectsData, mobileProfileData } from "./data/mobileMockData.js";
 import {
   MOBILE_DRAFT_ENTITY_TYPES,
   MOBILE_DRAFT_STATUS,
@@ -586,7 +589,7 @@ export function MobileShell() {
   const [selectedInspectionId, setSelectedInspectionId] = useState(savedContext.selectedInspectionId ?? null);
   const [selectedWarehouseItemId, setSelectedWarehouseItemId] = useState(savedContext.selectedWarehouseItemId ?? null);
   const [selectedReceiptBatchId, setSelectedReceiptBatchId] = useState(savedContext.selectedReceiptBatchId ?? null);
-  const [receiptBatches, setReceiptBatches] = useState(mobileReceiptBatchesData);
+  const [receiptBatches, setReceiptBatches] = useState(mobileReceiptFixtureBatches);
   const [persistedEquipmentInspectionOverrides, setPersistedEquipmentInspectionOverrides] = useState({});
   const [equipmentInspectionOverrides, setEquipmentInspectionOverrides] = useState({});
   const [selectedDiscrepancyId, setSelectedDiscrepancyId] = useState(savedContext.selectedDiscrepancyId ?? null);
@@ -595,6 +598,8 @@ export function MobileShell() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [mobileDrafts, setMobileDrafts] = useState([]);
   const [syncQueueOperations, setSyncQueueOperations] = useState([]);
+  const [localWarehouses, setLocalWarehouses] = useState([]);
+  const [localReceiptStates, setLocalReceiptStates] = useState([]);
 
   const handleLogin = () => {
     const user = DEFAULT_MOBILE_USER;
@@ -650,6 +655,26 @@ export function MobileShell() {
     setIsAuthenticated(false);
     setActiveScreen("dashboard");
   };
+
+  const refreshReceiptBatches = () => {
+    return listLocalReceiptStates()
+      .then((receiptStates) => {
+        setLocalReceiptStates(receiptStates);
+        setReceiptBatches(applyLocalReceiptStatesToBatches(mobileReceiptFixtureBatches, receiptStates));
+      })
+      .catch(() => {
+        setLocalReceiptStates([]);
+        setReceiptBatches(mobileReceiptFixtureBatches);
+      });
+  };
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+
+    refreshReceiptBatches();
+  }, [activeScreen, isAuthenticated]);
 
   const handleNavSelect = (screenKey) => {
     if (
@@ -807,6 +832,7 @@ export function MobileShell() {
   const handleCompleteReceiptBatch = ({ batchId, status }) => {
     handleUpdateReceiptBatchStatus(batchId, status);
     setSelectedReceiptBatchId(null);
+    refreshReceiptBatches();
     setActiveScreen("receiptBatches");
   };
 
@@ -934,6 +960,26 @@ export function MobileShell() {
   useEffect(() => {
     let isCancelled = false;
 
+    listLocalWarehouses()
+      .then((warehouses) => {
+        if (!isCancelled) {
+          setLocalWarehouses(warehouses);
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setLocalWarehouses([]);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeScreen]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
     listSyncQueueOperations()
       .then((operations) => {
         if (!isCancelled) {
@@ -967,7 +1013,7 @@ export function MobileShell() {
   const dashboardData = createDashboardData(selectedDepartment ?? fixtureDepartment);
   const objectsData = createObjectsData(selectedDepartment ?? fixtureDepartment);
   const profileData = createProfileData(selectedDepartment ?? fixtureDepartment, syncQueueOperations);
-  const discrepanciesData = createLocalDiscrepanciesData(mobileDrafts, syncQueueOperations);
+  const discrepanciesData = createLocalDiscrepanciesData(mobileDrafts, syncQueueOperations, localWarehouses, localReceiptStates);
   const historyData = createLocalHistoryData(mobileDrafts, syncQueueOperations);
   const syncBadgeCount = syncQueueOperations.filter((operation) => (
     ["queued", "syncing", "failed", "conflict", "cancelled"].includes(operation.status)
@@ -1116,6 +1162,8 @@ export function MobileShell() {
           onBack={() => setActiveScreen("receiptBatches")}
           onCompleteReceiptBatch={handleCompleteReceiptBatch}
           onNavSelect={handleNavSelect}
+          operatorName={savedSession.user?.name ?? DEFAULT_MOBILE_USER.name}
+          onReceiptStateChanged={refreshReceiptBatches}
           onSaveReceiptBatchDraft={handleUpdateReceiptBatchStatus}
         />
       ) : (

@@ -209,3 +209,80 @@ export function closeLocalWarehouse(warehouseId) {
         .then(() => updatedWarehouse));
   });
 }
+
+export function addReceiptItemsToWarehouse(warehouseId, receiptBatch, options = {}) {
+  return getLocalWarehouse(warehouseId).then((warehouse) => {
+    if (!warehouse) {
+      throw createWarehouseError("LOCAL_WAREHOUSE_NOT_FOUND", "Склад не найден", { warehouseId });
+    }
+
+    const positions = Array.isArray(receiptBatch?.positions) ? receiptBatch.positions : [];
+    const stockItems = Array.isArray(warehouse.stockItems) ? warehouse.stockItems : [];
+    const existingLineKeys = new Set(
+      stockItems
+        .filter((item) => item?.sourceReceiptBatchId && item?.sourceReceiptLineId)
+        .map((item) => `${item.sourceReceiptBatchId}:${item.sourceReceiptLineId}`),
+    );
+    const currentTimestamp = nowIso();
+    const stockStatus = options.stockStatus ?? "in_stock";
+    const newStockItems = positions
+      .filter((position) => position?.id && !existingLineKeys.has(`${receiptBatch.id}:${position.id}`))
+      .map((position) => {
+        const itemHasDiscrepancy = Boolean(
+          position.hasDiscrepancy ||
+          position.hasQuantityMismatch ||
+          (Number(position.actualQuantity ?? position.quantity ?? 0) || 0) !== (Number(position.documentQuantity ?? position.quantity ?? 0) || 0) ||
+          (Array.isArray(position.discrepancyReasons) && position.discrepancyReasons.length > 0) ||
+          ["accepted_with_discrepancy", "conflict"].includes(position.status),
+        );
+
+        return {
+          id: `${warehouse.id}:receipt:${receiptBatch.id}:${position.id}`,
+          warehouseId: warehouse.id,
+          sourceReceiptBatchId: receiptBatch.id,
+          sourceReceiptLineId: position.id,
+          positionCode: position.positionCode ?? position.designPositionCode ?? null,
+          designPositionCode: position.designPositionCode ?? position.positionCode ?? null,
+          name: position.name ?? position.title ?? "Позиция поступления",
+          description: position.description ?? "",
+          brand: position.brand ?? position.model ?? "",
+          model: position.model ?? position.brand ?? "",
+          supplier: position.supplier ?? receiptBatch.supplier ?? "",
+          quantity: Number(position.actualQuantity ?? position.quantity ?? 0) || 0,
+          unit: position.unit ?? receiptBatch.unit ?? "шт.",
+          status: itemHasDiscrepancy ? stockStatus : "in_stock",
+          discrepancyStatus: itemHasDiscrepancy ? "open" : null,
+          hasDiscrepancy: itemHasDiscrepancy,
+          discrepancyReason: itemHasDiscrepancy ? (position.discrepancyReason ?? options.discrepancyReason ?? null) : null,
+          discrepancyReasons: itemHasDiscrepancy ? (position.discrepancyReasons ?? options.discrepancyReasons ?? []) : [],
+          discrepancyComment: itemHasDiscrepancy ? (position.discrepancyComment ?? options.discrepancyComment ?? "") : "",
+          documentQuantity: Number(position.documentQuantity ?? position.quantity ?? 0) || 0,
+          actualQuantity: Number(position.actualQuantity ?? position.quantity ?? 0) || 0,
+          discrepancyQuantity: (Number(position.actualQuantity ?? position.quantity ?? 0) || 0) - (Number(position.documentQuantity ?? position.quantity ?? 0) || 0),
+          identifiedBy: itemHasDiscrepancy ? (options.operatorName ?? null) : null,
+          identifiedAt: itemHasDiscrepancy ? (options.identifiedAt ?? currentTimestamp) : null,
+          source: "receipt",
+          receiptResult: position.receiptResult ?? options.receiptResult ?? null,
+          receiptDisplayNumber: receiptBatch.displayNumber ?? receiptBatch.batchNumber ?? receiptBatch.number ?? receiptBatch.id,
+          receiptDocumentName: receiptBatch.document ?? null,
+          destinationWarehouseId: warehouse.id,
+          destinationWarehouseRoomCode: warehouse.roomCode,
+          destinationWarehouseRoomName: warehouse.roomName,
+          destinationWarehouseBuilding: warehouse.building ?? warehouse.corpus ?? null,
+          destinationWarehouseFloor: warehouse.floor ?? null,
+          destinationWarehouseDepartmentName: warehouse.departmentName ?? null,
+          createdAt: currentTimestamp,
+          updatedAt: currentTimestamp,
+        };
+      });
+
+    if (newStockItems.length === 0) {
+      return warehouse;
+    }
+
+    return updateLocalWarehouse({
+      ...warehouse,
+      stockItems: [...stockItems, ...newStockItems],
+    });
+  });
+}

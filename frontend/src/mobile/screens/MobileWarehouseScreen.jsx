@@ -198,6 +198,21 @@ export function MobileWarehouseScreen({ activeNavKey, onOpenMenu, onOpenItem, on
                         <InboxOutlined aria-hidden="true" />
                         {isEmpty ? "Остатков нет" : `${totals.itemsCount} позиций • ${totals.quantityTotal} шт.`}
                       </p>
+                      {!isEmpty ? (
+                        <div className="mobile-warehouse-stock-list">
+                          {(warehouse.stockItems ?? []).map((stockItem) => (
+                            <div className="mobile-warehouse-stock-item" key={stockItem.id}>
+                              <div>
+                                <strong>{stockItem.positionCode ?? stockItem.designPositionCode ?? "Без ПОЗ"}</strong>
+                                <span>{stockItem.name}</span>
+                                <small>Источник: поступление {stockItem.receiptDisplayNumber ?? ""}</small>
+                                {stockItem.hasDiscrepancy ? <small>Есть расхождение: {stockItem.discrepancyReason ?? "требуется проверка"}</small> : null}
+                              </div>
+                              <em>{stockItem.quantity} {stockItem.unit}</em>
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
                     </div>
                     <div className="mobile-warehouse-item-footer">
                       <ClockCircleOutlined aria-hidden="true" />
